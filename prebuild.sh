@@ -13,6 +13,9 @@ prebuild() {
 
 prebuild api_version
 prebuild application_info
+prebuild physical_device_sparse_properties
+prebuild physical_device_limits
+prebuild physical_device_properties
 prebuild physical_device
 prebuild instance
 
