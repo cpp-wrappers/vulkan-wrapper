@@ -2,15 +2,13 @@ export module vk.instance;
 
 import <cstdint>;
 import <string>;
-export import <optional>;
 import <iostream>;
+import vk_headers;
+export import <optional>;
 export import <compare>;
-
 export import <cxx_util/parameter_pack/for_each.hpp>;
-
 export import vk.application_info;
 export import vk.physical_device;
-import vk_headers;
 
 inline void assert(auto v) {
 	if(v < 0) {
@@ -41,8 +39,8 @@ struct physical_devices_view {
 	VkInstance m_instance;
 
 	struct iterator {
-		uint32_t m_device;
 		VkInstance m_instance;
+		uint32_t m_device;
 
 		vk::physical_device operator * () const {
 			uint32_t count = m_device + 1;
@@ -61,7 +59,7 @@ struct physical_devices_view {
 			++m_device; return *this;
 		}
 
-		auto operator ++ (int) {
+		auto operator ++ (int) const {
 			iterator copy{ *this };
 			++copy;
 			return copy;
@@ -71,7 +69,7 @@ struct physical_devices_view {
 	};
 
 	iterator begin() const {
-		return { 0, m_instance };
+		return { m_instance, 0 };
 	}
 
 	uint32_t size() const {
@@ -85,7 +83,11 @@ struct physical_devices_view {
 	}
 
 	iterator end() const {
-		return { size(), m_instance };
+		return { m_instance, size() };
+	}
+
+	vk::physical_device front() const {
+		return *begin();
 	}
 };
 

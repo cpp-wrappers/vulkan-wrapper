@@ -1,11 +1,10 @@
 export module vk.application_info;
 
 import <string>;
-export import vk.api_version;
+import vk_headers;
 export import <cxx_util/parameter_pack/for_each.hpp>;
 export import <cxx_util/parameter_pack/parameter_pack.hpp>;
-
-import vk_headers;
+export import vk.api_version;
 
 namespace vk {
 

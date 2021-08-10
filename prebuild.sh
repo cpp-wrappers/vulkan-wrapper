@@ -11,6 +11,8 @@ prebuild() {
 	fi
 }
 
+prebuild extent
+prebuild queue_family_properties
 prebuild api_version
 prebuild application_info
 prebuild physical_device_sparse_properties

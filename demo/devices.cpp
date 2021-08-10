@@ -45,7 +45,19 @@ int main() {
 		}
 
 		std::cout << "device type: " << type_name << std::endl;
-
 		std::cout << "name: " << props.name << std::endl;
+
+		std::cout << "queue families properties: {" << std::endl;
+		for(auto family_props : device.queue_families_properties()) {
+			std::cout << "\t{" << std::endl;
+			std::cout << "\t\t" << "count: " << family_props.count << std::endl
+				<< "\t\tgraphics: " << family_props.flags.get(vk::queue_flag::graphics) << std::endl
+				<< "\t\tcompute: " << family_props.flags.get(vk::queue_flag::compute) << std::endl
+				<< "\t\ttransfer: " << family_props.flags.get(vk::queue_flag::transfer) << std::endl
+				<< "\t\tsparse binding: " << family_props.flags.get(vk::queue_flag::sparse_binding) << std::endl
+			;
+			std::cout << "\t}" << std::endl;
+		}
+		std::cout << "}" << std::endl;
 	}
 }
