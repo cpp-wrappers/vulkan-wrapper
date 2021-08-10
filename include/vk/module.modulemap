@@ -1,0 +1,4 @@
+module vk_headers {
+	header "vk_headers.hpp"
+	export *
+}
