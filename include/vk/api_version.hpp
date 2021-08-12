@@ -3,13 +3,14 @@ export module vk.api_version;
 export import <cinttypes>;
 export import <type_traits>;
 export import <cxx_util/parameter_pack/for_each.hpp>;
+export import <cxx_util/int.hpp>;
 
 export namespace vk {
 
-struct variant { uint32_t value; operator uint32_t() const { return value; }};
-struct major { uint32_t value; operator uint32_t() const { return value; }};
-struct minor { uint32_t value; operator uint32_t() const { return value; }};
-struct patch { uint32_t value; operator uint32_t() const { return value; }};
+struct variant : u::integral_like<uint32_t> {};
+struct major : u::integral_like<uint32_t> {};
+struct minor : u::integral_like<uint32_t> {};
+struct patch : u::integral_like<uint32_t> {};
 
 template<typename T>
 concept version_component =
@@ -51,13 +52,13 @@ struct api_version {
 		;
 
 		u::for_each(
-			u::combined {
+			args...,
+			u::do_one_of {
 				[&](vk::variant v){ variant = v; },
 				[&](vk::major v){ major = v; },
 				[&](vk::minor v){ minor = v; },
 				[&](vk::patch v){ patch = v; }
-			},
-			args...
+			}
 		);
 
 		value = (variant << 29) | (major << 22) | (minor << 12) | patch;

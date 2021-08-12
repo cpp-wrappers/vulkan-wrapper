@@ -81,7 +81,6 @@ export struct physical_device {
 	queue_families_properties_view queue_families_properties() const {
 		return { m_physical_device };
 	}
-	
 };
 
 }

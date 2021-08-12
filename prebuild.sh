@@ -11,6 +11,8 @@ prebuild() {
 	fi
 }
 
+#prebuild format
+#prebuild image
 prebuild extent
 prebuild queue_family_properties
 prebuild api_version

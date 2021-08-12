@@ -103,13 +103,13 @@ struct instance {
 		std::optional<vk::application_info> app_info;
 
 		u::for_each(
-			u::combined {
+			std::forward<Args>(args)...,
+			u::do_one_of {
 				[&](application_info&& i) {
-					//auto* ai{ (VkApplicationInfo*) i.app_info_ptr() };
 					app_info = i;
-				}
-			},
-			std::forward<Args>(args)...
+				},
+				[&](auto) {}
+			}
 		);
 
 		create_instance(&m_raw, app_info);
