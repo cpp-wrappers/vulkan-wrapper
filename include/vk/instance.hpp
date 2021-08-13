@@ -6,32 +6,11 @@ import <iostream>;
 import vk_headers;
 export import <optional>;
 export import <compare>;
+export import <system_error>;
 export import <cxx_util/parameter_pack/for_each.hpp>;
+export import vk.result;
 export import vk.application_info;
 export import vk.physical_device;
-
-inline void assert(auto v) {
-	if(v < 0) {
-		std::cout << v << std::endl;
-		throw;
-	}
-}
-
-inline void create_instance(VkInstance* m_raw, std::optional<vk::application_info> ai) {
-
-	VkInstanceCreateInfo ci {
-		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		nullptr,
-		0,
-		ai.has_value() ? (VkApplicationInfo*)&ai.value() : nullptr,
-		0,
-		nullptr,
-		0,
-		nullptr
-	};
-
-	assert(vkCreateInstance(&ci, nullptr, m_raw));
-}
 
 export namespace vk {
 
@@ -43,16 +22,18 @@ struct physical_devices_view {
 		uint32_t m_device;
 
 		vk::physical_device operator * () const {
-			uint32_t count = m_device + 1;
-			VkPhysicalDevice devices[count]; // Extension
+			uint32_t l_count = m_device + 1;
+			VkPhysicalDevice l_devices[l_count];
 
-			assert(vkEnumeratePhysicalDevices(
-				m_instance,
-				&count,
-				devices
-			)); // Let's hope it's cheap
+			vk::throw_if_error(
+				vkEnumeratePhysicalDevices(
+					m_instance,
+					&l_count,
+					l_devices
+				)
+			);
 
-			return { devices[count - 1] };
+			return { l_devices[l_count - 1] };
 		}
 
 		auto& operator ++ () {
@@ -66,20 +47,22 @@ struct physical_devices_view {
 		}
 
 		auto operator <=> (const iterator&) const = default;
-	};
+	}; // iterator
 
 	iterator begin() const {
 		return { m_instance, 0 };
 	}
 
 	uint32_t size() const {
-		uint32_t v;
-		vkEnumeratePhysicalDevices(
-			m_instance,
-			&v,
-			nullptr
+		uint32_t l_count;
+		vk::throw_if_error(
+			vkEnumeratePhysicalDevices(
+				m_instance,
+				&l_count,
+				nullptr
+			)
 		);
-		return v;
+		return l_count;
 	}
 
 	iterator end() const {
@@ -89,36 +72,57 @@ struct physical_devices_view {
 	vk::physical_device front() const {
 		return *begin();
 	}
+}; // physical_devices_view
+
+struct instance_create_info {
+	u::int_with_size<sizeof(VkStructureType)> m_type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	const void* m_next;
+	uint32_t m_flags;
+	vk::application_info* m_application_info;
+	uint32_t enabled_layer_count;
+	const char* const* pp_enabled_layer_names;
+	uint32_t enabled_extension_count;
+	const char* const* enabled_extension_names;
 };
 
 struct instance {
-	VkInstance m_raw;
+	VkInstance m_instance;
 
 	~instance() {
-		vkDestroyInstance(m_raw, nullptr);
+		vkDestroyInstance(m_instance, nullptr);
 	}
 
 	template<typename... Args>
-	instance(Args&&... args) {
-		std::optional<vk::application_info> app_info;
+	instance(Args&&... args) noexcept(false) {
+		std::optional<vk::application_info> l_application_info;
 
 		u::for_each(
 			std::forward<Args>(args)...,
 			u::do_one_of {
 				[&](application_info&& i) {
-					app_info = i;
+					l_application_info.emplace(std::forward<decltype(i)>(i));
 				},
 				[&](auto) {}
 			}
 		);
 
-		create_instance(&m_raw, app_info);
+		instance_create_info l_instance_crate_info{};
+		
+		if(l_application_info.has_value()) {
+			l_instance_crate_info.m_application_info = &l_application_info.value();
+		}
+
+		vk::throw_if_error(
+			(int)vkCreateInstance((VkInstanceCreateInfo*)&l_instance_crate_info, nullptr, &m_instance)
+		);
 	}
 
 	physical_devices_view physical_devices() const {
-		return { m_raw };
+		return { m_instance };
 	}
 
-};
+}; // instance
 
-}
+} // vk
+
+static_assert(sizeof(vk::instance_create_info) == sizeof(VkInstanceCreateInfo));

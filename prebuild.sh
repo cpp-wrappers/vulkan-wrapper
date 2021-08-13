@@ -13,6 +13,7 @@ prebuild() {
 
 #prebuild format
 #prebuild image
+prebuild result
 prebuild extent
 prebuild queue_family_properties
 prebuild api_version
