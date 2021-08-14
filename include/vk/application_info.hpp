@@ -20,11 +20,11 @@ export struct engine_version : u::integral_like<uint32_t> {};
 export class application_info {
 	u::int_with_size<sizeof(VkStructureType)> m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	const void* m_next = nullptr;
-	const char* m_app_name;
-	uint32_t m_app_version;
-	const char* m_engine_name;
-	uint32_t m_engine_version;
-	uint32_t m_api_version;
+	const char* m_app_name = nullptr;
+	uint32_t m_app_version = 0;
+	const char* m_engine_name = nullptr;
+	uint32_t m_engine_version = 0;
+	uint32_t m_api_version = 0;
 
 	friend instance;
 

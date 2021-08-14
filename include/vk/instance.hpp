@@ -19,7 +19,7 @@ struct physical_devices_view {
 
 	struct iterator {
 		VkInstance m_instance;
-		uint32_t m_device;
+		uint32_t m_device = 0;
 
 		vk::physical_device operator * () const {
 			uint32_t l_count = m_device + 1;
@@ -33,16 +33,16 @@ struct physical_devices_view {
 				)
 			);
 
-			return { l_devices[l_count - 1] };
+			return { l_devices[m_device] };
 		}
 
 		auto& operator ++ () {
 			++m_device; return *this;
 		}
 
-		auto operator ++ (int) const {
+		auto operator ++ (int) {
 			iterator copy{ *this };
-			++copy;
+			++m_device;
 			return copy;
 		}
 
@@ -113,7 +113,11 @@ struct instance {
 		}
 
 		vk::throw_if_error(
-			(int)vkCreateInstance((VkInstanceCreateInfo*)&l_instance_crate_info, nullptr, &m_instance)
+			(int)vkCreateInstance(
+				(VkInstanceCreateInfo*)&l_instance_crate_info,
+				nullptr,
+				&m_instance
+			)
 		);
 	}
 

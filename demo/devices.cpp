@@ -3,7 +3,7 @@ pushd `dirname $0`
 cd ..
 bash prebuild.sh
 mkdir -p build
-clang++ --config ./compile_flags.txt -lvulkan -o build/devices demo/devices.cpp
+clang++ -g --config ./compile_flags.txt -lvulkan -o build/devices demo/devices.cpp
 ./build/devices
 popd
 exit 0
@@ -57,6 +57,13 @@ int main() {
 				<< "\t\tsparse binding: " << family_props.flags.get(vk::queue_flag::sparse_binding) << std::endl
 			;
 			std::cout << "\t}" << std::endl;
+		}
+		std::cout << "}" << std::endl;
+
+		std::cout << "extensions properties: {" << std::endl;
+		for(auto ex_props : device.extensions_properties()) {
+			std::cout << "\tname: " << ex_props.name
+				<< ", spec version: " << ex_props.spec_version << std::endl;
 		}
 		std::cout << "}" << std::endl;
 	}
