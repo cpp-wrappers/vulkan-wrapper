@@ -23,14 +23,21 @@ export struct physical_device {
 		return get_physical_device_properties(m_physical_device);
 	}
 
-	physical_device_queue_families_properties_view
-	queue_families_properties() const {
-		return { m_physical_device };
+	template<typename F>
+	void view_queue_families_properties(F&& f) const {
+		view_physical_device_queue_families_properties(
+			(void*)m_physical_device,
+			std::forward<F>(f)
+		);
 	}
 
-	physical_device_extensions_properties_view
-	extensions_properties() const {
-		return { m_physical_device, "" };
+	template<typename F>
+	void view_extensions_properties(F&& f) const {
+		view_physical_device_extensions_properties(
+			(void*)m_physical_device,
+			"",
+			std::forward<F>(f)
+		);
 	}
 };
 

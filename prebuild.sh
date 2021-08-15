@@ -16,16 +16,19 @@ prebuild result
 prebuild extent
 prebuild api_version
 prebuild application_info
+prebuild queue_family_properties
+prebuild extension_properties
 prebuild physical_device_sparse_properties
 prebuild physical_device_limits
 prebuild physical_device_properties
-prebuild queue_family_properties
 prebuild physical_device_queue_families_properties_view
-prebuild extension_properties
 prebuild physical_device_extensions_properties_view
+prebuild physical_device_features
 prebuild physical_device
 prebuild instance
 prebuild format
-#prebuild image
+prebuild device_queue_create_info
+prebuild device_create_info
+prebuild device
 
 popd

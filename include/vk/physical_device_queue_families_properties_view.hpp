@@ -5,65 +5,71 @@ import vk_headers;
 export import <compare>;
 export import vk.queue_family_properties;
 
-namespace vk {
+export namespace vk {
 
-export struct physical_device_queue_families_properties_view {
-	VkPhysicalDevice m_physical_device;
+template<typename F>
+inline void view_physical_device_queue_families_properties(
+	void* physical_device,
+	F&& f
+);
 
-	physical_device_queue_families_properties_view(void* p_physical_device)
-		: m_physical_device{ (VkPhysicalDevice)p_physical_device }
+class physical_device_queue_families_properties_view {
+	vk::queue_family_properties* m_ptr;
+	uint32_t m_size;
+
+	physical_device_queue_families_properties_view(
+		vk::queue_family_properties* p_ptr,
+		uint32_t p_size
+	)
+		: m_ptr{ p_ptr }, m_size{ p_size }
 	{}
 
-	struct iterator {
-		VkPhysicalDevice m_physical_device;
-		uint32_t m_family_queue;
+	template<typename F>
+	friend inline void view_physical_device_queue_families_properties(
+		void* physical_device,
+		F&& f
+	);
+public:
 
-		vk::queue_family_properties
-		operator * () const {
-			uint32_t size = m_family_queue + 1;
+	auto begin() const {
+		return m_ptr;
+	}
 
-			vk::queue_family_properties props[size];
-
-			vkGetPhysicalDeviceQueueFamilyProperties(
-				m_physical_device,
-				&size,
-				(VkQueueFamilyProperties*)props
-			);
-
-			return props[m_family_queue];
-		}
-
-		auto& operator ++ () {
-			++m_family_queue;
-			return *this;
-		}
-
-		auto operator ++ (int) {
-			iterator copy{*this};
-			++m_family_queue;
-			return copy;
-		}
-
-		auto operator <=> (const iterator&) const = default;
-	};
-
-	iterator begin() const {
-		return { m_physical_device, 0 };
+	auto end() const {
+		return m_ptr + m_size;
 	}
 
 	uint32_t size() const {
-		uint32_t count;
-		vkGetPhysicalDeviceQueueFamilyProperties(
-			m_physical_device,
-			&count,
-			nullptr
-		);
-		return count;
+		return m_size;
 	}
 
-	iterator end() const {
-		return { m_physical_device, size() };
+	uint32_t index(vk::queue_family_properties& p) const {
+		return (&p - m_ptr);
 	}
 }; // queue_families_properties_view
+
+template<typename F>
+inline void view_physical_device_queue_families_properties(
+	void* physical_device,
+	F&& f
+) {
+	uint32_t count;
+	vkGetPhysicalDeviceQueueFamilyProperties(
+		(VkPhysicalDevice)physical_device,
+		&count,
+		nullptr
+	);
+	vk::queue_family_properties props[count];
+
+	vkGetPhysicalDeviceQueueFamilyProperties(
+		(VkPhysicalDevice)physical_device,
+		&count,
+		(VkQueueFamilyProperties*)props
+	);
+
+	physical_device_queue_families_properties_view v{ props, count };
+
+	f(v);
+}
 
 } // vk

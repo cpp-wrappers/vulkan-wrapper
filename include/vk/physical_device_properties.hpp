@@ -31,14 +31,6 @@ struct physical_device_properties {
 
 }
 
-static_assert(
-	sizeof(vk::physical_device_type)
-	==
-	sizeof(VkPhysicalDeviceType)
-);
+static_assert(sizeof(vk::physical_device_type) == sizeof(VkPhysicalDeviceType));
 
-static_assert(
-	sizeof(vk::physical_device_properties)
-	==
-	sizeof(VkPhysicalDeviceProperties)
-);
+static_assert(sizeof(vk::physical_device_properties) == sizeof(VkPhysicalDeviceProperties));

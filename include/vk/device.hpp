@@ -9,15 +9,6 @@ export import vk.physical_device;
 
 namespace vk {
 
-export enum class device_queue_create_flag { рrotected };
-
-export struct device_queue_create_info {
-	u::bitmask_from_enum<device_queue_create_flag> flags;
-	uint32_t queue_family_index;
-	uint32_t queue_queue_count;
-	const float* queue_priorities;
-};
-
 export struct device {
 	VkDevice m_device;
 
