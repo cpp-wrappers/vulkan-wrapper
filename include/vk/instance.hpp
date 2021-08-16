@@ -1,18 +1,18 @@
-export module vk.instance;
+#pragma once
 
-import <cstdint>;
-import <string>;
-import <iostream>;
-import vk_headers;
-export import <optional>;
-export import <compare>;
-export import <system_error>;
-export import <cxx_util/parameter_pack/for_each.hpp>;
-export import vk.result;
-export import vk.application_info;
-export import vk.physical_device;
+#include "headers.hpp"
+#include <cstdint>
+#include <string>
+#include <iostream>
+#include <optional>
+#include <compare>
+#include <system_error>
+#include <cxx_util/parameter_pack/for_each.hpp>
+#include "result.hpp"
+#include "application_info.hpp"
+#include "physical_device.hpp"
 
-export namespace vk {
+namespace vk {
 
 struct physical_devices_view {
 	VkInstance m_instance;

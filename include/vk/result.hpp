@@ -1,10 +1,10 @@
-export module vk.result;
+#pragma once
 
-import vk_headers;
-export import <system_error>;
-export import <string>;
+#include "headers.hpp"
+#include <system_error>
+#include <string>
 
-export namespace vk {
+namespace vk {
 
 inline struct error_category : std::error_category {
 
@@ -71,4 +71,4 @@ inline void throw_if_error(int result) {
 	}
 }
 
-}
+} // vk

@@ -1,12 +1,12 @@
-export module vk.physical_device_limits;
+#pragma once
 
-export import <cinttypes>;
-import vk_headers;
-import <type_traits>;
+#include "headers.hpp"
+#include <cinttypes>
+#include <type_traits>
 
 static_assert(std::is_same_v<VkDeviceSize, uint64_t>);
 
-export namespace vk {
+namespace vk {
 
 struct physical_device_limits {
 	uint32_t max_image_dimension_1d;
@@ -115,12 +115,8 @@ struct physical_device_limits {
 	uint64_t optimal_buffer_copy_offset_alignment;
 	uint64_t optimal_buffer_copy_row_pitch_alignment;
 	uint64_t non_coherent_atom_size;
-};
+}; // physical_device_limits
 
-}
+} // vk
 
-static_assert(
-	sizeof(vk::physical_device_limits)
-	==
-	sizeof(VkPhysicalDeviceLimits)
-);
+static_assert(sizeof(vk::physical_device_limits) == sizeof(VkPhysicalDeviceLimits));

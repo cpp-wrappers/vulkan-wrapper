@@ -1,14 +1,14 @@
-export module vk.extension_properties;
+#pragma once
 
-import vk_headers;
+#include "headers.hpp"
 
-export namespace vk {
+namespace vk {
 
 struct extension_properties {
 	char name[VK_MAX_EXTENSION_NAME_SIZE];
 	uint32_t spec_version;
 };
 
-}
+} // vk
 
 static_assert(sizeof(vk::extension_properties) == sizeof(VkExtensionProperties));

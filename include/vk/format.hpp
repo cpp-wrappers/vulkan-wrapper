@@ -1,8 +1,8 @@
-export module vk.format;
+#pragma once
 
-import vk_headers;
+#include "headers.hpp"
 
-export namespace vk {
+namespace vk {
 
 enum class format {
 	undefined = VK_FORMAT_UNDEFINED,

@@ -1,9 +1,9 @@
-export module vk.physical_device_features;
+#pragma once
 
-import vk_headers;
-export import <cinttypes>;
+#include "headers.hpp"
+#include <cinttypes>
 
-export namespace vk {
+namespace vk {
 
 struct physical_device_features {
 	uint32_t

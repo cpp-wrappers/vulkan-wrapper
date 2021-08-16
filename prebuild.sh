@@ -3,7 +3,7 @@ pushd `dirname $0`
 mkdir -p build
 
 prebuild() {
-	if ! $CXX --config ./compile_flags.txt -c \
+	if ! clang++ --config ./compile_flags.txt -c \
 		-Xclang -emit-module-interface \
 		-g \
 		-o./build/vk.$1.pcm \

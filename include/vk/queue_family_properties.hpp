@@ -1,12 +1,12 @@
-export module vk.queue_family_properties;
+#pragma once
 
-import <cstdint>;
-import vk_headers;
-export import <type_traits>;
-export import <cxx_util/bitmask_from_enum.hpp>;
-export import vk.extent;
+#include <cstdint>
+#include "headers.hpp"
+#include <type_traits>
+#include <cxx_util/bitmask_from_enum.hpp>
+#include "extent.hpp"
 
-export namespace vk {
+namespace vk {
 
 enum class queue_flag : uint32_t {
 	graphics = VK_QUEUE_GRAPHICS_BIT,

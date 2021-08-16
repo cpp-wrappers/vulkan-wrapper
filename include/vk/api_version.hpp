@@ -1,11 +1,11 @@
-export module vk.api_version;
+#pragma once
 
-export import <cinttypes>;
-export import <type_traits>;
-export import <cxx_util/parameter_pack/for_each.hpp>;
-export import <cxx_util/int.hpp>;
+#include <cinttypes>
+#include <type_traits>
+#include <cxx_util/parameter_pack/for_each.hpp>
+#include <cxx_util/int.hpp>
 
-export namespace vk {
+namespace vk {
 
 struct variant : u::integral_like<uint32_t> {};
 struct major : u::integral_like<uint32_t> {};

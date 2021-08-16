@@ -1,11 +1,10 @@
+#pragma once
 
-export module vk.physical_device_queue_families_properties_view;
+#include "headers.hpp"
+#include <compare>
+#include "queue_family_properties.hpp"
 
-import vk_headers;
-export import <compare>;
-export import vk.queue_family_properties;
-
-export namespace vk {
+namespace vk {
 
 template<typename F>
 inline void view_physical_device_queue_families_properties(

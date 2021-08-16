@@ -1,11 +1,11 @@
-export module vk.physical_device;
+#pragma once
 
-import vk_headers;
-export import <compare>;
-export import vk.physical_device_properties;
-export import vk.queue_family_properties;
-export import vk.physical_device_queue_families_properties_view;
-export import vk.physical_device_extensions_properties_view;
+#include "headers.hpp"
+#include <compare>
+#include "physical_device_properties.hpp"
+#include "queue_family_properties.hpp"
+#include "physical_device_queue_families_properties_view.hpp"
+#include "physical_device_extensions_properties_view.hpp"
 
 vk::physical_device_properties
 inline get_physical_device_properties(VkPhysicalDevice d) {
@@ -16,7 +16,7 @@ inline get_physical_device_properties(VkPhysicalDevice d) {
 
 namespace vk {
 
-export struct physical_device {
+struct physical_device {
 	VkPhysicalDevice m_physical_device;
 
 	physical_device_properties properties() const {

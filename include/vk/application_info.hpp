@@ -1,23 +1,23 @@
-export module vk.application_info;
+#pragma once
 
-import <string>;
-import vk_headers;
-export import <cxx_util/parameter_pack/for_each.hpp>;
-export import <cxx_util/parameter_pack/parameter_pack.hpp>;
-export import <cxx_util/int.hpp>;
-export import <cxx_util/null_terminated_string_view.hpp>;
-export import vk.api_version;
+#include <string>
+#include "headers.hpp"
+#include <cxx_util/parameter_pack/for_each.hpp>
+#include <cxx_util/parameter_pack/parameter_pack.hpp>
+#include <cxx_util/int.hpp>
+#include <cxx_util/null_terminated_string_view.hpp>
+#include "api_version.hpp"
 
 namespace vk {
 
 struct instance;
 
-export struct application_name : u::null_terminated_string_view<u::size_is::undefined> {};
-export struct application_version : u::integral_like<uint32_t> {};
-export struct engine_name : u::null_terminated_string_view<u::size_is::undefined> {};
-export struct engine_version : u::integral_like<uint32_t> {};
+struct application_name : u::null_terminated_string_view<u::size_is::undefined> {};
+struct application_version : u::integral_like<uint32_t> {};
+struct engine_name : u::null_terminated_string_view<u::size_is::undefined> {};
+struct engine_version : u::integral_like<uint32_t> {};
 
-export class application_info {
+class application_info {
 	u::int_with_size<sizeof(VkStructureType)> m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	const void* m_next = nullptr;
 	const char* m_app_name = nullptr;
@@ -51,8 +51,8 @@ public:
 			}
 		);
 	}
-};
+}; // application_info
 
-static_assert(sizeof(VkApplicationInfo) == sizeof(application_info));
+} // vk
 
-}
+static_assert(sizeof(VkApplicationInfo) == sizeof(vk::application_info));

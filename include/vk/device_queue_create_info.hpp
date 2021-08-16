@@ -1,13 +1,13 @@
-export module vk.device_queue_create_info;
+#pragma once
 
-import vk_headers;
-export import <cinttypes>;
-export import <cxx_util/bitmask_from_enum.hpp>;
-export import <cxx_util/int.hpp>;
+#include "headers.hpp"
+#include <cinttypes>
+#include <cxx_util/bitmask_from_enum.hpp>
+#include <cxx_util/int.hpp>
 
-export namespace vk {
+namespace vk {
 
-enum class device_queue_create_flag { рrotected };
+class device_queue_create_flag { рrotected };
 
 class device_queue_create_info {
 	const u::int_with_size<sizeof(VkStructureType)> m_type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -22,8 +22,8 @@ public:
 	device_queue_create_info(Args&&... args) {
 		
 	}
-};
+}; // device_queue_create_info
 
-}
+} // vk
 
 static_assert(sizeof(vk::device_queue_create_info) == sizeof(VkDeviceQueueCreateInfo));

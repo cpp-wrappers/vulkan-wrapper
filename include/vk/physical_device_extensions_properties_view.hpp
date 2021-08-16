@@ -1,11 +1,11 @@
-export module vk.physical_device_extensions_properties_view;
+#pragma once
 
-import vk_headers;
-export import <compare>;
-export import vk.extension_properties;
-export import vk.result;
+#include "headers.hpp"
+#include <compare>
+#include "extension_properties.hpp"
+#include "result.hpp"
 
-export namespace vk {
+namespace vk {
 
 template<typename F>
 inline void view_physical_device_extensions_properties(

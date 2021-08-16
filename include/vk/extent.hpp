@@ -1,9 +1,9 @@
-export module vk.extent;
+#pragma once
 
-export import <cstdint>;
-export import <array>;
+#include <cstdint>
+#include <array>
 
-export namespace vk {
+namespace vk {
 
 template<uint32_t S>
 struct extent;

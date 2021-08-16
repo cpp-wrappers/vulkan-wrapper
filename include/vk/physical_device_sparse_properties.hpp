@@ -1,9 +1,9 @@
-export module vk.physical_device_sparse_properties;
+#pragma once
 
-export import <cinttypes>;
-import vk_headers;
+#include <cinttypes>
+#include "headers.hpp"
 
-export namespace vk {
+namespace vk {
 
 struct physical_device_sparse_properties {
 	uint32_t residencyStandard2DBlockShape;
@@ -15,8 +15,4 @@ struct physical_device_sparse_properties {
 
 }
 
-static_assert(
-	sizeof(vk::physical_device_sparse_properties)
-	==
-	sizeof(VkPhysicalDeviceSparseProperties)
-);
+static_assert(sizeof(vk::physical_device_sparse_properties) == sizeof(VkPhysicalDeviceSparseProperties));

@@ -1,15 +1,16 @@
 #if 0
 pushd `dirname $0`
 cd ..
-bash prebuild.sh
 mkdir -p build
-clang++ -g --config ./compile_flags.txt -lvulkan -o build/devices demo/devices.cpp
-./build/devices
+if $CXX -g --config ./compile_flags.txt -lvulkan -o build/devices demo/devices.cpp
+	then ./build/devices
+fi
 popd
 exit 0
 #endif
-import vk.instance;
-import <iostream>;
+
+#include <iostream>
+#include "vk/instance.hpp"
 
 int main() {
 	vk::instance i {

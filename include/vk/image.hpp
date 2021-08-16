@@ -1,16 +1,15 @@
-export module vk.image;
+#pragma once
 
-import vk_headers;
-export import <cinttypes>;
-export import <type_traits>;
-export import <cxx_util/int.hpp>;
-export import vk.format;
-export import vk.extent;
-
+#include "headers.hpp"
+#include <cinttypes>
+#include <type_traits>
+#include <cxx_util/int.hpp>
+#include "format.hpp"
+#include "extent.hpp"
 
 namespace vk {
 
-export enum class image_create_flag {
+enum class image_create_flag {
 	sparse_binding = 0x00000001,
 	sparse_residency = 0x00000002,
 	sparse_aliased = 0x00000004,
@@ -51,11 +50,11 @@ export enum class image_usage {
 	shading_rate_image_bit_nv = fragment_shading_rate_attachment_bit_khr
 };
 
-export enum class sharing_mode {
+enum class sharing_mode {
 	exclusive, concurrent
 };
 
-export enum class image_layout {
+enum class image_layout {
 	undefined = 0,
 	general = 1,
 	color_attachment_optimal = 2,
@@ -100,7 +99,7 @@ void create_image(VkDevice device, VkImageCreateInfo ci, VkImage i) {
 
 namespace vk {
 
-export struct image {
+struct image {
 	VkImage m_image;
 
 	// TODO queue family indices

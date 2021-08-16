@@ -1,13 +1,12 @@
-export module vk.physical_device_properties;
+#pragma once
 
-export import <cinttypes>;
-export import vk.api_version;
-export import vk.physical_device_limits;
-export import vk.physical_device_sparse_properties;
+#include "headers.hpp"
+#include <cinttypes>
+#include "api_version.hpp"
+#include "physical_device_limits.hpp"
+#include "physical_device_sparse_properties.hpp"
 
-import vk_headers;
-
-export namespace vk {
+namespace vk {
 
 enum class physical_device_type {
 	other = VK_PHYSICAL_DEVICE_TYPE_OTHER,
@@ -32,5 +31,4 @@ struct physical_device_properties {
 }
 
 static_assert(sizeof(vk::physical_device_type) == sizeof(VkPhysicalDeviceType));
-
 static_assert(sizeof(vk::physical_device_properties) == sizeof(VkPhysicalDeviceProperties));
