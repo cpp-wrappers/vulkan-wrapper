@@ -42,3 +42,5 @@ struct physical_device {
 };
 
 }
+
+static_assert(sizeof(vk::physical_device) == sizeof(VkPhysicalDevice));

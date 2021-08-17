@@ -14,65 +14,67 @@
 
 namespace vk {
 
-struct physical_devices_view {
+template<typename F>
+void view_instance_physical_devices(VkInstance instance, F&& f);
+
+class physical_devices_view {
 	VkInstance m_instance;
+	vk::physical_device* m_physical_devices;
+	uint32_t m_count;
 
-	struct iterator {
-		VkInstance m_instance;
-		uint32_t m_device = 0;
+	physical_devices_view(
+		VkInstance p_instance,
+		vk::physical_device* p_physical_devices,
+		uint32_t p_count
+	)
+		: m_instance{ p_instance }, m_physical_devices{ p_physical_devices }, m_count{ p_count }
+	{}
 
-		vk::physical_device operator * () const {
-			uint32_t l_count = m_device + 1;
-			VkPhysicalDevice l_devices[l_count];
+	template<typename F>
+	friend void vk::view_instance_physical_devices(VkInstance instance, F&& f);
+public:
 
-			vk::throw_if_error(
-				vkEnumeratePhysicalDevices(
-					m_instance,
-					&l_count,
-					l_devices
-				)
-			);
+	auto begin() const {
+		return m_physical_devices;
+	}
 
-			return { l_devices[m_device] };
-		}
-
-		auto& operator ++ () {
-			++m_device; return *this;
-		}
-
-		auto operator ++ (int) {
-			iterator copy{ *this };
-			++m_device;
-			return copy;
-		}
-
-		auto operator <=> (const iterator&) const = default;
-	}; // iterator
-
-	iterator begin() const {
-		return { m_instance, 0 };
+	auto end() const {
+		return m_physical_devices + m_count;
 	}
 
 	uint32_t size() const {
-		uint32_t l_count;
-		vk::throw_if_error(
-			vkEnumeratePhysicalDevices(
-				m_instance,
-				&l_count,
-				nullptr
-			)
-		);
-		return l_count;
-	}
-
-	iterator end() const {
-		return { m_instance, size() };
+		return m_count;
 	}
 
 	vk::physical_device front() const {
 		return *begin();
 	}
 }; // physical_devices_view
+
+template<typename F>
+void view_instance_physical_devices(VkInstance instance, F&& f) {
+	uint32_t count;
+	vk::throw_if_error(
+		vkEnumeratePhysicalDevices(
+			instance,
+			&count,
+			nullptr
+		)
+	);
+
+	vk::physical_device devices[count];
+
+	vk::throw_if_error(
+		vkEnumeratePhysicalDevices(
+			instance,
+			&count,
+			(VkPhysicalDevice*)devices
+		)
+	);
+
+	physical_devices_view v{instance, devices, count};
+	f(v);
+}
 
 struct instance_create_info {
 	u::int_with_size<sizeof(VkStructureType)> m_type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -121,8 +123,12 @@ struct instance {
 		);
 	}
 
-	physical_devices_view physical_devices() const {
-		return { m_instance };
+	template<typename F>
+	void view_physical_devices(F&& f) const {
+		view_instance_physical_devices(
+			m_instance,
+			std::forward<F>(f)
+		);
 	}
 
 }; // instance

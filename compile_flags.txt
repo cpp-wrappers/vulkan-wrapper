@@ -1,5 +1,4 @@
 -std=c++20
--Wall
 -Iinclude
 -I../cxx-util/include
 -stdlib=libc++
