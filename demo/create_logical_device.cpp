@@ -1,3 +1,4 @@
+#include "vk/queue_family_properties.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh create_logical_device
 #endif
@@ -16,12 +17,14 @@ int main() {
 		physical_device = devices.front();
 	});
 
+	float priorities[1]{1};
+
 	vk::device device {
 		physical_device,
-		vk::device_queue_create_infos {
-			vk::choosen_queue_family {
-				0, std::array<float, 1>{ 1.0 }
-			}
+		vk::device_queue_create_info {
+			vk::queue_family_index{0},
+			vk::queue_count{ 1 },
+			vk::queue_priorities{ priorities }
 		}
 	};
 
