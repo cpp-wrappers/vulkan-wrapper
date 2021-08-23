@@ -2,8 +2,7 @@
 
 #include "headers.hpp"
 #include <cxx_util/parameter_pack/parameter_pack.hpp>
-#include <cxx_util/parameter_pack/for_each.hpp>
-#include <cxx_util/int.hpp>
+#include <cxx_util/tuple/for_each.hpp>
 #include <cxx_util/bitmask_from_enum.hpp>
 #include "physical_device.hpp"
 #include "device_create_info.hpp"

@@ -15,10 +15,10 @@ int main() {
 			auto props = device.properties();
 
 			std::cout << "api version: "
-				<< props.api_version.variant() << "."
-				<< props.api_version.major() << "."
-				<< props.api_version.minor() << "."
-				<< props.api_version.patch() << std::endl
+				<< props.api_version.variant().value << "."
+				<< props.api_version.major().value << "."
+				<< props.api_version.minor().value << "."
+				<< props.api_version.patch().value << std::endl
 			;
 
 			std::cout

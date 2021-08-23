@@ -2,15 +2,15 @@
 
 #include <cinttypes>
 #include <type_traits>
-#include <cxx_util/parameter_pack/for_each.hpp>
-#include <cxx_util/int.hpp>
+#include <cxx_util/tuple/for_each.hpp>
+#include <cxx_util/named.hpp>
 
 namespace vk {
 
-struct variant : u::integral_like<uint32_t> {};
-struct major : u::integral_like<uint32_t> {};
-struct minor : u::integral_like<uint32_t> {};
-struct patch : u::integral_like<uint32_t> {};
+struct variant : u::named<uint32_t> {};
+struct major : u::named<uint32_t> {};
+struct minor : u::named<uint32_t> {};
+struct patch : u::named<uint32_t> {};
 
 template<typename T>
 concept version_component =
@@ -54,10 +54,10 @@ struct api_version {
 		u::for_each(
 			args...,
 			u::do_one_of {
-				[&](vk::variant v){ variant = v; },
-				[&](vk::major v){ major = v; },
-				[&](vk::minor v){ minor = v; },
-				[&](vk::patch v){ patch = v; }
+				[&](vk::variant v){ variant = v.value; },
+				[&](vk::major v){ major = v.value; },
+				[&](vk::minor v){ minor = v.value; },
+				[&](vk::patch v){ patch = v.value; }
 			}
 		);
 
