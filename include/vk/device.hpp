@@ -19,11 +19,11 @@ struct device {
 	}
 
 	template<typename... Ps>
-	device(const Ps&... params) noexcept(false) {
+	device(Ps&&... params) noexcept(false) {
 		vk::device_create_info ci{};
 
-		u::params ps { params... };
-		ci.m_queue_create_info_count = ps.template count<const vk::device_queue_create_info&>();
+		u::params ps { std::tie(params...) };
+		ci.m_queue_create_info_count = ps.template count<vk::device_queue_create_info&>;
 
 		vk::device_queue_create_info dqcis[ci.m_queue_create_info_count];
 		int current = 0;
@@ -31,10 +31,10 @@ struct device {
 		vk::physical_device physical_device;
 
 		ps
-			.template handle<u::several<const vk::device_queue_create_info&>>([&](auto dqci) {
+			.template handle<u::several>([&](vk::device_queue_create_info& dqci) {
 				dqcis[current++] = dqci;
 			})
-			.template handle<u::required<const vk::physical_device&>>([&](auto pd) {
+			.template handle<u::required>([&](vk::physical_device pd) {
 				physical_device = pd;
 			})
 			.check_for_emptiness();

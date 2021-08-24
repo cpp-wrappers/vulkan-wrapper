@@ -6,7 +6,7 @@
 namespace vk {
 
 template<typename F>
-void view_instance_physical_devices(VkInstance instance, F&& f);
+void view_instance_physical_devices(uint32_t, VkInstance, F&&);
 
 class physical_devices_view {
 	VkInstance m_instance;
@@ -22,7 +22,7 @@ class physical_devices_view {
 	{}
 
 	template<typename F>
-	friend void vk::view_instance_physical_devices(VkInstance instance, F&& f);
+	friend void vk::view_instance_physical_devices(uint32_t, VkInstance, F&&);
 public:
 
 	auto begin() const {
@@ -43,16 +43,7 @@ public:
 }; // physical_devices_view
 
 template<typename F>
-void view_instance_physical_devices(VkInstance instance, F&& f) {
-	uint32_t count;
-	vk::throw_if_error(
-		vkEnumeratePhysicalDevices(
-			instance,
-			&count,
-			nullptr
-		)
-	);
-
+void view_instance_physical_devices(uint32_t count, VkInstance instance, F&& f) {
 	vk::physical_device devices[count];
 
 	vk::throw_if_error(

@@ -10,14 +10,14 @@ namespace vk {
 struct enabled_layer_name : u::named<const char*> {};
 
 struct instance_create_info {
-	u::int_with_size_of<VkStructureType> m_type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-	const void* m_next = nullptr;
-	uint32_t m_flags = 0;
-	vk::application_info* m_application_info = nullptr;
-	uint32_t m_enabled_layer_count = 0;
-	const enabled_layer_name* m_enabled_layer_names = nullptr;
-	uint32_t m_enabled_extension_count = 0;
-	const char* const* m_enabled_extension_names = nullptr;
+	u::int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	const void* next = nullptr;
+	uint32_t flags = 0;
+	vk::application_info* application_info = nullptr;
+	uint32_t enabled_layer_count = 0;
+	const vk::enabled_layer_name* enabled_layer_names = nullptr;
+	uint32_t enabled_extension_count = 0;
+	const char* const* enabled_extension_names = nullptr;
 };
 
 } // vk

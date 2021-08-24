@@ -33,22 +33,22 @@ struct application_info {
 	application_info(application_info&&) = default;
 
 	template<typename... Ps>
-	application_info(const Ps&... ps) {
-		u::params{ ps... }
-			.template handle<u::optional<const application_name&>>([&](auto app_name){
-				m_app_name = app_name;
+	application_info(Ps&&... ps) {
+		u::params{ std::tie(ps...) }
+			.template handle<u::optional>([&](application_name& app_name){
+				m_app_name = app_name.data();
 			})
-			.template handle<u::optional<const application_version&>>([&](auto app_ver) {
-				m_app_version = app_ver;
+			.template handle<u::optional>([&](application_version app_ver) {
+				m_app_version = app_ver.value;
 			})
-			.template handle<u::optional<const engine_name&>>([&](auto e_name) {
-				m_engine_name = e_name;
+			.template handle<u::optional>([&](engine_name& e_name) {
+				m_engine_name = e_name.data();
 			})
-			.template handle<u::optional<const engine_version&>>([&](auto e_ver) {
-				m_engine_version = e_ver;
+			.template handle<u::optional>([&](engine_version e_ver) {
+				m_engine_version = e_ver.value;
 			})
-			.template handle<u::required<const api_version&>>([&](auto api_ver) {
-				m_api_version = api_ver;
+			.template handle<u::required>([&](api_version& api_ver) {
+				m_api_version = api_ver.value;
 			})
 			.check_for_emptiness();
 	}

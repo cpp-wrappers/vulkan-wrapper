@@ -1,3 +1,4 @@
+#include "vk/device_queue_create_info.hpp"
 #include "vk/queue_family_properties.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh create_logical_device
@@ -14,19 +15,13 @@ int main() {
 		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
 	};
 
-	vk::physical_device physical_device;
-	i.view_physical_devices([&](auto& devices) {
-		physical_device = devices.front();
-	});
-
-	float priorities[1]{ 1.0F };
+	vk::physical_device physical_device = i.first_physical_device();
 
 	vk::device device {
 		physical_device,
 		vk::device_queue_create_info {
 			vk::queue_family_index{ 0 },
-			vk::queue_count{ 1 },
-			vk::queue_priorities{ priorities }
+			vk::queue_priorities{ 1.0F }
 		}
 	};
 
