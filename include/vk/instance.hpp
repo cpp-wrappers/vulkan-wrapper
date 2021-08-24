@@ -1,6 +1,7 @@
 #pragma once
 
 #include "headers.hpp"
+#include <cstdint>
 #include <optional>
 #include <compare>
 #include <cxx_util/tuple/for_each.hpp>
@@ -18,19 +19,31 @@ struct instance {
 	}
 
 	template<typename... Ps>
-	instance(const Ps&... ps) noexcept(false) {
+	instance(const Ps&... params) noexcept(false) {
+		u::params ps{ params... };
+
+		instance_create_info l_instance_crate_info{};
 		std::optional<vk::application_info> l_application_info;
 
-		u::params{ ps... }
-			.template handle<u::optional<vk::application_info>>([&](auto ai) {
+		l_instance_crate_info.m_enabled_layer_count
+			= ps.template count<const vk::enabled_layer_name&>();
+
+		vk::enabled_layer_name layers_names[l_instance_crate_info.m_enabled_layer_count];
+		uint32_t current_layer = 0;
+
+		ps
+			.template handle<u::optional<const vk::application_info&>>([&](auto ai) {
 				l_application_info.emplace(ai);
+			})
+			.template handle<u::any<const vk::enabled_layer_name&>>([&](auto eln) {
+				layers_names[current_layer++] = eln;
 			})
 			.check_for_emptiness();
 
-		instance_create_info l_instance_crate_info{};
 		if(l_application_info.has_value()) {
 			l_instance_crate_info.m_application_info = &l_application_info.value();
 		}
+		l_instance_crate_info.m_enabled_layer_names = layers_names;
 
 		vk::throw_if_error(
 			(int)vkCreateInstance(

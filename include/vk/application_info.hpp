@@ -10,6 +10,7 @@
 #include <cxx_util/int_with_size.hpp>
 #include "api_version.hpp"
 #include <cxx_util/params.hpp>
+#include <type_traits>
 
 namespace vk {
 
@@ -34,19 +35,19 @@ struct application_info {
 	template<typename... Ps>
 	application_info(const Ps&... ps) {
 		u::params{ ps... }
-			.template handle<u::optional<application_name>>([&](auto app_name){
+			.template handle<u::optional<const application_name&>>([&](auto app_name){
 				m_app_name = app_name;
 			})
-			.template handle<u::optional<application_version>>([&](auto app_ver) {
+			.template handle<u::optional<const application_version&>>([&](auto app_ver) {
 				m_app_version = app_ver;
 			})
-			.template handle<u::optional<engine_name>>([&](auto e_name) {
+			.template handle<u::optional<const engine_name&>>([&](auto e_name) {
 				m_engine_name = e_name;
 			})
-			.template handle<u::optional<engine_version>>([&](auto e_ver) {
+			.template handle<u::optional<const engine_version&>>([&](auto e_ver) {
 				m_engine_version = e_ver;
 			})
-			.template handle<u::required_single<api_version>>([&](auto api_ver) {
+			.template handle<u::required<const api_version&>>([&](auto api_ver) {
 				m_api_version = api_ver;
 			})
 			.check_for_emptiness();

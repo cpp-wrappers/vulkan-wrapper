@@ -11,13 +11,6 @@
 
 namespace vk {
 
-template<std::size_t Count>
-struct device_queue_create_infos : std::array<vk::device_queue_create_info, Count> {
-};
-
-template<typename...Qs>
-device_queue_create_infos(Qs&&...) -> device_queue_create_infos<sizeof...(Qs)>;
-
 struct device_create_info {
 	u::int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	const void* m_next = nullptr;
@@ -32,3 +25,5 @@ struct device_create_info {
 }; // device_create_info
 
 } // vk
+
+static_assert(sizeof(vk::device_create_info) == sizeof(VkDeviceCreateInfo));

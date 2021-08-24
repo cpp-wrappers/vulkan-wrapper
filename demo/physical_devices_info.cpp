@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "vk/instance.hpp"
+#include "vk/layers_properties_view.hpp"
 
 int main() {
 	vk::instance i {
@@ -70,6 +71,19 @@ int main() {
 						<< ", spec version: " << ex_props.spec_version << std::endl;
 				}
 			});
+			std::cout << "}" << std::endl;
+		}
+	});
+
+	std::cout << "layers:" << std::endl;
+
+	vk::view_layers_properties([](auto& layers) {
+		for(vk::layer_properties& props : layers) {
+			std::cout << "{" << std::endl
+				<< "\tname: " << props.name << std::endl
+				<< "\tspec version: " << props.spec_version << std::endl
+				<< "\timplementation version: " << props.implementation_version << std::endl
+				<< "\tdescription: " << props.description << std::endl;
 			std::cout << "}" << std::endl;
 		}
 	});
