@@ -7,7 +7,8 @@
 #include "device.hpp"
 #include "command_buffer.hpp"
 #include "result.hpp"
-#include "vk/command_buffer_level.hpp"
+#include "command_buffer_level.hpp"
+#include "command_buffer.hpp"
 
 enum class command_pool_create_flag {
 	transient = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
@@ -57,30 +58,32 @@ struct command_pool {
 	}
 
 	template<std::size_t Count>
-	auto allocate_command_buffers(std::optional<vk::command_buffer_level> l) {
-		std::array<VkCommandBuffer, Count> bufs;
+	auto allocate_command_buffers(vk::command_buffer_level l) const {
+		std::array<vk::command_buffer, Count> bufs;
 
 		VkCommandBufferAllocateInfo cbai {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 			.pNext = nullptr,
 			.commandPool = m_command_pool,
-			.level = (VkCommandBufferLevel) 0,
+			.level = (VkCommandBufferLevel) l,
 			.commandBufferCount = Count
 		};
-
-		if(l.has_value())
-			cbai.level = (VkCommandBufferLevel) l.value();
 
 		vk::throw_if_error(
 			vkAllocateCommandBuffers(
 				m_device,
 				&cbai,
-				bufs
+				(VkCommandBuffer*)bufs.data()
 			)
 		);
 
 		return bufs;
 	}
-};
 
-}
+	auto allocate_command_buffer(vk::command_buffer_level l) const {
+		return allocate_command_buffers<1>(l)[0];
+	}
+
+}; // command_pool
+
+} // vk

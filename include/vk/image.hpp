@@ -27,31 +27,12 @@ enum class image_create_flag {
 	subsampled_ext = 0x00004000,
 };
 
-export struct mip_levels : u::integral_like<uint32_t> {};
-export struct array_layers : u::integral_like<uint32_t> {};
-export struct sample_count : u::integral_like<uint32_t> {};
+struct mip_levels : u::integral_like<uint32_t> {};
+struct array_layers : u::integral_like<uint32_t> {};
+struct sample_count : u::integral_like<uint32_t> {};
 
-export enum class image_tiling {
+enum class image_tiling {
 	optimal, linear
-};
-
-export enum class image_usage {
-	transfer_src_bit = 0x00000001,
-	transfer_dst_bit = 0x00000002,
-	sampled_bit = 0x00000004,
-	storage_bit = 0x00000008,
-	color_attachment_bit = 0x00000010,
-	depth_stencil_attachment_bit = 0x00000020,
-	transient_attachment_bit = 0x00000040,
-	input_attachment_bit = 0x00000080,
-	fragment_density_map_bit_ext = 0x00000200,
-	fragment_shading_rate_attachment_bit_khr = 0x00000100,
-	invocation_mask_bit_huawei = 0x00040000,
-	shading_rate_image_bit_nv = fragment_shading_rate_attachment_bit_khr
-};
-
-enum class sharing_mode {
-	exclusive, concurrent
 };
 
 enum class image_layout {

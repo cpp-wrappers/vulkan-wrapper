@@ -27,11 +27,13 @@ struct instance {
 		instance_create_info ici{};
 		std::optional<vk::application_info> ai;
 
-		ici.enabled_layer_count
-			= ps.template count<vk::enabled_layer_name&>;
+		ici.enabled_layer_count = ps.template count<vk::enabled_layer_name&>;
+		ici.enabled_extension_count = ps.template count<vk::enabled_extension_name&>;
 
 		vk::enabled_layer_name layers_names[ici.enabled_layer_count];
+		vk::enabled_extension_name extensions_names[ici.enabled_extension_count];
 		uint32_t current_layer = 0;
+		uint32_t current_extension = 0;
 
 		ps
 			.template handle<u::optional>([&](vk::application_info& ai0) {
@@ -40,12 +42,16 @@ struct instance {
 			.template handle<u::any>([&](vk::enabled_layer_name eln) {
 				layers_names[current_layer++] = eln;
 			})
+			.template handle<u::any>([&](vk::enabled_extension_name eln) {
+				extensions_names[current_extension++] = eln;
+			})
 			.check_for_emptiness();
 
 		if(ai.has_value()) {
 			ici.application_info = &ai.value();
 		}
 		ici.enabled_layer_names = layers_names;
+		ici.enabled_extension_names = extensions_names;
 
 		vk::throw_if_error(
 			(int)vkCreateInstance(
