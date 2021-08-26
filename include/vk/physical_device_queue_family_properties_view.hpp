@@ -7,16 +7,16 @@
 namespace vk {
 
 template<typename F>
-inline void view_physical_device_queue_families_properties(
+inline void view_physical_device_queue_family_properties(
 	void* physical_device,
 	F&& f
 );
 
-class physical_device_queue_families_properties_view {
+class physical_device_queue_family_properties_view {
 	vk::queue_family_properties* m_ptr;
 	uint32_t m_size;
 
-	physical_device_queue_families_properties_view(
+	physical_device_queue_family_properties_view(
 		vk::queue_family_properties* p_ptr,
 		uint32_t p_size
 	)
@@ -24,7 +24,7 @@ class physical_device_queue_families_properties_view {
 	{}
 
 	template<typename F>
-	friend inline void view_physical_device_queue_families_properties(
+	friend inline void view_physical_device_queue_family_properties(
 		void* physical_device,
 		F&& f
 	);
@@ -48,7 +48,7 @@ public:
 }; // queue_families_properties_view
 
 template<typename F>
-inline void view_physical_device_queue_families_properties(
+inline void view_physical_device_queue_family_properties(
 	void* physical_device,
 	F&& f
 ) {
@@ -66,7 +66,7 @@ inline void view_physical_device_queue_families_properties(
 		(VkQueueFamilyProperties*)props
 	);
 
-	physical_device_queue_families_properties_view v{ props, count };
+	physical_device_queue_family_properties_view v{ props, count };
 
 	f(v);
 }

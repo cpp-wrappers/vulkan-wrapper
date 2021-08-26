@@ -8,17 +8,17 @@
 namespace vk {
 
 template<typename F>
-inline void view_physical_device_extensions_properties(
+inline void view_physical_device_extension_properties(
 	void* physical_device,
 	const char* layer_name,
 	F&& f
 );
 
-class physical_device_extensions_properties_view {
+class physical_device_extension_properties_view {
 	vk::extension_properties* m_ptr;
 	uint32_t m_count;
 
-	physical_device_extensions_properties_view(
+	physical_device_extension_properties_view(
 		vk::extension_properties* p_ptr,
 		uint32_t p_count
 	)
@@ -26,7 +26,7 @@ class physical_device_extensions_properties_view {
 	{}
 
 	template<typename F>
-	friend inline void view_physical_device_extensions_properties(
+	friend inline void view_physical_device_extension_properties(
 		void* physical_device,
 		const char* layer_name,
 		F&& f
@@ -48,7 +48,7 @@ public:
 };
 
 template<typename F>
-inline void view_physical_device_extensions_properties(
+inline void view_physical_device_extension_properties(
 	void* physical_device,
 	const char* layer_name,
 	F&& f
@@ -70,7 +70,7 @@ inline void view_physical_device_extensions_properties(
 		(VkExtensionProperties*)props
 	);
 
-	physical_device_extensions_properties_view v{props, count};
+	physical_device_extension_properties_view v{props, count};
 	f(v);
 }
 

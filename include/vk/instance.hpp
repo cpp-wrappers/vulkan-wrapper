@@ -97,6 +97,12 @@ struct instance {
 		return d;
 	}
 
+	void for_each_physical_device(auto&& f) {
+		view_physical_devices([&](auto& view) {
+			for(auto& device : view) f(device);
+		});
+	}
+
 }; // instance
 
 } // vk

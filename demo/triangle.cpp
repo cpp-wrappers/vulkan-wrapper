@@ -20,17 +20,15 @@ exit 1
 #include <ios>
 
 vk::shader_module read_shader_module(vk::device& device, const char* path) {
-	std::string src(std::filesystem::file_size(path), 0);
+	auto size = std::filesystem::file_size(path);
+	char src[size];
 
-	{
-		std::ifstream str{ path, std::ios::binary };
-		str.read(src.data(), src.size());
-	}
+	std::ifstream{ path, std::ios::binary }.read(src, size);
 
 	return {
 		device,
-		vk::code_size{ (uint32_t) src.size() },
-		vk::code{ (uint32_t*) src.data() }
+		vk::code_size{ (uint32_t) size },
+		vk::code{ (uint32_t*) src }
 	};
 }
 
