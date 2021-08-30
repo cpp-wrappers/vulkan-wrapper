@@ -3,10 +3,10 @@
 . `dirname $0`/build_and_run.sh create_logical_device
 #endif
 
+#include "vk/instance.hpp"
 #include "vk/device_queue_create_info.hpp"
 #include "vk/queue_family_properties.hpp"
 #include "vk/device.hpp"
-#include "vk/instance.hpp"
 #include "vk/command_pool.hpp"
 #include <iostream>
 

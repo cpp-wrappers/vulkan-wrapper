@@ -3,7 +3,7 @@
 #include <cstdint>
 #include "headers.hpp"
 #include <type_traits>
-#include <cxx_util/bitmask_from_enum.hpp>
+#include <core/flag_enum.hpp>
 #include "extent.hpp"
 
 namespace vk {
@@ -16,7 +16,7 @@ enum class queue_flag : uint32_t {
 };
 
 struct queue_family_properties {
-	u::bitmask_from_enum<queue_flag> flags;
+	flag_enum<queue_flag> flags;
 	uint32_t count;
 	uint32_t timestamp_valid_bits;
 	vk::extent<3> min_image_transfer_granularity;

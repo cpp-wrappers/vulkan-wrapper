@@ -44,6 +44,8 @@ struct device_queue_create_info {
 	device_queue_create_info() = default;
 	device_queue_create_info(const device_queue_create_info&) = default;
 	device_queue_create_info(device_queue_create_info&) = default;
+	device_queue_create_info(device_queue_create_info&&) = default;
+	device_queue_create_info& operator = (const device_queue_create_info&) = default;
 
 	template<typename... Ps>
 	device_queue_create_info(Ps&&... params) {

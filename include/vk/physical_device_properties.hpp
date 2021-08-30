@@ -17,7 +17,7 @@ enum class physical_device_type {
 };
 
 struct physical_device_properties {
-	vk::api_version api_version;
+	vk::api_version api_version{};
 	uint32_t driver_version;
 	uint32_t vendor_id;
 	uint32_t device_id;

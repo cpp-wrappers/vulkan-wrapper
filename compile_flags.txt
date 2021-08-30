@@ -1,6 +1,6 @@
 -std=c++20
 -Iinclude
--I../cxx-util/include
+-I../core/include
 -stdlib=libc++
 -fmodules
 -Xclang -fimplicit-module-maps

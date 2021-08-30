@@ -2,22 +2,23 @@
 
 #include <cinttypes>
 #include <type_traits>
-#include <cxx_util/tuple/for_each.hpp>
-#include <cxx_util/named.hpp>
+#include <core/named.hpp>
+#include <core/is.hpp>
+#include <core/tuple.hpp>
 
 namespace vk {
 
-struct variant : u::named<uint32_t> {};
-struct major : u::named<uint32_t> {};
-struct minor : u::named<uint32_t> {};
-struct patch : u::named<uint32_t> {};
+struct variant : named<uint32_t> {};
+struct major : named<uint32_t> {};
+struct minor : named<uint32_t> {};
+struct patch : named<uint32_t> {};
 
 template<typename T>
 concept version_component =
-	std::is_same_v<T, variant>
-	|| std::is_same_v<T, major>
-	|| std::is_same_v<T, minor>
-	|| std::is_same_v<T, patch>
+	   is::type<T>::template same_as<variant>
+	|| is::type<T>::template same_as<major>
+	|| is::type<T>::template same_as<minor>
+	|| is::type<T>::template same_as<patch>
 ;
 
 struct api_version {
@@ -43,7 +44,20 @@ struct api_version {
 		return { value & 0b111111111111 };
 	}
 
-	api_version(version_component auto... args) {
+	template<typename... Args>
+	requires(
+		types::of<Args...>::template count<vk::variant> <= 1 &&
+		types::of<Args...>::template count<vk::major> <= 1 && 
+		types::of<Args...>::template count<vk::minor> <= 1 &&
+		types::of<Args...>::template count<vk::patch> <= 1 &&
+		types::of<Args...>::template erase_types<
+			vk::variant,
+			vk::major,
+			vk::minor,
+			vk::patch
+		>::empty
+	)
+	api_version(Args... args) {
 		uint32_t
 			variant = 0,
 			major = 0,
@@ -51,15 +65,20 @@ struct api_version {
 			patch = 0
 		;
 
-		u::for_each(
-			args...,
-			u::do_one_of {
-				[&](vk::variant v){ variant = v.value; },
-				[&](vk::major v){ major = v.value; },
-				[&](vk::minor v){ minor = v.value; },
-				[&](vk::patch v){ patch = v.value; }
-			}
-		);
+		tuple{ std::forward<Args>(args)... }
+			.consume([&](vk::variant v) {
+				variant = v.value;
+			})
+			.consume([&](vk::major v) {
+				major = v.value;
+			})
+			.consume([&](vk::minor v) {
+				minor = v.value;
+			})
+			.consume([&](vk::patch v) {
+				patch = v.value;
+			})
+		;
 
 		value = (variant << 29) | (major << 22) | (minor << 12) | patch;
 	}

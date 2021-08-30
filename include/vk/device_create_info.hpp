@@ -22,6 +22,12 @@ struct device_create_info {
 	uint32_t m_enabled_extension_count = 0;
 	const char* const* m_enabled_extension_names = nullptr;
 	const vk::physical_device_features* m_enabled_features = nullptr;
+
+	template<std::size_t Count>
+	void set_device_queue_create_infos(vk::device_queue_create_info (&infos) [Count]) {
+		m_queue_create_infos = infos;
+		m_queue_create_info_count = Count;
+	}
 }; // device_create_info
 
 } // vk

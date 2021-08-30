@@ -2,7 +2,6 @@
 
 #include "headers.hpp"
 #include <compare>
-#include <vulkan/vulkan_core.h>
 #include "physical_device_properties.hpp"
 #include "queue_family_properties.hpp"
 #include "physical_device_queue_family_properties_view.hpp"

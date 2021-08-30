@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <optional>
 #include <compare>
-#include <cxx_util/tuple/for_each.hpp>
 #include "result.hpp"
 #include "instance_physical_devices_view.hpp"
 #include "instance_create_info.hpp"
 #include "application_info.hpp"
-#include "vk/physical_device.hpp"
+#include "physical_device.hpp"
+#include <core/tuple.hpp>
 
 namespace vk {
 
@@ -20,32 +20,37 @@ struct instance {
 		vkDestroyInstance(m_instance, nullptr);
 	}
 
-	template<typename... Ps>
-	instance(Ps&&... params) noexcept(false) {
-		u::params ps{ std::tie(params...) };
-
+	template<typename... Args>
+	requires(
+		types::of<Args...>::template count<vk::application_info> <= 1 &&
+		types::of<Args...>::template erase_types<
+			vk::application_info,
+			vk::enabled_layer_name,
+			vk::enabled_extension_name
+		>::empty
+	)
+	instance(Args&&... args) noexcept(false) {
 		instance_create_info ici{};
 		std::optional<vk::application_info> ai;
 
-		ici.enabled_layer_count = ps.template count<vk::enabled_layer_name&>;
-		ici.enabled_extension_count = ps.template count<vk::enabled_extension_name&>;
+		ici.enabled_layer_count = types::of<Args...>::template count<vk::enabled_layer_name>;
+		ici.enabled_extension_count = types::of<Args...>::template count<vk::enabled_extension_name>;
 
 		vk::enabled_layer_name layers_names[ici.enabled_layer_count];
 		vk::enabled_extension_name extensions_names[ici.enabled_extension_count];
 		uint32_t current_layer = 0;
 		uint32_t current_extension = 0;
 
-		ps
-			.template handle<u::optional>([&](vk::application_info& ai0) {
+		tuple{ std::forward<Args>(args)... }
+			.consume([&](vk::application_info ai0) {
 				ai.emplace(ai0);
 			})
-			.template handle<u::any>([&](vk::enabled_layer_name eln) {
+			.consume([&](vk::enabled_layer_name eln) {
 				layers_names[current_layer++] = eln;
 			})
-			.template handle<u::any>([&](vk::enabled_extension_name eln) {
+			.consume([&](vk::enabled_extension_name eln) {
 				extensions_names[current_extension++] = eln;
-			})
-			.check_for_emptiness();
+			});
 
 		if(ai.has_value()) {
 			ici.application_info = &ai.value();
@@ -54,7 +59,7 @@ struct instance {
 		ici.enabled_extension_names = extensions_names;
 
 		vk::throw_if_error(
-			(int)vkCreateInstance(
+			vkCreateInstance(
 				(VkInstanceCreateInfo*)&ici,
 				nullptr,
 				&m_instance
