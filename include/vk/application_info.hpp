@@ -31,11 +31,11 @@ struct application_info {
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count<vk::application_name> <= 1 &&
-		types::of<Args...>::template count<vk::application_version> <= 1 && 
-		types::of<Args...>::template count<vk::engine_name> <= 1 &&
-		types::of<Args...>::template count<vk::engine_version> <= 1 &&
-		types::of<Args...>::template count<vk::api_version> == 1 &&
+		types::of<Args...>::template count_of_type<vk::application_name> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::application_version> <= 1 && 
+		types::of<Args...>::template count_of_type<vk::engine_name> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::engine_version> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::api_version> == 1 &&
 		types::of<Args...>::template erase_types<
 			vk::application_name,
 			vk::application_version,
@@ -47,19 +47,19 @@ struct application_info {
 	application_info(Args&&... args) {
 		using Ts = types::of<Args...>;
 		tuple { std::forward<Args>(args)... }
-			.consume([&](vk::application_name v) {
+			.get([&](vk::application_name v) {
 				m_app_name = v.data();
 			})
-			.consume([&](vk::application_version v) {
+			.get([&](vk::application_version v) {
 				m_app_version = v.value;
 			})
-			.consume([&](vk::engine_name v) {
+			.get([&](vk::engine_name v) {
 				m_engine_name = v.data();
 			})
-			.consume([&](vk::engine_version v) {
+			.get([&](vk::engine_version v) {
 				m_engine_version = v.value;
 			})
-			.consume([&](vk::api_version v) {
+			.get([&](vk::api_version v) {
 				m_api_version = v.value;
 			});
 	}

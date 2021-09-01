@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cinttypes>
-#include <cxx_util/named.hpp>
+#include <core/named.hpp>
 
 namespace vk {
 
-struct queue_family_index : u::named<uint32_t>{};
+struct queue_family_index : named<uint32_t>{};
 
 }

@@ -46,10 +46,10 @@ struct api_version {
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count<vk::variant> <= 1 &&
-		types::of<Args...>::template count<vk::major> <= 1 && 
-		types::of<Args...>::template count<vk::minor> <= 1 &&
-		types::of<Args...>::template count<vk::patch> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::variant> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::major> <= 1 && 
+		types::of<Args...>::template count_of_type<vk::minor> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::patch> <= 1 &&
 		types::of<Args...>::template erase_types<
 			vk::variant,
 			vk::major,
@@ -66,16 +66,16 @@ struct api_version {
 		;
 
 		tuple{ std::forward<Args>(args)... }
-			.consume([&](vk::variant v) {
+			.get([&](vk::variant v) {
 				variant = v.value;
 			})
-			.consume([&](vk::major v) {
+			.get([&](vk::major v) {
 				major = v.value;
 			})
-			.consume([&](vk::minor v) {
+			.get([&](vk::minor v) {
 				minor = v.value;
 			})
-			.consume([&](vk::patch v) {
+			.get([&](vk::patch v) {
 				patch = v.value;
 			})
 		;

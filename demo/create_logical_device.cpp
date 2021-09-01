@@ -1,8 +1,8 @@
-#include "vk/command_buffer_level.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh create_logical_device
 #endif
 
+#include "vk/command_buffer_level.hpp"
 #include "vk/instance.hpp"
 #include "vk/device_queue_create_info.hpp"
 #include "vk/queue_family_properties.hpp"
@@ -18,13 +18,12 @@ int main() {
 
 	vk::physical_device physical_device = i.first_physical_device();
 
-	vk::device device {
-		physical_device,
+	physical_device.create_device(
 		vk::device_queue_create_info {
 			vk::queue_family_index{ 0 },
 			vk::queue_priorities{ 1.0F }
 		}
-	};
+	);
 
 	vk::command_pool pool {
 		device,

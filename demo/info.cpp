@@ -41,12 +41,18 @@ void object_block(auto f) {
 }
 
 int main() {
-	vk::instance i {
-		vk::application_info{ vk::api_version{ vk::major{1}, vk::minor{0} } }
-	};
+	vk::instance& i = vk::create_instance(
+		vk::application_info {
+			vk::api_version {
+				vk::major{ 1 },
+				vk::minor{ 0 }
+			}
+		},
+		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
+	);
 
 	array_block("physical devices", [&]() {
-		i.for_each_physical_device([](auto& device) {
+		i.for_each_physical_device([](vk::physical_device& device) {
 			auto props = device.properties();
 
 			println("api version: ",

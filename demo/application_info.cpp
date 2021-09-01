@@ -1,7 +1,8 @@
-#include "vk/application_info.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh application_info
 #endif
+
+#include "vk/application_info.hpp"
 #include "vk/api_version.hpp"
 
 int main() {

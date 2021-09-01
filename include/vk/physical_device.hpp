@@ -2,20 +2,59 @@
 
 #include "headers.hpp"
 #include <compare>
+#include <cstddef>
 #include "physical_device_properties.hpp"
 #include "queue_family_properties.hpp"
 #include "physical_device_queue_family_properties_view.hpp"
 #include "physical_device_extension_properties_view.hpp"
+#include "device.hpp"
+#include "device_queue_create_info.hpp"
 
 namespace vk {
 
-struct physical_device {
-	VkPhysicalDevice m_physical_device;
+class physical_device {
+	physical_device() = default;
+public:
+
+	template<typename... Args>
+	requires(
+		types::of<Args...>::template count_of_type<vk::device_queue_create_info> >= 1 &&
+		(
+			types::of<Args...>::size
+			-
+			types::of<Args...>::template count_of_type<vk::device_queue_create_info>
+		) == 0
+	)
+	device& create_device(Args&&... args) const {
+		vk::device_create_info ci{};
+
+		ci.m_queue_create_info_count = types::of<Args...>::template count_of_type<vk::device_queue_create_info>;
+		vk::device_queue_create_info dqcis[ci.m_queue_create_info_count];
+		std::size_t current = 0;
+
+		tuple<Args&...>{ args... }
+			.get([&](vk::device_queue_create_info& dqci) {
+				dqcis[current++] = dqci;
+			});
+
+		VkDevice device;
+
+		vk::throw_if_error(
+			vkCreateDevice(
+				(VkPhysicalDevice)this,
+				(VkDeviceCreateInfo*)&ci,
+				nullptr,
+				&device
+			)
+		);
+
+		return *((vk::device*) device);
+	}
 
 	physical_device_properties properties() const {
 		vk::physical_device_properties props;
 		vkGetPhysicalDeviceProperties(
-			m_physical_device,
+			(VkPhysicalDevice)this,
 			(VkPhysicalDeviceProperties*)&props
 		);
 		return props;
@@ -24,7 +63,7 @@ struct physical_device {
 	template<typename F>
 	void view_queue_family_properties(F&& f) const {
 		view_physical_device_queue_family_properties(
-			(void*)m_physical_device,
+			(VkPhysicalDevice)this,
 			std::forward<F>(f)
 		);
 	}
@@ -38,7 +77,7 @@ struct physical_device {
 	template<typename F>
 	void view_extension_properties(F&& f) const {
 		view_physical_device_extension_properties(
-			(void*)m_physical_device,
+			(VkPhysicalDevice)this,
 			"",
 			std::forward<F>(f)
 		);
@@ -52,5 +91,3 @@ struct physical_device {
 };
 
 }
-
-static_assert(sizeof(vk::physical_device) == sizeof(VkPhysicalDevice));
