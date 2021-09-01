@@ -1,14 +1,19 @@
 #pragma once
 
+#include "core/types.hpp"
 #include "headers.hpp"
 #include <compare>
 #include <cstddef>
+#include <vulkan/vulkan_core.h>
 #include "physical_device_properties.hpp"
 #include "queue_family_properties.hpp"
 #include "physical_device_queue_family_properties_view.hpp"
 #include "physical_device_extension_properties_view.hpp"
 #include "device.hpp"
 #include "device_queue_create_info.hpp"
+#include "device_create_info.hpp"
+#include "result.hpp"
+#include <core/storage.hpp>
 
 namespace vk {
 
@@ -18,22 +23,21 @@ public:
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::device_queue_create_info> >= 1 &&
-		(
-			types::of<Args...>::size
-			-
-			types::of<Args...>::template count_of_type<vk::device_queue_create_info>
-		) == 0
+		types::of<Args...>::template count_of_type<vk::device_queue_create_info>
+		==
+		types::of<Args...>::size
 	)
-	device& create_device(Args&&... args) const {
+	vk::device& create_device(Args&&... args) const {
 		vk::device_create_info ci{};
-
 		ci.m_queue_create_info_count = types::of<Args...>::template count_of_type<vk::device_queue_create_info>;
-		vk::device_queue_create_info dqcis[ci.m_queue_create_info_count];
+
+		storage<sizeof(vk::device_queue_create_info)> dqcis_storage[ci.m_queue_create_info_count];
+		vk::device_queue_create_info* dqcis = (vk::device_queue_create_info*)dqcis_storage;
+		ci.m_queue_create_infos = dqcis;
 		std::size_t current = 0;
 
-		tuple<Args&...>{ args... }
-			.get([&](vk::device_queue_create_info& dqci) {
+		tuple{ args... }
+			.get([&](vk::device_queue_create_info dqci) {
 				dqcis[current++] = dqci;
 			});
 
@@ -48,7 +52,7 @@ public:
 			)
 		);
 
-		return *((vk::device*) device);
+		return *((vk::device*)device);
 	}
 
 	physical_device_properties properties() const {

@@ -19,17 +19,16 @@ exit 1
 #include <fstream>
 #include <ios>
 
-vk::shader_module read_shader_module(vk::device& device, const char* path) {
+vk::shader_module& read_shader_module(vk::device& device, const char* path) {
 	auto size = std::filesystem::file_size(path);
 	char src[size];
 
 	std::ifstream{ path, std::ios::binary }.read(src, size);
 
-	return {
-		device,
+	return device.create_shader_module(
 		vk::code_size{ (uint32_t) size },
 		vk::code{ (uint32_t*) src }
-	};
+	);
 }
 
 int main() {
@@ -53,20 +52,22 @@ int main() {
 		std::cout << extensions[--count] << std::endl;
 	}
 
-	vk::instance instance {
+	vk::instance& instance = vk::create_instance(
 		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" },
 		vk::enabled_extension_name{ extensions[0] },
 		vk::enabled_extension_name{ extensions[1] } // TODO
-	};
+	);
 
-	vk::physical_device physical_device = instance.first_physical_device();
-	vk::device device {
-		physical_device,
+	float ps[1]{ 1.0F };
+
+	vk::physical_device& physical_device = instance.first_physical_device();
+	vk::device& device = physical_device.create_device(
 		vk::device_queue_create_info {
 			vk::queue_family_index{ 0 },
-			vk::queue_priorities{ 1.0F }
+			vk::queue_count{ 1 },
+			vk::queue_priorities{ ps }
 		}
-	};
+	);
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window;
@@ -77,7 +78,7 @@ int main() {
 	}
 
 	vk::surface surface;
-	if(glfwCreateWindowSurface(instance.m_instance, window, nullptr, &surface.m_surface) >= 0) {
+	if(glfwCreateWindowSurface((VkInstance)&instance, window, nullptr, &surface.m_surface) >= 0) {
 		std::cout << "created surface" << std::endl;
 	}
 	else {

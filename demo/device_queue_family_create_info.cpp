@@ -6,11 +6,6 @@
 #include "vk/queue_family_index.hpp"
 
 int main() {
-	/*vk::device_queue_create_info {
-		vk::queue_family_index{ 0 },
-		vk::queue_priorities{ 1.0F }
-	};*/
-
 	float priorities[] = { 1.0F };
 
 	vk::device_queue_create_info {
