@@ -24,7 +24,7 @@ enum class composite_alpha_flag {
 };
 
 struct surface {
-	VkSurfaceKHR m_surface;
+	
 }; // surface
 
 } // vk

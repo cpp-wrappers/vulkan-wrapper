@@ -9,6 +9,7 @@
 #include "command_pool_create_info.hpp"
 #include "shader_module.hpp"
 #include "shader_module_create_info.hpp"
+#include "render_pass.hpp"
 
 namespace vk {
 

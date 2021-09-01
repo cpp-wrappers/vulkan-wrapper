@@ -4,9 +4,6 @@
 
 namespace vk {
 
-struct swapchain {
+enum class sample_count {};
 
-};
-
-} // vk
-
+}
