@@ -29,11 +29,11 @@ public:
 	)
 	vk::device& create_device(Args&&... args) const {
 		vk::device_create_info ci{};
-		ci.m_queue_create_info_count = types::of<Args...>::template count_of_type<vk::device_queue_create_info>;
+		ci.queue_create_info_count = types::of<Args...>::template count_of_type<vk::device_queue_create_info>;
 
-		storage<sizeof(vk::device_queue_create_info)> dqcis_storage[ci.m_queue_create_info_count];
+		storage<sizeof(vk::device_queue_create_info)> dqcis_storage[ci.queue_create_info_count];
 		vk::device_queue_create_info* dqcis = (vk::device_queue_create_info*)dqcis_storage;
-		ci.m_queue_create_infos = dqcis;
+		ci.queue_create_infos = dqcis;
 		std::size_t current = 0;
 
 		tuple{ args... }

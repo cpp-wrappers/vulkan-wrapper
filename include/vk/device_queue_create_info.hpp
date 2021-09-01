@@ -22,12 +22,12 @@ class physical_device;
 class device;
 
 class device_queue_create_info {
-	int_with_size_of<VkStructureType> m_type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	const void* m_next = nullptr;
-	flag_enum<device_queue_create_flag> m_flags{};
-	uint32_t m_queue_family_index;
-	uint32_t m_queue_count;
-	const float* m_queue_priorities;
+	int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	const void* next = nullptr;
+	flag_enum<device_queue_create_flag> flags{};
+	vk::queue_family_index queue_family_index;
+	vk::queue_count queue_count;
+	vk::queue_priorities queue_priorities;
 
 	device_queue_create_info() = default;
 	friend physical_device;
@@ -48,16 +48,16 @@ public:
 		types::of<Args...>::template count_of_type<vk::queue_priorities> == 1 &&
 		types::of<Args...>::size == 3
 	)
-	device_queue_create_info(Args&&... args) {
-		tuple<Args&...>{ args... }
+	device_queue_create_info(Args... args) {
+		tuple{ args... }
 			.get([&](vk::queue_family_index i) {
-				m_queue_family_index = i.value;
+				queue_family_index = i;
 			})
 			.get([&](vk::queue_count c) {
-				m_queue_count = c.value;
+				queue_count = c;
 			})
 			.get([&](vk::queue_priorities p) {
-				m_queue_priorities = p.value;
+				queue_priorities = p;
 			});
 	}
 }; // device_queue_create_info

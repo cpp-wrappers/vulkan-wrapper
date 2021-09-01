@@ -8,9 +8,6 @@
 
 namespace vk {
 
-struct code_size : named<uint32_t>{};
-struct code : named<uint32_t*>{};
-
 struct shader_module {
 
 };
