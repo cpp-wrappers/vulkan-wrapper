@@ -30,12 +30,12 @@ class attachment_description {
 	flag_enum<attachment_description_flag> flags;
 	vk::format format;
 	vk::sample_count samples{ 1 };
-	vk::load_op load_op;
-	vk::store_op store_op;
-	vk::stencil_load_op stencil_load_op;
-	vk::stencil_store_op stencil_store_op;
-	vk::initial_layout initial_layout;
-	vk::final_layout final_layout;
+	vk::load_op load_op{ vk::attachment_load_op::dont_care };
+	vk::store_op store_op{ vk::attachment_store_op::dont_care };
+	vk::stencil_load_op stencil_load_op{ vk::attachment_load_op::dont_care };
+	vk::stencil_store_op stencil_store_op{ vk::attachment_store_op::dont_care };
+	vk::initial_layout initial_layout { vk::image_layout::undefined };
+	vk::final_layout final_layout{ vk::image_layout::undefined };
 
 	attachment_description() = default;
 
@@ -51,18 +51,18 @@ public:
 	requires(
 		types::of<Args...>::template count_of_type<vk::format> == 1 &&
 		types::of<Args...>::template count_of_type<vk::sample_count> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::load_op> == 1 &&
-		types::of<Args...>::template count_of_type<vk::store_op> == 1 &&
-		types::of<Args...>::template count_of_type<vk::stencil_load_op> == 1 &&
-		types::of<Args...>::template count_of_type<vk::stencil_store_op> == 1 &&
-		types::of<Args...>::template count_of_type<vk::initial_layout> == 1 &&
-		types::of<Args...>::template count_of_type<vk::final_layout> == 1 &&
+		types::of<Args...>::template count_of_type<vk::load_op> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::store_op> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::stencil_load_op> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::stencil_store_op> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::initial_layout> <= 1 &&
+		types::of<Args...>::template count_of_type<vk::final_layout> <= 1 &&
 		types::of<Args...>::template erase_types<
 			vk::format, vk::sample_count, vk::load_op, vk::store_op,
 			vk::stencil_load_op, vk::stencil_store_op, vk::initial_layout, vk::final_layout
 		>::empty
 	)
-	attachment_description(Args&&... args) {
+	attachment_description(Args... args) {
 		tuple{ args... }
 			.get([&](vk::format f) { format = f; })
 			.get([&](vk::sample_count sc) { samples = sc; })

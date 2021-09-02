@@ -89,6 +89,7 @@ struct device {
 
 	template<typename... Args>
 	requires(
+		types::of<Args...>::template count_of_type<vk::subpass_description> > 0 &&
 		types::of<Args...>::template erase_types<
 			vk::attachment_description,
 			vk::subpass_description,
@@ -101,17 +102,17 @@ struct device {
 		vk::render_pass_create_info ci{};
 
 		ci.attachment_count = Types::template count_of_type<vk::attachment_description>;
-		storage_of<vk::attachment_description> adss[ci.attachment_count];
+		storage_for<vk::attachment_description> adss[ci.attachment_count];
 		auto ads = (vk::attachment_description*)adss;
 		std::size_t adi = 0;
 
 		ci.subpass_count = Types::template count_of_type<vk::subpass_description>;
-		storage_of<vk::subpass_description> sdss[ci.subpass_count];
+		storage_for<vk::subpass_description> sdss[ci.subpass_count];
 		auto sds = (vk::subpass_description*) sdss;
 		std::size_t sdi = 0;
 
 		ci.dependency_count = Types::template count_of_type<vk::subpass_dependency>;
-		storage_of<vk::subpass_dependency> sdpss[ci.dependency_count];
+		storage_for<vk::subpass_dependency> sdpss[ci.dependency_count];
 		auto sdps = (vk::subpass_dependency*) sdpss;
 		std::size_t sdpi = 0;
 
@@ -125,6 +126,9 @@ struct device {
 			.get([&](vk::subpass_dependency sdp) {
 				sdps[sdpi++] = sdp;
 			});
+		ci.attachments = ads;
+		ci.subpasses = sds;
+		ci.dependencies = sdps;
 		
 		VkRenderPass render_pass;
 
