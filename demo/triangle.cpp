@@ -71,20 +71,41 @@ int main() {
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window;
-	window = glfwCreateWindow(640, 480, "Vulkan Triangle", NULL, NULL);
+	window = glfwCreateWindow(
+		640,
+		480,
+		"Vulkan Triangle",
+		nullptr,
+		nullptr
+	);
 	if (!window) {
 		std::cerr << "window creation failed" << std::endl;
 		return -1;
 	}
 
-	vk::surface surface;
-	if(glfwCreateWindowSurface((VkInstance)&instance, window, nullptr, &surface.m_surface) >= 0) {
+	vk::surface* surface;
+	if(glfwCreateWindowSurface(
+		(VkInstance)&instance,
+		window,
+		nullptr,
+		(VkSurfaceKHR*)&surface
+	) >= 0) {
 		std::cout << "created surface" << std::endl;
 	}
 	else {
 		std::cerr << "surface creation failed" << std::endl;
 		return -1;
 	}
+
+	vk::render_pass& render_pass = device.create_render_pass(
+		vk::attachment_description {
+			vk::format::r8_g8_b8_a8_unorm,
+			vk::load_op{ vk::attachment_load_op::clear },
+			vk::store_op{ vk::attachment_store_op::store },
+			vk::final_layout{ vk::image_layout::color_attachment_optimal }
+		},
+		vk::subpass_description {}
+	);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();

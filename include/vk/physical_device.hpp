@@ -17,21 +17,21 @@
 
 namespace vk {
 
-class physical_device {
-	physical_device() = default;
-public:
+struct physical_device {
+	physical_device() = delete;
+	physical_device(const physical_device&) = delete;
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::device_queue_create_info>
+		types::of<Args...>::template count_of_same_as_type<vk::device_queue_create_info>
 		==
 		types::of<Args...>::size
 	)
 	vk::device& create_device(Args&&... args) const {
 		vk::device_create_info ci{};
-		ci.queue_create_info_count = types::of<Args...>::template count_of_type<vk::device_queue_create_info>;
+		ci.queue_create_info_count = types::of<Args...>::template count_of_same_as_type<vk::device_queue_create_info>;
 
-		storage<sizeof(vk::device_queue_create_info)> dqcis_storage[ci.queue_create_info_count];
+		storage<10000> dqcis_storage[ci.queue_create_info_count];
 		vk::device_queue_create_info* dqcis = (vk::device_queue_create_info*)dqcis_storage;
 		ci.queue_create_infos = dqcis;
 		std::size_t current = 0;

@@ -1,3 +1,8 @@
+#if 0
+. `dirname $0`/build_and_run.sh create_logical_device
+#endif
+
+#include "vk/framebuffer.hpp"
 #include "vk/attachment_description.hpp"
 #include "vk/attachment_load_op.hpp"
 #include "vk/attachment_reference.hpp"
@@ -7,10 +12,6 @@
 #include "vk/queue_family_index.hpp"
 #include "vk/render_pass.hpp"
 #include "vk/subpass_description.hpp"
-#if 0
-. `dirname $0`/build_and_run.sh create_logical_device
-#endif
-
 #include "vk/command_buffer_level.hpp"
 #include "vk/instance.hpp"
 #include "vk/device_queue_create_info.hpp"
@@ -29,7 +30,7 @@ int main() {
 
 	float priorities[1]{ 1.0F };
 
-	vk::device device = physical_device.create_device(
+	vk::device& device = physical_device.create_device(
 		vk::device_queue_create_info {
 			vk::queue_family_index{ 0 },
 			vk::queue_count{ 1 },

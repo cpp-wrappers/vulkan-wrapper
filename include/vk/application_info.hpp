@@ -18,12 +18,12 @@ struct engine_version : named<uint32_t> {};
 
 struct application_info {
 	int_with_size_of<VkStructureType> m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-	const void* m_next = nullptr;
-	const char* m_app_name = nullptr;
-	uint32_t m_app_version = 0;
-	const char* m_engine_name = nullptr;
-	uint32_t m_engine_version = 0;
-	uint32_t m_api_version = 0;
+	const void* next = nullptr;
+	vk::application_name app_name{ nullptr };
+	vk::application_version app_version{ 0 };
+	vk::engine_name engine_name{ nullptr };
+	vk::engine_version engine_version{ 0 };
+	vk::api_version api_version{};
 
 	application_info(const application_info&) = default;
 	application_info(application_info&) = default;
@@ -31,12 +31,12 @@ struct application_info {
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::application_name> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::application_version> <= 1 && 
-		types::of<Args...>::template count_of_type<vk::engine_name> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::engine_version> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::api_version> == 1 &&
-		types::of<Args...>::template erase_types<
+		types::of<Args...>::template count_of_same_as_type<vk::application_name> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::application_version> <= 1 && 
+		types::of<Args...>::template count_of_same_as_type<vk::engine_name> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::engine_version> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::api_version> == 1 &&
+		types::of<Args...>::template erase_same_as_one_of_types<
 			vk::application_name,
 			vk::application_version,
 			vk::engine_name,
@@ -48,19 +48,19 @@ struct application_info {
 		using Ts = types::of<Args...>;
 		tuple { std::forward<Args>(args)... }
 			.get([&](vk::application_name v) {
-				m_app_name = v.data();
+				app_name = v;
 			})
 			.get([&](vk::application_version v) {
-				m_app_version = v.value;
+				app_version = v;
 			})
 			.get([&](vk::engine_name v) {
-				m_engine_name = v.data();
+				engine_name = v;
 			})
 			.get([&](vk::engine_version v) {
-				m_engine_version = v.value;
+				engine_version = v;
 			})
 			.get([&](vk::api_version v) {
-				m_api_version = v.value;
+				api_version = v;
 			});
 	}
 }; // application_info

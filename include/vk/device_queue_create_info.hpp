@@ -18,9 +18,6 @@ enum device_queue_create_flag {
 struct queue_count : named<uint32_t> {};
 struct queue_priorities : named<const float*> {};
 
-class physical_device;
-class device;
-
 class device_queue_create_info {
 	int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	const void* next = nullptr;
@@ -29,11 +26,6 @@ class device_queue_create_info {
 	vk::queue_count queue_count;
 	vk::queue_priorities queue_priorities;
 
-	device_queue_create_info() = default;
-	friend physical_device;
-
-	template<typename... Args>
-	friend vk::device& create_device(Args&&...);
 public:
 
 	device_queue_create_info(const device_queue_create_info&) = default;
@@ -43,9 +35,9 @@ public:
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::queue_family_index> == 1 &&
-		types::of<Args...>::template count_of_type<vk::queue_count> == 1 &&
-		types::of<Args...>::template count_of_type<vk::queue_priorities> == 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::queue_family_index> == 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::queue_count> == 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::queue_priorities> == 1 &&
 		types::of<Args...>::size == 3
 	)
 	device_queue_create_info(Args... args) {

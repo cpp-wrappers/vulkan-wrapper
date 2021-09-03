@@ -28,23 +28,23 @@ struct preserve_attachment_count : named<uint32_t> {};
 struct preserve_attachments : named<const uint32_t*> {};
 
 struct subpass_description {
-	flag_enum<vk::subpass_description_flag> flags;
+	flag_enum<vk::subpass_description_flag> flags{};
 	vk::pipeline_bind_point pipeline_bind_point{ vk::pipeline_bind_point::graphics };
-	vk::input_attachment_count input_attachment_count;
-	vk::input_attachments input_attachments;
-	vk::color_attachment_count color_attachment_count;
-	vk::color_attachments color_attachments;
-	vk::resolve_attachments resolve_attachments;
-	vk::depth_stencil_attachments depth_stencil_attachments;
-	vk::preserve_attachment_count preserve_attachment_count;
-	vk::preserve_attachments preserve_attachments;
+	vk::input_attachment_count input_attachment_count{ 0 };
+	vk::input_attachments input_attachments{ nullptr };
+	vk::color_attachment_count color_attachment_count{ 0 };
+	vk::color_attachments color_attachments{ 0 };
+	vk::resolve_attachments resolve_attachments{ nullptr };
+	vk::depth_stencil_attachments depth_stencil_attachments{ nullptr };
+	vk::preserve_attachment_count preserve_attachment_count{ 0 };
+	vk::preserve_attachments preserve_attachments{ nullptr };
 
 	template<typename... Args>
 	struct construction_requirements {
 		using Types = types::of<Args...>;
 
 		template<typename T>
-		static constexpr std::size_t count = Types::template count_of_type<T>;
+		static constexpr std::size_t count = Types::template count_of_same_as_type<T>;
 
 		template<typename T>
 		static constexpr bool has = count<T> == 1;
@@ -58,7 +58,7 @@ struct subpass_description {
 			) &&
 			count<vk::depth_stencil_attachments> <= 1 &&
 			(has<vk::preserve_attachment_count> == has<vk::preserve_attachments>) &&
-			Types::template erase_types<
+			Types::template erase_same_as_one_of_types<
 				vk::subpass_description_flag, vk::pipeline_bind_point, vk::input_attachment_count,
 				vk::input_attachments, vk::color_attachment_count, vk::color_attachments,
 				vk::resolve_attachments, vk::depth_stencil_attachments,

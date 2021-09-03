@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cinttypes>
 #include <type_traits>
+
 #include <core/named.hpp>
 #include <core/is.hpp>
 #include <core/tuple.hpp>
@@ -21,8 +21,9 @@ concept version_component =
 	|| is::type<T>::template same_as<patch>
 ;
 
-struct api_version {
-	uint32_t value;
+class api_version {
+	uint32_t value{ 0 };
+public:
 
 	operator uint32_t() const {
 		return value;
@@ -46,11 +47,11 @@ struct api_version {
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::variant> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::major> <= 1 && 
-		types::of<Args...>::template count_of_type<vk::minor> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::patch> <= 1 &&
-		types::of<Args...>::template erase_types<
+		types::of<Args...>::template count_of_same_as_type<vk::variant> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::major> <= 1 && 
+		types::of<Args...>::template count_of_same_as_type<vk::minor> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::patch> <= 1 &&
+		types::of<Args...>::template erase_same_as_one_of_types<
 			vk::variant,
 			vk::major,
 			vk::minor,

@@ -27,7 +27,7 @@ struct initial_layout : named<vk::image_layout> {};
 struct final_layout : named<vk::image_layout> {};
 
 class attachment_description {
-	flag_enum<attachment_description_flag> flags;
+	flag_enum<attachment_description_flag> flags{};
 	vk::format format;
 	vk::sample_count samples{ 1 };
 	vk::load_op load_op{ vk::attachment_load_op::dont_care };
@@ -37,10 +37,9 @@ class attachment_description {
 	vk::initial_layout initial_layout { vk::image_layout::undefined };
 	vk::final_layout final_layout{ vk::image_layout::undefined };
 
-	attachment_description() = default;
-
 public:
 
+	attachment_description() = delete;
 	attachment_description(const attachment_description&) = default;
 	attachment_description(attachment_description&) = default;
 	attachment_description(attachment_description&&) = default;
@@ -49,15 +48,15 @@ public:
 	// it smells (bad)
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::format> == 1 &&
-		types::of<Args...>::template count_of_type<vk::sample_count> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::load_op> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::store_op> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::stencil_load_op> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::stencil_store_op> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::initial_layout> <= 1 &&
-		types::of<Args...>::template count_of_type<vk::final_layout> <= 1 &&
-		types::of<Args...>::template erase_types<
+		types::of<Args...>::template count_of_same_as_type<vk::format> == 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::sample_count> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::load_op> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::store_op> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::stencil_load_op> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::stencil_store_op> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::initial_layout> <= 1 &&
+		types::of<Args...>::template count_of_same_as_type<vk::final_layout> <= 1 &&
+		types::of<Args...>::template erase_same_as_one_of_types<
 			vk::format, vk::sample_count, vk::load_op, vk::store_op,
 			vk::stencil_load_op, vk::stencil_store_op, vk::initial_layout, vk::final_layout
 		>::empty

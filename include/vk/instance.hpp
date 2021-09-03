@@ -16,7 +16,8 @@
 namespace vk {
 
 class instance {
-	instance() = default;
+	instance() = delete;
+	instance(const instance&) = delete;
 public:
 
 	uint32_t physical_devices_count() const {
@@ -67,8 +68,8 @@ public:
 
 template<typename... Args>
 requires(
-	types::of<Args...>::template count_of_type<vk::application_info> <= 1 &&
-	types::of<Args...>::template erase_types<
+	types::of<Args...>::template count_of_same_as_type<vk::application_info> <= 1 &&
+	types::of<Args...>::template erase_same_as_one_of_types<
 		vk::application_info,
 		vk::enabled_layer_name,
 		vk::enabled_extension_name
@@ -77,8 +78,8 @@ requires(
 vk::instance& create_instance(Args&&... args) {
 	instance_create_info ici{};
 
-	ici.enabled_layer_count = types::of<Args...>::template count_of_type<vk::enabled_layer_name>;
-	ici.enabled_extension_count = types::of<Args...>::template count_of_type<vk::enabled_extension_name>;
+	ici.enabled_layer_count = types::of<Args...>::template count_of_same_as_type<vk::enabled_layer_name>;
+	ici.enabled_extension_count = types::of<Args...>::template count_of_same_as_type<vk::enabled_extension_name>;
 
 	vk::enabled_layer_name layers_names[ici.enabled_layer_count];
 	vk::enabled_extension_name extensions_names[ici.enabled_extension_count];
