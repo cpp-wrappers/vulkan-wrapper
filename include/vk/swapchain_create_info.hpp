@@ -31,25 +31,31 @@ enum class present_mode {
 	shared_continuous_refresh_khr = VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR,
 };
 
+struct min_image_count : named<uint32_t> {};
+struct image_array_layers : named<uint32_t> {};
+struct queue_family_index_count : named<uint32_t> {};
+struct queue_family_indices : named<const vk::queue_family_index*> {};
+struct clipped : named<uint32_t> {};
+
 struct swapchain_create_info {
 	uint_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	const void* next = nullptr;
-	flag_enum<swapchain_create_flag> flags;
-	vk::surface* surface;
-	uint32_t min_image_count;
-	vk::format format;
-	vk::color_space color_space;
-	vk::extent<2> extent;
-	uint32_t image_array_layers;
-	vk::image_usage usage;
-	vk::sharing_mode sharing_mode;
-	uint32_t queue_family_index_count;
-	const vk::queue_family_index* queue_family_indices;
-	flag_enum<vk::surface_transform_flag> pre_transform;
-	flag_enum<vk::composite_alpha_flag> composite_alpha;
-	vk::present_mode present_mode;
-	uint32_t clipped;
-	vk::swapchain* swapchain;
+	const void* next{};
+	flag_enum<swapchain_create_flag> flags{};
+	vk::surface* surface{};
+	vk::min_image_count min_image_count{};
+	vk::format format{};
+	vk::color_space color_space{};
+	vk::extent<2> extent{};
+	vk::image_array_layers image_array_layers{ 1 };
+	vk::image_usage usage{};
+	vk::sharing_mode sharing_mode{};
+	vk::queue_family_index_count queue_family_index_count{};
+	vk::queue_family_indices queue_family_indices{};
+	flag_enum<vk::surface_transform_flag> pre_transform{};
+	flag_enum<vk::composite_alpha_flag> composite_alpha{};
+	vk::present_mode present_mode{};
+	vk::clipped clipped{};
+	vk::swapchain* swapchain{};
 }; // swapchain_create_info
 
 } // vk

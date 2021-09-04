@@ -23,11 +23,16 @@ struct physical_device {
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::device_queue_create_info>
-		==
-		types::of<Args...>::size
+		(
+			types::of<Args...>::template contains_same_as_type<vk::enabled_extension_count>
+			==
+			types::of<Args...>::template contains_same_as_type<vk::enabled_extension_names>
+		) &&
+		types::of<Args...>::template erase_same_as_one_of_types<
+			vk::device_queue_create_info, vk::enabled_extension_count, vk::enabled_extension_names
+		>::empty
 	)
-	vk::device& create_device(Args&&... args) const {
+	vk::device& create_device(Args... args) const {
 		vk::device_create_info ci{};
 		ci.queue_create_info_count = types::of<Args...>::template count_of_same_as_type<vk::device_queue_create_info>;
 
@@ -39,7 +44,14 @@ struct physical_device {
 		tuple{ args... }
 			.get([&](vk::device_queue_create_info dqci) {
 				dqcis[current++] = dqci;
-			});
+			})
+			.get([&](vk::enabled_extension_count c) {
+				ci.enabled_extension_count = c;
+			})
+			.get([&](vk::enabled_extension_names n) {
+				ci.enabled_extension_names = n;
+			})
+		;
 
 		VkDevice device;
 

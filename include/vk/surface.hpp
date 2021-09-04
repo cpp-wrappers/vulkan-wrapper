@@ -24,6 +24,8 @@ enum class composite_alpha_flag {
 };
 
 struct surface {
+	surface() = delete;
+	surface(const surface&) = delete;
 	
 }; // surface
 

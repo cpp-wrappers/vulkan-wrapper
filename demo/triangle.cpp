@@ -1,3 +1,10 @@
+#include "vk/color_space.hpp"
+#include "vk/device_create_info.hpp"
+#include "vk/extent.hpp"
+#include "vk/format.hpp"
+#include "vk/image_usage.hpp"
+#include "vk/sharing_mode.hpp"
+#include "vk/swapchain_create_info.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -60,13 +67,18 @@ int main() {
 
 	float ps[1]{ 1.0F };
 
+	const null_terminated_string_view<size_is::undefined> device_extensions[] {
+		"VK_KHR_swapchain"
+	};
 	vk::physical_device& physical_device = instance.first_physical_device();
 	vk::device& device = physical_device.create_device(
 		vk::device_queue_create_info {
 			vk::queue_family_index{ 0 },
 			vk::queue_count{ 1 },
 			vk::queue_priorities{ ps }
-		}
+		},
+		vk::enabled_extension_count{ 1 },
+		vk::enabled_extension_names{ device_extensions }
 	);
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -83,12 +95,12 @@ int main() {
 		return -1;
 	}
 
-	vk::surface* surface;
+	vk::surface* surface_ptr;
 	if(glfwCreateWindowSurface(
 		(VkInstance)&instance,
 		window,
 		nullptr,
-		(VkSurfaceKHR*)&surface
+		(VkSurfaceKHR*)&surface_ptr
 	) >= 0) {
 		std::cout << "created surface" << std::endl;
 	}
@@ -105,6 +117,24 @@ int main() {
 			vk::final_layout{ vk::image_layout::color_attachment_optimal }
 		},
 		vk::subpass_description {}
+	);
+
+	vk::queue_family_index queue_family_indices[]{ 0 };
+
+	vk::swapchain& swapchain = device.create_swapchain(
+		*surface_ptr,
+		vk::min_image_count{ 3 },
+		vk::format::r8_g8_b8_a8_srgb,
+		vk::color_space::srgb_nonlinear,
+		vk::extent<2>{ 640, 480 },
+		vk::image_usage::color_attachment_bit,
+		vk::sharing_mode::exclusive,
+		vk::queue_family_index_count{ 0 },
+		vk::queue_family_indices{ nullptr },
+		vk::present_mode::immediate,
+		vk::clipped{ true },
+		vk::surface_transform_flag::identity,
+		vk::composite_alpha_flag::opaque
 	);
 
 	while (!glfwWindowShouldClose(window)) {

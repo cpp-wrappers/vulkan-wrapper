@@ -4,6 +4,7 @@
 #include <core/storage.hpp>
 #include <vulkan/vulkan_core.h>
 
+#include "core/types.hpp"
 #include "headers.hpp"
 #include "device_create_info.hpp"
 #include "result.hpp"
@@ -20,6 +21,12 @@
 #include "framebuffer_create_info.hpp"
 #include "extent.hpp"
 #include "framebuffer.hpp"
+#include "swapchain.hpp"
+#include "swapchain_create_info.hpp"
+#include "vk/color_space.hpp"
+#include "vk/image_usage.hpp"
+#include "vk/sharing_mode.hpp"
+#include "vk/surface.hpp"
 
 namespace vk {
 
@@ -190,6 +197,63 @@ struct device {
 		);
 
 		return *((vk::framebuffer*)framebuffer);
+	}
+
+	template<typename... Args>
+	requires(
+		types::of<Args...>::template count_of_same_as_type<vk::surface&> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::min_image_count> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::format> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::color_space> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::extent<2>> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::image_usage> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::sharing_mode> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::queue_family_index_count> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::queue_family_indices> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::present_mode> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::clipped> == 1 &&
+		types::of<Args...>::template erase_remove_cvref_same_as_one_of_types<
+			vk::swapchain_create_flag, vk::surface, vk::min_image_count, vk::format,
+			vk::color_space, vk::extent<2>, vk::image_array_layers, vk::image_usage,
+			vk::sharing_mode, vk::queue_family_index_count, vk::queue_family_indices,
+			vk::surface_transform_flag, vk::composite_alpha_flag,
+			vk::present_mode, vk::clipped, vk::swapchain
+		>::empty
+	)
+	vk::swapchain& create_swapchain(Args&&... args) {
+		vk::swapchain_create_info ci{};
+
+		tuple<Args...>{ std::forward<Args>(args)... }
+			.get([&](vk::swapchain_create_flag f) { ci.flags.set(f); })
+			.get([&](vk::surface& s) { ci.surface = &s; })
+			.get([&](vk::min_image_count c) { ci.min_image_count = c; })
+			.get([&](vk::format f) { ci.format = f; })
+			.get([&](vk::color_space c) { ci.color_space = c; })
+			.get([&](vk::extent<2> e) { ci.extent = e; })
+			.get([&](vk::image_array_layers l) { ci.image_array_layers = l; })
+			.get([&](vk::image_usage u) { ci.usage = u; })
+			.get([&](vk::sharing_mode sm) { ci.sharing_mode = sm; })
+			.get([&](vk::queue_family_index_count c) { ci.queue_family_index_count = c; })
+			.get([&](vk::queue_family_indices i) { ci.queue_family_indices = i; })
+			.get([&](vk::surface_transform_flag f) { ci.pre_transform = f; })
+			.get([&](vk::composite_alpha_flag f) { ci.composite_alpha = f; })
+			.get([&](vk::present_mode m) { ci.present_mode = m; })
+			.get([&](vk::clipped c) { ci.clipped = c; })
+			.get([&](vk::swapchain& s) { ci.swapchain = &s; })
+		;
+
+		VkSwapchainKHR swapchain;
+
+		vk::throw_if_error(
+			vkCreateSwapchainKHR(
+				(VkDevice)this,
+				(VkSwapchainCreateInfoKHR*) &ci,
+				nullptr,
+				&swapchain
+			)
+		);
+
+		return *((vk::swapchain*)swapchain);
 	}
 
 };
