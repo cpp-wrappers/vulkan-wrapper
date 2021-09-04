@@ -1,9 +1,11 @@
 #pragma once
 
-#include "headers.hpp"
 #include <cstdint>
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
+
+#include "headers.hpp"
 #include "surface.hpp"
 #include "format.hpp"
 #include "color_space.hpp"
@@ -11,6 +13,8 @@
 #include "image_usage.hpp"
 #include "sharing_mode.hpp"
 #include "queue_family_index.hpp"
+#include "surface_transform.hpp"
+#include "composite_alpha.hpp"
 
 namespace vk {
 
@@ -51,8 +55,8 @@ struct swapchain_create_info {
 	vk::sharing_mode sharing_mode{};
 	vk::queue_family_index_count queue_family_index_count{};
 	vk::queue_family_indices queue_family_indices{};
-	flag_enum<vk::surface_transform_flag> pre_transform{};
-	flag_enum<vk::composite_alpha_flag> composite_alpha{};
+	flag_enum<vk::surface_transform> pre_transform{};
+	flag_enum<vk::composite_alpha> composite_alpha{};
 	vk::present_mode present_mode{};
 	vk::clipped clipped{};
 	vk::swapchain* swapchain{};

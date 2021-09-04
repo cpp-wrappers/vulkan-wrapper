@@ -216,7 +216,7 @@ struct device {
 			vk::swapchain_create_flag, vk::surface, vk::min_image_count, vk::format,
 			vk::color_space, vk::extent<2>, vk::image_array_layers, vk::image_usage,
 			vk::sharing_mode, vk::queue_family_index_count, vk::queue_family_indices,
-			vk::surface_transform_flag, vk::composite_alpha_flag,
+			vk::surface_transform, vk::composite_alpha,
 			vk::present_mode, vk::clipped, vk::swapchain
 		>::empty
 	)
@@ -235,8 +235,8 @@ struct device {
 			.get([&](vk::sharing_mode sm) { ci.sharing_mode = sm; })
 			.get([&](vk::queue_family_index_count c) { ci.queue_family_index_count = c; })
 			.get([&](vk::queue_family_indices i) { ci.queue_family_indices = i; })
-			.get([&](vk::surface_transform_flag f) { ci.pre_transform = f; })
-			.get([&](vk::composite_alpha_flag f) { ci.composite_alpha = f; })
+			.get([&](vk::surface_transform f) { ci.pre_transform = f; })
+			.get([&](vk::composite_alpha f) { ci.composite_alpha = f; })
 			.get([&](vk::present_mode m) { ci.present_mode = m; })
 			.get([&](vk::clipped c) { ci.clipped = c; })
 			.get([&](vk::swapchain& s) { ci.swapchain = &s; })

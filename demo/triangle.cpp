@@ -1,10 +1,5 @@
-#include "vk/color_space.hpp"
-#include "vk/device_create_info.hpp"
-#include "vk/extent.hpp"
-#include "vk/format.hpp"
-#include "vk/image_usage.hpp"
-#include "vk/sharing_mode.hpp"
-#include "vk/swapchain_create_info.hpp"
+#include "vk/surface_capabilities.hpp"
+#include "vk/surface_format.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -13,6 +8,13 @@ popd
 exit 1
 #endif
 
+#include "vk/color_space.hpp"
+#include "vk/device_create_info.hpp"
+#include "vk/extent.hpp"
+#include "vk/format.hpp"
+#include "vk/image_usage.hpp"
+#include "vk/sharing_mode.hpp"
+#include "vk/swapchain_create_info.hpp"
 #include "vk/device_queue_create_info.hpp"
 #include "vk/instance_create_info.hpp"
 #include "vk/queue_family_index.hpp"
@@ -109,6 +111,17 @@ int main() {
 		return -1;
 	}
 
+	if(!physical_device.get_surface_support(vk::queue_family_index{ 0 }, *surface_ptr)) {
+		std::cerr << "surface is not supported by physical device, queue family index 0" << std::endl;
+		return -1;
+	}
+
+	vk::surface_format surface_format;
+
+	physical_device.view_surface_formats(*surface_ptr, [&](auto& formats) {
+		surface_format = formats.front();
+	});
+
 	vk::render_pass& render_pass = device.create_render_pass(
 		vk::attachment_description {
 			vk::format::r8_g8_b8_a8_unorm,
@@ -121,20 +134,22 @@ int main() {
 
 	vk::queue_family_index queue_family_indices[]{ 0 };
 
+	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(*surface_ptr);
+
 	vk::swapchain& swapchain = device.create_swapchain(
 		*surface_ptr,
-		vk::min_image_count{ 3 },
-		vk::format::r8_g8_b8_a8_srgb,
-		vk::color_space::srgb_nonlinear,
+		vk::min_image_count{ surface_caps.min_image_count },
+		surface_format.format,
+		surface_format.color_space,
 		vk::extent<2>{ 640, 480 },
-		vk::image_usage::color_attachment_bit,
+		vk::image_usage::color_attachment,
 		vk::sharing_mode::exclusive,
 		vk::queue_family_index_count{ 0 },
 		vk::queue_family_indices{ nullptr },
 		vk::present_mode::immediate,
 		vk::clipped{ true },
-		vk::surface_transform_flag::identity,
-		vk::composite_alpha_flag::opaque
+		vk::surface_transform::identity,
+		vk::composite_alpha::opaque
 	);
 
 	while (!glfwWindowShouldClose(window)) {

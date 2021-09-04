@@ -4,7 +4,7 @@
 
 namespace vk {
 
-enum class access_flag {
+enum class access {
 	indirect_command_read = VK_ACCESS_INDIRECT_COMMAND_READ_BIT,
 	index_read = VK_ACCESS_INDEX_READ_BIT,
 	vertex_attribute_read = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,

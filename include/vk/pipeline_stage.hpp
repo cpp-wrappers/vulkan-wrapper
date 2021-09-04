@@ -4,7 +4,7 @@
 
 namespace vk {
 
-enum class pipeline_stage_flag {
+enum class pipeline_stage {
 	top_of_pipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 	draw_indirect = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
 	vertex_input = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,

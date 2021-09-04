@@ -40,6 +40,11 @@ void object_block(auto f) {
 	block('{', '}', f);
 }
 
+void object_block(auto name, auto f) {
+	print(name, ": ");
+	object_block(f);
+}
+
 int main() {
 	vk::instance& i = vk::create_instance(
 		vk::application_info {
@@ -101,7 +106,7 @@ int main() {
 				});
 			});
 
-			array_block("device extensions properties", [&]{;
+			array_block("device extensions properties", [&] {
 				device.for_each_extension_properties([](auto& props) {
 					object_block([&]{
 						println("name: ", props.name);
