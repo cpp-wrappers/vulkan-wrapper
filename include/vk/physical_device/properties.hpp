@@ -1,10 +1,10 @@
 #pragma once
 
-#include "headers.hpp"
+#include "../headers.hpp"
 #include <cinttypes>
-#include "api_version.hpp"
-#include "physical_device_limits.hpp"
-#include "physical_device_sparse_properties.hpp"
+#include "../api_version.hpp"
+#include "limits.hpp"
+#include "sparse_properties.hpp"
 
 namespace vk {
 

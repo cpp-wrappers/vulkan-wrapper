@@ -1,10 +1,11 @@
 #pragma once
 
+#include <optional>
+
 #include <core/tuple.hpp>
 #include <core/storage.hpp>
 #include <vulkan/vulkan_core.h>
 
-#include "core/types.hpp"
 #include "headers.hpp"
 #include "device_create_info.hpp"
 #include "result.hpp"
@@ -23,10 +24,14 @@
 #include "framebuffer.hpp"
 #include "swapchain.hpp"
 #include "swapchain_create_info.hpp"
-#include "vk/color_space.hpp"
-#include "vk/image_usage.hpp"
-#include "vk/sharing_mode.hpp"
-#include "vk/surface.hpp"
+#include "color_space.hpp"
+#include "image/usage.hpp"
+#include "sharing_mode.hpp"
+#include "surface.hpp"
+#include "image/view_create_info.hpp"
+#include "image/component_mapping.hpp"
+#include "image/subresource_range.hpp"
+#include "vk/image_view.hpp"
 
 namespace vk {
 
@@ -54,18 +59,18 @@ struct device {
 				ci.flags.set(f);
 			});
 
-		VkCommandPool command_pool;
+		vk::command_pool* command_pool;
 
 		vk::throw_if_error(
 			vkCreateCommandPool(
-				(VkDevice)this,
-				(VkCommandPoolCreateInfo*)&ci,
+				(VkDevice) this,
+				(VkCommandPoolCreateInfo*) &ci,
 				nullptr,
-				&command_pool
+				(VkCommandPool*) &command_pool
 			)
 		);
 
-		return *((vk::command_pool*)command_pool);
+		return *command_pool;
 	}
 
 	template<typename... Args>
@@ -85,18 +90,18 @@ struct device {
 				ci.code = c;
 			});
 		
-		VkShaderModule shader_module;
+		vk::shader_module* shader_module;
 
 		vk::throw_if_error(
 			vkCreateShaderModule(
-				(VkDevice)this,
-				(VkShaderModuleCreateInfo*)&ci,
+				(VkDevice) this,
+				(VkShaderModuleCreateInfo*) &ci,
 				nullptr,
-				&shader_module
+				(VkShaderModule*) &shader_module
 			)
 		);
 
-		return *((vk::shader_module*)shader_module);
+		return *shader_module;
 	}
 
 	template<typename... Args>
@@ -142,18 +147,18 @@ struct device {
 		ci.subpasses = sds;
 		ci.dependencies = sdps;
 		
-		VkRenderPass render_pass;
+		vk::render_pass* render_pass;
 
 		vk::throw_if_error(
 			vkCreateRenderPass(
-				(VkDevice)this,
-				(VkRenderPassCreateInfo*)&ci,
+				(VkDevice) this,
+				(VkRenderPassCreateInfo*) &ci,
 				nullptr,
-				&render_pass
+				(VkRenderPass*) &render_pass
 			)
 		);
 
-		return *((vk::render_pass*)render_pass);
+		return *render_pass;
 	}
 
 	template<typename... Args>
@@ -186,17 +191,17 @@ struct device {
 			})
 		;
 
-		VkFramebuffer framebuffer;
+		vk::framebuffer* framebuffer;
 		vk::throw_if_error(
 			vkCreateFramebuffer(
-				(VkDevice)this,
-				(VkFramebufferCreateInfo*)&ci,
+				(VkDevice) this,
+				(VkFramebufferCreateInfo*) &ci,
 				nullptr,
-				&framebuffer
+				(VkFramebuffer*) &framebuffer
 			)
 		);
 
-		return *((vk::framebuffer*)framebuffer);
+		return *framebuffer;
 	}
 
 	template<typename... Args>
@@ -242,18 +247,67 @@ struct device {
 			.get([&](vk::swapchain& s) { ci.swapchain = &s; })
 		;
 
-		VkSwapchainKHR swapchain;
+		vk::swapchain* swapchain;
 
 		vk::throw_if_error(
 			vkCreateSwapchainKHR(
-				(VkDevice)this,
+				(VkDevice) this,
 				(VkSwapchainCreateInfoKHR*) &ci,
 				nullptr,
-				&swapchain
+				(VkSwapchainKHR*) &swapchain
 			)
 		);
 
-		return *((vk::swapchain*)swapchain);
+		return *swapchain;
+	}
+
+	template<typename... Args>
+	requires(
+		types::of<Args...>::template count_of_same_as_type<vk::image&> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::image_view_type> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::format> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::component_mapping> == 1 &&
+		types::of<Args...>::template count_of_remove_cvref_same_as_type<vk::image_subresource_range> == 1 &&
+		types::of<Args...>::template erase_remove_cvref_same_as_one_of_types<
+			vk::image_view_create_flag, vk::image_view_type, vk::format,
+			vk::component_mapping, vk::image_subresource_range
+		>::template erase_types<vk::image&>::empty
+	)
+	vk::image_view& create_image_view(Args&&... args) const {
+		vk::image* image;
+		vk::image_view_type image_view_type;
+		vk::format format;
+		std::optional<vk::component_mapping> component_mapping;
+		std::optional<vk::image_subresource_range> image_subresource_range;
+
+		tupe<Args...>(std::forward<Args...>(args...))
+			.get([&](vk::image& v){ image = &v; })
+			.get([&](vk::image_view_type v){ image_view_type = v; })
+			.get([&](vk::format v){ format = v; })
+			.get([&](vk::component_mapping v){ component_mapping.emplace(v); })
+			.get([&](vk::image_subresource_range v){ image_subresource_range.emplace(v); })
+		;
+
+		vk::image_view_create_info ci {
+			.image = *image,
+			.view_type = image_view_type,
+			.format = format,
+			.components = component_mapping.value(),
+			.subresource_range = image_subresource_range.value()
+		};
+
+		vk::image_view* image_view;
+
+		vk::throw_if_error(
+			vkCreateImageView(
+				(VkDevice) this,
+				(VkImageViewCreateInfo*) &ci,
+				nullptr,
+				(VkImageView*) &image_view
+			)
+		);
+
+		return *image_view;
 	}
 
 };

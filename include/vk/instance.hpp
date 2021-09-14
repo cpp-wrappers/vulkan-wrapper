@@ -1,17 +1,16 @@
 #pragma once
 
-#include "headers.hpp"
 #include <cstdint>
-#include <functional>
 #include <optional>
 #include <compare>
-#include "result.hpp"
-#include "instance_physical_devices_view.hpp"
-#include "instance_create_info.hpp"
-#include "application_info.hpp"
-#include "physical_device.hpp"
+
 #include <core/tuple.hpp>
-#include <vulkan/vulkan_core.h>
+
+#include "headers.hpp"
+#include "result.hpp"
+#include "instance/physical_devices_view.hpp"
+#include "instance/create_info.hpp"
+#include "instance/application_info.hpp"
 
 namespace vk {
 

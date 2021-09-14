@@ -1,17 +1,16 @@
 #pragma once
 
-#include "headers.hpp"
+#include "../headers.hpp"
 #include "descriptor_type.hpp"
-#include <cxx_util/named.hpp>
-#include <cxx_util/bitmask_from_enum.hpp>
-#include <cxx_util/params.hpp>
-#include <vulkan/vulkan_core.h>
+#include <core/named.hpp>
+#include <core/flag_enum.hpp>
+#include <core/tuple.hpp>
 #include "shader_stage.hpp"
 
 namespace vk {
 
-struct descriptor_binding : u::named<uint32_t> {};
-struct descriptor_count : u::named<uint32_t> {};
+struct descriptor_binding : named<uint32_t> {};
+struct descriptor_count : named<uint32_t> {};
 
 struct descriptor_set_layout_binding {
 	vk::descriptor_binding m_binding;

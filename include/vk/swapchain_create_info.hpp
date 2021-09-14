@@ -7,10 +7,10 @@
 
 #include "headers.hpp"
 #include "surface.hpp"
-#include "format.hpp"
+#include "image/format.hpp"
 #include "color_space.hpp"
 #include "extent.hpp"
-#include "image_usage.hpp"
+#include "image/usage.hpp"
 #include "sharing_mode.hpp"
 #include "queue_family_index.hpp"
 #include "surface_transform.hpp"

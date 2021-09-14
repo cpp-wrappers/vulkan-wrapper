@@ -2,7 +2,7 @@
 
 #include "headers.hpp"
 #include "device_queue_create_info.hpp"
-#include "physical_device_features.hpp"
+#include "physical_device/features.hpp"
 #include <core/integer.hpp>
 #include <core/null_terminated_string_view.hpp>
 #include <cassert>

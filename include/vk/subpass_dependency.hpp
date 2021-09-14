@@ -6,7 +6,7 @@
 #include <core/named.hpp>
 #include <core/tuple.hpp>
 
-#include "pipeline_stage.hpp"
+#include "pipeline/stage.hpp"
 #include "access.hpp"
 #include "dependency.hpp"
 

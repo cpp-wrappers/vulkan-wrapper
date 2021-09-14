@@ -2,11 +2,11 @@
 
 #include "headers.hpp"
 #include <core/flag_enum.hpp>
-#include "format.hpp"
+#include "image/format.hpp"
 #include "sample_count.hpp"
 #include "attachment_load_op.hpp"
 #include "attachment_store_op.hpp"
-#include "image_layout.hpp"
+#include "image/layout.hpp"
 #include <core/types.hpp>
 #include <core/named.hpp>
 #include <core/tuple.hpp>

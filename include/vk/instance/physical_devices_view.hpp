@@ -1,10 +1,12 @@
 #pragma once
 
-#include "headers.hpp"
-#include "physical_device.hpp"
-#include "ptr_to_ref_like.hpp"
+#include "../headers.hpp"
+#include "../ptr_to_ref_like.hpp"
+#include "../result.hpp"
 
 namespace vk {
+
+struct physical_device;
 
 template<typename F>
 void view_instance_physical_devices(uint32_t, VkInstance, F&&);

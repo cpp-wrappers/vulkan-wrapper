@@ -6,7 +6,7 @@
 #include "extent.hpp"
 #include "surface_transform.hpp"
 #include "composite_alpha.hpp"
-#include "image_usage.hpp"
+#include "image/usage.hpp"
 
 namespace vk {
 

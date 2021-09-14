@@ -1,5 +1,3 @@
-#include "vk/surface_capabilities.hpp"
-#include "vk/surface_format.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -8,20 +6,20 @@ popd
 exit 1
 #endif
 
+#include "vk/surface_capabilities.hpp"
+#include "vk/surface_format.hpp"
 #include "vk/color_space.hpp"
-#include "vk/device_create_info.hpp"
 #include "vk/extent.hpp"
-#include "vk/format.hpp"
-#include "vk/image_usage.hpp"
+#include "vk/image/usage.hpp"
 #include "vk/sharing_mode.hpp"
 #include "vk/swapchain_create_info.hpp"
 #include "vk/device_queue_create_info.hpp"
-#include "vk/instance_create_info.hpp"
 #include "vk/queue_family_index.hpp"
 #include "vk/shader_module.hpp"
 #include "vk/instance.hpp"
 #include "vk/surface.hpp"
 #include "vk/device.hpp"
+#include "vk/physical_device.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <filesystem>
@@ -111,7 +109,9 @@ int main() {
 		return -1;
 	}
 
-	if(!physical_device.get_surface_support(vk::queue_family_index{ 0 }, *surface_ptr)) {
+	vk::surface& surface = *surface_ptr;
+
+	if(!physical_device.get_surface_support(vk::queue_family_index{ 0 }, surface)) {
 		std::cerr << "surface is not supported by physical device, queue family index 0" << std::endl;
 		return -1;
 	}
@@ -137,7 +137,7 @@ int main() {
 	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(*surface_ptr);
 
 	vk::swapchain& swapchain = device.create_swapchain(
-		*surface_ptr,
+		surface,
 		vk::min_image_count{ surface_caps.min_image_count },
 		surface_format.format,
 		surface_format.color_space,

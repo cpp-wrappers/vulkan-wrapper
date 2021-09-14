@@ -1,7 +1,6 @@
 #pragma once
 
-#include "headers.hpp"
-#include <vulkan/vulkan_core.h>
+#include "../headers.hpp"
 
 namespace vk {
 

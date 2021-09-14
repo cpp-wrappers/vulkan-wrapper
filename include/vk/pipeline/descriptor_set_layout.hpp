@@ -1,7 +1,7 @@
 #pragma once
 
-#include "cxx_util/bitmask_from_enum.hpp"
-#include "cxx_util/params.hpp"
+#include <core/flag_enum.hpp>
+#include <core/tuple.hpp>
 #include "descriptor_set_layout_binding.hpp"
 #include "vk/result.hpp"
 #include <cstdint>

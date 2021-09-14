@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <vulkan/vulkan_core.h>
-#include "image_layout.hpp"
+#include "image/layout.hpp"
 
 namespace vk {
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "format.hpp"
+#include "image/format.hpp"
 #include "color_space.hpp"
-#include <vulkan/vulkan_core.h>
 
 namespace vk {
 

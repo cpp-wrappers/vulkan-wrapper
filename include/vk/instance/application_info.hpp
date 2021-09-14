@@ -1,13 +1,13 @@
 #pragma once
 
-#include "headers.hpp"
 #include <cstdint>
-#include <string_view>
-#include "api_version.hpp"
+
 #include <core/null_terminated_string_view.hpp>
 #include <core/named.hpp>
 #include <core/integer.hpp>
-#include <type_traits>
+
+#include "../headers.hpp"
+#include "../api_version.hpp"
 
 namespace vk {
 

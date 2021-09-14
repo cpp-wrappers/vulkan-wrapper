@@ -6,7 +6,7 @@
 #include <core/named.hpp>
 #include <core/storage.hpp>
 #include <core/tuple.hpp>
-#include "pipeline_bind_point.hpp"
+#include "pipeline/bind_point.hpp"
 #include "attachment_reference.hpp"
 
 namespace vk {

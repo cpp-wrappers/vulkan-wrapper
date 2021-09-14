@@ -8,16 +8,16 @@
 #include <vulkan/vulkan_core.h>
 
 #include "headers.hpp"
-#include "physical_device_properties.hpp"
-#include "queue_family_properties.hpp"
-#include "physical_device_queue_family_properties_view.hpp"
-#include "physical_device_extension_properties_view.hpp"
+#include "physical_device/properties.hpp"
+#include "physical_device/queue_family_properties.hpp"
+#include "physical_device/queue_family_properties_view.hpp"
+#include "physical_device/extension_properties_view.hpp"
 #include "device_queue_create_info.hpp"
 #include "device_create_info.hpp"
 #include "surface_capabilities.hpp"
 #include "result.hpp"
 #include "queue_family_index.hpp"
-#include "physical_device_surface_formats_view.hpp"
+#include "physical_device/surface_formats_view.hpp"
 
 namespace vk {
 
