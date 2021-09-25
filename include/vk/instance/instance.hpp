@@ -1,16 +1,10 @@
 #pragma once
 
-#include <cstdint>
-#include <optional>
-#include <compare>
-
-#include <core/tuple.hpp>
-
-#include "headers.hpp"
-#include "result.hpp"
-#include "instance/physical_devices_view.hpp"
-#include "instance/create_info.hpp"
-#include "instance/application_info.hpp"
+#include "../headers.hpp"
+#include "../result.hpp"
+#include "physical_devices_view.hpp"
+#include "create_info.hpp"
+#include "application_info.hpp"
 
 namespace vk {
 
@@ -74,7 +68,7 @@ requires(
 		vk::enabled_extension_name
 	>::empty
 )
-vk::instance& create_instance(Args&&... args) {
+vk::instance& create_instance(Args... args) {
 	instance_create_info ici{};
 
 	ici.enabled_layer_count = types::of<Args...>::template count_of_same_as_type<vk::enabled_layer_name>;
@@ -85,7 +79,7 @@ vk::instance& create_instance(Args&&... args) {
 	uint32_t current_layer = 0;
 	uint32_t current_extension = 0;
 
-	tuple<Args&...> { args... }
+	tuple{ args... }
 		.get([&](vk::application_info& ai) {
 			ici.application_info = &ai;
 		})
@@ -99,17 +93,17 @@ vk::instance& create_instance(Args&&... args) {
 	ici.enabled_layer_names = layers_names;	
 	ici.enabled_extension_names = extensions_names;
 
-	VkInstance instance;
+	vk::instance* instance;
 
 	vk::throw_if_error(
 		vkCreateInstance(
-			(VkInstanceCreateInfo*)&ici,
+			(VkInstanceCreateInfo*) &ici,
 			nullptr,
-			&instance
+			(VkInstance*) &instance
 		)
 	);
 
-	return *((vk::instance*)instance);
+	return *instance;
 } // create_instance
 
 inline void destroy_instance(vk::instance& instance) {

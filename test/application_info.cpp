@@ -1,39 +1,38 @@
-#include "vk/application_info.hpp"
-#include "vk/api_version.hpp"
+#include "vk/instance/application_info.hpp"
 
 int main() {
 	vk::application_info {
 		vk::api_version {
-			vk::major{ 1 },
-			vk::minor{ 2 }
+			vk::major{ 1u },
+			vk::minor{ 2u }
 		}
 	};
 
 	vk::application_info {
 		vk::api_version {
-			vk::major{ 1 },
-			vk::minor{ 2 }
+			vk::major{ 1u },
+			vk::minor{ 2u }
 		},
 		vk::application_name{ "coolest engine" }
 	};
 
 	vk::application_info {
-		vk::application_version{ 0 },
+		vk::application_version{ 0u },
 		vk::api_version {
-			vk::major{ 1 },
-			vk::minor{ 2 }
+			vk::major{ 1u },
+			vk::minor{ 2u }
 		},
 		vk::application_name{ "coolest engine" }
 	};
 
 	vk::application_info {
-		vk::application_version{ 0 },
+		vk::application_version{ 0u },
 		vk::api_version {
-			vk::major{ 1 },
-			vk::minor{ 2 }
+			vk::major{ 1u },
+			vk::minor{ 2u }
 		},
 		vk::engine_name{ "coolest engine"},
-		vk::engine_version{ 1 },
+		vk::engine_version{ 1u },
 		vk::application_name{ "coolest app" }
 	};
 }

@@ -17,8 +17,6 @@ test() {
 
 	if ! $CXX \
 		--config ./compile_flags.txt \
-		-fsanitize=address \
-		-fsanitize=undefined \
 		-lvulkan \
 		-g \
 		-o ./build/$1 \
