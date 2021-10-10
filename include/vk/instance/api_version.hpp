@@ -20,8 +20,8 @@ struct api_version {
 		: variant{ variant }, major{ minor }, minor{ minor }, patch{ patch }
 	{}
 
-	api_version(vk::major major, vk::minor minor, vk::patch patch = {})
-		: api_version{ vk::variant{0u}, major, minor, patch }
+	api_version(vk::major major = {}, vk::minor minor = {}, vk::patch patch = {})
+		: api_version{ vk::variant{ 0u }, major, minor, patch }
 	{}
 };
 

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstdint>
 #include "../headers.hpp"
-#include <type_traits>
 #include <core/flag_enum.hpp>
 #include "../extent.hpp"
 
@@ -19,7 +17,7 @@ struct queue_family_properties {
 	flag_enum<queue_flag> flags;
 	uint32_t count;
 	uint32_t timestamp_valid_bits;
-	vk::extent<3> min_image_transfer_granularity;
+	vk::extent<3u> min_image_transfer_granularity;
 };
 
 }

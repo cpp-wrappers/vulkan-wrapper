@@ -1,29 +1,71 @@
+#include "core/primitive_integer.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh info
 #endif
 
-#include <iostream>
-#include "vk/instance.hpp"
+#include "vk/instance/instance.hpp"
+#include "vk/physical_device/physical_device.hpp"
 #include "vk/layer_properties_view.hpp"
 
-static std::size_t tabs = 0;
+#include <stdio.h>
+#include <string.h>
+
+static uint tabs = 0u;
+
+template<typename T>
+void print_atom(T val);
+
+void print_atom(char str) {
+	putc(str, stdout);
+}
+
+void print_atom(const char* str) {
+	fwrite(str, 1, strlen(str), stdout);
+}
+
+void print_atom(char* str) {
+	fwrite(str, 1, strlen(str), stdout);
+}
+
+template<integer I>
+void print_atom(I i) {
+	I powered = 1u;
+
+	auto i_copy = i;
+	while((i_copy /= 10u) > 1u) {
+		powered *= 10u;
+	}
+
+	while(powered > 0u) {
+		uint d = (i / powered) % 10u;
+		print_atom((char)((primitive::uint) d + '0'));
+		powered /= 10u;
+	}
+}
+
+void print_atom(primitive::uint32 i) { return print_atom(uint32{ i }); }
+void print_atom(bool b) {
+	if(b) print_atom("true");
+	else print_atom("false");
+}
 
 void print(auto... vs) {
-	char tabs_chars[tabs + 1];
-	std::fill_n(tabs_chars, tabs, '\t');
-	tabs_chars[tabs] = 0;
-
-	std::cout << tabs_chars;
-	(std::cout << ... << vs );
+	for(primitive::uint i = 0; i < (primitive::uint)tabs; ++i) print_atom((char)'\t');
+	(print_atom(vs), ... );
 }
 
 void println(auto... vs) {
 	print(vs...);
-	std::cout << "\n";
+	print_atom((char)'\n');
 }
 
+template<bool t>
 void block(char open, char close, auto f) {
-	println(open);
+	if(t) println(open);
+	else {
+		print_atom(open);
+		print_atom((char)'\n');
+	}
 
 	++tabs;
 	f();
@@ -33,11 +75,11 @@ void block(char open, char close, auto f) {
 
 void array_block(auto name, auto f) {
 	print(name, ": ");
-	block('[', ']', f);
+	block<false>('[', ']', f);
 }
 
 void object_block(auto f) {
-	block('{', '}', f);
+	block<true>('{', '}', f);
 }
 
 void object_block(auto name, auto f) {
@@ -49,11 +91,11 @@ int main() {
 	vk::instance& i = vk::create_instance(
 		vk::application_info {
 			vk::api_version {
-				vk::major{ 1 },
-				vk::minor{ 0 }
+				vk::major{ 1u },
+				vk::minor{ 0u }
 			}
 		},
-		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
+		array{ vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" } }
 	);
 
 	array_block("physical devices", [&]() {
@@ -61,10 +103,10 @@ int main() {
 			auto props = device.properties();
 
 			println("api version: ",
-				props.api_version.variant().value, ".",
-				props.api_version.major().value, ".",
-				props.api_version.minor().value, ".",
-				props.api_version.patch().value
+				props.api_version.variant, ".",
+				props.api_version.major, ".",
+				props.api_version.minor, ".",
+				props.api_version.patch
 			);
 
 			println("driver version: ", props.driver_version);
@@ -94,9 +136,9 @@ int main() {
 						println("count: ", props.count);
 						println(
 							"min image transfer granularity: ",
-							props.min_image_transfer_granularity[0], ", ", 
-							props.min_image_transfer_granularity[1], ", ",
-							props.min_image_transfer_granularity[2]
+							props.min_image_transfer_granularity[0u], ", ", 
+							props.min_image_transfer_granularity[1u], ", ",
+							props.min_image_transfer_granularity[2u]
 						);
 						println("graphics: ", props.flags.get(vk::queue_flag::graphics));
 						println("compute: ", props.flags.get(vk::queue_flag::compute));

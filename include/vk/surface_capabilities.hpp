@@ -11,12 +11,12 @@
 namespace vk {
 
 struct surface_capabilities {
-	uint32_t min_image_count;
-	uint32_t max_image_count;
-	vk::extent<2> current_extent;
-	vk::extent<2> min_image_extent;
-	vk::extent<2> max_image_extent;
-	uint32_t max_image_array_layers;
+	uint32 min_image_count;
+	uint32 max_image_count;
+	vk::extent<2u> current_extent;
+	vk::extent<2u> min_image_extent;
+	vk::extent<2u> max_image_extent;
+	uint32 max_image_array_layers;
 	flag_enum<vk::surface_transform> supported_transforms;
 	vk::surface_transform current_transform;
 	flag_enum<vk::composite_alpha> supported_composite_alpha;

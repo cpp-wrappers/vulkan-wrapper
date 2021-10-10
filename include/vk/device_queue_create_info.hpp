@@ -1,13 +1,6 @@
 #pragma once
 
 #include "headers.hpp"
-#include "queue_family_index.hpp"
-#include <cinttypes>
-#include <cstdint>
-#include <core/flag_enum.hpp>
-#include <array>
-#include <core/tuple.hpp>
-#include <type_traits>
 
 namespace vk {
 

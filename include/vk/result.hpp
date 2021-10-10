@@ -1,12 +1,10 @@
 #pragma once
 
 #include "headers.hpp"
-#include <system_error>
-#include <string>
 
 namespace vk {
 
-inline struct error_category : std::error_category {
+/*inline struct error_category : std::error_category {
 
 	const char* name() const noexcept override{
 		return "vulkan";
@@ -63,11 +61,12 @@ inline struct error_category : std::error_category {
 		}
 		return "";
 	}
-} error_category;
+} error_category;*/
 
 inline void throw_if_error(int result) {
 	if(result < 0) {
-		throw std::system_error{ result, error_category };
+		throw result;
+		//throw std::system_error{ result, error_category };
 	}
 }
 

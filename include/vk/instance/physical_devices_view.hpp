@@ -9,15 +9,15 @@ namespace vk {
 struct physical_device;
 
 template<typename F>
-void view_instance_physical_devices(uint32_t, VkInstance, F&&);
+void view_instance_physical_devices(uint32, VkInstance, F&&);
 
 class physical_devices_view {
 	cursed::ptr_to_ref_like<vk::physical_device> m_physical_devices_begin;
-	uint32_t m_count;
+	uint32 m_count;
 
 	physical_devices_view(
 		cursed::ptr_to_ref_like<vk::physical_device> p_physical_devices_begin,
-		uint32_t p_count
+		uint32 p_count
 	)
 		:
 		m_physical_devices_begin {
@@ -29,7 +29,7 @@ class physical_devices_view {
 	{}
 
 	template<typename F>
-	friend void vk::view_instance_physical_devices(uint32_t, VkInstance, F&&);
+	friend void vk::view_instance_physical_devices(uint32, VkInstance, F&&);
 public:
 
 	auto begin() const {
@@ -37,10 +37,10 @@ public:
 	}
 
 	auto end() const {
-		return m_physical_devices_begin + m_count;
+		return m_physical_devices_begin + uint{ m_count };
 	}
 
-	uint32_t size() const {
+	uint32 size() const {
 		return m_count;
 	}
 
@@ -50,21 +50,22 @@ public:
 }; // physical_devices_view
 
 template<typename F>
-void view_instance_physical_devices(uint32_t count, VkInstance instance, F&& f) {
-	vk::physical_device* devices[count];
+void view_instance_physical_devices(uint32 count, VkInstance instance, F&& f) {
+	vk::physical_device* devices[(uint32_t)count];
 
 	vk::throw_if_error(
 		vkEnumeratePhysicalDevices(
 			instance,
-			&count,
+			&((uint32_t&)count),
 			(VkPhysicalDevice*)devices
 		)
 	);
 
-	physical_devices_view v {
+	vk::physical_devices_view v {
 		devices,
 		count
 	};
+
 	f(v);
 }
 

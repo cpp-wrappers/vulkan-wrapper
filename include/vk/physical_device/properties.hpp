@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../headers.hpp"
-#include <cinttypes>
-#include "../api_version.hpp"
+#include "../instance/api_version.hpp"
 #include "limits.hpp"
 #include "sparse_properties.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -17,13 +17,13 @@ enum class physical_device_type {
 };
 
 struct physical_device_properties {
-	vk::api_version api_version{};
-	uint32_t driver_version;
-	uint32_t vendor_id;
-	uint32_t device_id;
+	vk::api_version api_version;
+	uint32 driver_version;
+	uint32 vendor_id;
+	uint32 device_id;
 	physical_device_type type;
 	char name[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
-	uint8_t pipeline_cache_uuid[VK_UUID_SIZE];
+	uint8 pipeline_cache_uuid[VK_UUID_SIZE];
 	vk::physical_device_limits limits;
 	vk::physical_device_sparse_properties sparse_properties;
 };

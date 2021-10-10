@@ -1,14 +1,14 @@
 #pragma once
 
 #include "headers.hpp"
-#include <cstdint>
+#include <core/integer.hpp>
 
 namespace vk {
 
 struct layer_properties {
 	char name[VK_MAX_EXTENSION_NAME_SIZE];
-	uint32_t spec_version;
-	uint32_t implementation_version;
+	uint32 spec_version;
+	uint32 implementation_version;
 	char description[VK_MAX_DESCRIPTION_SIZE];
 };
 

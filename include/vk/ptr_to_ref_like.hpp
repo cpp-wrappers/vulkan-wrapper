@@ -1,6 +1,6 @@
 #pragma once
 
-#include <compare>
+#include <core/integer.hpp>
 
 namespace cursed {
 
@@ -19,16 +19,19 @@ struct ptr_to_ref_like {
 		return *this;
 	}
 
-	auto& operator += (std::size_t n) {
-		ptr += n;
+	auto& operator += (uint n) {
+		ptr += (primitive::uint)n;
 		return *this;
 	}
 
-	auto operator + (std::size_t n) const {
+	auto operator + (uint n) const {
 		return ptr_to_ref_like{ *this } += n;
 	}
 
-	auto operator <=> (const ptr_to_ref_like&) const = default;
+	bool operator == (const ptr_to_ref_like other) const {
+		return ptr == other.ptr;
+	}
+	//auto operator <=> (const ptr_to_ref_like&) const = default;
 };
 
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include <core/tuple.hpp>
 #include <core/storage.hpp>
 #include <vulkan/vulkan_core.h>

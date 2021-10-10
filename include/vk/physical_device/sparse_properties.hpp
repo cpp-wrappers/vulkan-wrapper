@@ -1,16 +1,16 @@
 #pragma once
 
-#include <cinttypes>
 #include "../headers.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
 struct physical_device_sparse_properties {
-	uint32_t residencyStandard2DBlockShape;
-	uint32_t residencyStandard2DMultisampleBlockShape;
-	uint32_t residencyStandard3DBlockShape;
-	uint32_t residencyAlignedMipSize;
-	uint32_t residencyNonResidentStrict;
+	uint32 residencyStandard2DBlockShape;
+	uint32 residencyStandard2DMultisampleBlockShape;
+	uint32 residencyStandard3DBlockShape;
+	uint32 residencyAlignedMipSize;
+	uint32 residencyNonResidentStrict;
 };
 
 }

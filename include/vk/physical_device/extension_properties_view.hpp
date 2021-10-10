@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../headers.hpp"
-#include <compare>
 #include "../extension_properties.hpp"
 #include "../result.hpp"
 

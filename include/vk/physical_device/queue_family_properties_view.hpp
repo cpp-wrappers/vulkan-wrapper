@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../headers.hpp"
-#include <compare>
 #include "queue_family_properties.hpp"
 
 namespace vk {

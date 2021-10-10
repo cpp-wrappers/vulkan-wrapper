@@ -1,15 +1,12 @@
 #pragma once 
 
-#include "headers.hpp"
 #include <core/flag_enum.hpp>
+#include "headers.hpp"
 #include "image/format.hpp"
 #include "sample_count.hpp"
 #include "attachment_load_op.hpp"
 #include "attachment_store_op.hpp"
 #include "image/layout.hpp"
-#include <core/types.hpp>
-#include <core/named.hpp>
-#include <core/tuple.hpp>
 
 namespace vk {
 
@@ -17,14 +14,14 @@ enum class attachment_description_flag {
 	may_alias = VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT
 };
 
-struct load_op : named<vk::attachment_load_op> {};
-struct store_op : named<vk::attachment_store_op> {};
+using load_op = vk::attachment_load_op;
+using store_op = vk::attachment_store_op;
 
-struct stencil_load_op : named<vk::attachment_load_op> {};
-struct stencil_store_op : named<vk::attachment_store_op> {};
+using stencil_load_op = vk::attachment_load_op;
+using stencil_store_op = vk::attachment_store_op;
 
-struct initial_layout : named<vk::image_layout> {};
-struct final_layout : named<vk::image_layout> {};
+using initial_layout = vk::image_layout;
+using final_layout = vk::image_layout;
 
 class attachment_description {
 	flag_enum<attachment_description_flag> flags{};

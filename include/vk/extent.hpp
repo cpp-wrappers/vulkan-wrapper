@@ -1,28 +1,28 @@
 #pragma once
 
-#include <array>
+#include <core/array.hpp>
 
 namespace vk {
 
-template<uint32_t S>
+template<uint32 S>
 struct extent;
 
 template<>
-struct extent<1> : std::array<uint32_t, 1> {
-	uint32_t& width() { return (*this)[0]; }
+struct extent<1u> : array<uint32, 1u> {
+	uint32& width() { return (*this)[0u]; }
 };
 
 template<>
-struct extent<2> : std::array<uint32_t, 2> {
-	uint32_t& width() { return (*this)[0]; }
-	uint32_t& height() { return (*this)[1]; }
+struct extent<2u> : array<uint32, 2u> {
+	uint32& width() { return (*this)[0u]; }
+	uint32& height() { return (*this)[1u]; }
 };
 
 template<>
-struct extent<3> : std::array<uint32_t, 3> {
-	uint32_t& width() { return (*this)[0]; }
-	uint32_t& height() { return (*this)[1]; }
-	uint32_t& depth() { return (*this)[3]; }
+struct extent<3u> : array<uint32, 3u> {
+	uint32& width() { return (*this)[0u]; }
+	uint32& height() { return (*this)[1u]; }
+	uint32& depth() { return (*this)[3u]; }
 };
 
 }
