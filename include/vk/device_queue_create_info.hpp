@@ -1,6 +1,15 @@
 #pragma once
 
 #include "headers.hpp"
+#include "queue_family_index.hpp"
+
+#include <core/primitive_integer.hpp>
+#include <core/integer.hpp>
+#include <core/flag_enum.hpp>
+#include <core/pointer.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/count_of_type.hpp>
+#include <core/elements/of_type.hpp>
 
 namespace vk {
 
@@ -8,11 +17,11 @@ enum device_queue_create_flag {
 	рrotected
 };
 
-struct queue_count : named<uint32_t> {};
-struct queue_priorities : named<const float*> {};
+struct queue_count : uint32 {};
+struct queue_priorities : pointer_of<const float> {};
 
 class device_queue_create_info {
-	int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	unsigned_integer_of_size_of<VkStructureType> type = (primitive::uint32)VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	const void* next = nullptr;
 	flag_enum<device_queue_create_flag> flags{};
 	vk::queue_family_index queue_family_index;
@@ -28,22 +37,16 @@ public:
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::queue_family_index> == 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::queue_count> == 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::queue_priorities> == 1 &&
-		types::of<Args...>::size == 3
+		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::queue_family_index>::equals<1u>,
+			types::count_of_type<vk::queue_count>::equals<1u>,
+			types::count_of_type<vk::queue_priorities>::equals<1u>
+		>::for_types_of<Args...>
 	)
 	device_queue_create_info(Args... args) {
-		tuple{ args... }
-			.get([&](vk::queue_family_index i) {
-				queue_family_index = i;
-			})
-			.get([&](vk::queue_count c) {
-				queue_count = c;
-			})
-			.get([&](vk::queue_priorities p) {
-				queue_priorities = p;
-			});
+		queue_family_index = elements::of_type<vk::queue_family_index&>::for_elements_of(args...);
+		queue_count = elements::of_type<vk::queue_count&>::for_elements_of(args...);
+		queue_priorities = elements::of_type<vk::queue_priorities&>::for_elements_of(args...);
 	}
 }; // device_queue_create_info
 	

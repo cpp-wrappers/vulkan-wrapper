@@ -1,15 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/null_terminated_string_view.hpp>
 #include "application_info.hpp"
-
+#include "../enabled_extension_name.hpp"
 #include "../headers.hpp"
 
 namespace vk {
 
 struct enabled_layer_name : null_terminated_string_view<size_is::undefined> {};
-struct enabled_extension_name : null_terminated_string_view<size_is::undefined> {};
 
 struct instance_create_info {
 	unsigned_integer_of_size_of<VkStructureType> type{ (primitive::uint32)VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO };

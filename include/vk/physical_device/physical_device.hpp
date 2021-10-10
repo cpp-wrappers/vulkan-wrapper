@@ -30,15 +30,17 @@ struct physical_device {
 	template<typename F>
 	void view_queue_family_properties(F&& f) const {
 		view_physical_device_queue_family_properties(
-			(VkPhysicalDevice)this,
+			*this,
 			forward<F>(f)
 		);
 	}
 
 	void for_each_queue_family_properties(auto&& f) {
-		view_queue_family_properties([&](auto& view) {
-			for(auto& props : view) f(props);
-		});
+		view_queue_family_properties(
+			[&](vk::physical_device_queue_family_properties_view& view) {
+				for(auto& props : view) f(props);
+			}
+		);
 	}
 
 	template<typename F>

@@ -2,43 +2,39 @@
 . `dirname $0`/build_and_run.sh create_logical_device
 #endif
 
-#include "vk/framebuffer.hpp"
-#include "vk/attachment_description.hpp"
-#include "vk/attachment_load_op.hpp"
-#include "vk/attachment_reference.hpp"
-#include "vk/attachment_store_op.hpp"
-#include "vk/format.hpp"
-#include "vk/image_layout.hpp"
+#include "vk/image/format.hpp"
+#include "vk/image/layout.hpp"
 #include "vk/queue_family_index.hpp"
 #include "vk/render_pass.hpp"
-#include "vk/subpass_description.hpp"
-#include "vk/command_buffer_level.hpp"
-#include "vk/instance.hpp"
+//#include "vk/subpass_description.hpp"
+//#include "vk/command_buffer_level.hpp"
+#include "vk/instance/instance.hpp"
 #include "vk/device_queue_create_info.hpp"
-#include "vk/queue_family_properties.hpp"
-#include "vk/device.hpp"
-#include "vk/command_pool.hpp"
-#include <iostream>
+#include "vk/device/create.hpp"
+//#include "vk/command_pool.hpp"
 
 int main() {
 	vk::instance& instance = vk::create_instance(
-		vk::application_info{ vk::api_version{ vk::major{1}, vk::minor{0} } },
-		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
+		vk::application_info{ vk::api_version{ vk::major{1u}, vk::minor{0u} } },
+		array{ vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" } }
 	);
 
 	vk::physical_device& physical_device = instance.first_physical_device();
 
-	float priorities[1]{ 1.0F };
+	array priorities{ 1.0F };
 
-	vk::device& device = physical_device.create_device(
-		vk::device_queue_create_info {
-			vk::queue_family_index{ 0 },
-			vk::queue_count{ 1 },
-			vk::queue_priorities{ priorities }
+	vk::device& device = vk::create_device(
+		physical_device,
+		array{
+			vk::device_queue_create_info {
+				vk::queue_family_index{ 0u },
+				vk::queue_count{ 1u },
+				vk::queue_priorities{ priorities.data() }
+			}
 		}
 	);
 
-	vk::command_pool& command_pool = device.create_command_pool(
+	/*vk::command_pool& command_pool = device.create_command_pool(
 		vk::queue_family_index{ 0 }
 	);
 
@@ -52,5 +48,5 @@ int main() {
 		vk::subpass_description {}
 	);
 
-	std::cout << "done." << std::endl;
+	std::cout << "done." << std::endl;*/
 }
