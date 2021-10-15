@@ -1,45 +1,60 @@
 #pragma once
 
 #include <core/flag_enum.hpp>
-#include <core/named.hpp>
-#include <core/tuple.hpp>
-#include <vulkan/vulkan_core.h>
+#include <core/integer.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/are_contain_type.hpp>
+#include <core/types/count_of_type.hpp>
+#include <core/elements/of_type.hpp>
+#include <core/elements/for_each_of_type.hpp>
+
 #include "aspect.hpp"
 
 namespace vk {
 
-struct base_mip_level : named<uint32_t> {};
-struct level_count : named<uint32_t> {};
-struct base_array_layer : named<uint32_t> {};
-struct layer_count : named<uint32_t> {};
+struct base_mip_level : uint32 {};
+struct level_count : uint32 {};
+struct base_array_layer : uint32 {};
+struct layer_count : uint32 {};
 
 struct image_subresource_range {
 	flag_enum<vk::image_aspect_flag> aspect_mask{};
-	vk::base_mip_level base_mip_level{ 0 };
-	vk::level_count level_count{ 1 };
-	vk::base_array_layer base_array_layer{ 0 };
-	vk::layer_count layer_count{ 1 };
+	vk::base_mip_level base_mip_level{ 0u };
+	vk::level_count level_count{ 1u };
+	vk::base_array_layer base_array_layer{ 0u };
+	vk::layer_count layer_count{ 1u };
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::image_aspect_flag> >= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::base_mip_level> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::level_count> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::base_array_layer> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::layer_count> <= 1 &&
-		types::of<Args...>::template erase_types<
-			vk::image_aspect_flag, vk::base_mip_level, vk::level_count,
-			vk::base_array_layer, vk::layer_count
-		>::empty
+		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::image_aspect_flag>::greater_or_equals<1u>,
+			types::count_of_type<vk::base_mip_level>::less_or_equals<1u>,
+			types::count_of_type<vk::level_count>::less_or_equals<1u>,
+			types::count_of_type<vk::base_array_layer>::less_or_equals<1u>,
+			types::count_of_type<vk::layer_count>::less_or_equals<1u>
+		>::for_types_of<Args...>
 	)
 	image_subresource_range(Args... args) {
-		tuple{ args... }
-			.get([&](vk::image_aspect_flag v){ aspect_mask.set(v); })
-			.get([&](vk::base_mip_level v){ base_mip_level = v; })
-			.get([&](vk::level_count v){ level_count = v; })
-			.get([&](vk::base_array_layer v){ base_array_layer = v; })
-			.get([&](vk::layer_count v){ layer_count = v; })
-		;
+		elements::for_each_of_type_remove_reference<vk::image_aspect_flag>(
+			[&](auto af) { aspect_mask.set(af); },
+			args...
+		);
+
+		if constexpr(types::are_contain_type<vk::base_mip_level>::for_types_of<Args...>) {
+			base_mip_level = elements::of_type<vk::base_mip_level&>::for_elements_of(args...);
+		}
+
+		if constexpr(types::are_contain_type<vk::level_count>::for_types_of<Args...>) {
+			level_count = elements::of_type<vk::level_count&>::for_elements_of(args...);
+		}
+
+		if constexpr(types::are_contain_type<vk::base_array_layer>::for_types_of<Args...>) {
+			base_array_layer = elements::of_type<vk::base_array_layer&>::for_elements_of(args...);
+		}
+
+		if constexpr(types::are_contain_type<vk::layer_count>::for_types_of<Args...>) {
+			layer_count = elements::of_type<vk::layer_count&>::for_elements_of(args...);
+		}
 	}
 
 };

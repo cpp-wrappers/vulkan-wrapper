@@ -1,3 +1,4 @@
+#include "core/primitive_integer.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -6,33 +7,36 @@ popd
 exit 1
 #endif
 
-#include "vk/surface_capabilities.hpp"
-#include "vk/surface_format.hpp"
-#include "vk/color_space.hpp"
-#include "vk/extent.hpp"
-#include "vk/image/usage.hpp"
-#include "vk/sharing_mode.hpp"
-#include "vk/swapchain_create_info.hpp"
-#include "vk/device_queue_create_info.hpp"
-#include "vk/queue_family_index.hpp"
-#include "vk/shader_module.hpp"
-#include "vk/instance.hpp"
-#include "vk/surface.hpp"
-#include "vk/device.hpp"
-#include "vk/physical_device.hpp"
+#include "vk/instance/create.hpp"
+#include "vk/instance/instance.hpp"
+
+#include "vk/shader_module/create.hpp"
+
+#include "vk/device/create.hpp"
+
+#include "vk/swapchain/create.hpp"
+
+#include "vk/render_pass/create.hpp"
+
+#include "vk/surface/format.hpp"
+
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <ios>
+
+#include <stdio.h>
 
 vk::shader_module& read_shader_module(vk::device& device, const char* path) {
-	auto size = std::filesystem::file_size(path);
+	FILE* f = fopen(path, "r");
+	fseek(f, 0, SEEK_END);
+	primitive::uint size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
 	char src[size];
 
-	std::ifstream{ path, std::ios::binary }.read(src, size);
+	fread(src, 1, size, f);
+	fclose(f);
 
-	return device.create_shader_module(
+	return create_shader_module(
+		device,
 		vk::code_size{ (uint32_t) size },
 		vk::code{ (uint32_t*) src }
 	);
@@ -40,45 +44,52 @@ vk::shader_module& read_shader_module(vk::device& device, const char* path) {
 
 int main() {
 	if (!glfwInit()) {
-		std::cerr << "glfw init failed" << std::endl;
+		fprintf(stderr, "glfw init failed\n");
 		return -1;
 	}
 
 	if(glfwVulkanSupported()) {
-		std::cout << "supported" << std::endl;
+		printf("supported\n");
 	}
 	else {
-		std::cerr << "vulkan isn't supported" << std::endl;
+		fprintf(stderr, "vulkan isn't supported\n");
 		return -1;
 	}
 
-	std::cout << "required extensions:" << std::endl;
-	uint32_t count;
+	printf("required extensions:\n");
+	primitive::uint32 count;
 	const char** extensions = glfwGetRequiredInstanceExtensions(&count);
 	while(count > 0) {
-		std::cout << extensions[--count] << std::endl;
+		printf("%s", extensions[--count]);
 	}
 
 	vk::instance& instance = vk::create_instance(
-		vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" },
-		vk::enabled_extension_name{ extensions[0] },
-		vk::enabled_extension_name{ extensions[1] } // TODO
+		array {
+			vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
+		},
+		array {
+			vk::enabled_extension_name{ extensions[0] },
+			vk::enabled_extension_name{ extensions[1] } // TODO
+		}
 	);
 
 	float ps[1]{ 1.0F };
 
-	const null_terminated_string_view<size_is::undefined> device_extensions[] {
-		"VK_KHR_swapchain"
-	};
 	vk::physical_device& physical_device = instance.first_physical_device();
-	vk::device& device = physical_device.create_device(
-		vk::device_queue_create_info {
-			vk::queue_family_index{ 0 },
-			vk::queue_count{ 1 },
-			vk::queue_priorities{ ps }
+	vk::device& device = vk::create_device(
+		physical_device,
+		array {
+			vk::device_queue_create_info {
+				vk::queue_family_index{ 0u },
+				vk::queue_count{ 1u },
+				vk::queue_priorities{ ps }
+			}
 		},
-		vk::enabled_extension_count{ 1 },
-		vk::enabled_extension_names{ device_extensions }
+		array {
+			vk::enabled_extension_name {
+				"VK_KHR_swapchain"
+			}
+		}
 	);
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -91,7 +102,7 @@ int main() {
 		nullptr
 	);
 	if (!window) {
-		std::cerr << "window creation failed" << std::endl;
+		fprintf(stderr, "window creation failed\n");
 		return -1;
 	}
 
@@ -102,17 +113,17 @@ int main() {
 		nullptr,
 		(VkSurfaceKHR*)&surface_ptr
 	) >= 0) {
-		std::cout << "created surface" << std::endl;
+		printf("created surface\n");
 	}
 	else {
-		std::cerr << "surface creation failed" << std::endl;
+		fprintf(stderr, "surface creation failed\n");
 		return -1;
 	}
 
 	vk::surface& surface = *surface_ptr;
 
-	if(!physical_device.get_surface_support(vk::queue_family_index{ 0 }, surface)) {
-		std::cerr << "surface is not supported by physical device, queue family index 0" << std::endl;
+	if(!physical_device.get_surface_support(vk::queue_family_index{ 0u }, surface)) {
+		fprintf(stderr, "surface is not supported by physical device, queue family index 0\n");
 		return -1;
 	}
 
@@ -122,32 +133,36 @@ int main() {
 		surface_format = formats.front();
 	});
 
-	vk::render_pass& render_pass = device.create_render_pass(
-		vk::attachment_description {
-			vk::format::r8_g8_b8_a8_unorm,
-			vk::load_op{ vk::attachment_load_op::clear },
-			vk::store_op{ vk::attachment_store_op::store },
-			vk::final_layout{ vk::image_layout::color_attachment_optimal }
+	vk::render_pass& render_pass = vk::create_render_pass(
+		device,
+		array{
+			vk::attachment_description {
+				vk::format::r8_g8_b8_a8_unorm,
+				vk::load_op{ vk::attachment_load_op::clear },
+				vk::store_op{ vk::attachment_store_op::store },
+				vk::final_layout{ vk::image_layout::color_attachment_optimal }
+			},
 		},
-		vk::subpass_description {}
+		array{ vk::subpass_description {} }
 	);
 
-	vk::queue_family_index queue_family_indices[]{ 0 };
+	vk::queue_family_index queue_family_indices[]{ 0u };
 
 	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(*surface_ptr);
 
-	vk::swapchain& swapchain = device.create_swapchain(
+	vk::swapchain& swapchain = vk::create_swapchain(
+		device,
 		surface,
 		vk::min_image_count{ surface_caps.min_image_count },
 		surface_format.format,
 		surface_format.color_space,
-		vk::extent<2>{ 640, 480 },
+		vk::extent<2u>{ 640u, 480u },
 		vk::image_usage::color_attachment,
 		vk::sharing_mode::exclusive,
-		vk::queue_family_index_count{ 0 },
+		vk::queue_family_index_count{ 0u },
 		vk::queue_family_indices{ nullptr },
 		vk::present_mode::immediate,
-		vk::clipped{ true },
+		vk::clipped{ 1u },
 		vk::surface_transform::identity,
 		vk::composite_alpha::opaque
 	);

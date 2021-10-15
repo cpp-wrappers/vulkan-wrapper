@@ -2,12 +2,7 @@
 . `dirname $0`/build_and_run.sh create_logical_device
 #endif
 
-#include "vk/image/format.hpp"
-#include "vk/image/layout.hpp"
-#include "vk/queue_family_index.hpp"
-//#include "vk/render_pass.hpp"
-//#include "vk/subpass_description.hpp"
-//#include "vk/command_buffer_level.hpp"
+#include "stdio.h"
 #include "vk/instance/instance.hpp"
 #include "vk/instance/destroy.hpp"
 
@@ -18,7 +13,7 @@
 #include "vk/command/pool/destroy.hpp"
 
 #include "vk/render_pass/create.hpp"
-//#include "vk/command_pool.hpp"
+#include "vk/render_pass/destroy.hpp"
 
 int main() {
 	vk::instance& instance = vk::create_instance(
@@ -61,9 +56,10 @@ int main() {
 		}
 	);
 
+	vk::destroy_render_pass(device, render_pass);
 	vk::destroy_command_pool(device, command_pool);
 	vk::destroy_device(device);
 	vk::destroy_instance(instance);
 
-	//std::cout << "done." << std::endl;*/
+	printf("done.\n");
 }

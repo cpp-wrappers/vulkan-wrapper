@@ -2,10 +2,11 @@
 
 #include "properties.hpp"
 #include "../result.hpp"
-#include "../surface_capabilities.hpp"
+#include "../surface/capabilities.hpp"
 #include "../queue_family_index.hpp"
 #include "queue_family_properties_view.hpp"
 #include "extension_properties_view.hpp"
+#include "surface_formats_view.hpp"
 
 #include <core/forward.hpp>
 

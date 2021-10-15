@@ -30,7 +30,6 @@ namespace vk {
 		using Types = types::of<Args...>;
 
 		vk::render_pass_create_info ci{};
-		vk::device& device = elements::of_type<vk::device&>::for_elements_of(args...);
 
 		auto& subpass_descriptions = elements::range_of_value_type<vk::subpass_description>::for_elements_of(args...);
 		ci.subpass_count = (primitive::uint32)(primitive::uint) subpass_descriptions.size();
@@ -52,7 +51,7 @@ namespace vk {
 
 		vk::throw_if_error(
 			vkCreateRenderPass(
-				(VkDevice) &device,
+				(VkDevice) & elements::of_type<vk::device&>::for_elements_of(args...),
 				(VkRenderPassCreateInfo*) &ci,
 				nullptr,
 				(VkRenderPass*) &render_pass

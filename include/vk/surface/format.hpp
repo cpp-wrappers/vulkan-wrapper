@@ -1,7 +1,7 @@
 #pragma once
 
-#include "image/format.hpp"
-#include "color_space.hpp"
+#include "../image/format.hpp"
+#include "../color_space.hpp"
 
 namespace vk {
 

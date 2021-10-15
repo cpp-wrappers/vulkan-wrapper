@@ -30,11 +30,11 @@ vk::device& create_device(Args&&... args) {
 	vk::physical_device& physical_device = elements::of_type<vk::physical_device&>::for_elements_of(args...);
 
 	if constexpr(types::count_of_ranges_of_value_type<vk::device_queue_create_info>::equals<1u>::for_types_of<Args...>) {
-		ci.queue_create_info_count = (primitive::uint32)(primitive::uint)elements::range_of_value_type<vk::device_queue_create_info>::for_elements_of(args...).size();
+		ci.queue_create_info_count = (primitive::uint32)(primitive::uint) elements::range_of_value_type<vk::device_queue_create_info>::for_elements_of(args...).size();
 		ci.queue_create_infos = elements::range_of_value_type<vk::device_queue_create_info>::for_elements_of(args...).data();
 	}
 	if constexpr(types::count_of_ranges_of_value_type<vk::enabled_extension_name>::equals<1u>::for_types_of<Args...>) {
-		ci.enabled_extension_count = elements::range_of_value_type<vk::enabled_extension_name>::for_elements_of(args...).size();
+		ci.enabled_extension_count = (primitive::uint32)(primitive::uint) elements::range_of_value_type<vk::enabled_extension_name>::for_elements_of(args...).size();
 		ci.enabled_extension_names = elements::range_of_value_type<vk::enabled_extension_name>::for_elements_of(args...).data();
 	}
 

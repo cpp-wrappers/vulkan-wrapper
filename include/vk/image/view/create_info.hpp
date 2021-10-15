@@ -2,11 +2,12 @@
 
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
-#include <core/named.hpp>
-#include "../headers.hpp"
-#include "format.hpp"
-#include "component_mapping.hpp"
-#include "subresource_range.hpp"
+#include <core/primitive_integer.hpp>
+
+#include "../../headers.hpp"
+#include "../format.hpp"
+#include "../component_mapping.hpp"
+#include "../subresource_range.hpp"
 
 namespace vk {
 
@@ -28,7 +29,7 @@ enum class image_view_type {
 struct image;
 
 struct image_view_create_info {
-	uint_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	const void* next = nullptr;
 	flag_enum<image_view_create_flag> flags{};
 	vk::image& image;

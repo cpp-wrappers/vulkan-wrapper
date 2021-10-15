@@ -1,9 +1,9 @@
 #pragma once
 
-#include "headers.hpp"
-#include "image.hpp"
-#include "ptr_to_ref_like.hpp"
-#include "result.hpp"
+#include "../headers.hpp"
+#include "../image/image.hpp"
+#include "../ptr_to_ref_like.hpp"
+#include "../result.hpp"
 
 namespace vk {
 

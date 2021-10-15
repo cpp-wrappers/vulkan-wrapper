@@ -1,7 +1,7 @@
 #pragma once
 
-#include "headers.hpp"
-#include "swapchain_images_view.hpp"
+#include "../headers.hpp"
+#include "images_view.hpp"
 
 namespace vk {
 

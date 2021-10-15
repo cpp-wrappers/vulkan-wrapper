@@ -1,39 +1,48 @@
 #pragma once
 
-#include <core/named.hpp>
-#include <core/tuple.hpp>
 #include "component_swizzle.hpp"
+
+#include <core/primitive_integer.hpp>
+#include <core/integer.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/count_of_type.hpp>
+#include <core/types/are_contain_type.hpp>
+#include <core/elements/of_type.hpp>
 
 namespace vk {
 
-struct r : named<vk::component_swizzle> {};
-struct g : named<vk::component_swizzle> {};
-struct b : named<vk::component_swizzle> {};
-struct a : named<vk::component_swizzle> {};
+struct r : uint32 {};
+struct g : uint32 {};
+struct b : uint32 {};
+struct a : uint32 {};
 
 struct component_mapping {
-	vk::r r{ vk::component_swizzle::identity };
-	vk::g g{ vk::component_swizzle::identity };
-	vk::b b{ vk::component_swizzle::identity };
-	vk::a a{ vk::component_swizzle::identity };
+	vk::r r{ (primitive::uint32) vk::component_swizzle::identity };
+	vk::g g{ (primitive::uint32) vk::component_swizzle::identity };
+	vk::b b{ (primitive::uint32) vk::component_swizzle::identity };
+	vk::a a{ (primitive::uint32) vk::component_swizzle::identity };
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::r> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::g> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::b> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::a> <= 1 &&
-		types::of<Args...>::template erase_types<
-			vk::r, vk::g, vk::b, vk::a
-		>::empty
+		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::r>::less_or_equals<1u>,
+			types::count_of_type<vk::g>::less_or_equals<1u>,
+			types::count_of_type<vk::b>::less_or_equals<1u>,
+			types::count_of_type<vk::a>::less_or_equals<1u>
+		>::for_types_of<Args...>
 	)
 	component_mapping(Args... args) {
-		tuple{ args... }
-			.get([&](vk::r v){ r = v; })
-			.get([&](vk::g v){ g = v; })
-			.get([&](vk::b v){ b = v; })
-			.get([&](vk::a v){ a = v; })
-		;
+		if constexpr(types::are_contain_type<vk::r>::for_types_of<Args...>)
+			r = elements::of_type<vk::r&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::g>::for_types_of<Args...>)
+			g = elements::of_type<vk::g&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::b>::for_types_of<Args...>)
+			b = elements::of_type<vk::b&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::a>::for_types_of<Args...>)
+			a = elements::of_type<vk::a&>::for_elements_of(args...);
 	};
 };
 

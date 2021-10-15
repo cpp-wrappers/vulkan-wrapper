@@ -1,30 +1,26 @@
 #pragma once
 
-#include <cstdint>
-#include <ranges>
-
-#include "../surface_format.hpp"
+#include <core/integer.hpp>
+#include "../surface/format.hpp"
 
 namespace vk {
 
 struct physical_device;
 struct surface;
 
-void view_physical_device_surface_formats(const vk::physical_device&, vk::surface&, uint32_t, auto&&);
+void view_physical_device_surface_formats(const vk::physical_device&, vk::surface&, uint32, auto&&);
 
-class physical_device_surface_formats_view
-	: public std::ranges::view_interface<physical_device_surface_formats_view>
-{
+class physical_device_surface_formats_view {
 	vk::surface_format* formats;
-	uint32_t count;
+	uint32 count;
 
 	physical_device_surface_formats_view(
 		vk::surface_format* formats,
-		uint32_t count
+		uint32 count
 	) : formats{ formats }, count{ count }
 	{}
 
-	friend void vk::view_physical_device_surface_formats(const vk::physical_device&, vk::surface&, uint32_t, auto&&);
+	friend void vk::view_physical_device_surface_formats(const vk::physical_device&, vk::surface&, uint32, auto&&);
 
 public:
 	vk::surface_format* begin() const {
@@ -32,22 +28,26 @@ public:
 	}
 
 	vk::surface_format* end() const {
-		return formats + count;
+		return formats + (primitive::uint32) count;
+	}
+
+	vk::surface_format& front() const {
+		return *begin();
 	}
 };
 
 void view_physical_device_surface_formats(
 	const vk::physical_device& device,
 	vk::surface& surface,
-	uint32_t count,
+	uint32 count,
 	auto&& f
 ) {
-	vk::surface_format formats[count];
+	vk::surface_format formats[(primitive::uint32) count];
 
 	vkGetPhysicalDeviceSurfaceFormatsKHR(
 		(VkPhysicalDevice)&device,
 		(VkSurfaceKHR)&surface,
-		&count,
+		(primitive::uint32*) &count,
 		(VkSurfaceFormatKHR*) formats
 	);
 
