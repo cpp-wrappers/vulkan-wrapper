@@ -1,4 +1,3 @@
-#include "core/primitive_integer.hpp"
 #if 0
 . `dirname $0`/build_and_run.sh info
 #endif

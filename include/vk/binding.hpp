@@ -1,10 +1,9 @@
 #pragma once
 
-#include <cinttypes>
-#include <core/named.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-struct binding : named<uint32_t>{};
+struct binding : uint32 {};
 
 }

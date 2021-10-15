@@ -1,11 +1,9 @@
 #pragma once
 
-#include <cinttypes>
-#include <core/named.hpp>
-#include "location.hpp"
-#include "binding.hpp"
-#include "format.hpp"
-#include "offset.hpp"
+#include "../../location.hpp"
+#include "../../binding.hpp"
+#include "../../image/format.hpp"
+#include "../../offset.hpp"
 
 namespace vk {
 

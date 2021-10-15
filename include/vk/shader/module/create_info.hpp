@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../headers.hpp"
 #include <core/integer.hpp>
 #include <core/pointer.hpp>
+
+#include "../../headers.hpp"
 
 namespace vk {
 

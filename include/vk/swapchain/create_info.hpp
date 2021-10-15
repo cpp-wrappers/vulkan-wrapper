@@ -7,7 +7,7 @@
 #include "../headers.hpp"
 #include "../surface/surface.hpp"
 #include "../image/format.hpp"
-#include "../color_space.hpp"
+#include "../image/color_space.hpp"
 #include "../extent.hpp"
 #include "../image/usage.hpp"
 #include "../sharing_mode.hpp"

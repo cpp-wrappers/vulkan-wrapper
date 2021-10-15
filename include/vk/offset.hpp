@@ -1,10 +1,9 @@
 #pragma once
 
-#include <cinttypes>
-#include <core/named.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-struct offset : named<uint32_t>{};
+struct offset : uint32 {};
 
 }

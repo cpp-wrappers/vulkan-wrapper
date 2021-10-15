@@ -4,7 +4,7 @@
 #include <core/types/count_of_type.hpp>
 #include <core/elements/of_type.hpp>
 
-#include "../result.hpp"
+#include "../../result.hpp"
 #include "create_info.hpp"
 
 namespace vk {

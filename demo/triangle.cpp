@@ -1,4 +1,3 @@
-#include "core/primitive_integer.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -10,7 +9,7 @@ exit 1
 #include "vk/instance/create.hpp"
 #include "vk/instance/instance.hpp"
 
-#include "vk/shader_module/create.hpp"
+#include "vk/shader/module/create.hpp"
 
 #include "vk/device/create.hpp"
 
