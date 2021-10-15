@@ -42,7 +42,6 @@ public:
 	attachment_description(attachment_description&&) = default;
 	attachment_description& operator = (const attachment_description&) = default;
 
-	// it smells (bad)
 	template<typename... Args>
 	requires(
 		types::of<Args...>::template count_of_same_as_type<vk::format> == 1 &&

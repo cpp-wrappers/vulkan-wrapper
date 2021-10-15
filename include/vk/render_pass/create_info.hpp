@@ -1,11 +1,10 @@
 #pragma once
 
-#include "headers.hpp"
+#include "../headers.hpp"
 #include <core/integer.hpp>
-#include <vulkan/vulkan_core.h>
-#include "attachment_description.hpp"
-#include "subpass_description.hpp"
-#include "subpass_dependency.hpp"
+#include "../attachment_description.hpp"
+#include "../subpass_description.hpp"
+#include "../subpass_dependency.hpp"
 
 namespace vk {
 

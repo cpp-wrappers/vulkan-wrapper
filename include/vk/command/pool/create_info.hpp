@@ -1,10 +1,10 @@
 #pragma once
 
-#include "headers.hpp"
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
-#include <vulkan/vulkan_core.h>
-#include "queue_family_index.hpp"
+
+#include "../../headers.hpp"
+#include "../../queue_family_index.hpp"
 
 namespace vk {
 
@@ -15,7 +15,7 @@ enum class command_pool_create_flag {
 };
 
 struct command_pool_create_info {
-	int_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	uint32 type = (primitive::uint32)VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	const void* next = nullptr;
 	flag_enum<command_pool_create_flag> flags{};
 	vk::queue_family_index queue_family_index;

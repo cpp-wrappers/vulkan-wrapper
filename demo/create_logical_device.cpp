@@ -9,8 +9,13 @@
 //#include "vk/subpass_description.hpp"
 //#include "vk/command_buffer_level.hpp"
 #include "vk/instance/instance.hpp"
-#include "vk/device_queue_create_info.hpp"
+#include "vk/instance/destroy.hpp"
+
 #include "vk/device/create.hpp"
+#include "vk/device/destroy.hpp"
+
+#include "vk/command/pool/create.hpp"
+#include "vk/command/pool/destroy.hpp"
 //#include "vk/command_pool.hpp"
 
 int main() {
@@ -34,11 +39,16 @@ int main() {
 		}
 	);
 
-	/*vk::command_pool& command_pool = device.create_command_pool(
-		vk::queue_family_index{ 0 }
+	vk::command_pool& command_pool = vk::create_command_pool(
+		device,
+		vk::queue_family_index{ 0u }
 	);
 
-	vk::render_pass& render_pass = device.create_render_pass(
+	vk::destroy_command_pool(device, command_pool);
+	vk::destroy_device(device);
+	vk::destroy_instance(instance);
+
+	/*vk::render_pass& render_pass = device.create_render_pass(
 		vk::attachment_description {
 			vk::format::r8_g8_b8_a8_unorm,
 			vk::load_op{ vk::attachment_load_op::clear },

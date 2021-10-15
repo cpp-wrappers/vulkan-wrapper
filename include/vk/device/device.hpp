@@ -1,75 +1,10 @@
 #pragma once
 
-#include <core/tuple.hpp>
-#include <core/storage.hpp>
-#include <vulkan/vulkan_core.h>
-
-#include "headers.hpp"
-#include "device_create_info.hpp"
-#include "result.hpp"
-#include "queue_family_index.hpp"
-#include "command_pool.hpp"
-#include "command_pool_create_info.hpp"
-#include "shader_module.hpp"
-#include "shader_module_create_info.hpp"
-#include "render_pass.hpp"
-#include "render_pass_create_info.hpp"
-#include "attachment_description.hpp"
-#include "subpass_dependency.hpp"
-#include "subpass_description.hpp"
-#include "framebuffer_create_info.hpp"
-#include "extent.hpp"
-#include "framebuffer.hpp"
-#include "swapchain.hpp"
-#include "swapchain_create_info.hpp"
-#include "color_space.hpp"
-#include "image/usage.hpp"
-#include "sharing_mode.hpp"
-#include "surface.hpp"
-#include "image/view_create_info.hpp"
-#include "image/component_mapping.hpp"
-#include "image/subresource_range.hpp"
-#include "vk/image_view.hpp"
-
 namespace vk {
 
 struct device {
 	device() = delete;
 	device(const device&) = delete;
-
-	template<typename... Args>
-	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::queue_family_index> == 1 &&
-		(
-			types::of<Args...>::size - 1
-			-
-			types::of<Args...>::template count_of_same_as_type<vk::command_pool_create_flag>
-		) == 0
-	)
-	vk::command_pool& create_command_pool(Args... args) const {
-		vk::command_pool_create_info ci{};
-
-		tuple{ args... }
-			.get([&](vk::queue_family_index i) {
-				ci.queue_family_index = i;
-			})
-			.get([&](vk::command_pool_create_flag f) {
-				ci.flags.set(f);
-			});
-
-		vk::command_pool* command_pool;
-
-		vk::throw_if_error(
-			vkCreateCommandPool(
-				(VkDevice) this,
-				(VkCommandPoolCreateInfo*) &ci,
-				nullptr,
-				(VkCommandPool*) &command_pool
-			)
-		);
-
-		return *command_pool;
-	}
 
 	template<typename... Args>
 	requires(
