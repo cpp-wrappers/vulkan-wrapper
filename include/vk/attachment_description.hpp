@@ -1,6 +1,11 @@
 #pragma once 
 
 #include <core/flag_enum.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/are_contain_type.hpp>
+
+#include "core/elements/of_type.hpp"
+#include "core/types/count_of_type.hpp"
 #include "headers.hpp"
 #include "image/format.hpp"
 #include "sample_count.hpp"
@@ -44,30 +49,40 @@ public:
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_same_as_type<vk::format> == 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::sample_count> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::load_op> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::store_op> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::stencil_load_op> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::stencil_store_op> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::initial_layout> <= 1 &&
-		types::of<Args...>::template count_of_same_as_type<vk::final_layout> <= 1 &&
-		types::of<Args...>::template erase_same_as_one_of_types<
-			vk::format, vk::sample_count, vk::load_op, vk::store_op,
-			vk::stencil_load_op, vk::stencil_store_op, vk::initial_layout, vk::final_layout
-		>::empty
+		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::format>::equals<1u>,
+			types::count_of_type<vk::sample_count>::less_or_equals<1u>,
+			types::count_of_type<vk::load_op>::less_or_equals<1u>,
+			types::count_of_type<vk::store_op>::less_or_equals<1u>,
+			types::count_of_type<vk::stencil_load_op>::less_or_equals<1u>,
+			types::count_of_type<vk::stencil_store_op>::less_or_equals<1u>,
+			types::count_of_type<vk::initial_layout>::less_or_equals<1u>,
+			types::count_of_type<vk::final_layout>::less_or_equals<1u>
+		>::for_types_of<Args...>
 	)
 	attachment_description(Args... args) {
-		tuple{ args... }
-			.get([&](vk::format f) { format = f; })
-			.get([&](vk::sample_count sc) { samples = sc; })
-			.get([&](vk::load_op op) { load_op = op; })
-			.get([&](vk::store_op op) { store_op = op; })
-			.get([&](vk::stencil_load_op op) { stencil_load_op = op; })
-			.get([&](vk::stencil_store_op op) { stencil_store_op = op; })
-			.get([&](vk::initial_layout il) { initial_layout = il; })
-			.get([&](vk::final_layout fl) { final_layout = fl; })
-		;
+		format = elements::of_type<vk::format&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::sample_count>::for_types_of<Args...>)
+			samples = elements::of_type<vk::sample_count&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::load_op>::for_types_of<Args...>)
+			load_op = elements::of_type<vk::load_op&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::store_op>::for_types_of<Args...>)
+			store_op = elements::of_type<vk::store_op&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::stencil_load_op>::for_types_of<Args...>)
+			stencil_load_op = elements::of_type<vk::stencil_load_op&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::stencil_store_op>::for_types_of<Args...>)
+			stencil_store_op = elements::of_type<vk::stencil_store_op&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::initial_layout>::for_types_of<Args...>)
+			initial_layout = elements::of_type<vk::initial_layout&>::for_elements_of(args...);
+
+		if constexpr(types::are_contain_type<vk::final_layout>::for_types_of<Args...>)
+			final_layout = elements::of_type<vk::final_layout&>::for_elements_of(args...);
 	}
 };
 

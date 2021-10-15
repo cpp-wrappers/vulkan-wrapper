@@ -5,7 +5,7 @@
 #include "vk/image/format.hpp"
 #include "vk/image/layout.hpp"
 #include "vk/queue_family_index.hpp"
-#include "vk/render_pass.hpp"
+//#include "vk/render_pass.hpp"
 //#include "vk/subpass_description.hpp"
 //#include "vk/command_buffer_level.hpp"
 #include "vk/instance/instance.hpp"
@@ -16,6 +16,8 @@
 
 #include "vk/command/pool/create.hpp"
 #include "vk/command/pool/destroy.hpp"
+
+#include "vk/render_pass/create.hpp"
 //#include "vk/command_pool.hpp"
 
 int main() {
@@ -44,19 +46,24 @@ int main() {
 		vk::queue_family_index{ 0u }
 	);
 
+	vk::render_pass& render_pass = vk::create_render_pass(
+		device,
+		array {
+			vk::attachment_description {
+				vk::format::r8_g8_b8_a8_unorm,
+				vk::load_op{ vk::attachment_load_op::clear },
+				vk::store_op{ vk::attachment_store_op::store },
+				vk::final_layout{ vk::image_layout::color_attachment_optimal }
+			}
+		},
+		array {
+			vk::subpass_description {}
+		}
+	);
+
 	vk::destroy_command_pool(device, command_pool);
 	vk::destroy_device(device);
 	vk::destroy_instance(instance);
 
-	/*vk::render_pass& render_pass = device.create_render_pass(
-		vk::attachment_description {
-			vk::format::r8_g8_b8_a8_unorm,
-			vk::load_op{ vk::attachment_load_op::clear },
-			vk::store_op{ vk::attachment_store_op::store },
-			vk::final_layout{ vk::image_layout::color_attachment_optimal }
-		},
-		vk::subpass_description {}
-	);
-
-	std::cout << "done." << std::endl;*/
+	//std::cout << "done." << std::endl;*/
 }

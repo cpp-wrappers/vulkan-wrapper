@@ -1,25 +1,25 @@
 #pragma once
 
-#include <cstdint>
-
 #include <core/flag_enum.hpp>
-#include <core/named.hpp>
-#include <core/tuple.hpp>
+#include <core/integer.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/count_of_type.hpp>
 
+#include "core/elements/of_type.hpp"
 #include "pipeline/stage.hpp"
 #include "access.hpp"
 #include "dependency.hpp"
 
 namespace vk {
 
-struct src_subpass : named<std::uint32_t> {};
-struct dst_subpass : named<std::uint32_t> {};
+struct src_subpass : uint32 {};
+struct dst_subpass : uint32 {};
 
-struct src_stages : named<flag_enum<vk::pipeline_stage>> {};
-struct dst_stages : named<flag_enum<vk::pipeline_stage>> {};
+struct src_stages : flag_enum<vk::pipeline_stage> {};
+struct dst_stages : flag_enum<vk::pipeline_stage> {};
 
-struct src_access : named<flag_enum<vk::access>> {};
-struct dst_access : named<flag_enum<vk::access>> {};
+struct src_access : flag_enum<vk::access> {};
+struct dst_access : flag_enum<vk::access> {};
 
 class subpass_dependency {
 	vk::src_subpass src_subpass;
@@ -33,28 +33,22 @@ public:
 
 	template<typename... Args>
 	requires(
-		types::of<Args...>::template count_of_type<vk::src_subpass> == 1 &&
-		types::of<Args...>::template count_of_type<vk::dst_subpass> == 1 &&
-		types::of<Args...>::template count_of_type<vk::src_stages> == 1 &&
-		types::of<Args...>::template count_of_type<vk::dst_stages> == 1 &&
-		types::of<Args...>::template count_of_type<vk::src_access> == 1 &&
-		types::of<Args...>::template count_of_type<vk::dst_access> == 1 &&
-		types::of<Args...>::template erase_types<
-			vk::src_subpass, vk::dst_subpass, vk::src_stages,
-			vk::dst_stages, vk::src_access, vk::dst_access,
-			vk::dependency
-		>::empty
+		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::src_subpass>::equals<1u>,
+			types::count_of_type<vk::dst_subpass>::equals<1u>,
+			types::count_of_type<vk::src_stages>::equals<1u>,
+			types::count_of_type<vk::dst_stages>::equals<1u>,
+			types::count_of_type<vk::src_access>::equals<1u>,
+			types::count_of_type<vk::dst_access>::equals<1u>
+		>::for_types_of<Args...>
 	)
 	subpass_dependency(Args... args) {
-		tuple{ args... }
-			.get([&](vk::src_subpass s) { src_subpass = s; })
-			.get([&](vk::dst_subpass d) { dst_subpass = d; })
-			.get([&](vk::src_stages s) { src_stages = s; })
-			.get([&](vk::dst_stages d) { dst_stages = d; })
-			.get([&](vk::src_access s) { src_access = s; })
-			.get([&](vk::dst_access d) { dst_access = d; })
-			.get([&](vk::dependency f) { dependency_flags.set(f); })
-		;
+		src_subpass = elements::of_type<vk::src_subpass&>::for_elements_of(args...);
+		dst_subpass = elements::of_type<vk::dst_subpass&>::for_elements_of(args...);
+		src_stages = elements::of_type<vk::src_stages&>::for_elements_of(args...);
+		dst_stages = elements::of_type<vk::dst_stages&>::for_elements_of(args...);
+		src_access = elements::of_type<vk::src_access&>::for_elements_of(args...);
+		dst_access = elements::of_type<vk::dst_access&>::for_elements_of(args...);
 	}
 };
 

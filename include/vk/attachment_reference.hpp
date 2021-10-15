@@ -1,13 +1,12 @@
 #pragma once
 
-#include <cstdint>
-#include <vulkan/vulkan_core.h>
 #include "image/layout.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
 struct attachment_reference {
-	uint32_t attachment;
+	uint32 attachment;
 	vk::image_layout layout;
 };
 

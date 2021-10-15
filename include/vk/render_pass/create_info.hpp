@@ -1,22 +1,24 @@
 #pragma once
 
-#include "../headers.hpp"
 #include <core/integer.hpp>
+
+#include "../headers.hpp"
 #include "../attachment_description.hpp"
 #include "../subpass_description.hpp"
 #include "../subpass_dependency.hpp"
+#include "core/primitive_integer.hpp"
 
 namespace vk {
 
 struct render_pass_create_info {
-	uint_with_size_of<VkStructureType> type = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	const void* next = nullptr;
-	uint_with_size_of<VkRenderPassCreateFlags> flags = 0;
-	uint32_t attachment_count = 0;
+	uint32 type = (primitive::uint32)VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	const void* next{};
+	uint32 flags{};
+	uint32 attachment_count{};
 	const vk::attachment_description* attachments = nullptr;
-	uint32_t subpass_count = 0;
+	uint32 subpass_count{};
 	const vk::subpass_description* subpasses = nullptr;
-	uint32_t dependency_count = 0;
+	uint32 dependency_count{};
 	const vk::subpass_dependency* dependencies = nullptr;
 };
 
