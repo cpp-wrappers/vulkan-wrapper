@@ -11,7 +11,7 @@ struct vertex_input_attribute_description {
 	vk::location location;
 	vk::binding binding;
 	vk::format format;
-	vk::offset offset;
+	vk::offset<1u> offset;
 };
 
 }

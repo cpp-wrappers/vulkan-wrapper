@@ -4,11 +4,11 @@
 #include <core/integer.hpp>
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_type.hpp>
+#include <core/elements/of_type.hpp>
 
-#include "core/elements/of_type.hpp"
-#include "pipeline/stage.hpp"
-#include "access.hpp"
-#include "dependency.hpp"
+#include "../pipeline/stage.hpp"
+#include "../access.hpp"
+#include "../dependency.hpp"
 
 namespace vk {
 

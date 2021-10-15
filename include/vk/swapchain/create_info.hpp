@@ -13,7 +13,7 @@
 #include "../sharing_mode.hpp"
 #include "../queue_family_index.hpp"
 #include "../surface/transform.hpp"
-#include "../composite_alpha.hpp"
+#include "../surface/composite_alpha.hpp"
 
 namespace vk {
 

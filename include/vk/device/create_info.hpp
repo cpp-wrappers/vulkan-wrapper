@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../headers.hpp"
-#include "../device_queue_create_info.hpp"
+#include "device_queue_create_info.hpp"
 #include "../physical_device/features.hpp"
 #include "vk/enabled_extension_name.hpp"
 #include <core/integer.hpp>
