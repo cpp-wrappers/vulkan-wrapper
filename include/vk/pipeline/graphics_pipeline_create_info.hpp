@@ -10,6 +10,10 @@
 #include "tesselation_state_create_info.hpp"
 #include "viewport_state_create_info.hpp"
 #include "rasterization_state_create_info.hpp"
+#include "multisample_state_create_info.hpp"
+#include "depth_stencil_state_create_info.hpp"
+#include "color_blend_state_create_info.hpp"
+#include "dynamic_state_create_info.hpp"
 
 namespace vk {
 
@@ -36,6 +40,10 @@ namespace vk {
 		ray_tracing_allow_motion = VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV
 	};
 
+	struct pipeline_layout;
+	struct render_pass;
+	struct pipeline;
+
 	struct graphics_pipeline_create_info {
 		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
@@ -47,6 +55,15 @@ namespace vk {
 		const vk::pipeline_tesselation_state_create_info* tesselation_state;
 		const vk::pipeline_viewport_state_create_info* viewport_state;
 		const vk::pipeline_rasterization_state_create_info* rasterization_state;
+		const vk::pipeline_multisample_state_create_info* multisample_state;
+		const vk::pipeline_depth_stencil_state_create_info* depth_stencil_state;
+		const vk::pipeline_color_blend_state_create_info* color_blend_state;
+		const vk::pipeline_dynamic_state_create_info* dynamic_state;
+		vk::pipeline_layout& layout;
+		vk::render_pass& render_pass;
+		uint32 subpass;
+		vk::pipeline* base_pipeline_handle;
+		int32 base_pipeline_index;
 	};
 }
 

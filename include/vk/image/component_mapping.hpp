@@ -1,13 +1,13 @@
 #pragma once
 
-#include "component_swizzle.hpp"
-
 #include <core/primitive_integer.hpp>
 #include <core/integer.hpp>
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_type.hpp>
 #include <core/types/are_contain_type.hpp>
 #include <core/elements/of_type.hpp>
+
+#include "component_swizzle.hpp"
 
 namespace vk {
 
