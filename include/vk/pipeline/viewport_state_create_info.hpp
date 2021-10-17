@@ -14,7 +14,7 @@ namespace vk {
 		uint32 flags;
 		uint32 viewport_count;
 		const vk::viewport* viewport;
-		uint32 scissro_count;
+		uint32 scissor_count;
 		const vk::rect2d* scissors;
 	};
 }

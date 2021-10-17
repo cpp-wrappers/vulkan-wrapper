@@ -48,7 +48,7 @@ namespace vk {
 		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
 		flag_enum<pipeline_create_flag> flags;
-		uint32 stage_flags;
+		uint32 stage_count;
 		const vk::pipeline_shader_stage_create_info* stages;
 		const vk::pipeline_vertex_input_state_create_info* vertex_input_state;
 		const vk::pipeline_input_assembly_state_create_info* input_assembly_state;
@@ -62,7 +62,7 @@ namespace vk {
 		vk::pipeline_layout& layout;
 		vk::render_pass& render_pass;
 		uint32 subpass;
-		vk::pipeline* base_pipeline_handle;
+		vk::pipeline* base_pipeline;
 		int32 base_pipeline_index;
 	};
 }

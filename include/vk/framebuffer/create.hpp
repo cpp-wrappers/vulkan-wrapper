@@ -16,6 +16,7 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::device&>::equals<1u>,
 			types::count_of_type<vk::render_pass&>::equals<1u>,
 			types::count_of_type<vk::attachment_count>::remove_reference::equals<1u>,
 			types::count_of_type<vk::attachments>::remove_reference::equals<1u>,
@@ -24,7 +25,7 @@ namespace vk {
 	)
 	vk::framebuffer& create_framebuffer(Args&&... args) {
 		vk::framebuffer_create_info ci{
-			.render_pass = elements::of_type<vk::render_pass&>::for_elements_of(args...),
+			.render_pass = & elements::of_type<vk::render_pass&>::for_elements_of(args...),
 			.attachment_count = elements::of_type<vk::attachment_count&>::for_elements_of(args...),
 			.attachments = elements::of_type<vk::attachments&>::for_elements_of(args...)
 		};
@@ -36,6 +37,7 @@ namespace vk {
 		ci.layers = extent.depth();
 
 		vk::framebuffer* framebuffer;
+		
 		vk::throw_if_error(
 			vkCreateFramebuffer(
 				(VkDevice) & elements::of_type<vk::device&>::for_elements_of(args...),

@@ -21,6 +21,7 @@ namespace vk {
 			types::count_of_type<vk::device&>::equals<1u>,
 			types::count_of_type<vk::image&>::equals<1u>,
 			types::count_of_type<vk::format>::remove_reference::equals<1u>,
+			types::count_of_type<vk::image_view_type>::remove_reference::equals<1u>,
 			types::count_of_type<vk::component_mapping>::remove_reference::equals<1u>,
 			types::count_of_type<vk::image_subresource_range>::remove_reference::equals<1u>
 		>::for_types_of<Args...>

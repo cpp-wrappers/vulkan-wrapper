@@ -3,14 +3,14 @@
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 
-#include "../device_queue_create_info.hpp"
+#include "queue_create_info.hpp"
 #include "../enabled_extension_name.hpp"
 #include "core/elements/of_type.hpp"
 #include "core/elements/range_of_value_type.hpp"
 #include "core/types/count_of_type.hpp"
 #include "create_info.hpp"
 #include "../result.hpp"
-#include "vk/physical_device/physical_device.hpp"
+#include "../physical_device/physical_device.hpp"
 
 namespace vk {
 

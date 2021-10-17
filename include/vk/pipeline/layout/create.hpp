@@ -17,6 +17,7 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::device&>::equals<1u>,
 			types::count_of_ranges_of_value_type<vk::descriptor_set_layout>::less_or_equals<1u>,
 			types::count_of_ranges_of_value_type<vk::push_constant_range>::less_or_equals<1u>
 		>::for_types_of<Args...>

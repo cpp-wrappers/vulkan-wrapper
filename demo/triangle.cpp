@@ -1,6 +1,12 @@
+#include "vk/framebuffer/create.hpp"
+#include "vk/framebuffer/create_info.hpp"
+#include "vk/image/aspect.hpp"
+#include "vk/image/component_mapping.hpp"
+#include "vk/image/component_swizzle.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
+glslangValidator -e main -o ../build/triangle.frag.spv -V triangle.frag
 bash build_and_run.sh triangle "-lglfw"
 popd
 exit 1
@@ -8,16 +14,17 @@ exit 1
 
 #include "vk/instance/create.hpp"
 #include "vk/instance/instance.hpp"
-
 #include "vk/shader/module/create.hpp"
-
 #include "vk/device/create.hpp"
-
 #include "vk/swapchain/create.hpp"
-
+#include "vk/swapchain/swapchain.hpp"
+#include "vk/framebuffer/create.hpp"
 #include "vk/render_pass/create.hpp"
-
 #include "vk/surface/format.hpp"
+#include "vk/pipeline/create.hpp"
+#include "vk/image/view/create.hpp"
+
+#include "vk/pipeline/layout/create.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -136,7 +143,7 @@ int main() {
 		device,
 		array{
 			vk::attachment_description {
-				vk::format::r8_g8_b8_a8_unorm,
+				surface_format.format,
 				vk::load_op{ vk::attachment_load_op::clear },
 				vk::store_op{ vk::attachment_store_op::store },
 				vk::final_layout{ vk::image_layout::color_attachment_optimal }
@@ -164,6 +171,96 @@ int main() {
 		vk::clipped{ 1u },
 		vk::surface_transform::identity,
 		vk::composite_alpha::opaque
+	);
+
+	vk::pipeline_color_blend_attachment_state attachment_state {
+		.color_write_mask{ vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
+	};
+
+	vk::shader_module& vertex_module = read_shader_module(device, "triangle.vert.spv");
+	vk::shader_module& fragment_module = read_shader_module(device, "triangle.frag.spv");
+
+	vk::pipeline_shader_stage_create_info vertex {
+		.stage = vk::shader_stage::vertex,
+		.module = vertex_module,
+		.entry_point_name = "main"
+	};
+
+	vk::pipeline_shader_stage_create_info fragment {
+		.stage = vk::shader_stage::fragment,
+		.module = fragment_module,
+		.entry_point_name = "main"
+	};
+
+	array dynamics {
+		vk::dynamic_state::viewport,
+		vk::dynamic_state::scissor
+	};
+
+	vk::pipeline_layout& pipeline_layout = vk::create_pipeline_layout(device);
+
+	vk::create_graphics_pipeline(
+		device,
+		render_pass,
+		vk::subpass{ 0u },
+		pipeline_layout,
+		array<vk::pipeline_shader_stage_create_info, 2u> { vertex, fragment },
+		vk::pipeline_vertex_input_state_create_info {},
+		vk::pipeline_input_assembly_state_create_info {
+			.topology = vk::primitive_topology::triangle_list
+		},
+		vk::pipeline_rasterization_state_create_info {
+			.cull_mode = vk::cull_mode::back,
+			.front_face = vk::front_face::clockwise,
+			.line_width = 1.0
+		},
+		vk::pipeline_color_blend_state_create_info {
+			.attachment_count = 1u,
+			.attachments = &attachment_state
+		},
+		vk::pipeline_viewport_state_create_info {
+			.viewport_count = 1u,
+			.scissor_count = 1u
+		},
+		vk::pipeline_depth_stencil_state_create_info{},
+		vk::pipeline_multisample_state_create_info {
+			.rasterization_samples = vk::sample_count{ 1u }
+		},
+		vk::pipeline_dynamic_state_create_info {
+			.dynamic_state_count = (primitive::uint32)(primitive::uint) dynamics.size(),
+			.dynamic_states = dynamics.data()
+		}
+	);
+
+	vk::image_view* first_image_view;
+	swapchain.view_images(device, 1u, [&](auto& images_view) {
+		first_image_view = & vk::create_image_view(
+			device,
+			images_view.front(),
+			surface_format.format,
+			vk::image_subresource_range {
+				vk::image_aspect_flag{ vk::image_aspect::color },
+				vk::level_count{ 1u },
+				vk::layer_count{ 1u }
+			},
+			vk::component_mapping {
+				vk::r { (primitive::uint32) vk::component_swizzle::r },
+				vk::g { (primitive::uint32) vk::component_swizzle::g },
+				vk::b { (primitive::uint32) vk::component_swizzle::b },
+				vk::a { (primitive::uint32) vk::component_swizzle::a }
+			},
+			vk::image_view_type::two_d
+		);
+	});
+	
+	array attachments{ first_image_view };
+
+	vk::framebuffer& framebuffer = vk::create_framebuffer(
+		device,
+		render_pass,
+		vk::attachment_count{ 1u },
+		vk::attachments{ (const vk::image_view**)attachments.data() },
+		vk::extent<3u> { 640u, 480u, 1u }
 	);
 
 	while (!glfwWindowShouldClose(window)) {

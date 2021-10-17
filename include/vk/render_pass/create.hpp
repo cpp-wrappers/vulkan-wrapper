@@ -7,8 +7,6 @@
 #include <core/types/are_contain_range_of_value_type.hpp>
 
 #include "../attachment_description.hpp"
-#include "../subpass_dependency.hpp"
-#include "../subpass_description.hpp"
 #include "../result.hpp"
 #include "create_info.hpp"
 

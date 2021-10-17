@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/forward.hpp>
+
 #include "../headers.hpp"
 #include "images_view.hpp"
 
@@ -13,10 +15,11 @@ struct swapchain {
 
 	template<typename F>
 	void view_images(vk::device& device, uint32_t count, F&& f) const {
-		view_swapchain_images(
-			(VkDevice)&device,
-			(VkSwapchainKHR)this,
-			std::forward<F>(f)
+		vk::view_swapchain_images(
+			device,
+			*this,
+			count,
+			forward<F>(f)
 		);
 	}
 

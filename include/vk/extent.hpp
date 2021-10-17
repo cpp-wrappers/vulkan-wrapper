@@ -22,7 +22,7 @@ template<>
 struct extent<3u> : array<uint32, 3u> {
 	uint32& width() { return (*this)[0u]; }
 	uint32& height() { return (*this)[1u]; }
-	uint32& depth() { return (*this)[3u]; }
+	uint32& depth() { return (*this)[2u]; }
 };
 
 }

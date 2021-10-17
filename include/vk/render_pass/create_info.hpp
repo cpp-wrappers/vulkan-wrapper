@@ -4,8 +4,8 @@
 
 #include "../headers.hpp"
 #include "../attachment_description.hpp"
-#include "../subpass_description.hpp"
-#include "../subpass_dependency.hpp"
+#include "../render_pass/subpass_description.hpp"
+#include "../render_pass/subpass_dependency.hpp"
 #include "core/primitive_integer.hpp"
 
 namespace vk {
