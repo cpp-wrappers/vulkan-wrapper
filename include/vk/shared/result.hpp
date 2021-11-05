@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/wrapper/of_integer.hpp"
 #include "headers.hpp"
 
 namespace vk {
@@ -63,11 +64,17 @@ namespace vk {
 	}
 } error_category;*/
 
-inline void throw_if_error(int result) {
-	if(result < 0) {
-		throw result;
-		//throw std::system_error{ result, error_category };
+	struct result : wrapper::of_integer<uint32, struct vk_result> {
+		bool success() const {
+			return (uint32) *this == VK_SUCCESS;
+		}
+	};
+
+	inline void throw_if_error(result result) {
+		if((uint32)result < 0) {
+			throw result;
+			//throw std::system_error{ result, error_category };
+		}
 	}
-}
 
 } // vk

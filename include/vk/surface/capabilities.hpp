@@ -2,8 +2,8 @@
 
 #include <core/flag_enum.hpp>
 
-#include "../headers.hpp"
-#include "../extent.hpp"
+#include "../shared/headers.hpp"
+#include "../shared/extent.hpp"
 #include "transform.hpp"
 #include "../surface/composite_alpha.hpp"
 #include "../image/usage.hpp"

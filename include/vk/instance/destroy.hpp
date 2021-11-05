@@ -1,16 +1,15 @@
 #pragma once
 
-#include "../headers.hpp"
+#include "../shared/headers.hpp"
 
-namespace vk {
+namespace vk::internal {
+	struct instance;
 
-class instance;
-
-inline void destroy_instance(vk::instance& instance) {
-	vkDestroyInstance(
-		(VkInstance)&instance,
-		nullptr
-	);
-}
+	inline void destroy_instance(vk::internal::instance* instance) {
+		vkDestroyInstance(
+			(VkInstance) instance,
+			nullptr
+		);
+	}
 
 }

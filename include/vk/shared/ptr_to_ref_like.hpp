@@ -20,7 +20,7 @@ struct ptr_to_ref_like {
 	}
 
 	auto& operator += (uint n) {
-		ptr += (primitive::uint)n;
+		ptr += n;
 		return *this;
 	}
 

@@ -1,8 +1,3 @@
-#include "vk/framebuffer/create.hpp"
-#include "vk/framebuffer/create_info.hpp"
-#include "vk/image/aspect.hpp"
-#include "vk/image/component_mapping.hpp"
-#include "vk/image/component_swizzle.hpp"
 #if 0
 pushd `dirname $0`
 glslangValidator -e main -o ../build/triangle.vert.spv -V triangle.vert
@@ -12,28 +7,20 @@ popd
 exit 1
 #endif
 
-#include "vk/instance/create.hpp"
-#include "vk/instance/instance.hpp"
-#include "vk/shader/module/create.hpp"
-#include "vk/device/create.hpp"
-#include "vk/swapchain/create.hpp"
-#include "vk/swapchain/swapchain.hpp"
-#include "vk/framebuffer/create.hpp"
-#include "vk/render_pass/create.hpp"
-#include "vk/surface/format.hpp"
-#include "vk/pipeline/create.hpp"
-#include "vk/image/view/create.hpp"
+#include "vk/instance.hpp"
+#include "vk/device.hpp"
+#include "vk/shader_module.hpp"
 
-#include "vk/pipeline/layout/create.hpp"
+#include <core/array.hpp>
 
 #include <GLFW/glfw3.h>
 
 #include <stdio.h>
 
-vk::shader_module& read_shader_module(vk::device& device, const char* path) {
+vk::shader_module read_shader_module(vk::device& device, const char* path) {
 	FILE* f = fopen(path, "r");
 	fseek(f, 0, SEEK_END);
-	primitive::uint size = ftell(f);
+	uint size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
 	char src[size];
@@ -41,8 +28,7 @@ vk::shader_module& read_shader_module(vk::device& device, const char* path) {
 	fread(src, 1, size, f);
 	fclose(f);
 
-	return create_shader_module(
-		device,
+	return device.create_shader_module(
 		vk::code_size{ (uint32_t) size },
 		vk::code{ (uint32_t*) src }
 	);
@@ -63,26 +49,26 @@ int main() {
 	}
 
 	printf("required extensions:\n");
-	primitive::uint32 count;
+	uint32 count;
 	const char** extensions = glfwGetRequiredInstanceExtensions(&count);
 	while(count > 0) {
 		printf("%s", extensions[--count]);
 	}
 
-	vk::instance& instance = vk::create_instance(
+	vk::instance instance {
 		array {
-			vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" }
+			vk::layer_name{ "VK_LAYER_KHRONOS_validation" }
 		},
 		array {
-			vk::enabled_extension_name{ extensions[0] },
-			vk::enabled_extension_name{ extensions[1] } // TODO
+			vk::extension_name{ extensions[0] },
+			vk::extension_name{ extensions[1] } // TODO
 		}
-	);
+	};
 
 	float ps[1]{ 1.0F };
 
-	vk::physical_device& physical_device = instance.first_physical_device();
-	vk::device& device = vk::create_device(
+	vk::physical_device& physical_device = instance.get_first_physical_device();
+	/*vk::device& device = vk::create_device(
 		physical_device,
 		array {
 			vk::device_queue_create_info {
@@ -96,7 +82,7 @@ int main() {
 				"VK_KHR_swapchain"
 			}
 		}
-	);
+	);*/
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window;
@@ -112,7 +98,7 @@ int main() {
 		return -1;
 	}
 
-	vk::surface* surface_ptr;
+	/*vk::surface* surface_ptr;
 	if(glfwCreateWindowSurface(
 		(VkInstance)&instance,
 		window,
@@ -261,7 +247,7 @@ int main() {
 		vk::attachment_count{ 1u },
 		vk::attachments{ (const vk::image_view**)attachments.data() },
 		vk::extent<3u> { 640u, 480u, 1u }
-	);
+	);*/
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../headers.hpp"
+#include "../shared/headers.hpp"
 #include <core/integer.hpp>
 
 namespace vk {
@@ -66,13 +66,13 @@ struct physical_device_limits {
 	uint32 mipmap_precision_bits;
 	uint32 max_draw_indexed_index_value;
 	uint32 max_draw_indirect_count;
-	float    max_sampler_lod_bias;
-	float    max_sampler_anisotropy;
+	float max_sampler_lod_bias;
+	float max_sampler_anisotropy;
 	uint32 max_viewports;
 	uint32 max_viewport_dimensions[2];
-	float    viewport_bounds_range[2];
+	float viewport_bounds_range[2];
 	uint32 viewport_sub_pixel_bits;
-	size_t   min_memory_map_alignment;
+	uint min_memory_map_alignment;
 	uint64 min_texel_buffer_offset_alignment;
 	uint64 min_uniform_buffer_offset_alignment;
 	uint64 min_storage_buffer_offset_alignment;

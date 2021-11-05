@@ -2,17 +2,14 @@
 . `dirname $0`/build_and_run.sh info
 #endif
 
-#include "vk/instance/instance.hpp"
-#include "vk/physical_device/physical_device.hpp"
-#include "vk/layer_properties_view.hpp"
+#include "vk/instance.hpp"
+#include "vk/physical_device.hpp"
 
 #include <stdio.h>
 #include <string.h>
+#include <core/number.hpp>
 
 static uint tabs = 0u;
-
-template<typename T>
-void print_atom(T val);
 
 void print_atom(char str) {
 	putc(str, stdout);
@@ -26,30 +23,20 @@ void print_atom(char* str) {
 	fwrite(str, 1, strlen(str), stdout);
 }
 
-template<integer I>
+template<unsigned_integer I>
 void print_atom(I i) {
-	I powered = 1u;
-
-	auto i_copy = i;
-	while((i_copy /= 10u) > 1u) {
-		powered *= 10u;
-	}
-
-	while(powered > 0u) {
-		uint d = (i / powered) % 10u;
-		print_atom((char)((primitive::uint) d + '0'));
-		powered /= 10u;
-	}
+	for_each_digit_in_number(number{ i }, base{ 10 }, [](uint digit) {
+		print_atom(char(digit + '0'));
+	});
 }
 
-void print_atom(primitive::uint32 i) { return print_atom(uint32{ i }); }
 void print_atom(bool b) {
 	if(b) print_atom("true");
 	else print_atom("false");
 }
 
 void print(auto... vs) {
-	for(primitive::uint i = 0; i < (primitive::uint)tabs; ++i) print_atom((char)'\t');
+	for(uint i = 0; i < tabs; ++i) print_atom((char) '\t');
 	(print_atom(vs), ... );
 }
 
@@ -87,19 +74,18 @@ void object_block(auto name, auto f) {
 }
 
 int main() {
-	vk::instance& i = vk::create_instance(
+	vk::instance i {
 		vk::application_info {
 			vk::api_version {
-				vk::major{ 1u },
-				vk::minor{ 0u }
+				vk::major{ 1 }, vk::minor{ 0 }
 			}
 		},
-		array{ vk::enabled_layer_name{ "VK_LAYER_KHRONOS_validation" } }
-	);
+		array{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } }
+	};
 
 	array_block("physical devices", [&]() {
 		i.for_each_physical_device([](vk::physical_device& device) {
-			auto props = device.properties();
+			auto props = device.get_properties();
 
 			println("api version: ",
 				props.api_version.variant, ".",
@@ -130,7 +116,7 @@ int main() {
 			println("name: ", props.name);
 
 			array_block("queue family properties", [&]{
-				device.for_each_queue_family_properties([](auto& props) {
+				device.for_each_queue_family_properties([](auto props) {
 					object_block([&]{
 						println("count: ", props.count);
 						println(
@@ -148,7 +134,7 @@ int main() {
 			});
 
 			array_block("device extensions properties", [&] {
-				device.for_each_extension_properties([](auto& props) {
+				device.for_each_extension_properties([](auto props) {
 					object_block([&]{
 						println("name: ", props.name);
 						println("spec version: ", props.spec_version);
@@ -157,8 +143,8 @@ int main() {
 			});
 		});
 
-		array_block("layers", [&]{
-			vk::for_each_layer_properties([](auto& props) {
+		/*array_block("layers", [&]{
+			vk::for_each_layer_properties([](auto props) {
 				object_block([&]{
 					println("name: ", props.name);
 					println("spec version: ", props.spec_version);
@@ -166,6 +152,6 @@ int main() {
 					println("description: ", props.description);
 				});
 			});
-		});
+		});*/
 	});
 }
