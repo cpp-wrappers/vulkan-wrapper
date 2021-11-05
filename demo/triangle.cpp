@@ -9,7 +9,9 @@ exit 1
 
 #include "vk/instance.hpp"
 #include "vk/device.hpp"
+#include "vk/physical_device.hpp"
 #include "vk/shader_module.hpp"
+#include "vk/surface.hpp"
 
 #include <core/array.hpp>
 
@@ -29,8 +31,8 @@ vk::shader_module read_shader_module(vk::device& device, const char* path) {
 	fclose(f);
 
 	return device.create_shader_module(
-		vk::code_size{ (uint32_t) size },
-		vk::code{ (uint32_t*) src }
+		vk::code_size{ (uint32) size },
+		vk::code{ (uint32*) src }
 	);
 }
 
@@ -52,10 +54,11 @@ int main() {
 	uint32 count;
 	const char** extensions = glfwGetRequiredInstanceExtensions(&count);
 	while(count > 0) {
-		printf("%s", extensions[--count]);
+		printf("%s\n", extensions[--count]);
 	}
+	fflush(stdout);
 
-	vk::instance instance {
+	vk::instance instance = vk::create_instance(
 		array {
 			vk::layer_name{ "VK_LAYER_KHRONOS_validation" }
 		},
@@ -63,26 +66,27 @@ int main() {
 			vk::extension_name{ extensions[0] },
 			vk::extension_name{ extensions[1] } // TODO
 		}
-	};
+	);
 
 	float ps[1]{ 1.0F };
 
 	vk::physical_device& physical_device = instance.get_first_physical_device();
-	/*vk::device& device = vk::create_device(
+
+	vk::device device = vk::create_device(
 		physical_device,
 		array {
-			vk::device_queue_create_info {
+			vk::queue_create_info {
 				vk::queue_family_index{ 0u },
 				vk::queue_count{ 1u },
 				vk::queue_priorities{ ps }
 			}
 		},
 		array {
-			vk::enabled_extension_name {
+			vk::extension_name {
 				"VK_KHR_swapchain"
 			}
 		}
-	);*/
+	);
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window;
@@ -98,12 +102,13 @@ int main() {
 		return -1;
 	}
 
-	/*vk::surface* surface_ptr;
+	VkSurfaceKHR* surface_ptr;
+
 	if(glfwCreateWindowSurface(
-		(VkInstance)&instance,
+		*((VkInstance*) &instance),
 		window,
 		nullptr,
-		(VkSurfaceKHR*)&surface_ptr
+		surface_ptr
 	) >= 0) {
 		printf("created surface\n");
 	}
@@ -112,7 +117,7 @@ int main() {
 		return -1;
 	}
 
-	vk::surface& surface = *surface_ptr;
+	vk::surface surface{ *surface_ptr, instance };
 
 	if(!physical_device.get_surface_support(vk::queue_family_index{ 0u }, surface)) {
 		fprintf(stderr, "surface is not supported by physical device, queue family index 0\n");
@@ -121,11 +126,11 @@ int main() {
 
 	vk::surface_format surface_format;
 
-	physical_device.view_surface_formats(*surface_ptr, [&](auto& formats) {
-		surface_format = formats.front();
+	physical_device.view_surface_formats(surface, [&](auto formats) {
+		surface_format = formats[0];
 	});
 
-	vk::render_pass& render_pass = vk::create_render_pass(
+	/*vk::render_pass& render_pass = vk::create_render_pass(
 		device,
 		array{
 			vk::attachment_description {

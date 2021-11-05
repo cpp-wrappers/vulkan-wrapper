@@ -16,23 +16,23 @@ namespace vk::internal {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::internal::device>::equals<1u>,
+			types::count_of_type<vk::internal::device*>::equals<1u>,
 			types::count_of_type<vk::code_size>::equals<1u>,
 			types::count_of_type<vk::code>::equals<1u>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::internal::shader_module*>
-	create_shader_module(const Args&... args) {
+	create_shader_module(Args... args) {
 		vk::shader_module_create_info ci {
-			.code_size = elements::of_type<const vk::code_size&>::for_elements_of(args...),
-			.code = elements::of_type<const vk::code&>::for_elements_of(args...)
+			.code_size = elements::of_type<vk::code_size&>::for_elements_of(args...),
+			.code = elements::of_type<vk::code&>::for_elements_of(args...)
 		};
 		
 		vk::internal::shader_module* shader_module;
 
 		vk::result result {
 			(uint32) vkCreateShaderModule(
-				(VkDevice) & elements::of_type<const vk::internal::device&>::for_elements_of(args...),
+				(VkDevice) elements::of_type<vk::internal::device*&>::for_elements_of(args...),
 				(VkShaderModuleCreateInfo*) &ci,
 				nullptr,
 				(VkShaderModule*) &shader_module

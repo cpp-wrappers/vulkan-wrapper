@@ -2,8 +2,8 @@
 
 namespace vk {
 
-struct render_pass {
+	class render_pass {
 
-};
+	};
 
 }
