@@ -150,18 +150,22 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::surface_capabilities>
-		try_get_surface_capabilities(vk::surface& s) const {
+		try_get_surface_capabilities(const vk::surface& surface) const {
 			vk::surface_capabilities caps;
  
 			vk::result result {
 				(uint32) vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 					(VkPhysicalDevice) this,
-					*((VkSurfaceKHR*) &s),
+					*((VkSurfaceKHR*) &surface),
 					(VkSurfaceCapabilitiesKHR*) &caps
 				)
 			};
 			if(result.success()) return caps;
 			return result;
+		}
+
+		vk::surface_capabilities get_surface_capabilities(vk::surface& surface) const {
+			return try_get_surface_capabilities(surface).get<vk::surface_capabilities>();
 		}
 
 		elements::one_of<vk::result, vk::count>
@@ -211,7 +215,7 @@ namespace vk {
 			if(result.is_current<vk::result>()) return result;
 
 			vk::count count = result.get<vk::count>();
-			return tryview_surface_formats(
+			return try_view_surface_formats(
 				surface,
 				count,
 				forward<F>(f)

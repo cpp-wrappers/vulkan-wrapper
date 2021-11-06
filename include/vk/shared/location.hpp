@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include <core/wrapper/of_integer.hpp>
 
 namespace vk {
 
-struct location : uint32 {};
+	struct location : wrapper::of_integer<uint32> {};
 
 }

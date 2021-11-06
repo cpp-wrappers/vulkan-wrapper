@@ -2,15 +2,15 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../polygon_mode.hpp"
-#include "../cull_mode.hpp"
-#include "../front_face.hpp"
+#include "../shared/headers.hpp"
+#include "../shared/polygon_mode.hpp"
+#include "../shared/cull_mode.hpp"
+#include "../shared/front_face.hpp"
 
 namespace vk {
 
 	struct pipeline_rasterization_state_create_info {
-		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		const void* next{};
 		uint32 flags;
 		uint32 enable_depth_clamp;

@@ -2,7 +2,7 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
+#include "../shared/headers.hpp"
 
 namespace vk {
 
@@ -21,7 +21,7 @@ namespace vk {
 	};
 
 	struct pipeline_input_assembly_state_create_info {
-		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		const void* next{};
 		uint32 flags;
 		vk::primitive_topology topology;

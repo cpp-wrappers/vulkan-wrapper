@@ -12,6 +12,9 @@ exit 1
 #include "vk/physical_device.hpp"
 #include "vk/shader_module.hpp"
 #include "vk/surface.hpp"
+#include "vk/render_pass.hpp"
+#include "vk/swapchain.hpp"
+#include "vk/pipeline.hpp"
 
 #include <core/array.hpp>
 
@@ -102,13 +105,13 @@ int main() {
 		return -1;
 	}
 
-	VkSurfaceKHR* surface_ptr;
+	VkSurfaceKHR surface_raw;
 
 	if(glfwCreateWindowSurface(
 		*((VkInstance*) &instance),
 		window,
 		nullptr,
-		surface_ptr
+		&surface_raw
 	) >= 0) {
 		printf("created surface\n");
 	}
@@ -117,7 +120,7 @@ int main() {
 		return -1;
 	}
 
-	vk::surface surface{ *surface_ptr, instance };
+	vk::surface surface{ surface_raw, instance };
 
 	if(!physical_device.get_surface_support(vk::queue_family_index{ 0u }, surface)) {
 		fprintf(stderr, "surface is not supported by physical device, queue family index 0\n");
@@ -130,7 +133,7 @@ int main() {
 		surface_format = formats[0];
 	});
 
-	/*vk::render_pass& render_pass = vk::create_render_pass(
+	vk::render_pass render_pass = vk::create_render_pass(
 		device,
 		array{
 			vk::attachment_description {
@@ -145,21 +148,21 @@ int main() {
 
 	vk::queue_family_index queue_family_indices[]{ 0u };
 
-	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(*surface_ptr);
+	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(surface);
 
-	vk::swapchain& swapchain = vk::create_swapchain(
+	vk::swapchain swapchain = vk::create_swapchain(
 		device,
 		surface,
 		vk::min_image_count{ surface_caps.min_image_count },
 		surface_format.format,
 		surface_format.color_space,
-		vk::extent<2u>{ 640u, 480u },
+		vk::extent<2>{ 640, 480 },
 		vk::image_usage::color_attachment,
 		vk::sharing_mode::exclusive,
-		vk::queue_family_index_count{ 0u },
+		vk::queue_family_index_count{ 0 },
 		vk::queue_family_indices{ nullptr },
 		vk::present_mode::immediate,
-		vk::clipped{ 1u },
+		vk::clipped{ 1 },
 		vk::surface_transform::identity,
 		vk::composite_alpha::opaque
 	);
@@ -168,9 +171,9 @@ int main() {
 		.color_write_mask{ vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	vk::shader_module& vertex_module = read_shader_module(device, "triangle.vert.spv");
-	vk::shader_module& fragment_module = read_shader_module(device, "triangle.frag.spv");
-
+	vk::shader_module vertex_module = read_shader_module(device, "triangle.vert.spv");
+	vk::shader_module fragment_module = read_shader_module(device, "triangle.frag.spv");
+	
 	vk::pipeline_shader_stage_create_info vertex {
 		.stage = vk::shader_stage::vertex,
 		.module = vertex_module,
@@ -188,9 +191,9 @@ int main() {
 		vk::dynamic_state::scissor
 	};
 
-	vk::pipeline_layout& pipeline_layout = vk::create_pipeline_layout(device);
+	/*vk::pipeline_layout& pipeline_layout = vk::create_pipeline_layout(device);
 
-	vk::create_graphics_pipeline(
+	vk::pipeline pipeline = vk::create_graphics_pipeline(
 		device,
 		render_pass,
 		vk::subpass{ 0u },

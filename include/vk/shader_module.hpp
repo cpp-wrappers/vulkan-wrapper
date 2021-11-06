@@ -11,18 +11,30 @@
 
 namespace vk {
 
+	class device;
+
 	class shader_module {
 		void* m_shader_module;
-
-		shader_module(void* sm) : m_shader_module{ sm } {}
+		const vk::device& m_device;
 
 	public:
 		shader_module(const shader_module&) = delete;
-		shader_module(shader_module&&) = default;
-	};
 
-	class device;
-	class shader_module;
+		shader_module(shader_module&& other) : m_shader_module{ other.m_shader_module }, m_device{ other.m_device } { other.m_shader_module = nullptr; };
+
+		shader_module(VkShaderModule shader_module, const vk::device& device) : m_shader_module{ shader_module }, m_device{ device } {}
+
+		~shader_module() {
+			if(m_shader_module) {
+				vkDestroyShaderModule(
+					*(VkDevice*) &m_device,
+					(VkShaderModule) m_shader_module,
+					nullptr
+				);
+				m_shader_module = nullptr;
+			}
+		}
+	};
 
 	template<typename... Args>
 	requires(
@@ -41,7 +53,7 @@ namespace vk {
 		
 		const vk::device& device = elements::of_type<const vk::device&>::for_elements_of(args...);
 		VkShaderModule shader_module;
-
+		
 		vk::result result {
 			(uint32) vkCreateShaderModule(
 				(VkDevice) * ((void**)&device),
@@ -50,10 +62,7 @@ namespace vk {
 				(VkShaderModule*) & shader_module
 			)
 		};
-		if(result.success()) {
-			return move(*((vk::shader_module*) & shader_module));
-		}
-
+		if(result.success()) return vk::shader_module{ shader_module, device };
 		return result;
 	}
 }

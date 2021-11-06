@@ -3,7 +3,7 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../headers.hpp"
+#include "../shared/headers.hpp"
 #include "shader_stage_create_info.hpp"
 #include "vertex_input_state/create_info.hpp"
 #include "input_assembly_state_create_info.hpp"
@@ -45,7 +45,7 @@ namespace vk {
 	struct pipeline;
 
 	struct graphics_pipeline_create_info {
-		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
 		flag_enum<pipeline_create_flag> flags;
 		uint32 stage_count;
@@ -60,7 +60,7 @@ namespace vk {
 		const vk::pipeline_color_blend_state_create_info* color_blend_state;
 		const vk::pipeline_dynamic_state_create_info* dynamic_state;
 		vk::pipeline_layout& layout;
-		vk::render_pass& render_pass;
+		void* render_pass;
 		uint32 subpass;
 		vk::pipeline* base_pipeline;
 		int32 base_pipeline_index;

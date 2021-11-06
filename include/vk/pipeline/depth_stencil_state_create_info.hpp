@@ -2,14 +2,14 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../compare_op.hpp"
-#include "../stencil_op_state.hpp"
+#include "../shared/headers.hpp"
+#include "../shared/compare_op.hpp"
+#include "../shared/stencil_op_state.hpp"
 
 namespace vk {
 
 	struct pipeline_depth_stencil_state_create_info {
-		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		const void* next{};
 		uint32 flags;
 		uint32 enable_depth_test;

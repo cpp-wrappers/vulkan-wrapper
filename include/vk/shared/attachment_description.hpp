@@ -7,11 +7,11 @@
 #include "core/elements/of_type.hpp"
 #include "core/types/count_of_type.hpp"
 #include "headers.hpp"
-#include "image/format.hpp"
+#include "../image/format.hpp"
 #include "sample_count.hpp"
 #include "attachment_load_op.hpp"
 #include "attachment_store_op.hpp"
-#include "image/layout.hpp"
+#include "../image/layout.hpp"
 
 namespace vk {
 

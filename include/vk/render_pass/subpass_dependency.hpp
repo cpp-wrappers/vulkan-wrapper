@@ -5,15 +5,16 @@
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_type.hpp>
 #include <core/elements/of_type.hpp>
+#include <core/wrapper/of_integer.hpp>
 
 #include "../pipeline/stage.hpp"
-#include "../access.hpp"
-#include "../dependency.hpp"
+#include "../shared/access.hpp"
+#include "../shared/dependency.hpp"
 
 namespace vk {
 
-struct src_subpass : uint32 {};
-struct dst_subpass : uint32 {};
+struct src_subpass : wrapper::of_integer<uint32> {};
+struct dst_subpass : wrapper::of_integer<uint32> {};
 
 struct src_stages : flag_enum<vk::pipeline_stage> {};
 struct dst_stages : flag_enum<vk::pipeline_stage> {};

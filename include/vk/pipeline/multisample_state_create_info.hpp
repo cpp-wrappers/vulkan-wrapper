@@ -2,13 +2,13 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../sample_count.hpp"
+#include "../shared/headers.hpp"
+#include "../shared/sample_count.hpp"
 
 namespace vk {
 
 	struct pipeline_multisample_state_create_info {
-		uint32 type = (primitive::uint32) VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		const void* next{};
 		uint32 flags;
 		vk::sample_count rasterization_samples{0};

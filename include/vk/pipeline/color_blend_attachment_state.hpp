@@ -3,9 +3,9 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../blend_factor.hpp"
-#include "../blend_op.hpp"
-#include "../color_component.hpp"
+#include "../shared/blend_factor.hpp"
+#include "../shared/blend_op.hpp"
+#include "../shared/color_component.hpp"
 
 namespace vk {
 
