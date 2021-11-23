@@ -3,6 +3,7 @@
 #endif
 
 #include "vk/instance.hpp"
+#include "vk/instance_guard.hpp"
 #include "vk/physical_device.hpp"
 
 #include <stdio.h>
@@ -74,14 +75,16 @@ void object_block(auto name, auto f) {
 }
 
 int main() {
-	vk::instance instance = vk::create_instance(
-		vk::application_info {
-			vk::api_version {
-				vk::major{ 1 }, vk::minor{ 0 }
-			}
-		},
-		array{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } }
-	);
+	vk::instance_guard instance {
+		vk::create_instance(
+			vk::application_info {
+				vk::api_version {
+					vk::major{ 1 }, vk::minor{ 0 }
+				}
+			},
+			array{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } }
+		)
+	};
 
 	array_block("physical devices", [&]() {
 		instance.for_each_physical_device([](vk::physical_device& device) {

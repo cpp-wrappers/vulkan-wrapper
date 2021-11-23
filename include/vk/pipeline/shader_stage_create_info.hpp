@@ -21,7 +21,7 @@ namespace vk {
 		const void* next{};
 		flag_enum<vk::shader_stage_create_flag> flags;
 		flag_enum<vk::shader_stage> stage;
-		vk::shader_module& module;
+		const vk::shader_module& module;
 		c_string entry_point_name;
 		const void* specialization_info{};
 	};

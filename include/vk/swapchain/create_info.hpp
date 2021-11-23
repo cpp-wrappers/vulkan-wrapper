@@ -6,7 +6,7 @@
 #include <core/wrapper/of_pointer_to.hpp>
 
 #include "../shared/headers.hpp"
-//#include "../surface/surface.hpp"
+#include "../surface/present_mode.hpp"
 #include "../image/format.hpp"
 #include "../image/color_space.hpp"
 #include "../shared/extent.hpp"
@@ -27,15 +27,6 @@ namespace vk {
 		mutable_format = VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR
 	};
 
-	enum class present_mode {
-		immediate = VK_PRESENT_MODE_IMMEDIATE_KHR,
-		mailbox = VK_PRESENT_MODE_MAILBOX_KHR,
-		fifo = VK_PRESENT_MODE_FIFO_KHR,
-		fifo_relaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
-		shared_demand_refresh_khr = VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR,
-		shared_continuous_refresh_khr = VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR,
-	};
-
 	struct min_image_count : wrapper::of_integer<uint32> {};
 	struct image_array_layers : wrapper::of_integer<uint32> {};
 	struct queue_family_index_count : wrapper::of_integer<uint32> {};
@@ -46,7 +37,7 @@ namespace vk {
 		uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		const void* next{};
 		flag_enum<swapchain_create_flag> flags{};
-		void* surface;
+		uint64 surface;
 		vk::min_image_count min_image_count{};
 		vk::format format{};
 		vk::color_space color_space{};
@@ -60,7 +51,7 @@ namespace vk {
 		flag_enum<vk::composite_alpha> composite_alpha{};
 		vk::present_mode present_mode{};
 		vk::clipped clipped{};
-		void* swapchain;
+		uint64 swapchain;
 	}; // swapchain_create_info
 
 } // vk

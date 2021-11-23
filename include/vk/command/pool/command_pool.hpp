@@ -1,12 +1,15 @@
 #pragma once
 
+#include <core/integer.hpp>
+#include <core/elements/one_of.hpp>
+
+#include "../../shared/result.hpp"
+
 namespace vk {
 
-struct command_pool {
-	command_pool() = delete;
-	command_pool(const command_pool&) = delete;
+	class device;
 
-
-}; // command_pool
-
+	struct command_pool {
+		uint64 handle;
+	}; // command_pool
 } // vk

@@ -1,43 +1,10 @@
 #pragma once
 
-#include <core/forward.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/one_of.hpp>
-
-#include "swapchain/create_info.hpp"
-#include "shared/headers.hpp"
-#include "shared/result.hpp"
-//#include "image/view.hpp"
+#include "handle.hpp"
+#include "create_info.hpp"
+#include "../surface/handle.hpp"
 
 namespace vk {
-
-	class device;
-
-	class swapchain {
-		void* m_swapchain;
-		const device& m_device;
-	public:
-		swapchain() = delete;
-		swapchain(const swapchain&) = delete;
-		swapchain(swapchain&& other) : m_swapchain{ other.m_swapchain }, m_device{ other.m_device } { m_swapchain = nullptr; }
-
-		swapchain(VkSwapchainKHR swapchain, const vk::device& device) : m_swapchain{ swapchain }, m_device{ device } {}
-
-		~swapchain() {
-			if(m_swapchain) {
-				vkDestroySwapchainKHR(
-					* (VkDevice*) & m_device,
-					(VkSwapchainKHR) m_swapchain,
-					nullptr
-				);
-				m_swapchain = nullptr;
-			}
-		}
-	}; // swapchain
-
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
@@ -63,7 +30,7 @@ namespace vk {
 		const vk::surface& surface = elements::of_type<const vk::surface&>::for_elements_of(args...);
 
 		vk::swapchain_create_info ci {
-			.surface = *(void**) &surface, // TODO
+			.surface = surface.handle,
 			.min_image_count = elements::of_type<const vk::min_image_count&>::for_elements_of(args...),
 			.format = elements::of_type<const vk::format&>::for_elements_of(args...),
 			.color_space = elements::of_type<const vk::color_space&>::for_elements_of(args...),
@@ -89,27 +56,25 @@ namespace vk {
 			args...
 		);
 
-
 		const vk::device& device = elements::of_type<const vk::device&>::for_elements_of(args...);
 		VkSwapchainKHR swapchain;
 
 		vk::result result {
 			(uint32) vkCreateSwapchainKHR(
-				* (VkDevice*) & device,
+				(VkDevice) device.handle,
 				(VkSwapchainCreateInfoKHR*) &ci,
 				nullptr,
-				&swapchain
+				(VkSwapchainKHR*) &swapchain
 			)
 		};
-		if(!result.success()) return result;
 
-		return vk::swapchain{ swapchain, device };
+		if(result.success()) return (uint64) swapchain;
+
+		return result;
 	}
 
 	template<typename... Args>
 	vk::swapchain create_swapchain(const Args&... args) {
-		return try_create_swapchain(args...).template move<vk::swapchain>();
+		return try_create_swapchain(args...).template get<vk::swapchain>();
 	}
-
-} // vk
-
+}

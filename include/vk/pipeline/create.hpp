@@ -1,5 +1,7 @@
 #pragma once
 
+#include "handle.hpp"
+
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 #include <core/types/count_of_type.hpp>
@@ -10,38 +12,14 @@
 #include <core/types/are_contain_type.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/elements/one_of.hpp>
+#include <core/exchange.hpp>
 
-#include "shared/headers.hpp"
-#include "pipeline/graphics_pipeline_create_info.hpp"
-#include "shared/result.hpp"
+#include "../shared/headers.hpp"
+#include "graphics_pipeline_create_info.hpp"
+#include "../shared/result.hpp"
+#include "../device/handle.hpp"
 
 namespace vk {
-
-	class device;
-
-	class pipeline {
-		void* m_pipeline;
-		const vk::device& m_device;
-
-	public:
-		pipeline(const pipeline&) = delete;
-
-		pipeline(pipeline&& other) : m_pipeline{ other.m_pipeline }, m_device{ other.m_device } { other.m_pipeline = nullptr; }
-
-		pipeline(VkPipeline pipeline, const vk::device& device) : m_pipeline{ pipeline }, m_device{ device } {}
-
-		~pipeline() {
-			if(m_pipeline) {
-				vkDestroyPipeline(
-					*(VkDevice*) &m_device,
-					(VkPipeline) m_pipeline,
-					nullptr
-				);
-				m_pipeline = nullptr;
-			}
-		}
-	};
-
 	struct subpass : wrapper::of_integer<uint32> {};
 	struct base_pipeline_index : wrapper::of_integer<uint32> {};
 
@@ -123,8 +101,8 @@ namespace vk {
 
 		vk::result result {
 			(uint32) vkCreateGraphicsPipelines(
-				*(VkDevice*) &device,
-				nullptr,
+				(VkDevice) device.handle,
+				(VkPipelineCache) nullptr,
 				(uint32) 1,
 				(VkGraphicsPipelineCreateInfo*) & ci,
 				nullptr,
@@ -132,8 +110,8 @@ namespace vk {
 			)
 		};
 
-		if(!result.success()) return result;
-		return vk::pipeline{ pipeline, device };
+		if(result.success()) return (uint64) pipeline;
+		return result;
 	}
 
 	template<typename... Args>

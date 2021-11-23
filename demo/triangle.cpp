@@ -7,14 +7,27 @@ popd
 exit 1
 #endif
 
-#include "vk/instance.hpp"
-#include "vk/device.hpp"
-#include "vk/physical_device.hpp"
-#include "vk/shader_module.hpp"
-#include "vk/surface.hpp"
-#include "vk/render_pass.hpp"
-#include "vk/swapchain.hpp"
-#include "vk/pipeline.hpp"
+#include "vk/instance/guard.hpp"
+#include "vk/instance/create.hpp"
+
+#include "vk/device/guard.hpp"
+#include "vk/device/create.hpp"
+
+#include "vk/physical_device/handle.hpp"
+
+#include "vk/shader/module/create.hpp"
+#include "vk/shader/module/guard.hpp"
+
+#include "vk/surface/handle.hpp"
+#include "vk/surface/guard.hpp"
+
+#include "vk/render_pass/create.hpp"
+#include "vk/render_pass/guard.hpp"
+
+#include "vk/swapchain/create.hpp"
+#include "vk/swapchain/guard.hpp"
+
+#include "vk/pipeline/create.hpp"
 
 #include <core/array.hpp>
 
@@ -22,7 +35,7 @@ exit 1
 
 #include <stdio.h>
 
-vk::shader_module read_shader_module(vk::device& device, const char* path) {
+vk::shader_module read_shader_module(vk::device_guard& device, const char* path) {
 	FILE* f = fopen(path, "r");
 	fseek(f, 0, SEEK_END);
 	uint size = ftell(f);
@@ -61,35 +74,39 @@ int main() {
 	}
 	fflush(stdout);
 
-	vk::instance instance = vk::create_instance(
-		array {
-			vk::layer_name{ "VK_LAYER_KHRONOS_validation" }
-		},
-		array {
-			vk::extension_name{ extensions[0] },
-			vk::extension_name{ extensions[1] } // TODO
-		}
-	);
+	vk::instance_guard instance {
+		vk::create_instance(
+			array {
+				vk::layer_name{ "VK_LAYER_KHRONOS_validation" }
+			},
+			array {
+				vk::extension_name{ extensions[0] },
+				vk::extension_name{ extensions[1] } // TODO
+			}
+		)
+	};
 
 	float ps[1]{ 1.0F };
 
-	vk::physical_device& physical_device = instance.get_first_physical_device();
+	vk::physical_device physical_device = instance.get_first_physical_device();
 
-	vk::device device = vk::create_device(
-		physical_device,
-		array {
-			vk::queue_create_info {
-				vk::queue_family_index{ 0u },
-				vk::queue_count{ 1u },
-				vk::queue_priorities{ ps }
+	vk::device_guard device {
+		vk::create_device(
+			physical_device,
+			array {
+				vk::queue_create_info {
+					vk::queue_family_index{ 0u },
+					vk::queue_count{ 1u },
+					vk::queue_priorities{ ps }
+				}
+			},
+			array {
+				vk::extension_name {
+					"VK_KHR_swapchain"
+				}
 			}
-		},
-		array {
-			vk::extension_name {
-				"VK_KHR_swapchain"
-			}
-		}
-	);
+		)
+	};
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	GLFWwindow* window;
@@ -105,13 +122,13 @@ int main() {
 		return -1;
 	}
 
-	VkSurfaceKHR surface_raw;
+	vk::surface surface_raw;
 
 	if(glfwCreateWindowSurface(
-		*((VkInstance*) &instance),
+		(VkInstance) instance.object().handle,
 		window,
 		nullptr,
-		&surface_raw
+		(VkSurfaceKHR*) &surface_raw.handle
 	) >= 0) {
 		printf("created surface\n");
 	}
@@ -120,69 +137,79 @@ int main() {
 		return -1;
 	}
 
-	vk::surface surface{ surface_raw, instance };
+	vk::surface_guard surface{ surface_raw, instance.object() };
 
-	if(!physical_device.get_surface_support(vk::queue_family_index{ 0u }, surface)) {
+	if(!physical_device.get_surface_support(surface.object(), vk::queue_family_index{ 0u })) {
 		fprintf(stderr, "surface is not supported by physical device, queue family index 0\n");
 		return -1;
 	}
 
-	vk::surface_format surface_format;
+	vk::surface_format first_surface_format;
 
-	physical_device.view_surface_formats(surface, [&](auto formats) {
-		surface_format = formats[0];
+	physical_device.view_surface_formats(surface.object(), [&](auto formats) {
+		first_surface_format = formats[0];
 	});
 
-	vk::render_pass render_pass = vk::create_render_pass(
-		device,
-		array{
-			vk::attachment_description {
-				surface_format.format,
-				vk::load_op{ vk::attachment_load_op::clear },
-				vk::store_op{ vk::attachment_store_op::store },
-				vk::final_layout{ vk::image_layout::color_attachment_optimal }
+	vk::render_pass_guard render_pass {
+		vk::create_render_pass(
+			device.object(),
+			array{
+				vk::attachment_description {
+					first_surface_format.format,
+					vk::load_op{ vk::attachment_load_op::clear },
+					vk::store_op{ vk::attachment_store_op::store },
+					vk::final_layout{ vk::image_layout::color_attachment_optimal }
+				},
 			},
-		},
-		array{ vk::subpass_description {} }
-	);
+			array{ vk::subpass_description {} }
+		),
+		device.object()
+	};
 
-	vk::queue_family_index queue_family_indices[]{ 0u };
+	printf("created render_pass\n");
 
-	vk::surface_capabilities surface_caps = physical_device.get_surface_capabilities(surface);
+	vk::queue_family_index queue_family_indices[]{ 0 };
 
-	vk::swapchain swapchain = vk::create_swapchain(
-		device,
-		surface,
-		vk::min_image_count{ surface_caps.min_image_count },
-		surface_format.format,
-		surface_format.color_space,
-		vk::extent<2>{ 640, 480 },
-		vk::image_usage::color_attachment,
-		vk::sharing_mode::exclusive,
-		vk::queue_family_index_count{ 0 },
-		vk::queue_family_indices{ nullptr },
-		vk::present_mode::immediate,
-		vk::clipped{ 1 },
-		vk::surface_transform::identity,
-		vk::composite_alpha::opaque
-	);
+	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
+
+	vk::swapchain_guard swapchain {
+		vk::create_swapchain(
+			device.object(),
+			surface.object(),
+			vk::min_image_count{ surface_capabilities.min_image_count },
+			first_surface_format.format,
+			first_surface_format.color_space,
+			surface_capabilities.current_extent,
+			vk::image_usage::color_attachment,
+			vk::sharing_mode::exclusive,
+			vk::queue_family_index_count{ 0 },
+			vk::queue_family_indices{ nullptr },
+			vk::present_mode::immediate,
+			vk::clipped{ 1 },
+			vk::surface_transform::identity,
+			vk::composite_alpha::opaque
+		),
+		device.object()
+	};
+
+	printf("created swapchain\n");
 
 	vk::pipeline_color_blend_attachment_state attachment_state {
 		.color_write_mask{ vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	vk::shader_module vertex_module = read_shader_module(device, "triangle.vert.spv");
-	vk::shader_module fragment_module = read_shader_module(device, "triangle.frag.spv");
+	vk::shader_module_guard vertex_module { read_shader_module(device, "triangle.vert.spv"), device.object() };
+	vk::shader_module_guard fragment_module { read_shader_module(device, "triangle.frag.spv"), device.object() };
 	
 	vk::pipeline_shader_stage_create_info vertex {
 		.stage = vk::shader_stage::vertex,
-		.module = vertex_module,
+		.module = vertex_module.object(),
 		.entry_point_name = "main"
 	};
 
 	vk::pipeline_shader_stage_create_info fragment {
 		.stage = vk::shader_stage::fragment,
-		.module = fragment_module,
+		.module = fragment_module.object(),
 		.entry_point_name = "main"
 	};
 
