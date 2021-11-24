@@ -18,9 +18,9 @@
 #include "graphics_pipeline_create_info.hpp"
 #include "../shared/result.hpp"
 #include "../device/handle.hpp"
+#include "../shared/subpass.hpp"
 
 namespace vk {
-	struct subpass : wrapper::of_integer<uint32> {};
 	struct base_pipeline_index : wrapper::of_integer<uint32> {};
 
 	template<typename... Args>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "handle.hpp"
+#include "create.hpp"
 #include "../device/handle.hpp"
 
 namespace vk {
@@ -13,6 +14,11 @@ namespace vk {
 			: semaphore{ semaphore }, device{ device }
 		{}
 
+		template<typename... Args>
+		semaphore_guard(vk::device device, Args&&... args)
+			: semaphore{ vk::create_semaphore(device, forward<Args>(args)...)  }, device{ device }
+		{}
+
 		~semaphore_guard() {
 			if(semaphore.handle) {
 				vkDestroySemaphore(
@@ -22,5 +28,9 @@ namespace vk {
 				);
 			}
 		}
+
+		const vk::semaphore& object() const {
+			return semaphore;
+		}
 	};
-}
+} // vk

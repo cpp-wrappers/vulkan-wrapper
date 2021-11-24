@@ -43,7 +43,7 @@ namespace vk {
 		vk::color_space color_space{};
 		vk::extent<2u> extent{};
 		vk::image_array_layers image_array_layers{ 1u };
-		vk::image_usage usage{};
+		flag_enum<vk::image_usage> usage{};
 		vk::sharing_mode sharing_mode{};
 		vk::queue_family_index_count queue_family_index_count{};
 		vk::queue_family_indices queue_family_indices{};

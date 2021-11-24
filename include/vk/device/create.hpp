@@ -6,7 +6,8 @@
 #include "../physical_device/handle.hpp"
 
 namespace vk {
-		template<typename... Args>
+
+	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
 			types::count_of_type<vk::physical_device>::equals<1u>,
@@ -49,4 +50,4 @@ namespace vk {
 	vk::device create_device(const Args&... args) {
 		return try_create_device(args...).template get<vk::device>();
 	}
-}
+} // vk

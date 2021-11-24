@@ -15,7 +15,7 @@ namespace vk {
 			types::count_of_type<vk::format>::equals<1>,
 			types::count_of_type<vk::color_space>::equals<1>,
 			types::count_of_type<vk::extent<2>>::equals<1>,
-			types::count_of_type<vk::image_usage>::equals<1>,
+			types::count_of_type<vk::image_usage>::greater_or_equals<1>,
 			types::count_of_type<vk::sharing_mode>::equals<1>,
 			types::count_of_type<vk::queue_family_index_count>::equals<1>,
 			types::count_of_type<vk::queue_family_indices>::equals<1>,
@@ -35,7 +35,6 @@ namespace vk {
 			.format = elements::of_type<const vk::format&>::for_elements_of(args...),
 			.color_space = elements::of_type<const vk::color_space&>::for_elements_of(args...),
 			.extent = elements::of_type<const vk::extent<2u>&>::for_elements_of(args...),
-			.usage = elements::of_type<const vk::image_usage&>::for_elements_of(args...),
 			.sharing_mode = elements::of_type<const vk::sharing_mode&>::for_elements_of(args...),
 			.queue_family_index_count = elements::of_type<const vk::queue_family_index_count&>::for_elements_of(args...),
 			.queue_family_indices = elements::of_type<const vk::queue_family_indices&>::for_elements_of(args...),
@@ -45,6 +44,10 @@ namespace vk {
 
 		elements::for_each_of_type<const vk::swapchain_create_flag&>(
 			[&](auto f) { ci.flags.set(f); },
+			args...
+		);
+		elements::for_each_of_type<const vk::image_usage&>(
+			[&](auto f) { ci.usage.set(f); },
 			args...
 		);
 		elements::for_each_of_type<const vk::surface_transform&>(

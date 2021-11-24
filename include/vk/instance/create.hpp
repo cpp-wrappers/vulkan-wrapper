@@ -13,7 +13,7 @@ namespace vk {
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::instance, vk::result>
-	try_create_instance(const Args&... args) {
+	try_create_instance(Args... args) {
 		instance_create_info ici{};
 
 		if constexpr(types::count_of_ranges_of_value_type<vk::extension_name>::equals<1u>::for_types_of<Args...>) {
@@ -38,15 +38,13 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) {
-			return instance;
-		}
+		if(result.success()) return instance;
 
 		return result;
 	}
 
 	template<typename... Args>
-	vk::instance create_instance(const Args&... args) {
-		return try_create_instance(args...).template get<vk::instance>();
+	vk::instance create_instance(Args&&... args) {
+		return try_create_instance(forward<Args>(args)...).template get<vk::instance>();
 	}
 }

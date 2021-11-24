@@ -1,4 +1,5 @@
 #include "handle.hpp"
+#include "create.hpp"
 
 namespace vk {
 	class instance_guard {
@@ -7,6 +8,11 @@ namespace vk {
 
 		instance_guard(vk::instance instance)
 			: instance{ instance }
+		{}
+
+		template<typename... Args>
+		instance_guard(Args&&... args)
+			: instance{ vk::create_instance(forward<Args>(args)...) }
 		{}
 
 		~instance_guard() {

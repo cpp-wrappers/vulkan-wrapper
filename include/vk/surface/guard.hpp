@@ -27,7 +27,7 @@ namespace vk {
 			}
 		}
 
-		vk::surface object() const {
+		const vk::surface& object() const {
 			return surface;
 		}
 	};

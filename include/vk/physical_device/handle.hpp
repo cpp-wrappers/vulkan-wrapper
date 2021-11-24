@@ -68,6 +68,22 @@ namespace vk {
 			);
 		}
 
+		template<typename... Args>
+		requires(types::are_same::for_types_of<Args..., vk::queue_flag>)
+		vk::queue_family_index first_queue_family_index_with_capabilities(Args... args) {
+			uint32 count = (uint32)queue_family_properties_count();
+			vk::queue_family_properties props[count];
+			get_queue_family_properties(span{ props, count });
+
+			uint32 index = 0;
+			for(vk::queue_family_properties p : span{ props, count }) {
+				if((p.flags.get(args) && ...)) return { index };
+				++index;
+			}
+
+			return { VK_QUEUE_FAMILY_IGNORED };
+		}
+
 		vk::count for_each_queue_family_properties(auto&& f) const {
 			return view_queue_family_properties(
 				[&](auto view) {

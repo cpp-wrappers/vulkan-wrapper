@@ -3,10 +3,7 @@
 #include <core/integer.hpp>
 
 namespace vk {
-
-	class device;
-
-	struct semaphore {
+	struct framebuffer {
 		uint64 handle;
-	}; // semaphore
-} // vk
+	};
+}

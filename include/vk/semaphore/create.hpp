@@ -31,6 +31,6 @@ namespace vk {
 	}
 
 	vk::semaphore inline create_semaphore(const vk::device& device) {
-		return try_create_semaphore(device).move<vk::semaphore>();
+		return try_create_semaphore(device).get<vk::semaphore>();
 	}
 }

@@ -8,4 +8,4 @@ namespace vk {
 		uint64 handle;
 	};
 
-}
+} // vk
