@@ -15,6 +15,7 @@
 #include "../shared/queue_family_index.hpp"
 #include "../surface/transform.hpp"
 #include "../surface/composite_alpha.hpp"
+#include "../surface/min_image_count.hpp"
 
 namespace vk {
 
@@ -27,7 +28,6 @@ namespace vk {
 		mutable_format = VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR
 	};
 
-	struct min_image_count : wrapper::of_integer<uint32> {};
 	struct image_array_layers : wrapper::of_integer<uint32> {};
 	struct queue_family_index_count : wrapper::of_integer<uint32> {};
 	struct queue_family_indices : wrapper::of_pointer_to<const vk::queue_family_index> {};

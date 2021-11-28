@@ -7,7 +7,7 @@
 
 namespace vk {
 
-	struct code_size : wrapper::of_integer<uint> {};
+	struct code_size : wrapper::of_integer<nuint> {};
 	struct code : wrapper::of_pointer_to<const uint32_t>{};
 
 	struct shader_module_create_info {

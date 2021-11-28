@@ -36,7 +36,7 @@ namespace vk {
 			>::for_types_of<Args...>
 		)
 		image_subresource_range(Args... args) {
-			elements::for_each_of_type_remove_reference<vk::image_aspect>(
+			elements::for_each_of_type<vk::image_aspect&>(
 				[&](auto af) { aspect_mask.set(af); },
 				args...
 			);

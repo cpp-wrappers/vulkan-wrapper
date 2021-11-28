@@ -31,8 +31,8 @@ enum class pipeline_stage {
 	fragment_density_process = VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT,
 	fragment_shading_rate_attachment = VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
 	command_preprocess = VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
-	none = VK_PIPELINE_STAGE_NONE_KHR,
-	shading_rate_image = VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV
+	//none = VK_PIPELINE_STAGE_NONE_KHR,
+	//shading_rate_image = VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV
 };
 
 }

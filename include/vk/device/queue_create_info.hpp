@@ -13,7 +13,8 @@
 
 namespace vk {
 	struct queue_count : wrapper::of_integer<uint32> {};
-	struct queue_priorities : wrapper::of_pointer_to<const float> {};
+	struct queue_priority : wrapper::of<float> {};
+	struct queue_priorities : wrapper::of_pointer_to<const queue_priority> {};
 
 	enum queue_create_flag {
 		рrotected

@@ -24,12 +24,12 @@ namespace vk {
 			types::count_of_type<vk::device>::equals<1u>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::command_pool> try_create_command_pool(const Args&... args) {
+	elements::one_of<vk::result, vk::command_pool> try_create_command_pool(Args... args) {
 		vk::command_pool_create_info ci{};
 
-		const vk::device& device = elements::of_type<const vk::device&>::for_elements_of(args...);
-		ci.queue_family_index = elements::of_type<const vk::queue_family_index&>::for_elements_of(args...);
-		elements::for_each_of_type<const vk::command_pool_create_flag&>([&](auto f){ ci.flags.set(f); }, args...);
+		vk::device device = elements::of_type<vk::device&>::for_elements_of(args...);
+		ci.queue_family_index = elements::of_type<vk::queue_family_index&>::for_elements_of(args...);
+		elements::for_each_of_type<vk::command_pool_create_flag&>([&](auto f){ ci.flags.set(f); }, args...);
 
 		VkCommandPool command_pool;
 
@@ -55,7 +55,7 @@ namespace vk {
 			types::count_of_type<vk::device>::equals<1u>
 		>::for_types_of<Args...>
 	)
-	vk::command_pool create_command_pool(const Args&... args) {
+	vk::command_pool create_command_pool(Args... args) {
 		return try_create_command_pool(args...).template get<vk::command_pool>();
 	}
 }

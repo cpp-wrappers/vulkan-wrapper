@@ -15,7 +15,7 @@ enum class image_usage {
 	input_attachment = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
 	fragment_density_map_ext = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT,
 	fragment_shading_rate_attachment_khr = VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-	invocation_mask_huawei = VK_IMAGE_USAGE_INVOCATION_MASK_BIT_HUAWEI,
+	//invocation_mask_huawei = VK_IMAGE_USAGE_INVOCATION_MASK_BIT_HUAWEI,
 	shading_rate_image_nv = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV
 };
 

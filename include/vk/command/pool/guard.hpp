@@ -44,5 +44,9 @@ namespace vk {
 			command_pool.allocate_command_buffers(device, level, forward<CommandBuffers>(command_buffers));
 		}
 
+		template<type::range_of_value_type<vk::command_buffer> CommandBuffers>
+		void free_command_buffers(CommandBuffers&& command_buffers) {
+			command_pool.free_command_buffers(device, forward<CommandBuffers>(command_buffers));
+		}
 	};
 }

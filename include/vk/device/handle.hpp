@@ -15,6 +15,7 @@ namespace vk {
 
 	class physical_device;
 	class shader_module;
+	class command_pool;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 
@@ -28,9 +29,12 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		vk::shader_module create_shader_module(Args... args) const {
-			return try_create_shader_module(args...).template get<vk::shader_module>();
+		vk::shader_module create_shader_module(Args&&... args) const {
+			return try_create_shader_module(forward<Args>(args)...).template get<vk::shader_module>();
 		}
+
+		template<typename... Args>
+		vk::command_pool create_command_pool(Args&&... args) const;
 
 		vk::queue get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			VkQueue queue;
@@ -45,7 +49,22 @@ namespace vk {
 			return { queue };
 		}
 
+		vk::result try_wait_idle() const {
+			return {
+				(uint32) vkDeviceWaitIdle(
+					(VkDevice) handle
+				)
+			};
+		}
 		
 	}; // device
 
 } // vk
+
+#include "../command/pool/create.hpp"
+
+template<typename... Args>
+vk::command_pool vk::device::create_command_pool(Args&&... args) const {
+	return vk::create_command_pool(*this, forward<Args>(args)...);
+}
+

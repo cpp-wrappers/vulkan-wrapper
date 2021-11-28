@@ -1,5 +1,10 @@
 #pragma once
 
+#include <core/elements/pass_satisfying_type_predicate.hpp>
+#include <core/type/disjuncted_predicates.hpp>
+#include <core/type/negated_predicate.hpp>
+#include <core/type/remove_const.hpp>
+
 #include "handle.hpp"
 #include "create_info.hpp"
 #include "queue_create_info.hpp"
@@ -44,6 +49,37 @@ namespace vk {
 		};
 		if(result.success()) return device;
 		return result;
+	}
+
+	template<typename... Args>
+	requires(
+		types::count_of_type<vk::queue_family_index>::for_types_of<Args...> == 1 &&
+		types::count_of_ranges_of_value_type<vk::queue_priority>::for_types_of<Args...> == 1
+	) 
+	auto try_create_device(const Args&... args) {
+		auto& priorities = elements::range_of_value_type<vk::queue_priority>::for_elements_of(args...);
+		auto index = elements::of_type<const vk::queue_family_index&>::for_elements_of(args...);
+
+		return elements::pass_satisfying_type_predicate<
+			type::negated_predicate<
+				type::disjuncted_predicates<
+					type::is_range_of_value_type<vk::queue_priority>,
+					type::is_same_as<vk::queue_family_index>::after_applying<type::remove_const>::template after_applying<type::remove_reference>
+				>
+			>
+		>::for_function_and_elements_of(
+			[&](auto&... others){
+				return try_create_device(
+					array{
+						vk::queue_create_info{
+							index, vk::queue_count{ (uint32) priorities.size() }, vk::queue_priorities{ priorities.data() }
+						}
+					},
+					others...
+				);
+			},
+			args...
+		);
 	}
 
 	template<typename... Args>

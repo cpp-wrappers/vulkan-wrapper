@@ -72,7 +72,7 @@ struct physical_device_limits {
 	uint32 max_viewport_dimensions[2];
 	float viewport_bounds_range[2];
 	uint32 viewport_sub_pixel_bits;
-	uint min_memory_map_alignment;
+	nuint min_memory_map_alignment;
 	uint64 min_texel_buffer_offset_alignment;
 	uint64 min_uniform_buffer_offset_alignment;
 	uint64 min_storage_buffer_offset_alignment;

@@ -28,7 +28,10 @@ namespace vk {
 	struct physical_device {
 		void* handle;
 
-		physical_device_properties get_properties() const {
+		template<typename... Args>
+		vk::device create_device(Args&&... args) const;
+
+		vk::physical_device_properties get_properties() const {
 			vk::physical_device_properties props;
 			vkGetPhysicalDeviceProperties(
 				(VkPhysicalDevice) handle,
@@ -70,7 +73,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires(types::are_same::for_types_of<Args..., vk::queue_flag>)
-		vk::queue_family_index first_queue_family_index_with_capabilities(Args... args) {
+		vk::queue_family_index get_first_queue_family_index_with_capabilities(Args... args) {
 			uint32 count = (uint32)queue_family_properties_count();
 			vk::queue_family_properties props[count];
 			get_queue_family_properties(span{ props, count });
@@ -166,7 +169,7 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::surface_capabilities>
-		try_get_surface_capabilities(const vk::surface& surface) const {
+		try_get_surface_capabilities(vk::surface surface) const {
 			vk::surface_capabilities caps;
  
 			vk::result result {
@@ -180,12 +183,12 @@ namespace vk {
 			return result;
 		}
 
-		vk::surface_capabilities get_surface_capabilities(const vk::surface& surface) const {
+		vk::surface_capabilities get_surface_capabilities(vk::surface surface) const {
 			return try_get_surface_capabilities(surface).get<vk::surface_capabilities>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats(const vk::surface& surface, type::range_of_value_type<vk::surface_format> auto&& formats) const {
+		try_get_surface_formats(vk::surface surface, type::range_of_value_type<vk::surface_format> auto&& formats) const {
 			uint32 count = (uint32) formats.size();
  
 			vk::result result {
@@ -201,21 +204,21 @@ namespace vk {
 		}
 
 		template<type::range_of_value_type<vk::surface_format> FormatsRange>
-		vk::count get_surface_formats(const vk::surface& surface, FormatsRange&& formats) const {
+		vk::count get_surface_formats(vk::surface surface, FormatsRange&& formats) const {
 			return try_get_surface_formats(surface, forward<FormatsRange>(formats)).template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats_count(const vk::surface& surface) const {
+		try_get_surface_formats_count(vk::surface surface) const {
 			return try_get_surface_formats(surface, span<vk::surface_format>{ nullptr, 0 });
 		}
 
-		vk::count get_surface_formats_count(const vk::surface& surface) const {
+		vk::count get_surface_formats_count(vk::surface surface) const {
 			return try_get_surface_formats_count(surface).template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(const vk::surface& surface, vk::count count, auto&& f) const {
+		try_view_surface_formats(vk::surface surface, vk::count count, auto&& f) const {
 			vk::surface_format formats[(uint32) count];
 			auto result = try_get_surface_formats(surface, span{ formats, (uint32) count });
 			if(result.is_current<vk::result>()) return result;
@@ -226,7 +229,7 @@ namespace vk {
 
 		template<typename F>
 		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(const vk::surface& surface, F&& f) const {
+		try_view_surface_formats(vk::surface surface, F&& f) const {
 			auto result = try_get_surface_formats_count(surface);
 			if(result.is_current<vk::result>()) return result;
 
@@ -238,12 +241,18 @@ namespace vk {
 		}
 
 		template<typename F>
-		vk::count view_surface_formats(const vk::surface& surface, F&& f) const {
+		vk::count view_surface_formats(vk::surface surface, F&& f) const {
 			return try_view_surface_formats(surface, forward<F>(f)).template get<vk::count>();
 		}
 
+		vk::surface_format get_first_surface_format(vk::surface surface) const {
+			vk::surface_format f;
+			get_surface_formats(surface, span{ &f, 1 });
+			return f;
+		}
+
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_present_modes(const vk::surface& surface, type::range_of_value_type<vk::present_mode> auto&& present_modes) const {
+		try_get_surface_present_modes(vk::surface surface, type::range_of_value_type<vk::present_mode> auto&& present_modes) const {
 			uint32 count = (uint32) present_modes.size();
 
 			vk::result result {
@@ -259,12 +268,12 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_present_mode_count(const vk::surface& surface) const {
+		try_get_surface_present_mode_count(vk::surface surface) const {
 			return try_get_surface_present_modes(surface, span<vk::present_mode>{ nullptr, 0 });
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_view_surface_present_modes(const vk::surface& surface, vk::count count, auto&& f) const {
+		try_view_surface_present_modes(vk::surface surface, vk::count count, auto&& f) const {
 			vk::present_mode present_modes[(uint32) count];
 			auto result = try_get_surface_present_modes(surface, span{ present_modes, (uint32) count });
 			if(result.is_current<vk::result>()) return result;
@@ -321,4 +330,12 @@ namespace vk {
 		}
 	};
 
+}
+
+#include "../device/create.hpp"
+
+
+template<typename... Args>
+vk::device vk::physical_device::create_device(Args&&... args) const {
+	return vk::create_device(*this, forward<Args>(args)...);
 }

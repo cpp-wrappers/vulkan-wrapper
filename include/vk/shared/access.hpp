@@ -34,8 +34,8 @@ namespace vk {
 		fragment_shading_rate_attachment_read = VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR,
 		command_preprocess_read = VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV,
 		command_preprocess_write = VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,
-		none = VK_ACCESS_NONE_KHR,
-		shading_rate_image_read = VK_ACCESS_SHADING_RATE_IMAGE_READ_BIT_NV
+		//none = VK_ACCESS_NONE_KHR,
+		//shading_rate_image_read = VK_ACCESS_SHADING_RATE_IMAGE_READ_BIT_NV
 	};
 
 	struct src_access : flag_enum<vk::access> {};

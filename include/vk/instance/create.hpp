@@ -45,6 +45,8 @@ namespace vk {
 
 	template<typename... Args>
 	vk::instance create_instance(Args&&... args) {
-		return try_create_instance(forward<Args>(args)...).template get<vk::instance>();
+		auto result = vk::try_create_instance(forward<Args>(args)...);
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::instance>();
 	}
 }

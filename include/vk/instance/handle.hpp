@@ -76,12 +76,10 @@ namespace vk {
 
 		elements::one_of<vk::result, vk::physical_device>
 		try_get_first_physical_device() const {
-			array<vk::physical_device, 1> arr;
-
-			auto result = try_enumerate_physical_devices(arr);
-
+			vk::physical_device physical_device;
+			auto result = try_enumerate_physical_devices(span{ &physical_device, 1 });
 			if(result.is_current<vk::result>()) return result.get<vk::result>();
-			return arr[0];
+			return physical_device;
 		}
 
 		vk::physical_device get_first_physical_device() const {
