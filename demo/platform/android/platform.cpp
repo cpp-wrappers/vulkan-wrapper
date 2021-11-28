@@ -8,12 +8,38 @@
 #include <vulkan/vulkan_android.h>
 
 #include "../platform.hpp"
+#include <string.h>
+#include <assert.h>
+
+struct message_buffer {
+	int prio;
+	char buf[256]{ 0 };
+	uint size = 0;
+
+	void add(const char* str) {
+		while(char ch = *(str++)) {
+			assert(size < 256);
+
+			if(ch == '\n') {
+				buf[size] = 0;
+				__android_log_write(prio, "vulkan", buf);
+				size = 0;
+			}
+			else {
+				buf[size++] = ch;
+			}
+		}
+	}
+};
+
+static message_buffer info_message_buffer{ ANDROID_LOG_INFO };
+static message_buffer error_message_buffer{ ANDROID_LOG_ERROR };
 
 void platform::info(const char* str) {
-	__android_log_write(ANDROID_LOG_INFO, "vulkan", str);
+	info_message_buffer.add(str);
 }
 void platform::error(const char* str) {
-	__android_log_write(ANDROID_LOG_ERROR, "vulkan", str);
+	error_message_buffer.add(str);
 }
 
 array<const char*, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_android_surface" };
@@ -21,7 +47,7 @@ array<const char*, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_an
 nuint platform::required_instance_extension_count() { return required_instance_extensions.size(); }
 const char** platform::get_required_instance_extensions() { return required_instance_extensions.data(); }
 
-android_app* app;
+static android_app* app;
 
 elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instance instance) {
 
@@ -48,7 +74,7 @@ elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instanc
 	return surface;
 }
 
-void poll() {
+static void poll() {
 	int identifier;
 	int events;
 	android_poll_source* source;
@@ -71,7 +97,7 @@ void platform::end() {}
 
 extern "C" void android_main(android_app* app) {
 	::app = app;
-	platform::info("starting");
+	platform::info("starting\n");
 
 	while(app->window == nullptr) {
 		poll();

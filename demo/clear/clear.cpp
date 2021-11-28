@@ -144,7 +144,7 @@ int entrypoint() {
 	vk::semaphore_guard swapchain_image_semaphore { device.object() };
 	vk::semaphore_guard rendering_finished_semaphore { device.object() };
 
-	vk::queue presentation_queue = device.get_queue(queue_family_index, vk::queue_index{ 0u });
+	vk::queue presentation_queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while (!platform::should_close()) {
 		platform::begin();

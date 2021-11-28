@@ -8,6 +8,3 @@
 -ftemplate-backtrace-limit=0
 -I/home/fewizz/core/include
 -I/home/fewizz/vulkan-wrapper/include
--fmodules
--Xclang -fimplicit-module-maps
--Xclang -fprebuilt-module-path=./build

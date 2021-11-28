@@ -15,28 +15,27 @@ declare -a args
 
 args+=(-g)
 args+=(-fpic)
-args+=(--sysroot=/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot)
-args+=(-isystem/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include)
-args+=(-isystem/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1)
-args+=(-isystem/home/fewizz/android/ndk/24.0.7856742/sources)
-args+=(-I/home/fewizz/core/include)
-args+=(-I/home/fewizz/vulkan-wrapper/include)
+args+=(--sysroot=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot)
+args+=(-isystem${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include)
+args+=(-isystem${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1)
+args+=(-isystem${ANDROID_NDK_ROOT}/sources)
+args+=(-I${root_dir}/../core/include)
+args+=(-I${root_dir}/include)
 
 if [ -v sanitize ]; then
 	args+=(-fsanitize=address)
 	args+=(-fsanitize=undefined)
 fi
 
-NDK=${ANDROID_SDK_ROOT}/ndk/24.0.7856742
-CXX=${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android32-clang++
-C=${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android32-clang
+CXX=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android32-clang++
+C=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android32-clang
 
 if ! $C \
 	-c \
 	${args[@]} \
 	-ftemplate-backtrace-limit=0 \
 	-o ${platform_dir}/build/glue.o \
-	${NDK}/sources/android/native_app_glue/android_native_app_glue.c
+	${ANDROID_NDK_ROOT}/sources/android/native_app_glue/android_native_app_glue.c
 
 	then
 	exit 1
