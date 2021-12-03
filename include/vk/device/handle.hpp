@@ -8,7 +8,6 @@
 
 #include "../shared/headers.hpp"
 #include "../shared/queue_family_index.hpp"
-#include "../shader/module/create.hpp"
 #include "../queue/handle.hpp"
 
 namespace vk {
@@ -24,14 +23,10 @@ namespace vk {
 
 		template<typename... Args>
 		elements::one_of<vk::result, vk::shader_module>
-		try_create_shader_module(Args... args) const {
-			return vk::try_create_shader_module(*this, args...);
-		}
+		try_create_shader_module(Args... args) const;
 
 		template<typename... Args>
-		vk::shader_module create_shader_module(Args&&... args) const {
-			return try_create_shader_module(forward<Args>(args)...).template get<vk::shader_module>();
-		}
+		vk::shader_module create_shader_module(Args&&... args) const;
 
 		template<typename... Args>
 		vk::command_pool create_command_pool(Args&&... args) const;
@@ -51,7 +46,7 @@ namespace vk {
 
 		vk::result try_wait_idle() const {
 			return {
-				(uint32) vkDeviceWaitIdle(
+				(int32) vkDeviceWaitIdle(
 					(VkDevice) handle
 				)
 			};
@@ -64,7 +59,24 @@ namespace vk {
 #include "../command/pool/create.hpp"
 
 template<typename... Args>
-vk::command_pool vk::device::create_command_pool(Args&&... args) const {
+vk::command_pool
+vk::device::create_command_pool(Args&&... args) const {
 	return vk::create_command_pool(*this, forward<Args>(args)...);
+}
+
+#include "../shader/module/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::shader_module>
+vk::device::try_create_shader_module(Args... args) const {
+	return vk::try_create_shader_module(*this, args...);
+}
+
+template<typename... Args>
+vk::shader_module
+vk::device::create_shader_module(Args&&... args) const {
+	auto result = try_create_shader_module(forward<Args>(args)...);
+	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+	return result.template get<vk::shader_module>();
 }
 

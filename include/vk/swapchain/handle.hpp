@@ -35,7 +35,7 @@ namespace vk {
 			uint32 index;
 
 			vk::result result {
-				(uint32) vkAcquireNextImageKHR(
+				(int32) vkAcquireNextImageKHR(
 					(VkDevice) device.handle ,
 					(VkSwapchainKHR) handle,
 					(uint64) timeout,
@@ -46,6 +46,7 @@ namespace vk {
 			};
 
 			if(result.success()) return vk::image_index{ index };
+
 			return result;
 		}
 
@@ -54,7 +55,7 @@ namespace vk {
 			uint32 count = images.size();
 
 			vk::result result {
-				(uint32) vkGetSwapchainImagesKHR(
+				(int32) vkGetSwapchainImagesKHR(
 					(VkDevice) device.handle,
 					(VkSwapchainKHR) handle,
 					&count,
@@ -68,7 +69,9 @@ namespace vk {
 
 		template<type::range_of_value_type<vk::image> Images>
 		vk::count get_images(vk::device device, Images&& images) const {
-			return try_get_images(device, forward<Images>(images)).template get<vk::count>();
+			auto result = try_get_images(device, forward<Images>(images));
+			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+			return result.template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count> try_get_image_count(vk::device device) const {
@@ -76,7 +79,9 @@ namespace vk {
 		}
 
 		vk::count get_image_count(vk::device device) const {
-			return try_get_image_count(device).get<vk::count>();
+			auto result = try_get_image_count(device);
+			if(result.is_current<vk::result>()) throw result.get<vk::result>();
+			return result.template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
@@ -101,12 +106,16 @@ namespace vk {
 		template<typename F>
 		elements::one_of<vk::result, vk::count>
 		try_for_each_image(vk::device device, F&& f) const {
-			return try_for_feach_image(device, get_image_count(device), forward<F>(f));
+			auto result = try_get_image_count(device);
+			if(result.is_current<vk::result>()) return result;
+			return try_for_feach_image(device, result.get<vk::count>(), forward<F>(f));
 		}
 
 		template<typename F>
 		vk::count for_each_image(vk::device device, F&& f) const {
-			return try_for_each_image(device, get_image_count(device), forward<F>(f));
+			auto result = try_for_each_image(device, forward<F>(f));
+			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+			return result.template get<vk::count>();
 		}
 	}; // swapchain
 

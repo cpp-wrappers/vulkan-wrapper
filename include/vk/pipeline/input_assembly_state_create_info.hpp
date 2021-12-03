@@ -23,9 +23,9 @@ namespace vk {
 	struct pipeline_input_assembly_state_create_info {
 		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		const void* next{};
-		uint32 flags;
+		uint32 flags{};
 		vk::primitive_topology topology;
-		uint32 enable_primitive_restart;
+		uint32 enable_primitive_restart = VK_FALSE;
 	};
 }
 

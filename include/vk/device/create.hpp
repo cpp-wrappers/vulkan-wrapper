@@ -40,7 +40,7 @@ namespace vk {
 		VkDevice device;
 
 		vk::result result {
-			(uint32) vkCreateDevice(
+			(int32) vkCreateDevice(
 				(VkPhysicalDevice) physical_device.handle,
 				(VkDeviceCreateInfo*) &ci,
 				nullptr,
@@ -84,6 +84,8 @@ namespace vk {
 
 	template<typename... Args>
 	vk::device create_device(const Args&... args) {
-		return try_create_device(args...).template get<vk::device>();
+		auto result = try_create_device(args...);
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::device>();
 	}
 } // vk

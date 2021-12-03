@@ -6,6 +6,7 @@
 
 #include "../shared/headers.hpp"
 #include "../shader/stage.hpp"
+#include "../shader/module/handle.hpp"
 
 namespace vk {
 
@@ -21,7 +22,7 @@ namespace vk {
 		const void* next{};
 		flag_enum<vk::shader_stage_create_flag> flags;
 		flag_enum<vk::shader_stage> stage;
-		const vk::shader_module& module;
+		vk::shader_module module;
 		c_string entry_point_name;
 		const void* specialization_info{};
 	};

@@ -34,7 +34,7 @@ namespace vk {
 		VkCommandPool command_pool;
 
 		vk::result result {
-			(uint32) vkCreateCommandPool(
+			(int32) vkCreateCommandPool(
 				*(VkDevice*) &device,
 				(VkCommandPoolCreateInfo*) &ci,
 				nullptr,
@@ -42,7 +42,7 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return (uint64) command_pool;
+		if(result.success()) return vk::command_pool{ command_pool };
 
 		return result;
 	}

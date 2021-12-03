@@ -21,7 +21,7 @@ namespace vk {
 	};
 
 	class queue_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		const void* next = nullptr;
 		flag_enum<queue_create_flag> flags{};
 		vk::queue_family_index queue_family_index;
@@ -29,11 +29,6 @@ namespace vk {
 		vk::queue_priorities queue_priorities;
 
 	public:
-
-		queue_create_info(const queue_create_info&) = default;
-		queue_create_info(queue_create_info&) = default;
-		queue_create_info(queue_create_info&&) = default;
-		queue_create_info& operator = (const queue_create_info&) = default;
 
 		template<typename... Args>
 		requires(

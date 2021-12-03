@@ -10,8 +10,10 @@ exit 1
 #include "vk/command/pool/guard.hpp"
 #include "vk/surface/guard.hpp"
 #include "vk/semaphore/guard.hpp"
+#include "vk/instance/layer_properties.hpp"
 
 #include "../platform/platform.hpp"
+#include <string.h>
 
 int entrypoint() {
 	nuint count = platform::required_instance_extension_count();
@@ -21,13 +23,27 @@ int entrypoint() {
 	};
 
 	platform::info("required extensions:\n");
-	for(auto ex_name: extensions) {
-		platform::info(ex_name.begin());
+	for(vk::extension_name extension_name: extensions) {
+		platform::info(extension_name.begin());
 		platform::info('\n');
 	}
 
+	bool validation_layer_is_supported = false;
+	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
+
+	vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
+		for(vk::layer_properties p : props) {
+			if(strcmp(p.name, validation_layer_name.begin()) == 0) {
+				validation_layer_is_supported = true;
+				return;
+			}
+		}
+	});
+
+	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
+
 	vk::instance_guard instance {
-		/*array { vk::layer_name{ "VK_LAYER_KHRONOS_validation" } },*/
+		layers,
 		extensions
 	};
 
@@ -154,7 +170,7 @@ int entrypoint() {
 		if(result.is_current<vk::result>()) {
 			vk::result r = result.get<vk::result>();
 
-			if((uint32)r == VK_SUBOPTIMAL_KHR) break;
+			if((int32)r == VK_SUBOPTIMAL_KHR) break;
 			platform::error("can't acquire swapchain image\n");
 			return -1;
 		}

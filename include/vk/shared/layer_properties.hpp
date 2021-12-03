@@ -5,12 +5,12 @@
 
 namespace vk {
 
-struct layer_properties {
-	char name[VK_MAX_EXTENSION_NAME_SIZE];
-	uint32 spec_version;
-	uint32 implementation_version;
-	char description[VK_MAX_DESCRIPTION_SIZE];
-};
+	struct layer_properties {
+		char name[VK_MAX_EXTENSION_NAME_SIZE];
+		uint32 spec_version;
+		uint32 implementation_version;
+		char description[VK_MAX_DESCRIPTION_SIZE];
+	};
 
 } // vk
 

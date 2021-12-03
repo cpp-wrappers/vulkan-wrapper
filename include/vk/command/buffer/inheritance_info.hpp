@@ -14,7 +14,7 @@ namespace vk {
 	struct occlusion_query_enable : wrapper::of_integer<uint32> {};
 
 	struct command_buffer_inheritance_info {
-		uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		const void* next = nullptr;
 		vk::render_pass render_pass;
 		vk::subpass subpass;

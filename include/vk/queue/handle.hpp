@@ -15,7 +15,7 @@ namespace vk {
 
 		vk::result try_submit(type::range_of_value_type<vk::submit_info> auto&& submits, vk::fence fence = { VK_NULL_HANDLE }) const {
 			return vk::result {
-				(uint32)vkQueueSubmit(
+				(int32)vkQueueSubmit(
 					(VkQueue) handle,
 					(uint32) submits.size(),
 					(VkSubmitInfo*) submits.data(),
@@ -35,7 +35,7 @@ namespace vk {
 
 		vk::result try_present(vk::present_info present_info) const {
 			return {
-				(uint32) vkQueuePresentKHR(
+				(int32) vkQueuePresentKHR(
 					(VkQueue) handle,
 					(VkPresentInfoKHR*) &present_info
 				)

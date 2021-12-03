@@ -3,7 +3,7 @@
 #include <core/integer.hpp>
 
 #include "../shared/headers.hpp"
-#include "../shared/attachment_description.hpp"
+#include "attachment_description.hpp"
 #include "subpass_description.hpp"
 #include "subpass_dependency.hpp"
 

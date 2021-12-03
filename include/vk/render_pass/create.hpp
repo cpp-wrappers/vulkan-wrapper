@@ -10,7 +10,7 @@
 #include <core/elements/one_of.hpp>
 #include <core/exchange.hpp>
 
-#include "../shared/attachment_description.hpp"
+#include "attachment_description.hpp"
 #include "../shared/result.hpp"
 #include "create_info.hpp"
 #include "../device/handle.hpp"
@@ -19,16 +19,14 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_ranges_of_value_type<vk::subpass_description>::less_or_equals<1u>,
-			types::count_of_ranges_of_value_type<vk::subpass_dependency>::greater_or_equals<0u>,
-			types::count_of_ranges_of_value_type<vk::attachment_description>::greater_or_equals<0u>,
-			types::count_of_type<vk::device>::equals<1u>
+			types::count_of_ranges_of_value_type<vk::subpass_description>::equals<1>,
+			types::count_of_ranges_of_value_type<vk::subpass_dependency>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>,
+			types::count_of_type<vk::device>::equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::render_pass>
 	try_create_render_pass(const Args&... args) {
-		using Types = types::of<Args...>;
-
 		vk::render_pass_create_info ci{};
 
 		auto& subpass_descriptions = elements::range_of_value_type<vk::subpass_description>::for_elements_of(args...);
@@ -52,20 +50,22 @@ namespace vk {
 		VkRenderPass render_pass;
 
 		vk::result result {
-			(uint32) vkCreateRenderPass(
+			(int32) vkCreateRenderPass(
 				(VkDevice) device.handle,
 				(VkRenderPassCreateInfo*) &ci,
 				nullptr,
 				(VkRenderPass*) &render_pass
 			)
 		};
-		if(result.success()) return (uint64) render_pass;
+		if(result.success()) return vk::render_pass{ (uint64) render_pass };
 
 		return result;
 	}
 
 	template<typename... Args>
 	vk::render_pass create_render_pass(Args&&... args) {
-		return try_create_render_pass(forward<Args>(args)...).template get<vk::render_pass>();
+		auto result = try_create_render_pass(forward<Args>(args)...);
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::render_pass>();
 	}
 }

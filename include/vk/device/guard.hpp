@@ -28,7 +28,7 @@ namespace vk {
 			}
 		}
 
-		vk::device object() const {
+		const vk::device& object() const {
 			return device;
 		}
 		

@@ -1,0 +1,387 @@
+#if 0
+src_dir=`dirname ${BASH_SOURCE[0]}`
+
+mkdir -p ${src_dir}/build
+
+glslangValidator -e main -o ${src_dir}/build/triangle.vert.spv -V ${src_dir}/triangle.vert
+glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/triangle.frag
+
+. ${src_dir}/../build.sh $@
+
+exit 1
+#endif
+
+#include "vk/instance/guard.hpp"
+#include "vk/physical_device/handle.hpp"
+#include "vk/instance/layer_properties.hpp"
+#include "vk/device/guard.hpp"
+#include "vk/surface/guard.hpp"
+#include "vk/swapchain/guard.hpp"
+#include "vk/render_pass/attachment_description.hpp"
+#include "vk/render_pass/subpass_description.hpp"
+#include "vk/render_pass/create.hpp"
+#include "vk/image/view/create.hpp"
+#include "vk/framebuffer/create.hpp"
+#include "vk/pipeline/create.hpp"
+#include "vk/shader/module/guard.hpp"
+#include "vk/pipeline/layout/create.hpp"
+#include "vk/semaphore/guard.hpp"
+
+#include <string.h>
+#include <stdio.h>
+#include "../platform/platform.hpp"
+
+vk::shader_module_guard read_shader_module(vk::device_guard& device, const char* path) {
+	FILE* f = fopen(path, "r");
+	if(f == nullptr) {
+		platform::error("couldn't open file ");
+		platform::error(path);
+		platform::error("\n");
+
+		throw;
+	}
+	fseek(f, 0, SEEK_END);
+	nuint size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	char src[size];
+
+	fread(src, 1, size, f);
+	fclose(f);
+
+	return {
+		device.create_shader_module(
+			vk::code_size{ (uint32) size },
+			vk::code{ (uint32*) src }
+		),
+		device.object()
+	};
+}
+
+int entrypoint() {
+	nuint count = platform::required_instance_extension_count();
+	span extensions {
+		(vk::extension_name*)platform::get_required_instance_extensions(),
+		platform::required_instance_extension_count()
+	};
+
+	platform::info("required extensions:\n");
+	for(vk::extension_name extension_name: extensions) {
+		platform::info(extension_name.begin());
+		platform::info('\n');
+	}
+
+	bool validation_layer_is_supported = false;
+	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
+
+	vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
+		for(vk::layer_properties p : props) {
+			if(strcmp(p.name, validation_layer_name.begin()) == 0) {
+				validation_layer_is_supported = true;
+				return;
+			}
+		}
+	});
+
+	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
+
+	vk::instance_guard instance {
+		layers,
+		extensions
+	};
+
+	vk::physical_device physical_device = instance.get_first_physical_device();
+
+	vk::queue_family_index queue_family_index {
+		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
+	};
+
+	platform::info("graphics family index: ");
+	platform::info((uint32)queue_family_index);
+	platform::info('\n');
+
+	vk::device_guard device = physical_device.create_device(
+		queue_family_index,
+		array { vk::queue_priority{ 1.0F } },
+		array { vk::extension_name { "VK_KHR_swapchain" } }
+	);
+
+	auto surface_raw = platform::try_create_surface(instance.object());
+	if(!surface_raw.is_current<vk::surface>()) {
+		platform::error(surface_raw.get<c_string>().begin());
+		return -1;
+	}
+
+	vk::surface_guard surface { surface_raw.get<vk::surface>(), instance.object()};
+
+	if(!physical_device.get_surface_support(surface.object(), queue_family_index)) {
+		platform::error("surface is not supported\n");
+		return -1;
+	}
+
+	vk::surface_format surface_format = physical_device.get_first_surface_format(surface.object());
+
+	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
+
+	vk::swapchain_guard swapchain {
+		device.object(),
+		surface.object(),
+		surface_capabilities.min_image_count,
+		surface_capabilities.current_extent,
+		surface_format,
+		vk::image_usage::color_attachment,
+		vk::image_usage::transfer_dst,
+		vk::sharing_mode::exclusive,
+		vk::present_mode::immediate,
+		vk::clipped{ true },
+		vk::surface_transform::identity,
+		vk::composite_alpha::opaque
+	};
+
+	platform::info("created swapchain\n");
+
+	uint32 images_count = (uint32)swapchain.get_image_count();
+	vk::image images_storage[images_count];
+	span images{ images_storage, images_count };
+
+	swapchain.get_images(images);
+
+	vk::attachment_description attachment_description {
+		surface_format.format,
+		vk::initial_layout{ vk::image_layout::undefined },
+		vk::final_layout{ vk::image_layout::present_src_khr }
+	};
+	array color_attachments{ vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal } };
+	vk::subpass_description subpass_description { color_attachments };
+
+	vk::render_pass render_pass = vk::create_render_pass(
+		device.object(),
+		array{ subpass_description },
+		array{ attachment_description }
+	);
+	
+	platform::info("swapchain images: ");
+	platform::info(images_count);
+	platform::info("\n");
+
+	vk::image_view image_views_raw[images_count];
+	span image_views{ image_views_raw, images_count };
+
+	for(nuint i = 0; i < images_count; ++i) {
+		image_views[i] = vk::create_image_view(
+			device.object(),
+			images[i],
+			surface_format.format,
+			vk::image_view_type::two_d,
+			vk::component_mapping{},
+			vk::image_subresource_range{ vk::image_aspect::color }
+		);
+	}
+
+	vk::framebuffer framebuffers_raw[images_count];
+	span framebuffers{ framebuffers_raw, images_count };
+
+	for(nuint i = 0; i < images_count; ++i) {
+		framebuffers[i] = vk::create_framebuffer(
+			device.object(),
+			render_pass,
+			array{ image_views[i] },
+			vk::extent<3>{ 300, 300, 1 }
+		);
+	}
+
+	auto vertex_shader = read_shader_module(device, "triangle.vert.spv");
+	auto fragment_shader = read_shader_module(device, "triangle.frag.spv");
+
+	array shader_stages {
+		vk::pipeline_shader_stage_create_info {
+			.stage{ vk::shader_stage::vertex },
+			.module{ vertex_shader.object() },
+			.entry_point_name{ "main" }
+		},
+		vk::pipeline_shader_stage_create_info {
+			.stage{ vk::shader_stage::fragment },
+			.module{ fragment_shader.object() },
+			.entry_point_name{ "main" }
+		}
+	};
+
+	vk::pipeline_vertex_input_state_create_info pvisci {};
+	vk::pipeline_input_assembly_state_create_info piasci {
+		.topology = vk::primitive_topology::triangle_list
+	};
+
+	vk::viewport viewport {
+		.width = 300, .height = 300
+	};
+
+	vk::rect2d scissor {
+		.offset{ 0, 0 },
+		.extent{ 300, 300 }
+	};
+
+	vk::pipeline_viewport_state_create_info pvsci {
+		.viewport_count = 1,
+		.viewports = &viewport,
+		.scissor_count = 1,
+		.scissors = &scissor
+	};
+
+	vk::pipeline_rasterization_state_create_info prsci {
+		.polygon_mode = vk::polygon_mode::fill,
+		.cull_mode = vk::cull_mode::back,
+		.front_face = vk::front_face::counter_clockwise
+	};
+
+	vk::pipeline_multisample_state_create_info pmsci {};
+
+	vk::pipeline_color_blend_attachment_state pcbas {
+		.src_color_blend_factor = vk::blend_factor::one,
+		.dst_color_blend_factor = vk::blend_factor::zero,
+		.color_blend_op = vk::blend_op::add,
+		.src_alpha_blend_factor = vk::blend_factor::one,
+		.dst_alpha_blend_factor = vk::blend_factor::zero,
+		.alpha_blend_op = vk::blend_op::add,
+		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
+	};
+
+	vk::pipeline_color_blend_state_create_info pcbsci {
+		.logic_op = vk::logic_op::copy,
+		.attachment_count = 1,
+		.attachments = &pcbas
+	};
+
+	vk::pipeline_layout pipeline_layout = vk::create_pipeline_layout(device.object());
+
+	vk::pipeline pipeline = vk::create_graphics_pipeline(
+		device.object(),
+		shader_stages,
+		pvisci,
+		piasci,
+		pvsci,
+		prsci,
+		pmsci,
+		pcbas,
+		pcbsci,
+		pipeline_layout,
+		render_pass,
+		vk::subpass{ 0 }
+	);
+
+	vk::command_pool_guard command_pool = device.create_guarded_command_pool(queue_family_index);
+	vk::command_buffer command_buffers_storage[images_count];
+	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
+	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
+
+	vk::image_subresource_range image_subresource_range { vk::image_aspect::color };
+
+	for(nuint i = 0; i < images_count; ++i) {
+		auto command_buffer = command_buffers[i];
+
+		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
+
+		vk::clear_value clear_value{ vk::clear_color_value{ 1.0, 0.8, 0.4, 0.0 } };
+
+		vk::image_memory_barrier image_memory_barrier_from_present_to_draw {
+			.src_access = vk::src_access{ vk::access::memory_read },
+			.dst_access = vk::dst_access{ vk::access::color_attachment_write },
+			.old_layout = vk::old_layout{ vk::image_layout::undefined },
+			.new_layout = vk::new_layout{ vk::image_layout::present_src_khr },
+			.src_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
+			.dst_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
+			.image = images[i],
+			.subresource_range = image_subresource_range
+		};
+
+		command_buffer.cmd_pipeline_barrier(
+			vk::src_stage_flags { vk::pipeline_stage::color_attachment_output },
+			vk::dst_stage_flags { vk::pipeline_stage::color_attachment_output },
+			vk::dependency_flags{},
+			array{ image_memory_barrier_from_present_to_draw }
+		);
+
+		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
+			.render_pass{ render_pass },
+			.framebuffer{ framebuffers[i] },
+			.render_area {
+				.offset{ 0 },
+				.extent{ 300 }
+			},
+			.clear_value_count = 1,
+			.clear_values = &clear_value
+		});
+
+		command_buffer.cmd_bind_pipeline(pipeline);
+		command_buffer.cmd_draw(3, 1, 0, 0);
+		command_buffer.cmd_end_render_pass();
+
+		vk::image_memory_barrier image_memory_barrier_from_draw_to_present {
+			.src_access = vk::src_access{ vk::access::color_attachment_write },
+			.dst_access = vk::dst_access{ vk::access::memory_read },
+			.old_layout = vk::old_layout{ vk::image_layout::present_src_khr },
+			.new_layout = vk::new_layout{ vk::image_layout::present_src_khr },
+			.src_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
+			.dst_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
+			.image = images[i],
+			.subresource_range = image_subresource_range
+		};
+
+		command_buffer.cmd_pipeline_barrier(
+			vk::src_stage_flags { vk::pipeline_stage::color_attachment_output },
+			vk::dst_stage_flags { vk::pipeline_stage::bottom_of_pipe },
+			vk::dependency_flags{},
+			array{ image_memory_barrier_from_draw_to_present }
+		);
+
+		command_buffer.end();
+	}
+
+	vk::semaphore_guard swapchain_image_semaphore { device.object() };
+	vk::semaphore_guard rendering_finished_semaphore { device.object() };
+
+	vk::queue queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+
+	while (!platform::should_close()) {
+		platform::begin();
+
+		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.object());
+
+		if(result.is_current<vk::result>()) {
+			vk::result r = result.get<vk::result>();
+
+			if((int32)r == VK_SUBOPTIMAL_KHR) break;
+			platform::error("can't acquire swapchain image\n");
+			return -1;
+		}
+
+		vk::image_index image_index = result.get<vk::image_index>();
+
+		vk::pipeline_stage wait_dst_stage_mask = vk::pipeline_stage::color_attachment_output;
+
+		queue.submit(vk::submit_info {
+			.wait_semaphore_count = 1,
+			.wait_semaphores = &swapchain_image_semaphore.object(),
+			.wait_dst_stage_mask = &wait_dst_stage_mask,
+			.command_buffer_count = 1,
+			.command_buffers = &command_buffers[(uint32)image_index],
+			.signal_semaphore_count = 1,
+			.signal_semaphores = &rendering_finished_semaphore.object()
+		});
+
+		queue.present(vk::present_info {
+			.wait_semaphore_count = 1,
+			.wait_semaphores = &rendering_finished_semaphore.object(),
+			.swapchain_count = 1,
+			.swapchains = &swapchain.object(),
+			.image_indices = &image_index
+		});
+
+		platform::end();
+	}
+
+	device.wait_idle();
+
+	command_pool.free_command_buffers(command_buffers);
+
+	return 0;
+}

@@ -14,15 +14,14 @@
 #include "../../pipeline/stage.hpp"
 #include "../../shared/dependency.hpp"
 #include "../../image/memory_barrier.hpp"
+#include "clear.hpp"
+#include "render_pass_begin_info.hpp"
+#include "../../pipeline/handle.hpp"
 
 namespace vk {
 
 	struct src_stage_flags : flag_enum<vk::pipeline_stage> {};
 	struct dst_stage_flags : flag_enum<vk::pipeline_stage> {};
-
-	struct clear_color_value {
-		float r, g, b, a;
-	};
 
 	struct command_buffer {
 		void* handle;
@@ -57,7 +56,7 @@ namespace vk {
 			elements::for_each_of_type<vk::command_buffer_usage>([&](auto f){ bi.usage.set(f); }, args...);
 
 			return {
-				(uint32) vkBeginCommandBuffer(
+				(int32) vkBeginCommandBuffer(
 					(VkCommandBuffer) handle,
 					(VkCommandBufferBeginInfo*) &bi
 				)
@@ -74,7 +73,7 @@ namespace vk {
 			elements::for_each_of_type<vk::command_buffer_usage&>([&](auto f){ bi.usage.set(f); }, args...);
 
 			return {
-				(uint32) vkBeginCommandBuffer(
+				(int32) vkBeginCommandBuffer(
 					(VkCommandBuffer) handle,
 					(VkCommandBufferBeginInfo*) &bi
 				)
@@ -130,7 +129,7 @@ namespace vk {
 
 		vk::result try_end() const {
 			return {
-				(uint32) vkEndCommandBuffer((VkCommandBuffer) handle)
+				(int32) vkEndCommandBuffer((VkCommandBuffer) handle)
 			};
 		}
 
@@ -138,6 +137,46 @@ namespace vk {
 			vk::result result = try_end();
 			if(!result.success()) throw result;
 		}
+
+		void cmd_begin_render_pass(
+			vk::render_pass_begin_info render_pass_begin_info
+		) const {
+			vkCmdBeginRenderPass(
+				(VkCommandBuffer) handle,
+				(VkRenderPassBeginInfo*) &render_pass_begin_info,
+				VK_SUBPASS_CONTENTS_INLINE
+			);
+		}
+
+		void cmd_bind_pipeline(
+			vk::pipeline pipeline
+		) const {
+			vkCmdBindPipeline(
+				(VkCommandBuffer) handle,
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				(VkPipeline) pipeline.handle
+			);
+		}
+
+		void cmd_draw(
+			uint32 vertex_count,
+			uint32 instance_count,
+			uint32 first_vertex,
+			uint32 first_instance
+		) const {
+			vkCmdDraw(
+				(VkCommandBuffer) handle,
+				vertex_count,
+				instance_count,
+				first_vertex,
+				first_instance
+			);
+		}
+
+		void cmd_end_render_pass() const {
+			vkCmdEndRenderPass((VkCommandBuffer) handle);
+		}
+
 	};
 
 } // vk

@@ -21,6 +21,10 @@ if [ -v sanitize ]; then
 	args+=(-fsanitize=undefined)
 fi
 
+if [ -z $CXX ]; then
+	CXX=clang++
+fi
+
 if ! $CXX \
 	-c \
 	${args[@]} \
@@ -43,5 +47,7 @@ if ! $CXX \
 fi
 
 if [ -v run ]; then
-	${src_dir}/build/${src_name}
+	pushd ${src_dir}/build
+	./${src_name}
+	popd
 fi

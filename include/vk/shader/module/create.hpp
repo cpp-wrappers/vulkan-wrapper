@@ -8,15 +8,16 @@
 #include "../../shared/result.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../../device/handle.hpp"
 
 namespace vk {
 
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::device>::equals<1u>,
-			types::count_of_type<vk::code_size>::equals<1u>,
-			types::count_of_type<vk::code>::equals<1u>
+			types::count_of_type<vk::device>::equals<1>,
+			types::count_of_type<vk::code_size>::equals<1>,
+			types::count_of_type<vk::code>::equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::shader_module> try_create_shader_module(const Args&... args) {
@@ -30,15 +31,15 @@ namespace vk {
 		VkShaderModule shader_module;
 		
 		vk::result result {
-			(uint32) vkCreateShaderModule(
-				*(VkDevice*) &device,
+			(int32) vkCreateShaderModule(
+				(VkDevice) device.handle,
 				(VkShaderModuleCreateInfo*) &ci,
 				nullptr,
 				(VkShaderModule*) &shader_module
 			)
 		};
 
-		if(result.success()) return (uint64)shader_module;
+		if(result.success()) return vk::shader_module{ shader_module };
 
 		return result;
 	}

@@ -64,17 +64,16 @@ namespace vk {
 	}
 } error_category;*/
 
-	struct result : wrapper::of_integer<uint32, struct vk_result> {
-		bool success() const {
-			return (uint32) *this == VK_SUCCESS;
-		}
-	};
+	
 
-	inline void throw_if_error(result result) {
-		if((uint32)result < 0) {
-			throw result;
-			//throw std::system_error{ result, error_category };
-		}
-	}
+	struct result : wrapper::of_integer<int32, struct vk_result> {
+
+		template<typename Type>
+		requires(type::is_same_as<int32>::after_applying<type::remove_reference>::for_type_of<Type>)
+		result(Type val) : wrapper::of_integer<int32, struct vk_result>{ val } {}
+
+		bool success() const { return (int32) *this == VK_SUCCESS; }
+		bool incomplete() const { return (int32) *this == VK_INCOMPLETE; }
+	};
 
 } // vk

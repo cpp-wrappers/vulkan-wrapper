@@ -5,8 +5,9 @@ exit 1
 
 #include "vk/instance/guard.hpp"
 #include "vk/physical_device/handle.hpp"
-
+#include "vk/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
+#include <string.h>
 
 static nuint tabs = 0u;
 
@@ -49,14 +50,28 @@ void object_block(auto name, auto f) {
 }
 
 int entrypoint() {
+	bool validation_layer_is_supported = false;
+	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
+
+	vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
+		for(vk::layer_properties p : props) {
+			if(strcmp(p.name, validation_layer_name.begin()) == 0) {
+				validation_layer_is_supported = true;
+				return;
+			}
+		}
+	});
+
+	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
+
 	vk::instance_guard instance {
 		vk::create_instance(
 			vk::application_info {
 				vk::api_version {
 					vk::major{ 1 }, vk::minor{ 0 }
 				}
-			}/*,
-			array{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } }*/
+			},
+			layers
 		)
 	};
 
@@ -107,7 +122,7 @@ int entrypoint() {
 						println("graphics: ", props.flags.get(vk::queue_flag::graphics));
 						println("compute: ", props.flags.get(vk::queue_flag::compute));
 						println("transfer: ", props.flags.get(vk::queue_flag::transfer));
-						println("tsparse binding: ", props.flags.get(vk::queue_flag::sparse_binding));
+						println("sparse binding: ", props.flags.get(vk::queue_flag::sparse_binding));
 					});
 				});
 			});
@@ -122,8 +137,8 @@ int entrypoint() {
 			});
 		});
 
-		/*array_block("layers", [&]{
-			vk::for_each_layer_properties([](auto props) {
+		array_block("instance_layers", [&]{
+			vk::for_each_instance_layer_properties([](auto props) {
 				object_block([&]{
 					println("name: ", props.name);
 					println("spec version: ", props.spec_version);
@@ -131,7 +146,7 @@ int entrypoint() {
 					println("description: ", props.description);
 				});
 			});
-		});*/
+		});
 	});
 
 	return 0;

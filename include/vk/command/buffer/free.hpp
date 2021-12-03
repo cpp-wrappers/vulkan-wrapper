@@ -3,20 +3,19 @@
 #include <core/type/range.hpp>
 
 #include "../../shared/headers.hpp"
+#include "handle.hpp"
+#include "../../device/handle.hpp"
 
 namespace vk {
-	class device;
-	class command_pool;
-	class command_buffer;
 
 	void free_command_buffers(
-		const vk::device& device,
-		const vk::command_pool& command_pool,
+		vk::device device,
+		vk::command_pool command_pool,
 		type::range_of_value_type<vk::command_buffer> auto&& command_buffers
 	) {
 		vkFreeCommandBuffers(
-			*(VkDevice*) &device,
-			*(VkCommandPool*) &command_pool,
+			(VkDevice) device.handle,
+			(VkCommandPool) command_pool.handle,
 			command_buffers.size(),
 			(VkCommandBuffer*) command_buffers.data()
 		);

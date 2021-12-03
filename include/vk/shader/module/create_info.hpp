@@ -11,7 +11,7 @@ namespace vk {
 	struct code : wrapper::of_pointer_to<const uint32_t>{};
 
 	struct shader_module_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 		const void* next{};
 		uint32 flags{};
 		vk::code_size code_size;

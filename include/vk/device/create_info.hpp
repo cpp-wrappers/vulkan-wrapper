@@ -11,7 +11,7 @@
 namespace vk {
 
 	struct device_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		const void* next = nullptr;
 		uint32 flags = 0;
 		uint32 queue_create_info_count;

@@ -5,7 +5,7 @@
 namespace vk {
 
 	struct viewport {
-		float x, y, width, height, min_depth, max_depth;
+		float x = 0, y = 0, width, height, min_depth = 0, max_depth = 1;
 	};
 }
 

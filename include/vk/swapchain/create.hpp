@@ -76,7 +76,7 @@ namespace vk {
 		VkSwapchainKHR swapchain;
 
 		vk::result result {
-			(uint32) vkCreateSwapchainKHR(
+			(int32) vkCreateSwapchainKHR(
 				(VkDevice) device.handle,
 				(VkSwapchainCreateInfoKHR*) &ci,
 				nullptr,
@@ -84,7 +84,7 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return (uint64) swapchain;
+		if(result.success()) return vk::swapchain{ swapchain };
 
 		return result;
 	}
@@ -104,6 +104,8 @@ namespace vk {
 
 	template<typename... Args>
 	vk::swapchain create_swapchain(Args&&... args) {
-		return try_create_swapchain(forward<Args>(args)...).template get<vk::swapchain>();
+		auto result = try_create_swapchain(forward<Args>(args)...);
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::swapchain>();
 	}
 }

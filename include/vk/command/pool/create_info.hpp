@@ -15,7 +15,7 @@ namespace vk {
 	};
 
 	struct command_pool_create_info {
-		uint32 type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		const void* next = nullptr;
 		flag_enum<command_pool_create_flag> flags{};
 		vk::queue_family_index queue_family_index;

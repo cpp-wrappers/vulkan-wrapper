@@ -3,7 +3,6 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../shared/headers.hpp"
 #include "shader_stage_create_info.hpp"
 #include "vertex_input_state/create_info.hpp"
 #include "input_assembly_state_create_info.hpp"
@@ -14,6 +13,11 @@
 #include "depth_stencil_state_create_info.hpp"
 #include "color_blend_state_create_info.hpp"
 #include "dynamic_state_create_info.hpp"
+#include "../render_pass/handle.hpp"
+#include "layout/handle.hpp"
+#include "handle.hpp"
+#include "../shared/headers.hpp"
+#include "../shared/subpass.hpp"
 
 namespace vk {
 
@@ -40,10 +44,6 @@ namespace vk {
 		ray_tracing_allow_motion = VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV
 	};
 
-	struct pipeline_layout;
-	struct render_pass;
-	struct pipeline;
-
 	struct graphics_pipeline_create_info {
 		uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
@@ -59,10 +59,10 @@ namespace vk {
 		const vk::pipeline_depth_stencil_state_create_info* depth_stencil_state;
 		const vk::pipeline_color_blend_state_create_info* color_blend_state;
 		const vk::pipeline_dynamic_state_create_info* dynamic_state;
-		vk::pipeline_layout& layout;
-		void* render_pass;
-		uint32 subpass;
-		vk::pipeline* base_pipeline;
+		vk::pipeline_layout layout;
+		vk::render_pass render_pass;
+		vk::subpass subpass;
+		vk::pipeline base_pipeline;
 		int32 base_pipeline_index;
 	};
 }

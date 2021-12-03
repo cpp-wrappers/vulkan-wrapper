@@ -26,7 +26,7 @@ namespace vk {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {
-				(uint32) vkEnumeratePhysicalDevices(
+				(int32) vkEnumeratePhysicalDevices(
 					(VkInstance) handle,
 					&count,
 					(VkPhysicalDevice*) devices.data()

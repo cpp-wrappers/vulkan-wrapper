@@ -6,19 +6,19 @@
 
 namespace vk {
 
-	template<uint Dim = 1>
+	template<nuint Dim = 1>
 	struct offset;
 
 	template<>
-	struct offset<1u> : wrapper::of_integer<uint32> {};
+	struct offset<1> : wrapper::of_integer<int32> {};
 
-	offset(uint32) -> offset<1u>;
+	offset(int32) -> offset<1>;
 
 	template<>
-	struct offset<2u> {
-		uint32 x, y;
+	struct offset<2> {
+		int32 x, y;
 	};
 
 }
 
-static_assert(sizeof(vk::offset<2u>) == sizeof(VkOffset2D));
+static_assert(sizeof(vk::offset<2>) == sizeof(VkOffset2D));

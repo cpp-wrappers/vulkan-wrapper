@@ -6,8 +6,8 @@
 namespace vk {
 
 	struct rect2d {
-		vk::offset<2u> offset;
-		vk::extent<2u> extent;
+		vk::offset<2> offset{};
+		vk::extent<2> extent{};
 	};
 
 }

@@ -8,11 +8,13 @@ platform=$1
 shift
 
 src_path=`realpath ${BASH_SOURCE[1]}`
+echo "src_path: ${src_path}"
 src_dir=`dirname ${src_path}`
 src_base=`basename ${src_path}`
 src_name=${src_base%.*}
 
 script_path=`realpath ${BASH_SOURCE[0]}`
+echo "script_path: ${script_path}"
 script_dir=`dirname ${script_path}`
 
 root_dir=`realpath ${script_dir}/../`

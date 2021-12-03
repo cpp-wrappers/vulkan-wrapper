@@ -8,7 +8,7 @@
 
 #include "../shared/headers.hpp"
 #include "../shared/result.hpp"
-
+#include "../device/handle.hpp"
 
 namespace vk {
 	elements::one_of<vk::result, vk::semaphore>
@@ -18,15 +18,15 @@ namespace vk {
 		VkSemaphore semaphore;
 
 		vk::result result {
-			(uint32) vkCreateSemaphore(
-				*(VkDevice*) &device,
+			(int32) vkCreateSemaphore(
+				(VkDevice) device.handle,
 				(VkSemaphoreCreateInfo*) &ci,
 				(VkAllocationCallbacks*) nullptr,
 				&semaphore
 			)
 		};
 
-		if(result.success()) return (uint64) semaphore;
+		if(result.success()) return vk::semaphore{ semaphore };
 		return result;
 	}
 

@@ -31,14 +31,14 @@ namespace vk {
 		VkInstance instance;
 
 		vk::result result {
-			(uint32) vkCreateInstance(
+			(int32) vkCreateInstance(
 				(VkInstanceCreateInfo*) &ici,
 				nullptr,
 				(VkInstance*) &instance
 			)
 		};
 
-		if(result.success()) return instance;
+		if(result.success()) return vk::instance{ instance };
 
 		return result;
 	}

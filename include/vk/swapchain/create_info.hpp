@@ -34,14 +34,14 @@ namespace vk {
 	struct clipped : wrapper::of_integer<uint32> {};
 
 	struct swapchain_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		const void* next{};
 		flag_enum<swapchain_create_flag> flags{};
 		uint64 surface;
 		vk::min_image_count min_image_count{};
 		vk::format format{};
 		vk::color_space color_space{};
-		vk::extent<2u> extent{};
+		vk::extent<2> extent{};
 		vk::image_array_layers image_array_layers{ 1u };
 		flag_enum<vk::image_usage> usage{};
 		vk::sharing_mode sharing_mode{};
