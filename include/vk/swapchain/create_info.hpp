@@ -16,11 +16,10 @@
 #include "../surface/transform.hpp"
 #include "../surface/composite_alpha.hpp"
 #include "../surface/min_image_count.hpp"
+#include "handle.hpp"
+#include "../surface/handle.hpp"
 
 namespace vk {
-
-	class swapchain;
-	class surface;
 
 	enum class swapchain_create_flag {
 		split_instance_bind_regions = VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR,
@@ -35,23 +34,23 @@ namespace vk {
 
 	struct swapchain_create_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		const void* next{};
-		flag_enum<swapchain_create_flag> flags{};
-		uint64 surface;
-		vk::min_image_count min_image_count{};
-		vk::format format{};
-		vk::color_space color_space{};
-		vk::extent<2> extent{};
-		vk::image_array_layers image_array_layers{ 1u };
-		flag_enum<vk::image_usage> usage{};
-		vk::sharing_mode sharing_mode{};
-		vk::queue_family_index_count queue_family_index_count{};
-		vk::queue_family_indices queue_family_indices{};
-		flag_enum<vk::surface_transform> pre_transform{};
-		flag_enum<vk::composite_alpha> composite_alpha{};
-		vk::present_mode present_mode{};
-		vk::clipped clipped{};
-		uint64 swapchain;
+		const void* next;
+		flag_enum<swapchain_create_flag> flags;
+		vk::surface surface;
+		vk::min_image_count min_image_count;
+		vk::format format;
+		vk::color_space color_space;
+		vk::extent<2> extent;
+		vk::image_array_layers image_array_layers{ 1 };
+		vk::image_usages usage;
+		vk::sharing_mode sharing_mode;
+		vk::queue_family_index_count queue_family_index_count;
+		vk::queue_family_indices queue_family_indices;
+		flag_enum<vk::surface_transform> pre_transform;
+		flag_enum<vk::composite_alpha> composite_alpha;
+		vk::present_mode present_mode;
+		vk::clipped clipped;
+		vk::swapchain old_swapchain;
 	}; // swapchain_create_info
 
 } // vk

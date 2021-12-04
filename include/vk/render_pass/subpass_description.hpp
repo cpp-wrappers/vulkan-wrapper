@@ -40,16 +40,16 @@ namespace vk {
 	//struct preserve_attachments : wrapper::of_pointer_to<const uint32> {};
 	
 	struct subpass_description {
-		flag_enum<vk::subpass_description_flag> flags{};
+		flag_enum<vk::subpass_description_flag> flags;
 		vk::pipeline_bind_point pipeline_bind_point{ vk::pipeline_bind_point::graphics };
-		uint32 input_attachment_count{ 0 };
-		vk::input_attachment_reference* input_attachments{ nullptr };
-		uint32 color_attachment_count{ 0 };
-		vk::color_attachment_reference* color_attachments{ nullptr };
-		vk::resolve_attachment_reference* resolve_attachments{ nullptr };
-		vk::depth_stencil_attachment_reference* depth_stencil_attachments{ nullptr };
-		uint32 preserve_attachment_count{ 0 };
-		vk::preserve_attachment_reference* preserve_attachments{ nullptr };
+		uint32 input_attachment_count = 0;
+		vk::input_attachment_reference* input_attachments = nullptr;
+		uint32 color_attachment_count = 0;
+		vk::color_attachment_reference* color_attachments = nullptr;
+		vk::resolve_attachment_reference* resolve_attachments = nullptr;
+		vk::depth_stencil_attachment_reference* depth_stencil_attachments = nullptr;
+		uint32 preserve_attachment_count = 0;
+		vk::preserve_attachment_reference* preserve_attachments = nullptr;
 	
 		template<typename... Args>
 		requires(

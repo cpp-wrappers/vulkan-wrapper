@@ -9,8 +9,8 @@
 namespace vk {
 
 	struct pipeline_depth_stencil_state_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		const void* next{};
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		const void* next;
 		uint32 flags;
 		uint32 enable_depth_test;
 		uint32 enable_depth_write;
@@ -19,8 +19,8 @@ namespace vk {
 		uint32 enable_stencil_test;
 		vk::stencil_op_state front;
 		vk::stencil_op_state back;
-		float min_depth_bounds{};
-		float max_depth_bounds{};
+		float min_depth_bounds;
+		float max_depth_bounds;
 	};
 }
 

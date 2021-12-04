@@ -9,7 +9,7 @@
 namespace vk {
 	struct command_buffer_begin_info {
 		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		const void* next = nullptr;
+		const void* next;
 		flag_enum<vk::command_buffer_usage> usage;
 		const vk::command_buffer_inheritance_info* inheritance_info;
 	};

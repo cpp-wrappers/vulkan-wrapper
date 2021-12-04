@@ -10,7 +10,7 @@
 namespace vk {
 
 	struct pipeline_color_blend_attachment_state {
-		uint32 enable_blend{ VK_FALSE };
+		uint32 enable_blend;
 		vk::blend_factor src_color_blend_factor;
 		vk::blend_factor dst_color_blend_factor;
 		vk::blend_op color_blend_op;

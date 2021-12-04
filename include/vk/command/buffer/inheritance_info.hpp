@@ -15,7 +15,7 @@ namespace vk {
 
 	struct command_buffer_inheritance_info {
 		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		const void* next = nullptr;
+		const void* next;
 		vk::render_pass render_pass;
 		vk::subpass subpass;
 		vk::framebuffer framebuffer;

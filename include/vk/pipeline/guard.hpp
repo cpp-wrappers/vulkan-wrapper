@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pipeline.hpp"
-#include "device.hpp"
+#include "handle.hpp"
+#include "../device/handle.hpp"
 
 namespace vk {
 

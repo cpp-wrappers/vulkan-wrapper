@@ -30,7 +30,7 @@ namespace vk {
 	struct final_layout : wrapper::of<vk::image_layout> {};
 	
 	struct attachment_description {
-		flag_enum<attachment_description_flag> flags{};
+		flag_enum<attachment_description_flag> flags;
 		vk::format format;
 		vk::sample_count samples{ 1 };
 		vk::load_op load_op{ vk::attachment_load_op::dont_care };

@@ -18,12 +18,12 @@ namespace vk {
 	};
 
 	struct pipeline_shader_stage_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		const void* next{};
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		const void* next;
 		flag_enum<vk::shader_stage_create_flag> flags;
 		flag_enum<vk::shader_stage> stage;
 		vk::shader_module module;
 		c_string entry_point_name;
-		const void* specialization_info{};
+		const void* specialization_info;
 	};
 }

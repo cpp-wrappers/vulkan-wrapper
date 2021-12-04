@@ -23,7 +23,7 @@ namespace vk {
 	class queue_create_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		const void* next = nullptr;
-		flag_enum<queue_create_flag> flags{};
+		flag_enum<queue_create_flag> flags;
 		vk::queue_family_index queue_family_index;
 		vk::queue_count queue_count;
 		vk::queue_priorities queue_priorities;
@@ -33,9 +33,9 @@ namespace vk {
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::queue_family_index>::equals<1u>,
-				types::count_of_type<vk::queue_count>::equals<1u>,
-				types::count_of_type<vk::queue_priorities>::equals<1u>
+				types::count_of_type<vk::queue_family_index>::equals<1>,
+				types::count_of_type<vk::queue_count>::equals<1>,
+				types::count_of_type<vk::queue_priorities>::equals<1>
 			>::for_types_of<Args...>
 		)
 		queue_create_info(Args... args) {

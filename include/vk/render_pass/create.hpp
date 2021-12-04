@@ -57,6 +57,7 @@ namespace vk {
 				(VkRenderPass*) &render_pass
 			)
 		};
+		
 		if(result.success()) return vk::render_pass{ (uint64) render_pass };
 
 		return result;

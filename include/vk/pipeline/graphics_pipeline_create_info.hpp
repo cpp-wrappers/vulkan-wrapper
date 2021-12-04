@@ -45,7 +45,7 @@ namespace vk {
 	};
 
 	struct graphics_pipeline_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
 		flag_enum<pipeline_create_flag> flags;
 		uint32 stage_count;

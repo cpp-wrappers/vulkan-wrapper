@@ -4,7 +4,7 @@
 
 namespace vk {
 	
-	struct debug_error_callback {
+	struct debug_report_callback {
 		uint64 handle;
 	};
 	

@@ -26,6 +26,7 @@ exit 1
 #include "vk/shader/module/guard.hpp"
 #include "vk/pipeline/layout/create.hpp"
 #include "vk/semaphore/guard.hpp"
+#include "vk/debug/report/callback/create.hpp"
 
 #include <string.h>
 #include <stdio.h>
@@ -59,14 +60,14 @@ vk::shader_module_guard read_shader_module(vk::device_guard& device, const char*
 }
 
 int entrypoint() {
-	nuint count = platform::required_instance_extension_count();
-	span extensions {
+	nuint required_extension_count = platform::required_instance_extension_count();
+	span required_extensions {
 		(vk::extension_name*)platform::get_required_instance_extensions(),
 		platform::required_instance_extension_count()
 	};
 
 	platform::info("required extensions:\n");
-	for(vk::extension_name extension_name: extensions) {
+	for(vk::extension_name extension_name: required_extensions) {
 		platform::info(extension_name.begin());
 		platform::info('\n');
 	}
@@ -85,10 +86,40 @@ int entrypoint() {
 
 	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
 
+	vk::extension_name extensions_raw[required_extension_count + 1]; // TODO
+	span extensions{ extensions_raw, required_extension_count + 1 };
+	
+	nuint i = 0;
+	for(; i < required_extension_count; ++i) extensions[i] = required_extensions[i];
+	extensions[i++] = vk::extension_name{ "VK_EXT_debug_report" };
+
 	vk::instance_guard instance {
 		layers,
 		extensions
 	};
+
+	vk::create_debug_report_callback(
+		instance.object(),
+		vk::debug_report_flags{
+			vk::debug_report_flag::error,
+			vk::debug_report_flag::warning
+		},
+		(vk::debug_report_callback_type) [](
+			flag_enum<vk::debug_report_flag> flags,
+			vk::debug_report_object_type objectType,
+			uint64 object,
+			nuint location,
+			int32 message_code,
+			c_string layer_prefix,
+			c_string message,
+			void* user_data
+		) {
+			platform::info("[vk] ");
+			platform::info(message.begin());
+			platform::info("\n");
+			return uint32{ 0 };
+		}
+	);
 
 	vk::physical_device physical_device = instance.get_first_physical_device();
 
@@ -129,8 +160,7 @@ int entrypoint() {
 		surface_capabilities.min_image_count,
 		surface_capabilities.current_extent,
 		surface_format,
-		vk::image_usage::color_attachment,
-		vk::image_usage::transfer_dst,
+		vk::image_usages{ vk::image_usage::color_attachment, vk::image_usage::transfer_dst },
 		vk::sharing_mode::exclusive,
 		vk::present_mode::immediate,
 		vk::clipped{ true },

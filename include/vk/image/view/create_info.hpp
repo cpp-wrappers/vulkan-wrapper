@@ -26,12 +26,10 @@ namespace vk {
 		cube_array = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY
 	};
 
-	struct image;
-
 	struct image_view_create_info {
-		uint32 type = (uint32) VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		const void* next = nullptr;
-		flag_enum<image_view_create_flag> flags{};
+		const uint32 type = (uint32) VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		const void* next;
+		flag_enum<image_view_create_flag> flags;
 		vk::image image;
 		vk::image_view_type view_type;
 		vk::format format;

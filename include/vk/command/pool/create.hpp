@@ -19,9 +19,9 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0u>,
-			types::count_of_type<vk::queue_family_index>::equals<1u>,
-			types::count_of_type<vk::device>::equals<1u>
+			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>,
+			types::count_of_type<vk::queue_family_index>::equals<1>,
+			types::count_of_type<vk::device>::equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::command_pool> try_create_command_pool(Args... args) {
@@ -35,7 +35,7 @@ namespace vk {
 
 		vk::result result {
 			(int32) vkCreateCommandPool(
-				*(VkDevice*) &device,
+				(VkDevice) device.handle,
 				(VkCommandPoolCreateInfo*) &ci,
 				nullptr,
 				&command_pool
@@ -50,9 +50,9 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0u>,
-			types::count_of_type<vk::queue_family_index>::equals<1u>,
-			types::count_of_type<vk::device>::equals<1u>
+			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>,
+			types::count_of_type<vk::queue_family_index>::equals<1>,
+			types::count_of_type<vk::device>::equals<1>
 		>::for_types_of<Args...>
 	)
 	vk::command_pool create_command_pool(Args... args) {

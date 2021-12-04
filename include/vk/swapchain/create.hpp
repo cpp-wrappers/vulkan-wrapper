@@ -22,7 +22,7 @@ namespace vk {
 			types::count_of_type<vk::format>::equals<1>,
 			types::count_of_type<vk::color_space>::equals<1>,
 			types::count_of_type<vk::extent<2>>::equals<1>,
-			types::count_of_type<vk::image_usage>::greater_or_equals<1>,
+			types::count_of_type<vk::image_usages>::equals<1>,
 			types::count_of_type<vk::sharing_mode>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>,
 			types::count_of_type<vk::surface_transform>::greater_or_equals<0>,
@@ -36,11 +36,12 @@ namespace vk {
 		vk::surface surface = elements::of_type<vk::surface&>::for_elements_of(args...);
 
 		vk::swapchain_create_info ci {
-			.surface = surface.handle,
+			.surface = surface,
 			.min_image_count = elements::of_type<vk::min_image_count&>::for_elements_of(args...),
 			.format = elements::of_type<vk::format&>::for_elements_of(args...),
 			.color_space = elements::of_type<vk::color_space&>::for_elements_of(args...),
-			.extent = elements::of_type<vk::extent<2u>&>::for_elements_of(args...),
+			.extent = elements::of_type<vk::extent<2>&>::for_elements_of(args...),
+			.usage = elements::of_type<vk::image_usages&>::for_elements_of(args...),
 			.sharing_mode = elements::of_type<vk::sharing_mode&>::for_elements_of(args...),
 			.present_mode = elements::of_type<vk::present_mode&>::for_elements_of(args...),
 			.clipped = elements::of_type<vk::clipped&>::for_elements_of(args...)
@@ -48,10 +49,6 @@ namespace vk {
 
 		elements::for_each_of_type<vk::swapchain_create_flag&>(
 			[&](auto f) { ci.flags.set(f); },
-			args...
-		);
-		elements::for_each_of_type<vk::image_usage&>(
-			[&](auto f) { ci.usage.set(f); },
 			args...
 		);
 		elements::for_each_of_type<vk::surface_transform&>(
@@ -62,14 +59,11 @@ namespace vk {
 			[&](auto f) { ci.composite_alpha.set(f); },
 			args...
 		);
+
 		if constexpr(types::count_of_ranges_of_value_type<vk::queue_family_index>::for_types_of<Args...> == 1) {
 			auto& family_indices = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
 			ci.queue_family_index_count = vk::queue_family_index_count{ (uint32) family_indices.size() };
 			ci.queue_family_indices = vk::queue_family_indices{ family_indices.data() };
-		}
-		else {
-			ci.queue_family_index_count = vk::queue_family_index_count{ 0 };
-			ci.queue_family_indices = vk::queue_family_indices{ nullptr };
 		}
 
 		vk::device device = elements::of_type<vk::device&>::for_elements_of(args...);

@@ -11,18 +11,18 @@
 
 namespace vk {
 
-struct surface_capabilities {
-	vk::min_image_count min_image_count;
-	uint32 max_image_count;
-	vk::extent<2u> current_extent;
-	vk::extent<2u> min_image_extent;
-	vk::extent<2u> max_image_extent;
-	uint32 max_image_array_layers;
-	flag_enum<vk::surface_transform> supported_transforms;
-	vk::surface_transform current_transform;
-	flag_enum<vk::composite_alpha> supported_composite_alpha;
-	flag_enum<vk::image_usage> supported_usage_flags;
-};
+	struct surface_capabilities {
+		vk::min_image_count min_image_count;
+		uint32 max_image_count;
+		vk::extent<2> current_extent;
+		vk::extent<2> min_image_extent;
+		vk::extent<2> max_image_extent;
+		uint32 max_image_array_layers;
+		flag_enum<vk::surface_transform> supported_transforms;
+		vk::surface_transform current_transform;
+		flag_enum<vk::composite_alpha> supported_composite_alpha;
+		vk::image_usages supported_usages;
+	};
 
 } // vk
 
