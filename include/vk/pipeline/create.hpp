@@ -36,7 +36,7 @@ namespace vk {
 	// vk::subpass>
 
 	template<typename... Args>
-	/*requires(
+	requires(
 		types::are_exclusively_satsify_predicates<
 			types::count_of_type<vk::device>::equals<1>,
 			types::count_of_type<vk::pipeline_create_flag>::greater_or_equals<0>,
@@ -56,7 +56,7 @@ namespace vk {
 			types::count_of_type<vk::pipeline>::less_or_equals<1>,
 			types::count_of_type<vk::base_pipeline_index>::less_or_equals<1>
 		>::for_types_of<Args...>
-	)*/
+	)
 	elements::one_of<vk::result, vk::pipeline>
 	try_create_graphics_pipeline(const Args&... args) {
 		vk::pipeline_rasterization_state_create_info prsci = elements::of_type<const vk::pipeline_rasterization_state_create_info&>::for_elements_of(args...);

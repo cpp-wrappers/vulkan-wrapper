@@ -4,6 +4,6 @@
 
 namespace vk {
 
-enum class sample_count {};
+	enum class sample_count {};
 
 }

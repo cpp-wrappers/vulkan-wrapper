@@ -90,6 +90,8 @@ $aapt_path package \
 	-f \
 	-F ${unsigned_output_path}
 
+
+
 $aapt_path add ${unsigned_output_path} ${shared_lib_path}
 
 jarsigner -keystore ${platform_dir}/key.keystore -signedjar ${output_path} ${unsigned_output_path} key

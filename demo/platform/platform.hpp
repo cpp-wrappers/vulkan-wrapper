@@ -27,6 +27,9 @@ namespace platform {
 		else info("false");vk::surface surface;
 	}
 
+	nuint file_size(const char*);
+	void read_file(const char*, char* buff, nuint size);
+
 	nuint required_instance_extension_count();
 	const char** get_required_instance_extensions();
 

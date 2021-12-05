@@ -17,6 +17,35 @@ void platform::error(const char* str) {
 	print(str, stderr);
 }
 
+nuint platform::file_size(const char* path) {
+	FILE* f = fopen(path, "r");
+	if(f == nullptr) {
+		platform::error("couldn't open file ");
+		platform::error(path);
+		platform::error("\n");
+
+		throw;
+	}
+	fseek(f, 0, SEEK_END);
+	nuint size = ftell(f);
+	fclose(f);
+	return size;
+}
+
+void platform::read_file(const char* path, char* buff, nuint size) {
+	FILE* f = fopen(path, "r");
+	if(f == nullptr) {
+		platform::error("couldn't open file ");
+		platform::error(path);
+		platform::error("\n");
+
+		throw;
+	}
+
+	fread(buff, 1, size, f);
+	fclose(f);
+}
+
 nuint platform::required_instance_extension_count() {
 	uint32 count;
 	glfwGetRequiredInstanceExtensions(&count);
@@ -55,11 +84,11 @@ bool platform::should_close() {
 	return glfwWindowShouldClose(window);
 }
 
-void platform::begin() {
-	glfwPollEvents();
-}
+void platform::begin() {}
 
-void platform::end() {} 
+void platform::end() {
+	glfwPollEvents();
+} 
 
 int main() {
 	if (glfwInit()) {

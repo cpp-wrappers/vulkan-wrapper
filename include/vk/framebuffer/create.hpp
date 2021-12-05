@@ -40,7 +40,7 @@ namespace vk {
 		vk::extent<3> extent = elements::of_type<const vk::extent<3>&>::for_elements_of(args...);
 
 		ci.width = extent.width();
-		ci.height =  extent.height();
+		ci.height = extent.height();
 		ci.layers = extent.depth();
 
 		const vk::device& device = elements::of_type<const vk::device&>::for_elements_of(args...);

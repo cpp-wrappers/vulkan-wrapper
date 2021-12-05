@@ -16,7 +16,7 @@ namespace vk {
 		vk::logic_op logic_op;
 		uint32 attachment_count;
 		const pipeline_color_blend_attachment_state* attachments;
-		float blend_constants[4];
+		float blend_constants[4]{ 0 };
 	};
 
 }

@@ -42,12 +42,26 @@ void platform::error(const char* str) {
 	error_message_buffer.add(str);
 }
 
+static android_app* app;
+
+nuint platform::file_size(const char* path) {
+	AAsset* asset = AAssetManager_open(app->activity->assetManager, path, AASSET_MODE_BUFFER);
+	auto size = AAsset_getLength(asset);
+	AAsset_close(asset);
+	return size;
+}
+
+void platform::read_file(const char* path, char* buff, nuint size) {
+	AAsset* asset = AAssetManager_open(app->activity->assetManager, path, AASSET_MODE_BUFFER);
+	char* asset_buff = (char*) AAsset_getBuffer(asset);
+	memcpy(buff, asset_buff, size);
+	AAsset_close(asset);
+}
+
 array<const char*, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_android_surface" };
 
 nuint platform::required_instance_extension_count() { return required_instance_extensions.size(); }
 const char** platform::get_required_instance_extensions() { return required_instance_extensions.data(); }
-
-static android_app* app;
 
 elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instance instance) {
 

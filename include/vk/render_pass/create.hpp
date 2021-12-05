@@ -33,19 +33,19 @@ namespace vk {
 		ci.subpass_count = (uint32) subpass_descriptions.size();
 		ci.subpasses = subpass_descriptions.data();
 
-		if constexpr(types::are_contain_range_of_value_type<vk::subpass_dependency>::for_types_of<Args...>) {
+		//if constexpr(types::are_contain_range_of_value_type<vk::subpass_dependency>::for_types_of<Args...>) {
 			auto& subpass_dependencies = elements::range_of_value_type<vk::subpass_dependency>::for_elements_of(args...);
 			ci.dependency_count = (uint32) subpass_dependencies.size();
 			ci.dependencies = subpass_dependencies.data();
-		}
+		//}
 
-		if constexpr(types::are_contain_range_of_value_type<vk::attachment_description>::for_types_of<Args...>) {
+		//if constexpr(types::are_contain_range_of_value_type<vk::attachment_description>::for_types_of<Args...>) {
 			auto& attachment_descriptions = elements::range_of_value_type<vk::attachment_description>::for_elements_of(args...);
 			ci.attachment_count = (uint32) attachment_descriptions.size();
 			ci.attachments = attachment_descriptions.data();
-		}
+		//}
 		
-		const vk::device& device = elements::of_type<const vk::device&>::for_elements_of(args...);
+		vk::device device = elements::of_type<const vk::device&>::for_elements_of(args...);
 
 		VkRenderPass render_pass;
 
@@ -58,7 +58,7 @@ namespace vk {
 			)
 		};
 		
-		if(result.success()) return vk::render_pass{ (uint64) render_pass };
+		if(result.success()) return vk::render_pass{ render_pass };
 
 		return result;
 	}

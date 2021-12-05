@@ -33,22 +33,9 @@ exit 1
 #include "../platform/platform.hpp"
 
 vk::shader_module_guard read_shader_module(vk::device_guard& device, const char* path) {
-	FILE* f = fopen(path, "r");
-	if(f == nullptr) {
-		platform::error("couldn't open file ");
-		platform::error(path);
-		platform::error("\n");
-
-		throw;
-	}
-	fseek(f, 0, SEEK_END);
-	nuint size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
+	auto size = platform::file_size(path);
 	char src[size];
-
-	fread(src, 1, size, f);
-	fclose(f);
+	platform::read_file(path, src, size);
 
 	return {
 		device.create_shader_module(
@@ -178,16 +165,27 @@ int entrypoint() {
 
 	vk::attachment_description attachment_description {
 		surface_format.format,
+		vk::load_op{ vk::attachment_load_op::clear },
+		vk::store_op{ vk::attachment_store_op::store },
 		vk::initial_layout{ vk::image_layout::undefined },
 		vk::final_layout{ vk::image_layout::present_src_khr }
 	};
-	array color_attachments{ vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal } };
+	array color_attachments {
+		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
+	};
 	vk::subpass_description subpass_description { color_attachments };
+	vk::subpass_dependency subpass_dependency{
+		vk::src_subpass{ VK_SUBPASS_EXTERNAL },
+		vk::dst_subpass{ 0 },
+		vk::src_stages{ vk::pipeline_stage::color_attachment_output },
+		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
+	};
 
 	vk::render_pass render_pass = vk::create_render_pass(
 		device.object(),
 		array{ subpass_description },
-		array{ attachment_description }
+		array{ attachment_description },
+		array{ subpass_dependency }
 	);
 	
 	platform::info("swapchain images: ");
@@ -291,7 +289,6 @@ int entrypoint() {
 		pvsci,
 		prsci,
 		pmsci,
-		pcbas,
 		pcbsci,
 		pipeline_layout,
 		render_pass,
@@ -303,32 +300,12 @@ int entrypoint() {
 	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
 	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
 
-	vk::image_subresource_range image_subresource_range { vk::image_aspect::color };
+	vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
 
 	for(nuint i = 0; i < images_count; ++i) {
 		auto command_buffer = command_buffers[i];
 
 		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
-
-		vk::clear_value clear_value{ vk::clear_color_value{ 1.0, 0.8, 0.4, 0.0 } };
-
-		vk::image_memory_barrier image_memory_barrier_from_present_to_draw {
-			.src_access = vk::src_access{ vk::access::memory_read },
-			.dst_access = vk::dst_access{ vk::access::color_attachment_write },
-			.old_layout = vk::old_layout{ vk::image_layout::undefined },
-			.new_layout = vk::new_layout{ vk::image_layout::present_src_khr },
-			.src_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
-			.dst_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
-			.image = images[i],
-			.subresource_range = image_subresource_range
-		};
-
-		command_buffer.cmd_pipeline_barrier(
-			vk::src_stage_flags { vk::pipeline_stage::color_attachment_output },
-			vk::dst_stage_flags { vk::pipeline_stage::color_attachment_output },
-			vk::dependency_flags{},
-			array{ image_memory_barrier_from_present_to_draw }
-		);
 
 		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
 			.render_pass{ render_pass },
@@ -344,24 +321,6 @@ int entrypoint() {
 		command_buffer.cmd_bind_pipeline(pipeline);
 		command_buffer.cmd_draw(3, 1, 0, 0);
 		command_buffer.cmd_end_render_pass();
-
-		vk::image_memory_barrier image_memory_barrier_from_draw_to_present {
-			.src_access = vk::src_access{ vk::access::color_attachment_write },
-			.dst_access = vk::dst_access{ vk::access::memory_read },
-			.old_layout = vk::old_layout{ vk::image_layout::present_src_khr },
-			.new_layout = vk::new_layout{ vk::image_layout::present_src_khr },
-			.src_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
-			.dst_queue_family_index{ VK_QUEUE_FAMILY_IGNORED },
-			.image = images[i],
-			.subresource_range = image_subresource_range
-		};
-
-		command_buffer.cmd_pipeline_barrier(
-			vk::src_stage_flags { vk::pipeline_stage::color_attachment_output },
-			vk::dst_stage_flags { vk::pipeline_stage::bottom_of_pipe },
-			vk::dependency_flags{},
-			array{ image_memory_barrier_from_draw_to_present }
-		);
 
 		command_buffer.end();
 	}
