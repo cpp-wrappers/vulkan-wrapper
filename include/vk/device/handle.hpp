@@ -23,7 +23,7 @@ namespace vk {
 
 		template<typename... Args>
 		elements::one_of<vk::result, vk::shader_module>
-		try_create_shader_module(Args... args) const;
+		try_create_shader_module(Args&&... args) const;
 
 		template<typename... Args>
 		vk::shader_module create_shader_module(Args&&... args) const;
@@ -68,7 +68,7 @@ vk::device::create_command_pool(Args&&... args) const {
 
 template<typename... Args>
 elements::one_of<vk::result, vk::shader_module>
-vk::device::try_create_shader_module(Args... args) const {
+vk::device::try_create_shader_module(Args&&... args) const {
 	return vk::try_create_shader_module(*this, args...);
 }
 

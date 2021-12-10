@@ -14,6 +14,8 @@ namespace vk {
 			: device{ device }
 		{}
 		
+		device_guard(const device_guard&) = delete;
+		
 		template<typename... Args>
 		device_guard(Args&&... args)
 			: device{ vk::create_device(forward<Args>(args)...) }

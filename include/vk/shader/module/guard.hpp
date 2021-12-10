@@ -30,7 +30,7 @@ namespace vk {
 			}
 		}
 
-		vk::shader_module object() const {
+		const vk::shader_module& object() const {
 			return shader_module;
 		}
 	};

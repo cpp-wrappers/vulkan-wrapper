@@ -38,6 +38,8 @@ namespace vk {
 			"vkCreateDebugReportCallbackEXT"
 		);
 
+		if(fn == nullptr) throw;
+
 		vk::result result {
 			(int32) fn(
 				(VkInstance) instance.handle,

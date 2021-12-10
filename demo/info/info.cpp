@@ -12,26 +12,27 @@ exit 1
 static nuint tabs = 0u;
 
 void print(auto... vs) {
-	for(nuint i = 0; i < tabs; ++i) platform::info((char) '\t');
-	(platform::info(vs), ... );
+	for(nuint i = 0; i < tabs; ++i) platform::info('\t');
+	platform::info(vs...);
 }
 
 void println(auto... vs) {
 	print(vs...);
-	platform::info((char)'\n');
+	platform::info('\n');
 }
 
 template<bool t>
 void block(char open, char close, auto f) {
 	if(t) println(open);
 	else {
-		platform::info(open);
-		platform::info((char)'\n');
+		platform::info(open, '\n');
+		platform::info('\n');
 	}
 
 	++tabs;
 	f();
 	--tabs;
+
 	println(close);
 }
 
@@ -66,16 +67,9 @@ int entrypoint() {
 
 	vk::instance_guard instance {
 		vk::create_instance(
-			vk::application_info {
-				vk::api_version {
-					vk::major{ 1 }, vk::minor{ 0 }
-				}
-			},
 			layers
 		)
 	};
-
-	print("instance is created\n");
 
 	array_block("physical devices", [&]() {
 		instance.for_each_physical_device([](vk::physical_device& device) {
@@ -115,9 +109,9 @@ int entrypoint() {
 						println("count: ", props.count);
 						println(
 							"min image transfer granularity: ",
-							props.min_image_transfer_granularity[0u], ", ", 
-							props.min_image_transfer_granularity[1u], ", ",
-							props.min_image_transfer_granularity[2u]
+							props.min_image_transfer_granularity[0], ", ", 
+							props.min_image_transfer_granularity[1], ", ",
+							props.min_image_transfer_granularity[2]
 						);
 						println("graphics: ", props.flags.get(vk::queue_flag::graphics));
 						println("compute: ", props.flags.get(vk::queue_flag::compute));

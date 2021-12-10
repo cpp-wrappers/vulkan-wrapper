@@ -24,7 +24,7 @@ namespace vk {
 			}
 		}
 
-		vk::instance object() const {
+		const vk::instance& object() const {
 			return instance;
 		}
 

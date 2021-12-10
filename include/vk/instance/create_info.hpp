@@ -12,7 +12,7 @@ namespace vk {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		const void* next;
 		uint32 flags;
-		vk::application_info* application_info;
+		const vk::application_info* application_info;
 		uint32 enabled_layer_count;
 		const vk::layer_name* enabled_layer_names;
 		uint32 enabled_extension_count;

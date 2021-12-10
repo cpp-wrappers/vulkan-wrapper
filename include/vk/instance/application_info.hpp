@@ -21,25 +21,21 @@ namespace vk {
 
 	struct application_info {
 		const uint32 m_type = (uint32) VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		const void* next = nullptr;
+		const void* next;
 		vk::application_name app_name;
 		vk::application_version app_version;
 		vk::engine_name engine_name;
 		vk::engine_version engine_version;
 		vk::api_version api_version;
 
-		application_info(const application_info&) = default;
-		application_info(application_info&) = default;
-		application_info(application_info&&) = default;
-
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::application_name>::less_or_equals<1u>,
-				types::count_of_type<vk::application_version>::less_or_equals<1u>,
-				types::count_of_type<vk::engine_name>::less_or_equals<1u>,
-				types::count_of_type<vk::engine_version>::less_or_equals<1u>,
-				types::count_of_type<vk::api_version>::equals<1u>
+				types::count_of_type<vk::application_name>::less_or_equals<1>,
+				types::count_of_type<vk::application_version>::less_or_equals<1>,
+				types::count_of_type<vk::engine_name>::less_or_equals<1>,
+				types::count_of_type<vk::engine_version>::less_or_equals<1>,
+				types::count_of_type<vk::api_version>::equals<1>
 			>::for_types_of<Args...>
 		)
 		application_info(Args... args)
@@ -58,4 +54,4 @@ namespace vk {
 
 } // vk
 
-static_assert(sizeof(VkApplicationInfo) == sizeof(vk::application_info));
+static_assert(sizeof(vk::application_info) == sizeof(VkApplicationInfo));

@@ -13,8 +13,13 @@ namespace vk {
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::instance, vk::result>
-	try_create_instance(Args... args) {
+	try_create_instance(const Args&... args) {
 		instance_create_info ici{};
+
+		if constexpr(types::are_contain_type<vk::application_info>::for_types_of<Args...>) {
+			auto& app_info = elements::of_type<const vk::application_info&>::for_elements_of(args...);
+			ici.application_info = &app_info;
+		}
 
 		if constexpr(types::count_of_ranges_of_value_type<vk::extension_name>::equals<1>::for_types_of<Args...>) {
 			auto& range = elements::range_of_value_type<vk::extension_name>::for_elements_of(args...);

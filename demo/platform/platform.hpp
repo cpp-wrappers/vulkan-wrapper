@@ -6,26 +6,39 @@
 #include "vk/instance/handle.hpp"
 
 namespace platform {
+	struct logger {
+		void* raw;
 
-	void info(const char* str);
-	void error(const char* str);
+		void string(const char*, nuint length) const;
 
-	inline void info(char ch) {
-		char str[2]{ ch, 0 };
-		info(str);
-	}
+		void operator () (const char*) const;
+		void operator () (char) const;
 
-	template<unsigned_integer I>
-	void info(I i) {
-		for_each_digit_in_number(number{ i }, base{ 10 }, [](nuint digit) {
-			info(char(digit + '0'));
-		});
-	}
+		void new_line() const {
+			(*this)('\n');
+		}
 
-	inline void info(bool b) {
-		if(b) info("true");
-		else info("false");vk::surface surface;
-	}
+		template<unsigned_integer I>
+		void operator() (I i) const {
+			for_each_digit_in_number(number{ i }, base{ 10 }, [this](nuint digit) {
+				(*this)(char(digit + '0'));
+			});
+		}
+
+		void operator() (bool b) const {
+			if(b) (*this)("true");
+			else (*this)("false");
+		}
+
+		template<typename... Args>
+		requires(sizeof...(Args) >= 2)
+		void operator () (Args... args) {
+			( (*this)(args), ... );
+		}
+	};
+
+	extern logger info;
+	extern logger error;
 
 	nuint file_size(const char*);
 	void read_file(const char*, char* buff, nuint size);
