@@ -21,7 +21,7 @@ namespace vk {
 		callable = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
 		task = VK_SHADER_STAGE_TASK_BIT_NV,
 		mesh = VK_SHADER_STAGE_MESH_BIT_NV,
-		subpass_shading = VK_SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI
+		//subpass_shading = VK_SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI
 	};
 
 } // vk

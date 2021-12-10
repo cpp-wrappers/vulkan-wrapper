@@ -4,8 +4,9 @@
 #include <android/native_activity.h>
 #include <android/log.h>
 #include <android/native_window.h>
-#include <vulkan/vulkan_core.h>
-#include <vulkan/vulkan_android.h>
+
+#include "vk/shared/headers.hpp"
+#include "vulkan/vulkan_android.h"
 
 #include "../platform.hpp"
 #include <string.h>

@@ -6,7 +6,7 @@ mkdir -p ${src_dir}/build
 glslangValidator -e main -o ${src_dir}/build/triangle.vert.spv -V ${src_dir}/triangle.vert
 glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/triangle.frag
 
-. ${src_dir}/../build.sh $@
+. ${src_dir}/../build.sh $@ --asset triangle.vert.spv --asset triangle.frag.spv
 
 exit 1
 #endif
@@ -174,6 +174,7 @@ int entrypoint() {
 		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
 	};
 	vk::subpass_description subpass_description { color_attachments };
+
 	vk::subpass_dependency subpass_dependency{
 		vk::src_subpass{ VK_SUBPASS_EXTERNAL },
 		vk::dst_subpass{ 0 },
@@ -311,8 +312,8 @@ int entrypoint() {
 			.render_pass{ render_pass },
 			.framebuffer{ framebuffers[i] },
 			.render_area {
-				.offset{ 0 },
-				.extent{ 300 }
+				.offset{ 0, 0 },
+				.extent{ 300, 300 }
 			},
 			.clear_value_count = 1,
 			.clear_values = &clear_value

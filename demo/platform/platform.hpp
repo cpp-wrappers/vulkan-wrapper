@@ -38,7 +38,6 @@ namespace platform {
 	bool should_close();
 	void begin();
 	void end();
-
 }
 
 int entrypoint();

@@ -1,3 +1,5 @@
+declare -a assets
+
 while [ $# -gt 0 ]; do
 	case $1 in
 	--run)
@@ -6,6 +8,9 @@ while [ $# -gt 0 ]; do
 	--sanitize)
 		sanitize=1
 		;;
+	--asset)
+		shift
+		assets+=($1)
 	esac
 
 	shift
@@ -90,9 +95,15 @@ $aapt_path package \
 	-f \
 	-F ${unsigned_output_path}
 
+mkdir -p assets
+declare -a apk_assets
 
+for asset in ${assets[@]}; do
+	cp ${asset} assets/${asset}
+	apk_assets+=(assets/${asset})
+done
 
-$aapt_path add ${unsigned_output_path} ${shared_lib_path}
+$aapt_path add ${unsigned_output_path} ${shared_lib_path} ${apk_assets[@]}
 
 jarsigner -keystore ${platform_dir}/key.keystore -signedjar ${output_path} ${unsigned_output_path} key
 
