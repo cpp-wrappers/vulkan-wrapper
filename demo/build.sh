@@ -20,6 +20,12 @@ script_dir=`dirname ${script_path}`
 root_dir=`realpath ${script_dir}/../`
 
 platform_dir=${script_dir}/platform/${platform}
+
+if ! [ -d ${platform_dir} ]; then
+	echo "platform doesn't exist"
+	exit 1;
+fi
+
 platform_path=${platform_dir}/build.sh
 
 echo "building for ${platform}"

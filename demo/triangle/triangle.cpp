@@ -32,7 +32,7 @@ exit 1
 #include <stdio.h>
 #include "../platform/platform.hpp"
 
-vk::shader_module_guard read_shader_module(vk::device_guard& device, const char* path) {
+vk::shader_module_guard read_shader_module(const vk::device_guard& device, const char* path) {
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
@@ -89,7 +89,8 @@ int entrypoint() {
 		instance.object(),
 		vk::debug_report_flags{
 			vk::debug_report_flag::error,
-			vk::debug_report_flag::warning
+			vk::debug_report_flag::warning,
+			vk::debug_report_flag::information
 		},
 		(vk::debug_report_callback_type) [](
 			flag_enum<vk::debug_report_flag> flags,
@@ -108,27 +109,19 @@ int entrypoint() {
 		}
 	);
 
+	auto surface_raw = platform::try_create_surface(instance.object());
+	if(!surface_raw.is_current<vk::surface>()) {
+		platform::error(surface_raw.get<c_string>().begin());
+		return -1;
+	}
+
 	vk::physical_device physical_device = instance.get_first_physical_device();
 
 	vk::queue_family_index queue_family_index {
 		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
 	};
 
-	platform::info("graphics family index: ");
-	platform::info((uint32)queue_family_index);
-	platform::info('\n');
-
-	vk::device_guard device = physical_device.create_device(
-		queue_family_index,
-		array { vk::queue_priority{ 1.0F } },
-		array { vk::extension_name { "VK_KHR_swapchain" } }
-	);
-
-	auto surface_raw = platform::try_create_surface(instance.object());
-	if(!surface_raw.is_current<vk::surface>()) {
-		platform::error(surface_raw.get<c_string>().begin());
-		return -1;
-	}
+	platform::info("graphics family index: ", (uint32)queue_family_index, '\n');
 
 	vk::surface_guard surface { surface_raw.get<vk::surface>(), instance.object()};
 
@@ -141,6 +134,12 @@ int entrypoint() {
 
 	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
 
+	vk::device_guard device = physical_device.create_device(
+		queue_family_index,
+		array { vk::queue_priority{ 1.0F } },
+		array { vk::extension_name { "VK_KHR_swapchain" } }
+	);
+
 	vk::swapchain_guard swapchain {
 		device.object(),
 		surface.object(),
@@ -149,7 +148,7 @@ int entrypoint() {
 		surface_format,
 		vk::image_usages{ vk::image_usage::color_attachment, vk::image_usage::transfer_dst },
 		vk::sharing_mode::exclusive,
-		vk::present_mode::immediate,
+		vk::present_mode::mailbox,
 		vk::clipped{ true },
 		vk::surface_transform::identity,
 		vk::composite_alpha::opaque
@@ -158,6 +157,9 @@ int entrypoint() {
 	platform::info("created swapchain\n");
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
+
+	platform::info("swapchain images: ", images_count, '\n');
+
 	vk::image images_storage[images_count];
 	span images{ images_storage, images_count };
 
@@ -187,10 +189,6 @@ int entrypoint() {
 		array{ attachment_description },
 		array{ subpass_dependency }
 	);
-	
-	platform::info("swapchain images: ");
-	platform::info(images_count);
-	platform::info("\n");
 
 	vk::image_view image_views_raw[images_count];
 	span image_views{ image_views_raw, images_count };

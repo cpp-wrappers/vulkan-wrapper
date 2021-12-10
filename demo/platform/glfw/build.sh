@@ -11,36 +11,53 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+if [ -z $CXX ]; then
+	CXX=clang++
+fi
+
 declare -a args
 
+args+=(-std=c++20)
 args+=(-g)
-args+=("--config ${root_dir}/compile_flags.txt")
+args+=(-nostdinc++)
+args+=(-fmodules)
+args+=(-I${root_dir}/../core/include)
+args+=(-Xclang -fimplicit-module-maps)
+args+=(-I${root_dir}/include)
 
 if [ -v sanitize ]; then
 	args+=(-fsanitize=address)
 	args+=(-fsanitize=undefined)
 fi
 
-if [ -z $CXX ]; then
-	CXX=clang++
-fi
-
 if ! $CXX \
+	-v \
 	-c \
 	${args[@]} \
 	-o ${platform_dir}/build/platform.o \
 	${platform_dir}/platform.cpp
 
-	then
+	then 
 	exit 1
 fi
 
+declare -a libs
+
+if [ $OS == Windows_NT ]; then
+	libs+=(-lglfw3)
+	libs+=(/c/Windows/System32/vulkan-1.dll)
+else
+	libs+=(-lglfw)
+	libs+=(-lvulkan)
+fi
+
 if ! $CXX \
+	-v \
 	${args[@]} \
-	-lvulkan -lglfw \
 	${platform_dir}/build/platform.o \
 	-o ${src_dir}/build/${src_name} \
-	${src_path}
+	${src_path} \
+	${libs[@]}
 
 	then
 	exit 1

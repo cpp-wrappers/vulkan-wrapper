@@ -15,13 +15,17 @@ namespace vk {
 		uint32 major : 7;
 		uint32 variant : 3;
 	
-		api_version(vk::variant variant, vk::major major, vk::minor minor, vk::patch patch = {})
-			: variant{ variant }, major{ minor }, minor{ minor }, patch{ patch }
+		constexpr api_version(vk::variant variant, vk::major major, vk::minor minor, vk::patch patch = {})
+			: variant{ variant }, major{ major }, minor{ minor }, patch{ patch }
 		{}
 	
-		api_version(vk::major major = {}, vk::minor minor = {}, vk::patch patch = {})
-			: api_version{ vk::variant{ 0u }, major, minor, patch }
+		constexpr api_version(vk::major major = {}, vk::minor minor = {}, vk::patch patch = {})
+			: api_version{ vk::variant{}, major, minor, patch }
 		{}
+
+		constexpr operator uint32 () {
+			return *((uint32*)this);
+		}
 	};
 }
 
