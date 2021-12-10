@@ -213,7 +213,7 @@ int entrypoint() {
 			device.object(),
 			render_pass,
 			array{ image_views[i] },
-			vk::extent<3>{ 300, 300, 1 }
+			vk::extent<3>{ 600, 600, 1 }
 		);
 	}
 
@@ -239,12 +239,12 @@ int entrypoint() {
 	};
 
 	vk::viewport viewport {
-		.width = 300, .height = 300
+		.width = 600, .height = 600
 	};
 
 	vk::rect2d scissor {
 		.offset{ 0, 0 },
-		.extent{ 300, 300 }
+		.extent{ 600, 600 }
 	};
 
 	vk::pipeline_viewport_state_create_info pvsci {
@@ -311,7 +311,7 @@ int entrypoint() {
 			.framebuffer{ framebuffers[i] },
 			.render_area {
 				.offset{ 0, 0 },
-				.extent{ 300, 300 }
+				.extent{ 600, 600 }
 			},
 			.clear_value_count = 1,
 			.clear_values = &clear_value

@@ -14,19 +14,38 @@
 
 struct message_buffer {
 	int prio;
-	char buf[256]{ 0 };
-	uint size = 0;
+	static constexpr nuint buf_size = 256;
+	char buf[buf_size]{ 0 };
+	nuint size = 0;
 
-	void add(const char* str) {
-		while(char ch = *(str++)) {
-			assert(size < 256);
+	void add(const char* str, nuint length) {
+		while(length-- > 0) {
+			char ch = str[0];
+			++str;
 
 			if(ch == '\n') {
+				assert(size < buf_size);
 				buf[size] = 0;
 				__android_log_write(prio, "vulkan", buf);
 				size = 0;
 			}
 			else {
+				assert(size < buf_size - 1);
+				buf[size++] = ch;
+			}
+		}
+	}
+
+	void add(const char* str) {
+		while(char ch = *(str++)) {
+			if(ch == '\n') {
+				assert(size < buf_size);
+				buf[size] = 0;
+				__android_log_write(prio, "vulkan", buf);
+				size = 0;
+			}
+			else {
+				assert(size < buf_size - 1);
 				buf[size++] = ch;
 			}
 		}
@@ -36,11 +55,21 @@ struct message_buffer {
 static message_buffer info_message_buffer{ ANDROID_LOG_INFO };
 static message_buffer error_message_buffer{ ANDROID_LOG_ERROR };
 
-void platform::info(const char* str) {
-	info_message_buffer.add(str);
+void platform::logger::string(const char* str, nuint length) const {
+	((message_buffer*)raw)->add(str, length);
 }
-void platform::error(const char* str) {
-	error_message_buffer.add(str);
+
+void platform::logger::operator () (const char* str) const {
+	((message_buffer*)raw)->add(str);
+}
+
+void platform::logger::operator () (char ch) const {
+	((message_buffer*)raw)->add(&ch, 1);
+}
+
+namespace platform {
+	logger info { &info_message_buffer };
+	logger error { &error_message_buffer };
 }
 
 static android_app* app;

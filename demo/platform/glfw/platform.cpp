@@ -78,7 +78,7 @@ elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instanc
 	});
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	window = glfwCreateWindow(640, 480, "Vulkan Clear", nullptr, nullptr);
+	window = glfwCreateWindow(640, 640, "Vulkan Clear", nullptr, nullptr);
 	if (!window) {
 		return c_string{ "window creation failed\n" };
 	}
