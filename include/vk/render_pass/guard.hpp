@@ -13,6 +13,10 @@ namespace vk {
 			: render_pass{ render_pass }, device{ device }
 		{}
 
+		render_pass_guard(render_pass_guard&& other)
+			: render_pass{ exchange(other.render_pass.handle, 0) }, device{ other.device }
+		{}
+
 		~render_pass_guard() {
 			if(render_pass.handle) {
 				vkDestroyRenderPass(
@@ -22,5 +26,7 @@ namespace vk {
 				);
 			}
 		}
+
+		const vk::render_pass& object() const { return render_pass; }
 	};
 }

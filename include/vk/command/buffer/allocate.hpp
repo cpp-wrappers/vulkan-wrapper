@@ -2,7 +2,7 @@
 
 #include "handle.hpp"
 
-#include <core/type/range.hpp>
+#include <core/range/of_value_type.hpp>
 
 #include "allocate_info.hpp"
 #include "../../shared/headers.hpp"
@@ -14,7 +14,7 @@ namespace vk {
 		vk::device device,
 		vk::command_pool command_pool,
 		vk::command_buffer_level level,
-		type::range_of_value_type<vk::command_buffer> auto&& command_buffers
+		range::of_value_type<vk::command_buffer> auto&& command_buffers
 	) {
 		vk::command_buffer_allocate_info ai {
 			.command_pool = command_pool,

@@ -4,7 +4,7 @@
 #include <core/elements/one_of.hpp>
 #include <core/elements/range_of_value_type.hpp>
 #include <core/forward.hpp>
-#include <core/type/range.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/span.hpp>
 
 #include "properties.hpp"
@@ -39,7 +39,7 @@ namespace vk {
 			return props;
 		}
 
-		vk::count get_queue_family_properties(type::range_of_value_type<vk::queue_family_properties> auto&& range) const {
+		vk::count get_queue_family_properties(range::of_value_type<vk::queue_family_properties> auto&& range) const {
 			uint32 count = (uint32) range.size();
 
 			vkGetPhysicalDeviceQueueFamilyProperties(
@@ -72,7 +72,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires(types::are_same::for_types_of<Args..., vk::queue_flag>)
-		vk::queue_family_index get_first_queue_family_index_with_capabilities(Args... args) {
+		vk::queue_family_index get_first_queue_family_index_with_capabilities(Args... args) const {
 			uint32 count = (uint32)queue_family_properties_count();
 			vk::queue_family_properties props[count];
 			get_queue_family_properties(span{ props, count });
@@ -95,7 +95,7 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_enumerate_extension_properties(type::range_of_value_type<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
+		try_enumerate_extension_properties(range::of_value_type<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
 			uint32 count = (uint32) props.size();
 			const char* name = extension_name.begin();
 
@@ -197,7 +197,7 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats(vk::surface surface, type::range_of_value_type<vk::surface_format> auto&& formats) const {
+		try_get_surface_formats(vk::surface surface, range::of_value_type<vk::surface_format> auto&& formats) const {
 			uint32 count = (uint32) formats.size();
  
 			vk::result result {
@@ -214,7 +214,7 @@ namespace vk {
 			return result;
 		}
 
-		template<type::range_of_value_type<vk::surface_format> FormatsRange>
+		template<range::of_value_type<vk::surface_format> FormatsRange>
 		vk::count get_surface_formats(vk::surface surface, FormatsRange&& formats) const {
 			auto result = try_get_surface_formats(surface, forward<FormatsRange>(formats));
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
@@ -269,7 +269,7 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_present_modes(vk::surface surface, type::range_of_value_type<vk::present_mode> auto&& present_modes) const {
+		try_get_surface_present_modes(vk::surface surface, range::of_value_type<vk::present_mode> auto&& present_modes) const {
 			uint32 count = (uint32) present_modes.size();
 
 			vk::result result {

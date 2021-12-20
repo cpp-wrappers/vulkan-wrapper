@@ -7,7 +7,7 @@
 #include <core/elements/of_type.hpp>
 #include <core/elements/one_of.hpp>
 #include <core/exchange.hpp>
-#include <core/type/range.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/span.hpp>
 
 #include "image_index.hpp"
@@ -51,7 +51,7 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_images(vk::device device, type::range_of_value_type<vk::image> auto&& images) const {
+		try_get_images(vk::device device, range::of_value_type<vk::image> auto&& images) const {
 			uint32 count = images.size();
 
 			vk::result result {
@@ -67,7 +67,7 @@ namespace vk {
 			return result;
 		}
 
-		template<type::range_of_value_type<vk::image> Images>
+		template<range::of_value_type<vk::image> Images>
 		vk::count get_images(vk::device device, Images&& images) const {
 			auto result = try_get_images(device, forward<Images>(images));
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();

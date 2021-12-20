@@ -2,6 +2,8 @@
 
 #include <core/integer.hpp>
 #include <core/number.hpp>
+#include <core/c_string.hpp>
+#include <core/span.hpp>
 #include "vk/surface/handle.hpp"
 #include "vk/instance/handle.hpp"
 
@@ -9,31 +11,40 @@ namespace platform {
 	struct logger {
 		void* raw;
 
-		void string(const char*, nuint length) const;
+		const logger& string(const char*, nuint length) const;
 
-		void operator () (const char*) const;
-		void operator () (char) const;
+		const logger& operator () (const char*) const;
+		const logger& operator () (char) const;
 
-		void new_line() const {
+		auto& new_line() const {
 			(*this)('\n');
+			return *this;
 		}
 
 		template<unsigned_integer I>
-		void operator() (I i) const {
+		auto& operator() (I i) const {
 			for_each_digit_in_number(number{ i }, base{ 10 }, [this](nuint digit) {
 				(*this)(char(digit + '0'));
 			});
+			return *this;
 		}
 
-		void operator() (bool b) const {
+		auto& operator() (bool b) const {
 			if(b) (*this)("true");
 			else (*this)("false");
+			return *this;
 		}
 
 		template<typename... Args>
 		requires(sizeof...(Args) >= 2)
-		void operator () (Args... args) {
+		auto& operator () (Args... args) const {
 			( (*this)(args), ... );
+			return *this;
+		}
+
+		auto& operator() (c_string str) const {
+			(*this)(str.begin());
+			return *this;
 		}
 	};
 
@@ -43,8 +54,7 @@ namespace platform {
 	nuint file_size(const char*);
 	void read_file(const char*, char* buff, nuint size);
 
-	nuint required_instance_extension_count();
-	const char** get_required_instance_extensions();
+	span<vk::extension_name> get_required_instance_extensions();
 
 	elements::one_of<c_string, vk::surface> try_create_surface(vk::instance);
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/type/range.hpp>
 #include <core/elements/one_of.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/array.hpp>
 
 #include "submit_info.hpp"
@@ -13,7 +13,7 @@ namespace vk {
 	struct queue {
 		void* handle;
 
-		vk::result try_submit(type::range_of_value_type<vk::submit_info> auto&& submits, vk::fence fence = { VK_NULL_HANDLE }) const {
+		vk::result try_submit(range::of_value_type<vk::submit_info> auto&& submits, vk::fence fence = { VK_NULL_HANDLE }) const {
 			return vk::result {
 				(int32)vkQueueSubmit(
 					(VkQueue) handle,

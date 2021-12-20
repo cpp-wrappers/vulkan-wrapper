@@ -62,7 +62,6 @@ namespace vk {
 			>::for_types_of<Args...>
 		)
 		subpass_description(Args&... args) {
-			using Types = types::of<Args...>;
 	
 			if constexpr(types::count_of_ranges_of_value_type<vk::input_attachment_reference>::for_types_of<Args...> == 1) {
 				auto& input = elements::range_of_value_type<vk::input_attachment_reference>::for_elements_of(args...);

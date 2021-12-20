@@ -27,6 +27,8 @@ exit 1
 #include "vk/pipeline/layout/create.hpp"
 #include "vk/semaphore/guard.hpp"
 #include "vk/debug/report/callback/create.hpp"
+#include "vk/framebuffer/guard.hpp"
+#include "vk/image/view/guard.hpp"
 
 #include <string.h>
 #include <stdio.h>
@@ -47,64 +49,32 @@ vk::shader_module_guard read_shader_module(const vk::device_guard& device, const
 }
 
 int entrypoint() {
-	nuint required_extension_count = platform::required_instance_extension_count();
-	span required_extensions {
-		(vk::extension_name*)platform::get_required_instance_extensions(),
-		platform::required_instance_extension_count()
-	};
+	span required_extensions = platform::get_required_instance_extensions();
 
-	platform::info("required extensions:\n");
-	for(vk::extension_name extension_name: required_extensions) {
-		platform::info(extension_name.begin());
-		platform::info('\n');
-	}
-
-	bool validation_layer_is_supported = false;
 	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-
-	vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
-		for(vk::layer_properties p : props) {
-			if(strcmp(p.name, validation_layer_name.begin()) == 0) {
-				validation_layer_is_supported = true;
-				return;
-			}
-		}
-	});
-
+	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
 	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
 
-	vk::extension_name extensions_raw[required_extension_count + 1]; // TODO
-	span extensions{ extensions_raw, required_extension_count + 1 };
+	vk::extension_name extensions_raw[required_extensions.size() + 1]; // TODO
+	span extensions{ extensions_raw, required_extensions.size() + 1 };
 	
 	nuint i = 0;
-	for(; i < required_extension_count; ++i) extensions[i] = required_extensions[i];
-	extensions[i++] = vk::extension_name{ "VK_EXT_debug_report" };
+	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
+	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
 
-	vk::instance_guard instance {
-		layers,
-		extensions
-	};
+	vk::instance_guard instance { layers, extensions };
 
-	vk::create_debug_report_callback(
-		instance.object(),
+	auto debug_report_callback = instance.create_guarded_debug_report_callback(
 		vk::debug_report_flags{
 			vk::debug_report_flag::error,
 			vk::debug_report_flag::warning,
 			vk::debug_report_flag::information
 		},
 		(vk::debug_report_callback_type) [](
-			flag_enum<vk::debug_report_flag> flags,
-			vk::debug_report_object_type objectType,
-			uint64 object,
-			nuint location,
-			int32 message_code,
-			c_string layer_prefix,
-			c_string message,
-			void* user_data
+			flag_enum<vk::debug_report_flag>, vk::debug_report_object_type, uint64, nuint,
+			int32, c_string, c_string message, void*
 		) {
-			platform::info("[vk] ");
-			platform::info(message.begin());
-			platform::info("\n");
+			platform::info("[vk] ", message).new_line();
 			return uint32{ 0 };
 		}
 	);
@@ -121,17 +91,16 @@ int entrypoint() {
 		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
 	};
 
-	platform::info("graphics family index: ", (uint32)queue_family_index, '\n');
+	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
 
 	vk::surface_guard surface { surface_raw.get<vk::surface>(), instance.object()};
 
 	if(!physical_device.get_surface_support(surface.object(), queue_family_index)) {
-		platform::error("surface is not supported\n");
+		platform::error("surface is not supported").new_line();
 		return -1;
 	}
 
 	vk::surface_format surface_format = physical_device.get_first_surface_format(surface.object());
-
 	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
 
 	vk::device_guard device = physical_device.create_device(
@@ -154,11 +123,11 @@ int entrypoint() {
 		vk::composite_alpha::opaque
 	};
 
-	platform::info("created swapchain\n");
+	platform::info("created swapchain").new_line();
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
 
-	platform::info("swapchain images: ", images_count, '\n');
+	platform::info("swapchain images: ", images_count).new_line();
 
 	vk::image images_storage[images_count];
 	span images{ images_storage, images_count };
@@ -172,9 +141,11 @@ int entrypoint() {
 		vk::initial_layout{ vk::image_layout::undefined },
 		vk::final_layout{ vk::image_layout::present_src_khr }
 	};
+
 	array color_attachments {
 		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
 	};
+	
 	vk::subpass_description subpass_description { color_attachments };
 
 	vk::subpass_dependency subpass_dependency{
@@ -184,19 +155,17 @@ int entrypoint() {
 		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
 	};
 
-	vk::render_pass render_pass = vk::create_render_pass(
-		device.object(),
+	vk::render_pass_guard render_pass = device.create_guarded_render_pass(
 		array{ subpass_description },
 		array{ attachment_description },
 		array{ subpass_dependency }
 	);
 
-	vk::image_view image_views_raw[images_count];
+	vk::image_view_guard image_views_raw[images_count];
 	span image_views{ image_views_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
-		image_views[i] = vk::create_image_view(
-			device.object(),
+		image_views[i] = device.create_guarded_image_view(
 			images[i],
 			surface_format.format,
 			vk::image_view_type::two_d,
@@ -205,14 +174,13 @@ int entrypoint() {
 		);
 	}
 
-	vk::framebuffer framebuffers_raw[images_count];
+	vk::framebuffer_guard framebuffers_raw[images_count];
 	span framebuffers{ framebuffers_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
-		framebuffers[i] = vk::create_framebuffer(
-			device.object(),
-			render_pass,
-			array{ image_views[i] },
+		framebuffers[i] = device.create_guarded_framebuffer(
+			render_pass.object(),
+			array{ vk::image_view{ image_views[i].object() } },
 			vk::extent<3>{ 600, 600, 1 }
 		);
 	}
@@ -278,10 +246,9 @@ int entrypoint() {
 		.attachments = &pcbas
 	};
 
-	vk::pipeline_layout pipeline_layout = vk::create_pipeline_layout(device.object());
+	vk::pipeline_layout_guard pipeline_layout = device.create_guarded_pipeline_layout();
 
-	vk::pipeline pipeline = vk::create_graphics_pipeline(
-		device.object(),
+	vk::pipeline_guard pipeline = device.create_guarded_graphics_pipeline(
 		shader_stages,
 		pvisci,
 		piasci,
@@ -289,8 +256,8 @@ int entrypoint() {
 		prsci,
 		pmsci,
 		pcbsci,
-		pipeline_layout,
-		render_pass,
+		pipeline_layout.object(),
+		render_pass.object(),
 		vk::subpass{ 0 }
 	);
 
@@ -307,8 +274,8 @@ int entrypoint() {
 		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
 
 		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
-			.render_pass{ render_pass },
-			.framebuffer{ framebuffers[i] },
+			.render_pass{ render_pass.object() },
+			.framebuffer{ framebuffers[i].object() },
 			.render_area {
 				.offset{ 0, 0 },
 				.extent{ 600, 600 }
@@ -317,7 +284,7 @@ int entrypoint() {
 			.clear_values = &clear_value
 		});
 
-		command_buffer.cmd_bind_pipeline(pipeline);
+		command_buffer.cmd_bind_pipeline(pipeline.object());
 		command_buffer.cmd_draw(3, 1, 0, 0);
 		command_buffer.cmd_end_render_pass();
 
@@ -338,7 +305,7 @@ int entrypoint() {
 			vk::result r = result.get<vk::result>();
 
 			if((int32)r == VK_SUBOPTIMAL_KHR) break;
-			platform::error("can't acquire swapchain image\n");
+			platform::error("can't acquire swapchain image").new_line();
 			return -1;
 		}
 

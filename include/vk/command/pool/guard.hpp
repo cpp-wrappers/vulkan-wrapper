@@ -28,7 +28,7 @@ namespace vk {
 			}
 		}
 
-		template<type::range_of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::command_buffer> CommandBuffers>
 		vk::result try_allocate_command_buffers(
 			vk::command_buffer_level level,
 			CommandBuffers&& command_buffers
@@ -36,7 +36,7 @@ namespace vk {
 			return command_pool.try_allocate_command_buffers(device, level, forward<CommandBuffers>(command_buffers));
 		}
 
-		template<type::range_of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::command_buffer> CommandBuffers>
 		void allocate_command_buffers(
 			vk::command_buffer_level level,
 			CommandBuffers&& command_buffers
@@ -44,7 +44,7 @@ namespace vk {
 			command_pool.allocate_command_buffers(device, level, forward<CommandBuffers>(command_buffers));
 		}
 
-		template<type::range_of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::command_buffer> CommandBuffers>
 		void free_command_buffers(CommandBuffers&& command_buffers) {
 			command_pool.free_command_buffers(device, forward<CommandBuffers>(command_buffers));
 		}

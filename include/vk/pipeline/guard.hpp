@@ -10,6 +10,17 @@ namespace vk {
 		vk::device device;
 
 	public:
+
+		pipeline_guard() = default;
+
+		pipeline_guard(vk::pipeline pipeline, vk::device device)
+			: pipeline{ pipeline }, device{ device }
+		{}
+
+		pipeline_guard(pipeline_guard&& other)
+			: pipeline{ exchange(other.pipeline.handle, 0) }, device{ other.device }
+		{}
+
 		~pipeline_guard() {
 			if(pipeline.handle) {
 				vkDestroyPipeline(
@@ -19,5 +30,7 @@ namespace vk {
 				);
 			}
 		}
+
+		const vk::pipeline& object() const { return pipeline; }
 	};
 }

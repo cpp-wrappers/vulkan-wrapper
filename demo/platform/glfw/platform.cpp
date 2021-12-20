@@ -4,19 +4,22 @@
 #include <stdio.h>
 #include <string.h>
 
-void platform::logger::string(const char* str, nuint length) const {
+const platform::logger& platform::logger::string(const char* str, nuint length) const {
 	fwrite(str, 1, length, (FILE*) raw);
 	fflush((FILE*) raw);
+	return *this;
 }
 
-void platform::logger::operator () (const char* str) const {
+const platform::logger& platform::logger::operator () (const char* str) const {
 	fputs(str, (FILE*) raw);
 	fflush((FILE*) raw);
+	return *this;
 }
 
-void platform::logger::operator () (char c) const {
+const platform::logger& platform::logger::operator () (char c) const {
 	fputc(c, (FILE*) raw);
 	fflush((FILE*) raw);
+	return *this;
 }
 
 namespace platform {
@@ -59,28 +62,28 @@ void platform::read_file(const char* path, char* buff, nuint size) {
 	}
 }
 
-nuint platform::required_instance_extension_count() {
+span<vk::extension_name> platform::get_required_instance_extensions() {
 	uint32 count;
 	glfwGetRequiredInstanceExtensions(&count);
-	return count;
-}
 
-const char** platform::get_required_instance_extensions() {
 	uint32 ingnore;
-	return glfwGetRequiredInstanceExtensions(&ingnore);
+	return {
+		(vk::extension_name*) glfwGetRequiredInstanceExtensions(&ingnore),
+		count
+	};
 }
 
 GLFWwindow* window;
 
 elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instance instance) {
 	glfwSetErrorCallback([](int error_code, const char* description) {
-		platform::error("glfw error: ", description, '\n');
+		platform::error("[glfw] error code: ", uint32(error_code), ", description: ", description).new_line();
 	});
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	window = glfwCreateWindow(640, 640, "Vulkan Clear", nullptr, nullptr);
 	if (!window) {
-		return c_string{ "window creation failed\n" };
+		return c_string{ "window creation failed" };
 	}
 
 	VkSurfaceKHR surface;
@@ -95,7 +98,7 @@ elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instanc
 	if(result < 0) {
 		platform::info((uint32)result);
 		platform::info("\n");
-		return c_string{ "surface creation failed\n" };
+		return c_string{ "surface creation failed" };
 	}
 
 	return vk::surface{ surface };
@@ -113,17 +116,17 @@ void platform::end() {
 
 int main() {
 	if (glfwInit()) {
-		platform::info("glfw is initialised\n");
+		platform::info("glfw is initialised").new_line();
 	}
 	else {
-		platform::error("glfw init failed\n");
+		platform::error("glfw init failed").new_line();
 		return -1;
 	}
 
 	if(glfwVulkanSupported()) {
 	}
 	else {
-		platform::error("vulkan is not supported\n");
+		platform::error("vulkan is not supported").new_line();
 		return -1;
 	}
 

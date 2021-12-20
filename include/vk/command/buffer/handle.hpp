@@ -115,7 +115,7 @@ namespace vk {
 			vk::image image,
 			vk::image_layout layout,
 			vk::clear_color_value clear_color,
-			type::range_of_value_type<vk::image_subresource_range> auto&& ranges
+			range::of_value_type<vk::image_subresource_range> auto&& ranges
 		) const {
 			vkCmdClearColorImage(
 				(VkCommandBuffer) handle,

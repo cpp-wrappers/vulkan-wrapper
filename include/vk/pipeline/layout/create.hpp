@@ -26,7 +26,7 @@ namespace vk {
 			types::count_of_ranges_of_value_type<vk::push_constant_range>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::pipeline_layout, vk::result>
+	elements::one_of<vk::result, vk::pipeline_layout>
 	try_create_pipeline_layout(const Args&... args) {
 		vk::pipeline_layout_create_info ci{};
 

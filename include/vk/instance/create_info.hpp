@@ -3,10 +3,9 @@
 #include "application_info.hpp"
 #include "../shared/extension_name.hpp"
 #include "../shared/headers.hpp"
+#include "../shared/layer_name.hpp"
 
 namespace vk {
-
-	struct layer_name : c_string {};
 	
 	struct instance_create_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

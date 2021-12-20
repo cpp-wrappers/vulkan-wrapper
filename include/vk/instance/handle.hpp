@@ -4,7 +4,7 @@
 #include <core/forward.hpp>
 #include <core/span.hpp>
 #include <core/elements/one_of.hpp>
-#include <core/type/range.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/move.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
@@ -16,13 +16,14 @@
 #include "../physical_device/handle.hpp"
 
 namespace vk {
-	class physical_device;
+
+	class debug_report_callback;
 
 	struct instance {
 		void* handle;
 
 		elements::one_of<vk::result, vk::count>
-		try_enumerate_physical_devices(type::range_of_value_type<vk::physical_device> auto&& devices) const {
+		try_enumerate_physical_devices(range::of_value_type<vk::physical_device> auto&& devices) const {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {
@@ -98,6 +99,28 @@ namespace vk {
 		for_each_physical_device(F&& f) const {
 			return try_for_each_physical_device(forward<F>(f)).template get<vk::count>();
 		}
+
+		template<typename... Args>
+		elements::one_of<vk::result, vk::debug_report_callback>
+		try_create_debug_report_callback(Args&&... args) const;
+
+		template<typename... Args>
+		vk::debug_report_callback create_debug_report_callback(Args&&... args) const;
 	}; // instance
 
 } // vk
+
+#include "../debug/report/callback/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::debug_report_callback>
+vk::instance::try_create_debug_report_callback(Args&&... args) const {
+	return vk::try_create_debug_report_callback(args..., *this);
+}
+
+template<typename... Args>
+vk::debug_report_callback vk::instance::create_debug_report_callback(Args&&... args) const {
+	auto result = try_create_debug_report_callback(forward<Args>(args)...);
+	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+	return result.template get<vk::debug_report_callback>();
+}

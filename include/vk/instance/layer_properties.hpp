@@ -1,18 +1,21 @@
 #pragma once
 
 #include <core/elements/one_of.hpp>
-#include <core/type/range.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/span.hpp>
+#include <core/range/is_contains.hpp>
+#include <core/range/transform.hpp>
 
 #include "../shared/layer_properties.hpp"
 #include "../shared/result.hpp"
 #include "../shared/count.hpp"
+#include "../shared/layer_name.hpp"
 
 namespace vk {
 
 	elements::one_of<vk::result, vk::count>
 	try_enumerate_instance_layer_properties(
-		type::range_of_value_type<vk::layer_properties> auto&& layer_properties
+		range::of_value_type<vk::layer_properties> auto&& layer_properties
 	) {
 		uint32 count = layer_properties.size();
 
@@ -80,6 +83,21 @@ namespace vk {
 		auto result = try_for_each_instance_layer_properties(forward<F>(f));
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 		return result.template get<vk::count>();
+	}
+
+	inline bool is_instance_layer_supported(vk::layer_name name) {
+		bool supported = false;
+
+		vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
+			supported =
+				range::is_contains(name).for_range(
+					range::transform(props).elements([](vk::layer_properties& a) {
+						return vk::layer_name{ a.name };
+					})
+				);
+		});
+
+		return supported;
 	}
 
 }

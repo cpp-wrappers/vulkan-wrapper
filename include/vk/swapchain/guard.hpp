@@ -37,7 +37,7 @@ namespace vk {
 			return swapchain.try_acquire_next_image(device, timeout, semaphore, fence);
 		}
 
-		template<type::range_of_value_type<vk::image> Images>
+		template<range::of_value_type<vk::image> Images>
 		vk::count get_images(Images&& images) const {
 			return swapchain.get_images(device, forward<Images>(images));
 		}
