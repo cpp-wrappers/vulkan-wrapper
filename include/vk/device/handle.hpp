@@ -21,6 +21,7 @@ namespace vk {
 	class pipeline_layout;
 	class pipeline;
 	class render_pass;
+	class semaphore;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 
@@ -73,6 +74,13 @@ namespace vk {
 
 		template<typename... Args>
 		vk::render_pass create_render_pass(Args&&... args) const;
+
+		template<typename... Args>
+		elements::one_of<vk::result, vk::semaphore>
+		try_create_semaphore(Args&&... args) const;
+
+		template<typename... Args>
+		semaphore create_semaphore(Args&&... args) const;
 
 		vk::result try_wait_idle() const {
 			return {
@@ -203,4 +211,20 @@ vk::device::create_render_pass(Args&&... args) const {
 	auto result = try_create_render_pass(forward<Args>(args)...);
 	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 	return result.template get<vk::render_pass>();
+}
+
+#include "../semaphore/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::semaphore>
+vk::device::try_create_semaphore(Args&&... args) const {
+	return vk::try_create_semaphore(*this, args...);
+}
+
+template<typename... Args>
+vk::semaphore
+vk::device::create_semaphore(Args&&... args) const {
+	auto result = try_create_semaphore(forward<Args>(args)...);
+	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+	return result.template get<vk::semaphore>();
 }

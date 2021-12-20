@@ -10,6 +10,7 @@ namespace vk {
 	class pipeline_layout_guard;
 	class pipeline_guard;
 	class render_pass_guard;
+	class semaphore_guard;
 
 	class device_guard {
 		vk::device device;
@@ -61,6 +62,9 @@ namespace vk {
 
 		template<typename... Args>
 		vk::render_pass_guard create_guarded_render_pass(Args&&... args) const;
+
+		template<typename... Args>
+		vk::semaphore_guard create_guarded_semaphore(Args&&... args) const;
 
 		vk::queue get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			return device.get_queue(queue_family_index, queue_index);
@@ -118,4 +122,11 @@ vk::pipeline_guard vk::device_guard::create_guarded_graphics_pipeline(Args&&... 
 template<typename... Args>
 vk::render_pass_guard vk::device_guard::create_guarded_render_pass(Args&&... args) const {
 	return { device.create_render_pass(forward<Args>(args)...), this->device };
+}
+
+#include "../semaphore/guard.hpp"
+
+template<typename... Args>
+vk::semaphore_guard vk::device_guard::create_guarded_semaphore(Args&&... args) const {
+	return { device.create_semaphore(forward<Args>(args)...), this->device };
 }

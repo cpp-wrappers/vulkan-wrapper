@@ -4,7 +4,7 @@
 #include <core/number.hpp>
 #include <core/c_string.hpp>
 #include <core/span.hpp>
-#include "vk/surface/handle.hpp"
+#include "vk/surface/guard.hpp"
 #include "vk/instance/handle.hpp"
 
 namespace platform {
@@ -56,11 +56,11 @@ namespace platform {
 
 	span<vk::extension_name> get_required_instance_extensions();
 
-	elements::one_of<c_string, vk::surface> try_create_surface(vk::instance);
+	vk::surface_guard create_surface(vk::instance);
 
 	bool should_close();
 	void begin();
 	void end();
 }
 
-int entrypoint();
+void entrypoint();

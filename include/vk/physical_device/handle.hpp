@@ -23,12 +23,16 @@ namespace vk {
 
 	struct device;
 	struct surface;
+	struct device_guard;
 
 	struct physical_device {
 		void* handle;
 
 		template<typename... Args>
 		vk::device create_device(Args&&... args) const;
+
+		template<typename... Args>
+		vk::device_guard create_guarded_device(Args&&... args) const;
 
 		vk::physical_device_properties get_properties() const {
 			vk::physical_device_properties props;
@@ -358,8 +362,14 @@ namespace vk {
 
 #include "../device/create.hpp"
 
-
 template<typename... Args>
 vk::device vk::physical_device::create_device(Args&&... args) const {
 	return vk::create_device(*this, forward<Args>(args)...);
+}
+
+#include "../device/guard.hpp"
+
+template<typename... Args>
+vk::device_guard vk::physical_device::create_guarded_device(Args&&... args) const {
+	return { vk::create_device(*this, forward<Args>(args)...) };
 }

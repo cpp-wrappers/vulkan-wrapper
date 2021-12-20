@@ -19,12 +19,16 @@ namespace vk {
 			: semaphore{ vk::create_semaphore(device, forward<Args>(args)...)  }, device{ device }
 		{}
 
+		semaphore_guard(semaphore_guard&& other)
+			: semaphore{ exchange(other.semaphore.handle, 0) }, device{ other.device }
+		{}
+
 		~semaphore_guard() {
 			if(semaphore.handle) {
 				vkDestroySemaphore(
 					(VkDevice) device.handle,
 					(VkSemaphore) exchange(semaphore.handle, 0),
-					nullptr
+					(VkAllocationCallbacks*) nullptr
 				);
 			}
 		}

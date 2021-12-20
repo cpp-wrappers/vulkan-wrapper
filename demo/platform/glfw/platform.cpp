@@ -75,15 +75,17 @@ span<vk::extension_name> platform::get_required_instance_extensions() {
 
 GLFWwindow* window;
 
-elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instance instance) {
+vk::surface_guard platform::create_surface(vk::instance instance) {
 	glfwSetErrorCallback([](int error_code, const char* description) {
 		platform::error("[glfw] error code: ", uint32(error_code), ", description: ", description).new_line();
 	});
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	window = glfwCreateWindow(640, 640, "Vulkan Clear", nullptr, nullptr);
+
 	if (!window) {
-		return c_string{ "window creation failed" };
+		platform::error("window creation failed").new_line();
+		throw;
 	}
 
 	VkSurfaceKHR surface;
@@ -96,12 +98,11 @@ elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instanc
 	);
 
 	if(result < 0) {
-		platform::info((uint32)result);
-		platform::info("\n");
-		return c_string{ "surface creation failed" };
+		platform::error("surface creation failed").new_line();
+		throw;
 	}
 
-	return vk::surface{ surface };
+	return vk::surface_guard{ vk::surface{ surface }, instance };
 }
 
 bool platform::should_close() {
@@ -130,5 +131,5 @@ int main() {
 		return -1;
 	}
 
-	return entrypoint();
+	entrypoint();
 }

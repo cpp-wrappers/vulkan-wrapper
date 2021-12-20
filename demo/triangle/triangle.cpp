@@ -34,7 +34,7 @@ exit 1
 #include <stdio.h>
 #include "../platform/platform.hpp"
 
-vk::shader_module_guard read_shader_module(const vk::device_guard& device, const char* path) {
+inline vk::shader_module_guard read_shader_module(const vk::device_guard& device, const char* path) {
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
@@ -48,7 +48,7 @@ vk::shader_module_guard read_shader_module(const vk::device_guard& device, const
 	};
 }
 
-int entrypoint() {
+void entrypoint() {
 	span required_extensions = platform::get_required_instance_extensions();
 
 	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
@@ -65,11 +65,7 @@ int entrypoint() {
 	vk::instance_guard instance { layers, extensions };
 
 	auto debug_report_callback = instance.create_guarded_debug_report_callback(
-		vk::debug_report_flags{
-			vk::debug_report_flag::error,
-			vk::debug_report_flag::warning,
-			vk::debug_report_flag::information
-		},
+		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
 		(vk::debug_report_callback_type) [](
 			flag_enum<vk::debug_report_flag>, vk::debug_report_object_type, uint64, nuint,
 			int32, c_string, c_string message, void*
@@ -79,31 +75,25 @@ int entrypoint() {
 		}
 	);
 
-	auto surface_raw = platform::try_create_surface(instance.object());
-	if(!surface_raw.is_current<vk::surface>()) {
-		platform::error(surface_raw.get<c_string>().begin());
-		return -1;
-	}
+	auto surface = platform::create_surface(instance.object());
 
-	vk::physical_device physical_device = instance.get_first_physical_device();
+	auto physical_device = instance.get_first_physical_device();
 
-	vk::queue_family_index queue_family_index {
+	auto queue_family_index {
 		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
 	};
 
 	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
 
-	vk::surface_guard surface { surface_raw.get<vk::surface>(), instance.object()};
-
 	if(!physical_device.get_surface_support(surface.object(), queue_family_index)) {
 		platform::error("surface is not supported").new_line();
-		return -1;
+		throw;
 	}
 
-	vk::surface_format surface_format = physical_device.get_first_surface_format(surface.object());
-	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
+	auto surface_format = physical_device.get_first_surface_format(surface.object());
+	auto surface_capabilities = physical_device.get_surface_capabilities(surface.object());
 
-	vk::device_guard device = physical_device.create_device(
+	auto device = physical_device.create_guarded_device(
 		queue_family_index,
 		array { vk::queue_priority{ 1.0F } },
 		array { vk::extension_name { "VK_KHR_swapchain" } }
@@ -127,7 +117,7 @@ int entrypoint() {
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
 
-	platform::info("swapchain images: ", images_count).new_line();
+	platform::info("swapchain images count: ", images_count).new_line();
 
 	vk::image images_storage[images_count];
 	span images{ images_storage, images_count };
@@ -155,7 +145,7 @@ int entrypoint() {
 		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
 	};
 
-	vk::render_pass_guard render_pass = device.create_guarded_render_pass(
+	auto render_pass = device.create_guarded_render_pass(
 		array{ subpass_description },
 		array{ attachment_description },
 		array{ subpass_dependency }
@@ -246,9 +236,9 @@ int entrypoint() {
 		.attachments = &pcbas
 	};
 
-	vk::pipeline_layout_guard pipeline_layout = device.create_guarded_pipeline_layout();
+	auto pipeline_layout = device.create_guarded_pipeline_layout();
 
-	vk::pipeline_guard pipeline = device.create_guarded_graphics_pipeline(
+	auto pipeline = device.create_guarded_graphics_pipeline(
 		shader_stages,
 		pvisci,
 		piasci,
@@ -261,7 +251,7 @@ int entrypoint() {
 		vk::subpass{ 0 }
 	);
 
-	vk::command_pool_guard command_pool = device.create_guarded_command_pool(queue_family_index);
+	auto command_pool = device.create_guarded_command_pool(queue_family_index);
 	vk::command_buffer command_buffers_storage[images_count];
 	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
 	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
@@ -291,10 +281,10 @@ int entrypoint() {
 		command_buffer.end();
 	}
 
-	vk::semaphore_guard swapchain_image_semaphore { device.object() };
-	vk::semaphore_guard rendering_finished_semaphore { device.object() };
+	auto swapchain_image_semaphore = device.create_guarded_semaphore();
+	auto rendering_finished_semaphore = device.create_guarded_semaphore();
 
-	vk::queue queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while (!platform::should_close()) {
 		platform::begin();
@@ -306,7 +296,7 @@ int entrypoint() {
 
 			if((int32)r == VK_SUBOPTIMAL_KHR) break;
 			platform::error("can't acquire swapchain image").new_line();
-			return -1;
+			throw;
 		}
 
 		vk::image_index image_index = result.get<vk::image_index>();
@@ -337,6 +327,4 @@ int entrypoint() {
 	device.wait_idle();
 
 	command_pool.free_command_buffers(command_buffers);
-
-	return 0;
 }
