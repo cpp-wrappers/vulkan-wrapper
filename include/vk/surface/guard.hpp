@@ -4,20 +4,22 @@
 
 #include "handle.hpp"
 #include "../instance/handle.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
-	class instance;
+	struct instance;
 
-	class surface_guard {
+	template<>
+	class guarded<vk::surface> {
 		vk::surface surface;
 		vk::instance instance;
 	public:
 
-		surface_guard(vk::surface surface, vk::instance instance)
+		guarded<vk::surface>(vk::surface surface, vk::instance instance)
 			: surface{ surface }, instance{ instance }
 		{}
 
-		~surface_guard() {
+		~guarded() {
 			if(surface.handle) {
 				vkDestroySurfaceKHR(
 					(VkInstance) instance.handle,

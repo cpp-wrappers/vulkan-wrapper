@@ -5,35 +5,39 @@
 #include "handle.hpp"
 #include "../device/handle.hpp"
 #include "../shared/headers.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
-
-	struct framebuffer_guard {
+	
+	template<>
+	class guarded<vk::framebuffer> {
 		vk::framebuffer framebuffer;
 		vk::device device;
 
-		framebuffer_guard() = default;
+	public:
 
-		framebuffer_guard(vk::framebuffer framebuffer, vk::device device)
+		guarded() = default;
+
+		guarded(vk::framebuffer framebuffer, vk::device device)
 			: framebuffer{ framebuffer }, device{ device }
 		{}
 
 		template<typename... Args>
-		framebuffer_guard(vk::device device, Args&&... args)
+		guarded(vk::device device, Args&&... args)
 			: framebuffer{ vk::create_framebuffer(forward<Args>(args)..., device) }, device{ device }
 		{}
 
-		framebuffer_guard(framebuffer_guard&& other)
+		guarded(guarded&& other)
 			: framebuffer{ exchange(other.framebuffer.handle, 0) }, device{ other.device }
 		{}
 
-		vk::framebuffer_guard& operator = (framebuffer_guard&& other) {
+		guarded& operator = (guarded&& other) {
 			framebuffer.handle = exchange(other.framebuffer.handle, 0);
 			device = other.device;
 			return *this;
 		}
 
-		~framebuffer_guard() {
+		~guarded() {
 			if(framebuffer.handle) {
 				vkDestroyFramebuffer(
 					(VkDevice) device.handle,

@@ -1,23 +1,31 @@
+#pragma once
+
 #include "handle.hpp"
 #include "create.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
 	class debug_report_callback_guard;
 
-	class instance_guard {
+	template<>
+	class guarded<vk::instance> {
 		vk::instance instance;
 	public:
 
-		instance_guard(vk::instance instance)
+		guarded(vk::instance instance)
 			: instance{ instance }
 		{}
 
 		template<typename... Args>
-		instance_guard(Args&&... args)
+		guarded(Args&&... args)
 			: instance{ vk::create_instance(forward<Args>(args)...) }
 		{}
 
-		~instance_guard() {
+		guarded(guarded&& other)
+			: instance{ exchange(other.instance.handle, nullptr) }
+		{}
+
+		~guarded() {
 			if(instance.handle) {
 				vkDestroyInstance(
 					(VkInstance) exchange(instance.handle, nullptr),
@@ -45,13 +53,13 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		vk::debug_report_callback_guard create_guarded_debug_report_callback(Args&&... args) const;
+		vk::guarded<vk::debug_report_callback> create_guarded_debug_report_callback(Args&&... args) const;
 	};
 } // vk
 
 #include "../debug/report/callback/guard.hpp"
 
 template<typename... Args>
-vk::debug_report_callback_guard vk::instance_guard::create_guarded_debug_report_callback(Args&&... args) const {
+vk::guarded<vk::debug_report_callback> vk::guarded<vk::instance>::create_guarded_debug_report_callback(Args&&... args) const {
 	return { instance.create_debug_report_callback(forward<Args>(args)...), this->instance };
 }

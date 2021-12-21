@@ -64,22 +64,21 @@ namespace vk {
 			type::negated_predicate<
 				type::disjuncted_predicates<
 					type::is_range_of_value_type<vk::queue_priority>,
-					type::is_same_as<vk::queue_family_index>::after_applying<type::remove_const>::template after_applying<type::remove_reference>
+					type::is_same_as<vk::queue_family_index>::ignore_const::ignore_reference
 				>
 			>
-		>::for_function_and_elements_of(
-			[&](auto&... others){
+		>::to_function{
+			[&](auto&... others) {
 				return try_create_device(
-					array{
-						vk::queue_create_info{
+					array {
+						vk::queue_create_info {
 							index, vk::queue_count{ (uint32) priorities.size() }, vk::queue_priorities{ priorities.data() }
 						}
 					},
 					others...
 				);
-			},
-			args...
-		);
+			}
+		}.for_elements_of(args...);
 	}
 
 	template<typename... Args>

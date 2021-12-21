@@ -2,30 +2,33 @@
 
 #include "handle.hpp"
 #include "../../device/handle.hpp"
+#include "../../shared/guarded.hpp"
 
 namespace vk {
 
-	struct pipeline_layout_guard {
+	template<>
+	class guarded<vk::pipeline_layout> {
 		vk::pipeline_layout pipeline_layout;
 		vk::device device;
 
-		pipeline_layout_guard() = default;
+	public:
+		guarded() = default;
 
-		pipeline_layout_guard(vk::pipeline_layout pipeline_layout, vk::device device)
+		guarded(vk::pipeline_layout pipeline_layout, vk::device device)
 			: pipeline_layout{pipeline_layout}, device{ device }
 		{}
 
-		pipeline_layout_guard(vk::pipeline_layout_guard&& other)
+		guarded(guarded&& other)
 			: pipeline_layout{ exchange(other.pipeline_layout.handle, 0) }, device{ other.device }
 		{}
 
-		pipeline_layout_guard& operator = (vk::pipeline_layout_guard&& other) {
+		guarded& operator = (guarded&& other) {
 			pipeline_layout.handle = exchange(other.pipeline_layout.handle, 0);
 			device = other.device;
 			return *this;
 		}
 
-		~pipeline_layout_guard() {
+		~guarded() {
 			if(pipeline_layout.handle) {
 				vkDestroyPipelineLayout(
 					(VkDevice) device.handle,

@@ -2,22 +2,25 @@
 
 #include "handle.hpp"
 #include "../device/handle.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
-	class render_pass_guard {
+
+	template<>
+	class guarded<vk::render_pass> {
 		vk::render_pass render_pass;
 		vk::device device;
 	public:
 
-		render_pass_guard(vk::render_pass render_pass, vk::device device)
+		guarded(vk::render_pass render_pass, vk::device device)
 			: render_pass{ render_pass }, device{ device }
 		{}
 
-		render_pass_guard(render_pass_guard&& other)
+		guarded(guarded&& other)
 			: render_pass{ exchange(other.render_pass.handle, 0) }, device{ other.device }
 		{}
 
-		~render_pass_guard() {
+		~guarded() {
 			if(render_pass.handle) {
 				vkDestroyRenderPass(
 					(VkDevice) device.handle,

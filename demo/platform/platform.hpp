@@ -6,6 +6,7 @@
 #include <core/span.hpp>
 #include "vk/surface/guard.hpp"
 #include "vk/instance/handle.hpp"
+#include "vk/instance/guard.hpp"
 
 namespace platform {
 	struct logger {
@@ -56,7 +57,8 @@ namespace platform {
 
 	span<vk::extension_name> get_required_instance_extensions();
 
-	vk::surface_guard create_surface(vk::instance);
+	vk::guarded<vk::surface> create_surface(vk::instance);
+	inline vk::guarded<vk::surface> create_surface(const vk::guarded<vk::instance>& instance) { return create_surface(instance.object()); }
 
 	bool should_close();
 	void begin();

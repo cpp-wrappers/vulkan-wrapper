@@ -75,7 +75,7 @@ span<vk::extension_name> platform::get_required_instance_extensions() {
 
 GLFWwindow* window;
 
-vk::surface_guard platform::create_surface(vk::instance instance) {
+vk::guarded<vk::surface> platform::create_surface(vk::instance instance) {
 	glfwSetErrorCallback([](int error_code, const char* description) {
 		platform::error("[glfw] error code: ", uint32(error_code), ", description: ", description).new_line();
 	});
@@ -102,7 +102,7 @@ vk::surface_guard platform::create_surface(vk::instance instance) {
 		throw;
 	}
 
-	return vk::surface_guard{ vk::surface{ surface }, instance };
+	return { vk::surface{ surface }, instance };
 }
 
 bool platform::should_close() {

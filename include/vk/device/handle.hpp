@@ -12,16 +12,16 @@
 
 namespace vk {
 
-	class queue;
-	class physical_device;
-	class shader_module;
-	class command_pool;
-	class framebuffer;
-	class image_view;
-	class pipeline_layout;
-	class pipeline;
-	class render_pass;
-	class semaphore;
+	struct queue;
+	struct physical_device;
+	struct shader_module;
+	struct command_pool;
+	struct framebuffer;
+	struct image_view;
+	struct pipeline_layout;
+	struct pipeline;
+	struct render_pass;
+	struct semaphore;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 

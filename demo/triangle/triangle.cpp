@@ -34,7 +34,7 @@ exit 1
 #include <stdio.h>
 #include "../platform/platform.hpp"
 
-inline vk::shader_module_guard read_shader_module(const vk::device_guard& device, const char* path) {
+inline vk::shader_module_guard read_shader_module(const vk::guarded<vk::device>& device, const char* path) {
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
@@ -62,7 +62,7 @@ void entrypoint() {
 	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
 	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
 
-	vk::instance_guard instance { layers, extensions };
+	vk::guarded<vk::instance> instance { layers, extensions };
 
 	auto debug_report_callback = instance.create_guarded_debug_report_callback(
 		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
@@ -75,23 +75,19 @@ void entrypoint() {
 		}
 	);
 
-	auto surface = platform::create_surface(instance.object());
-
+	auto surface = platform::create_surface(instance);
 	auto physical_device = instance.get_first_physical_device();
-
-	auto queue_family_index {
-		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
-	};
+	auto queue_family_index = physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics);
 
 	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
 
-	if(!physical_device.get_surface_support(surface.object(), queue_family_index)) {
+	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface is not supported").new_line();
 		throw;
 	}
 
-	auto surface_format = physical_device.get_first_surface_format(surface.object());
-	auto surface_capabilities = physical_device.get_surface_capabilities(surface.object());
+	auto surface_format = physical_device.get_first_surface_format(surface);
+	auto surface_capabilities = physical_device.get_surface_capabilities(surface);
 
 	auto device = physical_device.create_guarded_device(
 		queue_family_index,
@@ -99,9 +95,9 @@ void entrypoint() {
 		array { vk::extension_name { "VK_KHR_swapchain" } }
 	);
 
-	vk::swapchain_guard swapchain {
-		device.object(),
-		surface.object(),
+	vk::guarded<vk::swapchain> swapchain {
+		device,
+		surface,
 		surface_capabilities.min_image_count,
 		surface_capabilities.current_extent,
 		surface_format,
@@ -151,7 +147,7 @@ void entrypoint() {
 		array{ subpass_dependency }
 	);
 
-	vk::image_view_guard image_views_raw[images_count];
+	vk::guarded<vk::image_view> image_views_raw[images_count];
 	span image_views{ image_views_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
@@ -164,12 +160,12 @@ void entrypoint() {
 		);
 	}
 
-	vk::framebuffer_guard framebuffers_raw[images_count];
+	vk::guarded<vk::framebuffer> framebuffers_raw[images_count];
 	span framebuffers{ framebuffers_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
 		framebuffers[i] = device.create_guarded_framebuffer(
-			render_pass.object(),
+			render_pass,
 			array{ vk::image_view{ image_views[i].object() } },
 			vk::extent<3>{ 600, 600, 1 }
 		);
@@ -246,8 +242,8 @@ void entrypoint() {
 		prsci,
 		pmsci,
 		pcbsci,
-		pipeline_layout.object(),
-		render_pass.object(),
+		pipeline_layout,
+		render_pass,
 		vk::subpass{ 0 }
 	);
 
@@ -301,25 +297,14 @@ void entrypoint() {
 
 		vk::image_index image_index = result.get<vk::image_index>();
 
-		vk::pipeline_stage wait_dst_stage_mask = vk::pipeline_stage::color_attachment_output;
+		queue.submit(
+			vk::wait_semaphore{ swapchain_image_semaphore.object() },
+			vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
+			command_buffers[(uint32)image_index],
+			vk::signal_semaphore{ rendering_finished_semaphore.object() }
+		);
 
-		queue.submit(vk::submit_info {
-			.wait_semaphore_count = 1,
-			.wait_semaphores = &swapchain_image_semaphore.object(),
-			.wait_dst_stage_mask = &wait_dst_stage_mask,
-			.command_buffer_count = 1,
-			.command_buffers = &command_buffers[(uint32)image_index],
-			.signal_semaphore_count = 1,
-			.signal_semaphores = &rendering_finished_semaphore.object()
-		});
-
-		queue.present(vk::present_info {
-			.wait_semaphore_count = 1,
-			.wait_semaphores = &rendering_finished_semaphore.object(),
-			.swapchain_count = 1,
-			.swapchains = &swapchain.object(),
-			.image_indices = &image_index
-		});
+		queue.present(vk::wait_semaphore{ rendering_finished_semaphore.object() }, swapchain.object(), image_index);
 
 		platform::end();
 	}

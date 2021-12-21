@@ -69,7 +69,7 @@ namespace vk {
 	struct result : wrapper::of_integer<int32, struct vk_result> {
 
 		template<typename Type>
-		requires(type::is_same_as<int32>::after_applying<type::remove_reference>::for_type<Type>)
+		requires(type::is_same_as<int32>::ignore_reference::for_type<Type>)
 		result(Type val) : wrapper::of_integer<int32, struct vk_result>{ val } {}
 
 		bool success() const { return (int32) *this == VK_SUCCESS; }

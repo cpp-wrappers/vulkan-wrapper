@@ -2,35 +2,38 @@
 
 #include "handle.hpp"
 #include "../../device/handle.hpp"
+#include "../../shared/guarded.hpp"
 
 namespace vk {
 
-	struct image_view_guard {
+	template<>
+	class guarded<vk::image_view> {
 		vk::image_view image_view;
 		vk::device device;
 
-		image_view_guard() = default;
+	public:
+		guarded() = default;
 
-		image_view_guard(vk::image_view image_view, vk::device device)
+		guarded(vk::image_view image_view, vk::device device)
 			: image_view{ image_view }, device{ device }
 		{}
 
 		template<typename... Args>
-		image_view_guard(Args&&... args, vk::device device)
+		guarded(Args&&... args, vk::device device)
 			: image_view{ device.create_image_view(forward<Args>(args)...) }, device{ device }
 		{}
 
-		image_view_guard(image_view_guard&& other)
+		guarded(guarded&& other)
 			: image_view{ exchange(other.image_view.handle, 0) }, device{ other.device }
 		{}
 
-		image_view_guard& operator = (image_view_guard&& other) {
+		guarded& operator = (guarded&& other) {
 			image_view.handle = exchange(other.image_view.handle, 0);
 			device = other.device;
 			return *this;
 		}
 
-		~image_view_guard() {
+		~guarded() {
 			if(image_view.handle) {
 				vkDestroyImageView(
 					(VkDevice) device.handle,

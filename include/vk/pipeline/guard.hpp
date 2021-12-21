@@ -2,26 +2,28 @@
 
 #include "handle.hpp"
 #include "../device/handle.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
 
-	class pipeline_guard {
+	template<>
+	class guarded<vk::pipeline> {
 		vk::pipeline pipeline;
 		vk::device device;
 
 	public:
 
-		pipeline_guard() = default;
+		guarded() = default;
 
-		pipeline_guard(vk::pipeline pipeline, vk::device device)
+		guarded(vk::pipeline pipeline, vk::device device)
 			: pipeline{ pipeline }, device{ device }
 		{}
 
-		pipeline_guard(pipeline_guard&& other)
+		guarded(guarded&& other)
 			: pipeline{ exchange(other.pipeline.handle, 0) }, device{ other.device }
 		{}
 
-		~pipeline_guard() {
+		~guarded() {
 			if(pipeline.handle) {
 				vkDestroyPipeline(
 					(VkDevice) device.handle,

@@ -2,23 +2,27 @@
 
 #include "handle.hpp"
 #include "create.hpp"
+#include "../device/handle.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
-	class swapchain_guard {
+
+	template<>
+	class guarded<vk::swapchain> {
 		vk::swapchain swapchain;
 		vk::device device;
 	public:
 
-		swapchain_guard(vk::swapchain swapchain, vk::device device)
+		guarded<vk::swapchain>(vk::swapchain swapchain, vk::device device)
 			: swapchain{ swapchain }, device{ device }
 		{}
 
 		template<typename... Args>
-		swapchain_guard(vk::device device, Args&&... args)
-			: swapchain{ vk::create_swapchain(device, forward<Args>(args)...) }, device{ device }
+		guarded<vk::swapchain>(vk::ordinary_or_guarded<vk::device> auto& device, Args&&... args)
+			: swapchain{ vk::create_swapchain(device, forward<Args>(args)...) }, device{ vk::get_handle<vk::device>(device) }
 		{}
 
-		~swapchain_guard() {
+		~guarded<vk::swapchain>() {
 			if(swapchain.handle) {
 				vkDestroySwapchainKHR(
 					(VkDevice) device.handle,

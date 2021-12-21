@@ -15,32 +15,34 @@
 #include "../shared/headers.hpp"
 #include "../shared/result.hpp"
 #include "../shared/count.hpp"
-#include "../semaphore/handle.hpp"
-#include "../fence/handle.hpp"
-#include "../device/handle.hpp"
-#include "../image/handle.hpp"
+#include "../shared/guarded.hpp"
 
 namespace vk {
 
 	class device;
-	class semaphore;
-	class fence;
-	class image;
+	struct semaphore;
+	struct fence;
+	struct image;
 
 	struct swapchain {
 		uint64 handle;
 
+		template<
+			vk::ordinary_or_guarded<vk::device> Device,
+			vk::ordinary_or_guarded<vk::semaphore> Semaphore,
+			vk::ordinary_or_guarded<vk::fence> Fence
+		>
 		elements::one_of<vk::result, vk::image_index>
-		try_acquire_next_image(vk::device device, vk::timeout timeout, vk::semaphore semaphore = {VK_NULL_HANDLE}, vk::fence fence = {VK_NULL_HANDLE}) {
+		try_acquire_next_image(Device& device, vk::timeout timeout, Semaphore& semaphore, Fence& fence) {
 			uint32 index;
 
 			vk::result result {
 				(int32) vkAcquireNextImageKHR(
-					(VkDevice) device.handle ,
+					(VkDevice) vk::get_raw_handle<vk::device>(device),
 					(VkSwapchainKHR) handle,
 					(uint64) timeout,
-					(VkSemaphore) semaphore.handle,
-					(VkFence) fence.handle,
+					(VkSemaphore) vk::get_raw_handle<vk::semaphore>(semaphore),
+					(VkFence) vk::get_raw_handle<vk::fence>(fence),
 					&index
 				)
 			};
@@ -50,13 +52,14 @@ namespace vk {
 			return result;
 		}
 
+		template<vk::ordinary_or_guarded<vk::device> Device>
 		elements::one_of<vk::result, vk::count>
-		try_get_images(vk::device device, range::of_value_type<vk::image> auto&& images) const {
+		try_get_images(Device& device, range::of_value_type<vk::image> auto&& images) const {
 			uint32 count = images.size();
 
 			vk::result result {
 				(int32) vkGetSwapchainImagesKHR(
-					(VkDevice) device.handle,
+					(VkDevice) vk::get_raw_handle<vk::device>(device),
 					(VkSwapchainKHR) handle,
 					&count,
 					(VkImage*) images.data()
@@ -67,36 +70,32 @@ namespace vk {
 			return result;
 		}
 
-		template<range::of_value_type<vk::image> Images>
-		vk::count get_images(vk::device device, Images&& images) const {
+		template<
+			vk::ordinary_or_guarded<vk::device> Device,
+			range::of_value_type<vk::image> Images
+		>
+		vk::count get_images(Device& device, Images&& images) const {
 			auto result = try_get_images(device, forward<Images>(images));
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
 		}
 
-		elements::one_of<vk::result, vk::count> try_get_image_count(vk::device device) const {
+		elements::one_of<vk::result, vk::count> try_get_image_count(vk::ordinary_or_guarded<vk::device> auto& device) const {
 			return try_get_images(device, span<vk::image>{ nullptr, 0 });
 		}
 
-		vk::count get_image_count(vk::device device) const {
+		vk::count get_image_count(vk::ordinary_or_guarded<vk::device> auto& device) const {
 			auto result = try_get_image_count(device);
-			if(result.is_current<vk::result>()) throw result.get<vk::result>();
+			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_view_images(vk::device device, vk::count count, auto&& f) const {
-			vk::image images[(uint32)count];
-			auto result = try_get_images(device, span{ images, (uint32)count });
-			if(result.is_current<vk::result>()) return result.get<vk::result>();
-			count = result.get<vk::count>();
-			f(span{ images, (uint32)count } );
-			return count;
-		}
+		try_view_images(vk::ordinary_or_guarded<vk::device> auto& device, vk::count count, auto&& f) const;
 
 		elements::one_of<vk::result, vk::count>
-		try_for_each_image(vk::device device, vk::count count, auto&& f) const {
-			return try_view_images(device, count, [&](auto view) {
+		try_for_each_image(vk::ordinary_or_guarded<vk::device> auto& device, vk::count count, auto&& f) const {
+			return try_view_images(forward<vk::device>(device), count, [&](auto view) {
 				for(vk::image image : view) {
 					f(image);
 				}
@@ -105,14 +104,14 @@ namespace vk {
 
 		template<typename F>
 		elements::one_of<vk::result, vk::count>
-		try_for_each_image(vk::device device, F&& f) const {
+		try_for_each_image(vk::ordinary_or_guarded<vk::device> auto& device, F&& f) const {
 			auto result = try_get_image_count(device);
-			if(result.is_current<vk::result>()) return result;
-			return try_for_feach_image(device, result.get<vk::count>(), forward<F>(f));
+			if(result.template is_current<vk::result>()) return result;
+			return try_for_feach_image(device, result.template get<vk::count>(), forward<F>(f));
 		}
 
 		template<typename F>
-		vk::count for_each_image(vk::device device, F&& f) const {
+		vk::count for_each_image(vk::ordinary_or_guarded<vk::device> auto& device, F&& f) const {
 			auto result = try_for_each_image(device, forward<F>(f));
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
@@ -121,3 +120,14 @@ namespace vk {
 
 } // vk
 
+#include "../image/handle.hpp"
+
+elements::one_of<vk::result, vk::count>
+vk::swapchain::try_view_images(vk::ordinary_or_guarded<vk::device> auto& device, vk::count count, auto&& f) const {
+	vk::image images[(uint32)count];
+	auto result = try_get_images(device, span{ images, (uint32)count });
+	if(result.template is_current<vk::result>()) return result.template get<vk::result>();
+	count = result.template get<vk::count>();
+	f(span{ images, (uint32)count } );
+	return count;
+}
