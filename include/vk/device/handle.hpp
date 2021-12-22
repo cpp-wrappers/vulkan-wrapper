@@ -22,6 +22,7 @@ namespace vk {
 	struct pipeline;
 	struct render_pass;
 	struct semaphore;
+	struct swapchain;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 
@@ -80,7 +81,14 @@ namespace vk {
 		try_create_semaphore(Args&&... args) const;
 
 		template<typename... Args>
-		semaphore create_semaphore(Args&&... args) const;
+		vk::semaphore create_semaphore(Args&&... args) const;
+
+		template<typename... Args>
+		elements::one_of<vk::result, vk::swapchain>
+		try_create_swapchain(Args&&... args) const;
+
+		template<typename... Args>
+		vk::swapchain create_swapchain(Args&&... args) const;
 
 		vk::result try_wait_idle() const {
 			return {
@@ -227,4 +235,20 @@ vk::device::create_semaphore(Args&&... args) const {
 	auto result = try_create_semaphore(forward<Args>(args)...);
 	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 	return result.template get<vk::semaphore>();
+}
+
+#include "../swapchain/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::swapchain>
+vk::device::try_create_swapchain(Args&&... args) const {
+	return vk::try_create_swapchain(*this, args...);
+}
+
+template<typename... Args>
+vk::swapchain
+vk::device::create_swapchain(Args&&... args) const {
+	auto result = try_create_swapchain(forward<Args>(args)...);
+	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+	return result.template get<vk::swapchain>();
 }

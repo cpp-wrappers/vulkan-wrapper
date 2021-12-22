@@ -12,8 +12,6 @@
 
 namespace vk {
 
-	class device;
-
 	struct shader_module {
 		uint64 handle;
 	}; // shader_module

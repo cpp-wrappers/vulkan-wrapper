@@ -3,17 +3,9 @@
 #include <core/exchange.hpp>
 
 #include "handle.hpp"
-#include "create.hpp"
 #include "../shared/guarded.hpp"
 
 namespace vk {
-	class command_pool_guard;
-	class framebuffer_guard;
-	class image_view_guard;
-	class pipeline_layout_guard;
-	class pipeline_guard;
-	class render_pass_guard;
-	class semaphore_guard;
 
 	template<>
 	class guarded<vk::device> {
@@ -47,25 +39,31 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		vk::guarded<command_pool> create_guarded_command_pool(Args&&... args) const;
+		vk::guarded<vk::shader_module> create_guarded_shader_module(Args&&... args) const;
 
 		template<typename... Args>
-		vk::guarded<framebuffer> create_guarded_framebuffer(Args&&... args) const;
+		vk::guarded<vk::command_pool> create_guarded_command_pool(Args&&... args) const;
 
 		template<typename... Args>
-		vk::guarded<image_view> create_guarded_image_view(Args&&... args) const;
+		vk::guarded<vk::framebuffer> create_guarded_framebuffer(Args&&... args) const;
+
+		template<typename... Args>
+		vk::guarded<vk::image_view> create_guarded_image_view(Args&&... args) const;
 
 		template<typename... Args>
 		vk::guarded<vk::pipeline_layout> create_guarded_pipeline_layout(Args&&... args) const;
 
 		template<typename... Args>
-		vk::guarded<pipeline> create_guarded_graphics_pipeline(Args&&... args) const;
+		vk::guarded<vk::pipeline> create_guarded_graphics_pipeline(Args&&... args) const;
 
 		template<typename... Args>
 		vk::guarded<vk::render_pass> create_guarded_render_pass(Args&&... args) const;
 
 		template<typename... Args>
-		vk::guarded<semaphore> create_guarded_semaphore(Args&&... args) const;
+		vk::guarded<vk::semaphore> create_guarded_semaphore(Args&&... args) const;
+
+		template<typename... Args>
+		vk::guarded<vk::swapchain> create_guarded_swapchain(Args&&... args) const;
 
 		vk::queue get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			return device.get_queue(queue_family_index, queue_index);
@@ -82,8 +80,14 @@ namespace vk {
 	}; //device_guard
 } // vk
 
-#include "../command/pool/guard.hpp"
+#include "../shader/module/guard.hpp"
 
+template<typename... Args>
+vk::guarded<vk::shader_module> vk::guarded<vk::device>::create_guarded_shader_module(Args&&... args) const {
+	return { device.create_shader_module(forward<Args>(args)...), this->device };
+}
+
+#include "../command/pool/guard.hpp"
 
 template<typename... Args>
 vk::guarded<vk::command_pool> vk::guarded<vk::device>::create_guarded_command_pool(Args&&... args) const {
@@ -130,4 +134,11 @@ vk::guarded<vk::render_pass> vk::guarded<vk::device>::create_guarded_render_pass
 template<typename... Args>
 vk::guarded<vk::semaphore> vk::guarded<vk::device>::create_guarded_semaphore(Args&&... args) const {
 	return { device.create_semaphore(forward<Args>(args)...), this->device };
+}
+
+#include "../swapchain/guard.hpp"
+
+template<typename... Args>
+vk::guarded<vk::swapchain> vk::guarded<vk::device>::create_guarded_swapchain(Args&&... args) const {
+	return { device.create_swapchain(forward<Args>(args)...), this->device };
 }

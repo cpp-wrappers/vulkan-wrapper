@@ -17,11 +17,6 @@ namespace vk {
 			: swapchain{ swapchain }, device{ device }
 		{}
 
-		template<typename... Args>
-		guarded<vk::swapchain>(vk::ordinary_or_guarded<vk::device> auto& device, Args&&... args)
-			: swapchain{ vk::create_swapchain(device, forward<Args>(args)...) }, device{ vk::get_handle<vk::device>(device) }
-		{}
-
 		~guarded<vk::swapchain>() {
 			if(swapchain.handle) {
 				vkDestroySwapchainKHR(

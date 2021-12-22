@@ -2,25 +2,25 @@
 
 #include "handle.hpp"
 #include "../../device/handle.hpp"
+#include "../../shared/guarded.hpp"
 
 namespace vk {
 
-	class device;
-
-	class shader_module_guard {
+	template<>
+	class vk::guarded<vk::shader_module> {
 		vk::shader_module shader_module;
 		vk::device device;
 	public:
 
-		shader_module_guard(vk::shader_module shader_module, vk::device device)
+		guarded(vk::shader_module shader_module, vk::device device)
 			: shader_module{ shader_module }, device{ device }
 		{}
 
-		shader_module_guard(shader_module_guard&& other)
+		guarded(guarded&& other)
 			: shader_module{ exchange(other.shader_module.handle, 0) }
 		{}
 
-		~shader_module_guard() {
+		~guarded() {
 			if(shader_module.handle) {
 				vkDestroyShaderModule(
 					(VkDevice) device.handle,

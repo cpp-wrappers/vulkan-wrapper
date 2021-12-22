@@ -4,8 +4,6 @@
 
 namespace vk {
 
-	class device;
-
 	struct semaphore {
 		uint64 handle;
 	}; // semaphore

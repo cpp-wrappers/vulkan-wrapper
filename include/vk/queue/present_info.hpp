@@ -5,10 +5,10 @@
 
 namespace vk {
 
-	class semaphore;
-	class swapchain;
-	class image_index;
-	class result;
+	struct semaphore;
+	struct swapchain;
+	struct image_index;
+	struct result;
 
 	struct present_info {
 		const uint32 type = (uint32)VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

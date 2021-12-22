@@ -17,6 +17,7 @@
 #include "clear.hpp"
 #include "render_pass_begin_info.hpp"
 #include "../../pipeline/handle.hpp"
+#include "../../shared/guarded.hpp"
 
 namespace vk {
 
@@ -148,13 +149,11 @@ namespace vk {
 			);
 		}
 
-		void cmd_bind_pipeline(
-			vk::pipeline pipeline
-		) const {
+		void cmd_bind_pipeline(vk::ordinary_or_guarded<vk::pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
 				(VkCommandBuffer) handle,
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				(VkPipeline) pipeline.handle
+				(VkPipeline) vk::get_raw_handle<vk::pipeline>(pipeline)
 			);
 		}
 

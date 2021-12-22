@@ -19,7 +19,7 @@
 
 namespace vk {
 
-	class device;
+	struct device;
 	struct semaphore;
 	struct fence;
 	struct image;

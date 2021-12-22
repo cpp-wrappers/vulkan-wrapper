@@ -7,8 +7,8 @@
 
 namespace vk {
 
-	class command_buffer;
-	class device;
+	struct command_buffer;
+	struct device;
 
 	struct command_pool {
 		uint64 handle;

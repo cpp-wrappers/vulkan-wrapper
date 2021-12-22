@@ -34,18 +34,11 @@ exit 1
 #include <stdio.h>
 #include "../platform/platform.hpp"
 
-inline vk::shader_module_guard read_shader_module(const vk::guarded<vk::device>& device, const char* path) {
+inline vk::guarded<vk::shader_module> read_shader_module(const vk::guarded<vk::device>& device, const char* path) {
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
-
-	return {
-		device.create_shader_module(
-			vk::code_size{ (uint32) size },
-			vk::code{ (uint32*) src }
-		),
-		device.object()
-	};
+	return device.create_guarded_shader_module(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
 }
 
 void entrypoint() {
@@ -62,7 +55,7 @@ void entrypoint() {
 	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
 	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
 
-	vk::guarded<vk::instance> instance { layers, extensions };
+	auto instance = vk::create_guarded_instance(layers, extensions);
 
 	auto debug_report_callback = instance.create_guarded_debug_report_callback(
 		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
@@ -95,8 +88,7 @@ void entrypoint() {
 		array { vk::extension_name { "VK_KHR_swapchain" } }
 	);
 
-	vk::guarded<vk::swapchain> swapchain {
-		device,
+	auto swapchain = device.create_guarded_swapchain(
 		surface,
 		surface_capabilities.min_image_count,
 		surface_capabilities.current_extent,
@@ -107,17 +99,15 @@ void entrypoint() {
 		vk::clipped{ true },
 		vk::surface_transform::identity,
 		vk::composite_alpha::opaque
-	};
+	);
 
 	platform::info("created swapchain").new_line();
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
-
 	platform::info("swapchain images count: ", images_count).new_line();
 
 	vk::image images_storage[images_count];
 	span images{ images_storage, images_count };
-
 	swapchain.get_images(images);
 
 	vk::attachment_description attachment_description {
@@ -235,15 +225,8 @@ void entrypoint() {
 	auto pipeline_layout = device.create_guarded_pipeline_layout();
 
 	auto pipeline = device.create_guarded_graphics_pipeline(
-		shader_stages,
-		pvisci,
-		piasci,
-		pvsci,
-		prsci,
-		pmsci,
-		pcbsci,
-		pipeline_layout,
-		render_pass,
+		shader_stages, pvisci, piasci, pvsci, prsci,
+		pmsci, pcbsci, pipeline_layout, render_pass,
 		vk::subpass{ 0 }
 	);
 
@@ -270,7 +253,7 @@ void entrypoint() {
 			.clear_values = &clear_value
 		});
 
-		command_buffer.cmd_bind_pipeline(pipeline.object());
+		command_buffer.cmd_bind_pipeline(pipeline);
 		command_buffer.cmd_draw(3, 1, 0, 0);
 		command_buffer.cmd_end_render_pass();
 

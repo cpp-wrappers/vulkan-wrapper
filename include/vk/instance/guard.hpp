@@ -16,11 +16,6 @@ namespace vk {
 			: instance{ instance }
 		{}
 
-		template<typename... Args>
-		guarded(Args&&... args)
-			: instance{ vk::create_instance(forward<Args>(args)...) }
-		{}
-
 		guarded(guarded&& other)
 			: instance{ exchange(other.instance.handle, nullptr) }
 		{}
@@ -55,6 +50,11 @@ namespace vk {
 		template<typename... Args>
 		vk::guarded<vk::debug_report_callback> create_guarded_debug_report_callback(Args&&... args) const;
 	};
+
+	template<typename... Args>
+	vk::guarded<vk::instance> create_guarded_instance(Args&&... args) {
+		return { vk::create_instance(forward<Args>(args)...) };
+	}
 } // vk
 
 #include "../debug/report/callback/guard.hpp"

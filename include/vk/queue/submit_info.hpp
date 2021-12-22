@@ -7,8 +7,8 @@
 
 namespace vk {
 
-	class semaphore;
-	class command_buffer;
+	struct semaphore;
+	struct command_buffer;
 
 	struct submit_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SUBMIT_INFO;
