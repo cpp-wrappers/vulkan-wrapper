@@ -33,7 +33,7 @@ namespace vk {
 			types::count_of_type<vk::clipped>::equals<1>::ignore_reference
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::swapchain>
+	elements::one_of<vk::result, vk::handle<vk::swapchain>>
 	try_create_swapchain(Args&&... args) {
 		auto& surface = elements::vk::of_type<vk::surface>::for_elements_of(args...);
 
@@ -80,14 +80,14 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return vk::swapchain{ swapchain };
+		if(result.success()) return vk::handle<vk::swapchain>{ swapchain };
 
 		return result;
 	}
 
 	template<typename... Args>
 	requires(types::count_of_type<vk::surface_format>::equals<1>::ignore_reference::for_types_of<Args...>)
-	elements::one_of<vk::result, vk::swapchain>
+	elements::one_of<vk::result, vk::handle<vk::swapchain>>
 	try_create_swapchain(Args&&... args) {
 		vk::surface_format surface_format = elements::of_type<vk::surface_format&>::for_elements_of(args...);
 
@@ -101,9 +101,9 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	vk::swapchain create_swapchain(Args&&... args) {
+	vk::handle<vk::swapchain> create_swapchain(Args&&... args) {
 		auto result = try_create_swapchain(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::swapchain>();
+		return result.template get<vk::handle<vk::swapchain>>();
 	}
 }

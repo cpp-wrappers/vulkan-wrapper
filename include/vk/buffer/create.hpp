@@ -23,7 +23,7 @@ namespace vk {
 			types::count_of_ranges_of_value_type<vk::queue_family_index>::equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::buffer>
+	elements::one_of<vk::result, vk::handle<vk::buffer>>
 	try_create_buffer(Args&&... args) {
 		auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
 
@@ -51,13 +51,13 @@ namespace vk {
 
 		if(!result.success()) return result;
 
-		return vk::buffer{ buffer };
+		return vk::handle<vk::buffer>{ buffer };
 	}
 
 	template<typename... Args>
-	vk::buffer create_buffer(Args&&... args) {
+	vk::handle<vk::buffer> create_buffer(Args&&... args) {
 		auto result = vk::try_create_buffer(forward<Args>(args)...);
 		if(result.template get_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::buffer>();
+		return result.template get<vk::handle<vk::buffer>>();
 	}
 }

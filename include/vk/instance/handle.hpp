@@ -13,22 +13,23 @@
 
 #include "../shared/count.hpp"
 #include "../shared/result.hpp"
+#include "../shared/handle.hpp"
 #include "../physical_device/handle.hpp"
 
 namespace vk {
 
-	class debug_report_callback;
+	struct debug_report_callback;
+	struct instance;
 
-	struct instance {
-		void* handle;
-
+	template<>
+	struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 		elements::one_of<vk::result, vk::count>
 		try_enumerate_physical_devices(range::of_value_type<vk::physical_device> auto&& devices) const {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {
 				(int32) vkEnumeratePhysicalDevices(
-					(VkInstance) handle,
+					(VkInstance) value,
 					&count,
 					(VkPhysicalDevice*) devices.data()
 				)
@@ -115,12 +116,10 @@ namespace vk {
 template<typename... Args>
 elements::one_of<vk::result, vk::debug_report_callback>
 vk::instance::try_create_debug_report_callback(Args&&... args) const {
-	return vk::try_create_debug_report_callback(args..., *this);
+	return vk::try_create_debug_report_callback(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::debug_report_callback vk::instance::create_debug_report_callback(Args&&... args) const {
-	auto result = try_create_debug_report_callback(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::debug_report_callback>();
+	return vk::create_debug_report_callback(*this, forward<Args>(args)...);
 }

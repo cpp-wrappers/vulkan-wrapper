@@ -11,38 +11,38 @@ namespace vk {
 	
 	template<>
 	class guarded<vk::framebuffer> {
-		vk::framebuffer framebuffer;
-		vk::device device;
+		vk::handle<vk::framebuffer> framebuffer;
+		vk::handle<vk::device> device;
 
 	public:
 
 		guarded() = default;
 
-		guarded(vk::framebuffer framebuffer, vk::device device)
+		guarded(vk::handle<vk::framebuffer> framebuffer, vk::handle<vk::device> device)
 			: framebuffer{ framebuffer }, device{ device }
 		{}
 
 		guarded(guarded&& other)
-			: framebuffer{ exchange(other.framebuffer.handle, 0) }, device{ other.device }
+			: framebuffer{ exchange(other.framebuffer.value, 0) }, device{ other.device }
 		{}
 
 		guarded& operator = (guarded&& other) {
-			framebuffer.handle = exchange(other.framebuffer.handle, 0);
+			framebuffer.value = exchange(other.framebuffer.value, 0);
 			device = other.device;
 			return *this;
 		}
 
 		~guarded() {
-			if(framebuffer.handle) {
+			if(framebuffer.value) {
 				vkDestroyFramebuffer(
-					(VkDevice) device.handle,
-					(VkFramebuffer) exchange(framebuffer.handle, 0),
+					(VkDevice) device.value,
+					(VkFramebuffer) exchange(framebuffer.value, 0),
 					nullptr
 				);
 			}
 		}
 
-		const vk::framebuffer& object() const {
+		const vk::handle<vk::framebuffer>& object() const {
 			return framebuffer;
 		}
 	};

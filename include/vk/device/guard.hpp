@@ -9,32 +9,32 @@ namespace vk {
 
 	template<>
 	class guarded<vk::device> {
-		vk::device device;
+		vk::handle<vk::device> device;
 	public:
 
-		guarded(vk::device device)
+		guarded(vk::handle<vk::device> device)
 			: device{ device }
 		{}
 
 		guarded(guarded&& other)
-			: device{ exchange(other.device.handle, nullptr) }
+			: device{ exchange(other.device.value, nullptr) }
 		{}
 
 		~guarded() {
-			if(device.handle) {
+			if(device.value) {
 				vkDestroyDevice(
-					(VkDevice) exchange(device.handle, nullptr),
+					(VkDevice) exchange(device.value, nullptr),
 					nullptr
 				);
 			}
 		}
 
-		const vk::device& object() const {
+		const vk::handle<vk::device>& object() const {
 			return device;
 		}
 		
 		template<typename... Args>
-		vk::shader_module create_shader_module(Args... args) const {
+		vk::handle<vk::shader_module> create_shader_module(Args... args) const {
 			return device.create_shader_module<Args...>(forward<Args>(args)...);
 		}
 
@@ -65,7 +65,7 @@ namespace vk {
 		template<typename... Args>
 		vk::guarded<vk::swapchain> create_guarded_swapchain(Args&&... args) const;
 
-		vk::queue get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
+		vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			return device.get_queue(queue_family_index, queue_index);
 		}
 

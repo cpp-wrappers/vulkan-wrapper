@@ -16,6 +16,7 @@
 #include "../shared/result.hpp"
 #include "../shared/count.hpp"
 #include "../shared/guarded.hpp"
+#include "../shared/handle.hpp"
 
 namespace vk {
 
@@ -24,8 +25,10 @@ namespace vk {
 	struct fence;
 	struct image;
 
-	struct swapchain {
-		uint64 handle;
+	struct swapchain;
+
+	template<>
+	struct vk::handle<vk::swapchain> : vk::handle_base<vk::non_dispatchable> {
 
 		template<
 			vk::ordinary_or_guarded<vk::device> Device,
@@ -39,7 +42,7 @@ namespace vk {
 			vk::result result {
 				(int32) vkAcquireNextImageKHR(
 					(VkDevice) vk::get_raw_handle<vk::device>(device),
-					(VkSwapchainKHR) handle,
+					(VkSwapchainKHR) value,
 					(uint64) timeout,
 					(VkSemaphore) vk::get_raw_handle<vk::semaphore>(semaphore),
 					(VkFence) vk::get_raw_handle<vk::fence>(fence),
@@ -60,7 +63,7 @@ namespace vk {
 			vk::result result {
 				(int32) vkGetSwapchainImagesKHR(
 					(VkDevice) vk::get_raw_handle<vk::device>(device),
-					(VkSwapchainKHR) handle,
+					(VkSwapchainKHR) value,
 					&count,
 					(VkImage*) images.data()
 				)
@@ -123,8 +126,8 @@ namespace vk {
 #include "../image/handle.hpp"
 
 elements::one_of<vk::result, vk::count>
-vk::swapchain::try_view_images(vk::ordinary_or_guarded<vk::device> auto& device, vk::count count, auto&& f) const {
-	vk::image images[(uint32)count];
+vk::handle<vk::swapchain>::try_view_images(vk::ordinary_or_guarded<vk::device> auto& device, vk::count count, auto&& f) const {
+	vk::handle<vk::image> images[(uint32)count];
 	auto result = try_get_images(device, span{ images, (uint32)count });
 	if(result.template is_current<vk::result>()) return result.template get<vk::result>();
 	count = result.template get<vk::count>();

@@ -1,9 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shared/handle.hpp"
 
 namespace vk {
-	struct framebuffer {
-		uint64 handle;
+
+	struct framebuffer;
+
+	template<>
+	struct vk::handle<vk::framebuffer> : vk::handle_base<vk::non_dispatchable> {
 	};
 }

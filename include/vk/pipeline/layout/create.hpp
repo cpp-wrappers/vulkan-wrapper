@@ -21,12 +21,12 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::device>::equals<1>,
+			types::count_of_type<vk::handle<vk::device>>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::descriptor_set_layout>::less_or_equals<1>,
 			types::count_of_ranges_of_value_type<vk::push_constant_range>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::pipeline_layout>
+	elements::one_of<vk::result, vk::handle<vk::pipeline_layout>>
 	try_create_pipeline_layout(const Args&... args) {
 		vk::pipeline_layout_create_info ci{};
 
@@ -42,27 +42,27 @@ namespace vk {
 			ci.push_constant_ranges = push_constant_ranges.data();
 		}
 
-		vk::device device = elements::of_type<const vk::device&>::for_elements_of(args...);
+		vk::handle<vk::device> device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
 
 		VkPipelineLayout pipeline_layout;
 
 		vk::result result {
 			(int32) vkCreatePipelineLayout(
-				(VkDevice) device.handle,
+				(VkDevice) device.value,
 				(VkPipelineLayoutCreateInfo*) &ci,
 				nullptr,
 				(VkPipelineLayout*) &pipeline_layout
 			)
 		};
 
-		if(result.success()) { return vk::pipeline_layout{ pipeline_layout }; }
+		if(result.success()) { return vk::handle<vk::pipeline_layout>{ pipeline_layout }; }
 		return result;
 	}
 
 	template<typename... Args>
-	vk::pipeline_layout create_pipeline_layout(Args&&... args) {
+	vk::handle<vk::pipeline_layout> create_pipeline_layout(Args&&... args) {
 		auto result = vk::try_create_pipeline_layout(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::pipeline_layout>();
+		return result.template get<vk::handle<vk::pipeline_layout>>();
 	}
 }

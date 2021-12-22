@@ -9,13 +9,13 @@
 namespace vk {
 
 	void free_command_buffers(
-		vk::device device,
-		vk::command_pool command_pool,
-		range::of_value_type<vk::command_buffer> auto&& command_buffers
+		vk::handle<vk::device> device,
+		vk::handle<vk::command_pool> command_pool,
+		range::of_value_type<vk::handle<vk::command_buffer>> auto&& command_buffers
 	) {
 		vkFreeCommandBuffers(
-			(VkDevice) device.handle,
-			(VkCommandPool) command_pool.handle,
+			(VkDevice) device.value,
+			(VkCommandPool) command_pool.value,
 			command_buffers.size(),
 			(VkCommandBuffer*) command_buffers.data()
 		);

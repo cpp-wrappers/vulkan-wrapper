@@ -8,31 +8,31 @@ namespace vk {
 
 	template<>
 	class guarded<vk::pipeline> {
-		vk::pipeline pipeline;
-		vk::device device;
+		vk::handle<vk::pipeline> pipeline;
+		vk::handle<vk::device> device;
 
 	public:
 
 		guarded() = default;
 
-		guarded(vk::pipeline pipeline, vk::device device)
+		guarded(vk::handle<vk::pipeline> pipeline, vk::handle<vk::device> device)
 			: pipeline{ pipeline }, device{ device }
 		{}
 
 		guarded(guarded&& other)
-			: pipeline{ exchange(other.pipeline.handle, 0) }, device{ other.device }
+			: pipeline{ exchange(other.pipeline.value, 0) }, device{ other.device }
 		{}
 
 		~guarded() {
-			if(pipeline.handle) {
+			if(pipeline.value) {
 				vkDestroyPipeline(
-					(VkDevice) device.handle,
-					(VkPipeline) exchange(pipeline.handle, 0),
+					(VkDevice) device.value,
+					(VkPipeline) exchange(pipeline.value, 0),
 					nullptr
 				);
 			}
 		}
 
-		const vk::pipeline& object() const { return pipeline; }
+		const vk::handle<vk::pipeline>& object() const { return pipeline; }
 	};
 }

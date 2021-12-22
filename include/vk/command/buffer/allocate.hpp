@@ -11,10 +11,10 @@
 namespace vk {
 
 	vk::result try_allocate_command_buffers(
-		vk::device device,
-		vk::command_pool command_pool,
+		vk::handle<vk::device> device,
+		vk::handle<vk::command_pool> command_pool,
 		vk::command_buffer_level level,
-		range::of_value_type<vk::command_buffer> auto&& command_buffers
+		range::of_value_type<vk::handle<vk::command_buffer>> auto&& command_buffers
 	) {
 		vk::command_buffer_allocate_info ai {
 			.command_pool = command_pool,
@@ -24,7 +24,7 @@ namespace vk {
 
 		return {
 			(int32) vkAllocateCommandBuffers(
-				(VkDevice) device.handle,
+				(VkDevice) device.value,
 				(VkCommandBufferAllocateInfo*) &ai,
 				(VkCommandBuffer*) command_buffers.data()
 			)

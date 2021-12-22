@@ -2,6 +2,7 @@
 
 #include <core/integer.hpp>
 #include "../shared/headers.hpp"
+#include "../shared/handle.hpp"
 
 namespace vk {
 
@@ -14,9 +15,9 @@ namespace vk {
 		const uint32 type = (uint32)VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		const void* next;
 		uint32 wait_semaphore_count;
-		const vk::semaphore* wait_semaphores;
+		const vk::handle<vk::semaphore>* wait_semaphores;
 		uint32 swapchain_count;
-		const vk::swapchain* swapchains;
+		const vk::handle<vk::swapchain>* swapchains;
 		const vk::image_index* image_indices;
 		const vk::result* results;
 	};

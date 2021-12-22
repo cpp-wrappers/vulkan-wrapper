@@ -1,10 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shared/handle.hpp"
 
 namespace vk {
 
-	struct pipeline {
-		uint64 handle;
+	struct pipeline;
+
+	template<>
+	struct vk::handle<vk::pipeline> : vk::handle_base<vk::non_dispatchable> {
 	};
 }

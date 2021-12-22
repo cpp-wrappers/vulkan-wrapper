@@ -1,11 +1,13 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../../../shared/handle.hpp"
 
 namespace vk {
+
+	struct debug_report_callback;
 	
-	struct debug_report_callback {
-		uint64 handle;
+	template<>
+	struct vk::handle<vk::debug_report_callback> : vk::handle_base<vk::non_dispatchable> {
 	};
 	
-}
+} // vk

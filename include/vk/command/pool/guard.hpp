@@ -8,25 +8,25 @@ namespace vk {
 
 	template<>
 	class guarded<vk::command_pool> {
-		vk::command_pool command_pool;
-		vk::device device;
+		vk::handle<vk::command_pool> command_pool;
+		vk::handle<vk::device> device;
 	public:
 
-		guarded(vk::command_pool command_pool, vk::device device)
+		guarded(vk::handle<vk::command_pool> command_pool, vk::handle<vk::device> device)
 			: command_pool{ command_pool }, device{ device }
 		{}
 
 		~guarded() {
-			if(command_pool.handle) {
+			if(command_pool.value) {
 				vkDestroyCommandPool(
-					(VkDevice) device.handle,
-					(VkCommandPool) exchange(command_pool.handle, 0),
+					(VkDevice) device.value,
+					(VkCommandPool) exchange(command_pool.value, 0),
 					nullptr
 				);
 			}
 		}
 
-		template<range::of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		vk::result try_allocate_command_buffers(
 			vk::command_buffer_level level,
 			CommandBuffers&& command_buffers
@@ -34,7 +34,7 @@ namespace vk {
 			return command_pool.try_allocate_command_buffers(device, level, forward<CommandBuffers>(command_buffers));
 		}
 
-		template<range::of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		void allocate_command_buffers(
 			vk::command_buffer_level level,
 			CommandBuffers&& command_buffers
@@ -42,7 +42,7 @@ namespace vk {
 			command_pool.allocate_command_buffers(device, level, forward<CommandBuffers>(command_buffers));
 		}
 
-		template<range::of_value_type<vk::command_buffer> CommandBuffers>
+		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		void free_command_buffers(CommandBuffers&& command_buffers) {
 			command_pool.free_command_buffers(device, forward<CommandBuffers>(command_buffers));
 		}

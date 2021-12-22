@@ -23,7 +23,7 @@ namespace vk {
 		vk::new_layout new_layout;
 		vk::src_queue_family_index src_queue_family_index;
 		vk::dst_queue_family_index dst_queue_family_index;
-		vk::image image;
+		vk::handle<vk::image> image;
 		vk::image_subresource_range subresource_range;
 	};
 }

@@ -9,29 +9,29 @@ namespace vk {
 
 	template<>
 	class guarded<vk::semaphore> {
-		vk::semaphore semaphore;
-		vk::device device;
+		vk::handle<vk::semaphore> semaphore;
+		vk::handle<vk::device> device;
 	public:
 
-		guarded(vk::semaphore semaphore, vk::device device)
+		guarded(vk::handle<vk::semaphore> semaphore, vk::handle<vk::device> device)
 			: semaphore{ semaphore }, device{ device }
 		{}
 
 		guarded(guarded&& other)
-			: semaphore{ exchange(other.semaphore.handle, 0) }, device{ other.device }
+			: semaphore{ exchange(other.semaphore.value, 0) }, device{ other.device }
 		{}
 
 		~guarded() {
-			if(semaphore.handle) {
+			if(semaphore.value) {
 				vkDestroySemaphore(
-					(VkDevice) device.handle,
-					(VkSemaphore) exchange(semaphore.handle, 0),
+					(VkDevice) device.value,
+					(VkSemaphore) exchange(semaphore.value, 0),
 					(VkAllocationCallbacks*) nullptr
 				);
 			}
 		}
 
-		const vk::semaphore& object() const {
+		const vk::handle<vk::semaphore>& object() const {
 			return semaphore;
 		}
 	};

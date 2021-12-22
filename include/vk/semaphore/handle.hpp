@@ -1,10 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shared/handle.hpp"
 
 namespace vk {
 
-	struct semaphore {
-		uint64 handle;
+	struct semaphore;
+
+	template<>
+	struct vk::handle<vk::semaphore> : vk::handle_base<vk::non_dispatchable> {
 	}; // semaphore
 } // vk

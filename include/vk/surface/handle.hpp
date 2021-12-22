@@ -1,10 +1,13 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shared/handle.hpp"
 
 namespace vk {
-	struct surface {
-		uint64 handle;
-	}; // surface
+
+	struct surface;
+
+	template<>
+	struct vk::handle<vk::surface> : vk::handle_base<vk::non_dispatchable> {
+	};
 
 } // vk

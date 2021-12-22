@@ -45,7 +45,7 @@ namespace vk {
 			types::count_of_type<vk::base_pipeline_index>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::pipeline>
+	elements::one_of<vk::result, vk::handle<vk::pipeline>>
 	try_create_graphics_pipeline(const Args&... args) {
 		vk::pipeline_rasterization_state_create_info prsci = elements::of_type<const vk::pipeline_rasterization_state_create_info&>::for_elements_of(args...);
 
@@ -114,14 +114,14 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return vk::pipeline{ pipeline };
+		if(result.success()) return vk::handle<vk::pipeline>{ pipeline };
 		return result;
 	}
 
 	template<typename... Args>
-	vk::pipeline create_graphics_pipeline(Args&&... args) {
+	vk::handle<vk::pipeline> create_graphics_pipeline(Args&&... args) {
 		auto result = vk::try_create_graphics_pipeline(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::pipeline>();
+		return result.template get<vk::handle<vk::pipeline>>();
 	}
 }

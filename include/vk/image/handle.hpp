@@ -1,9 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shared/handle.hpp"
 
 namespace vk {
-	struct image {
-		uint64 handle;
+
+	struct image;
+
+	template<>
+	struct vk::handle<vk::image> : vk::handle_base<vk::non_dispatchable> {
 	};
 }

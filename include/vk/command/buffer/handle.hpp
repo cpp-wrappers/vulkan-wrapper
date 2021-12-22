@@ -18,14 +18,17 @@
 #include "../../shared/dependency.hpp"
 #include "../../shared/guarded.hpp"
 #include "../../shared/viewport.hpp"
+#include "../../shared/handle.hpp"
 
 namespace vk {
 
 	struct src_stage_flags : flag_enum<vk::pipeline_stage> {};
 	struct dst_stage_flags : flag_enum<vk::pipeline_stage> {};
 
-	struct command_buffer {
-		void* handle;
+	struct command_buffer;
+
+	template<>
+	struct vk::handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 
 		template<typename... Args>
 		requires(
@@ -58,7 +61,7 @@ namespace vk {
 
 			return {
 				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) handle,
+					(VkCommandBuffer) value,
 					(VkCommandBufferBeginInfo*) &bi
 				)
 			};
@@ -75,7 +78,7 @@ namespace vk {
 
 			return {
 				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) handle,
+					(VkCommandBuffer) value,
 					(VkCommandBufferBeginInfo*) &bi
 				)
 			};
@@ -99,7 +102,7 @@ namespace vk {
 			auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>::for_elements_of<Args...>(args...);
 
 			vkCmdPipelineBarrier(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				(VkPipelineStageFlags) elements::of_type<vk::src_stage_flags&>::for_elements_of(args...).value,
 				(VkPipelineStageFlags) elements::of_type<vk::dst_stage_flags&>::for_elements_of(args...).value,
 				(VkDependencyFlags) elements::of_type<vk::dependency_flags&>::for_elements_of(args...).value,
@@ -113,14 +116,14 @@ namespace vk {
 		}
 
 		void cmd_clear_color_image(
-			vk::image image,
+			vk::handle<vk::image> image,
 			vk::image_layout layout,
 			vk::clear_color_value clear_color,
 			range::of_value_type<vk::image_subresource_range> auto&& ranges
 		) const {
 			vkCmdClearColorImage(
-				(VkCommandBuffer) handle,
-				(VkImage) image.handle,
+				(VkCommandBuffer) value,
+				(VkImage) image.value,
 				(VkImageLayout) layout,
 				(VkClearColorValue*) &clear_color,
 				(uint32) ranges.size(),
@@ -130,7 +133,7 @@ namespace vk {
 
 		vk::result try_end() const {
 			return {
-				(int32) vkEndCommandBuffer((VkCommandBuffer) handle)
+				(int32) vkEndCommandBuffer((VkCommandBuffer) value)
 			};
 		}
 
@@ -143,7 +146,7 @@ namespace vk {
 			vk::render_pass_begin_info render_pass_begin_info
 		) const {
 			vkCmdBeginRenderPass(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				(VkRenderPassBeginInfo*) &render_pass_begin_info,
 				VK_SUBPASS_CONTENTS_INLINE
 			);
@@ -151,7 +154,7 @@ namespace vk {
 
 		void cmd_bind_pipeline(vk::ordinary_or_guarded<vk::pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
 				(VkPipeline) vk::get_raw_handle<vk::pipeline>(pipeline)
 			);
@@ -159,7 +162,7 @@ namespace vk {
 
 		void cmd_set_viewport(vk::viewport viewport) const {
 			vkCmdSetViewport(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				0,
 				1,
 				(VkViewport*) &viewport
@@ -168,7 +171,7 @@ namespace vk {
 
 		void cmd_set_scissor(vk::rect2d scissor) const {
 			vkCmdSetScissor(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				0,
 				1,
 				(VkRect2D*) &scissor
@@ -182,7 +185,7 @@ namespace vk {
 			uint32 first_instance
 		) const {
 			vkCmdDraw(
-				(VkCommandBuffer) handle,
+				(VkCommandBuffer) value,
 				vertex_count,
 				instance_count,
 				first_vertex,
@@ -191,7 +194,7 @@ namespace vk {
 		}
 
 		void cmd_end_render_pass() const {
-			vkCmdEndRenderPass((VkCommandBuffer) handle);
+			vkCmdEndRenderPass((VkCommandBuffer) value);
 		}
 
 	};

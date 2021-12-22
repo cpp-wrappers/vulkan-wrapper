@@ -10,8 +10,6 @@
 
 namespace vk {
 
-	class shader_module;
-
 	enum class shader_stage_create_flag {
 		allow_varying_subgroup_size = VK_PIPELINE_SHADER_STAGE_CREATE_ALLOW_VARYING_SUBGROUP_SIZE_BIT_EXT,
 		require_full_subgroups = VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT
@@ -22,7 +20,7 @@ namespace vk {
 		const void* next;
 		flag_enum<vk::shader_stage_create_flag> flags;
 		flag_enum<vk::shader_stage> stage;
-		vk::shader_module module;
+		vk::handle<vk::shader_module> module;
 		c_string entry_point_name;
 		const void* specialization_info;
 	};

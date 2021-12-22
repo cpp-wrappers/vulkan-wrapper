@@ -59,10 +59,10 @@ namespace vk {
 		const vk::pipeline_depth_stencil_state_create_info* depth_stencil_state;
 		const vk::pipeline_color_blend_state_create_info* color_blend_state;
 		const vk::pipeline_dynamic_state_create_info* dynamic_state;
-		vk::pipeline_layout layout;
-		vk::render_pass render_pass;
+		vk::handle<vk::pipeline_layout> layout;
+		vk::handle<vk::render_pass> render_pass;
 		vk::subpass subpass;
-		vk::pipeline base_pipeline;
+		vk::handle<vk::pipeline> base_pipeline;
 		int32 base_pipeline_index;
 	};
 }

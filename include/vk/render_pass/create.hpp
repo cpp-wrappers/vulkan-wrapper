@@ -22,10 +22,10 @@ namespace vk {
 			types::count_of_ranges_of_value_type<vk::subpass_description>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::subpass_dependency>::less_or_equals<1>,
 			types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>,
-			types::count_of_type<vk::device>::equals<1>
+			types::count_of_type<vk::handle<vk::device>>::equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::render_pass>
+	elements::one_of<vk::result, vk::handle<vk::render_pass>>
 	try_create_render_pass(const Args&... args) {
 		vk::render_pass_create_info ci{};
 
@@ -45,28 +45,28 @@ namespace vk {
 			ci.attachments = attachment_descriptions.data();
 		//}
 		
-		vk::device device = elements::of_type<const vk::device&>::for_elements_of(args...);
+		vk::handle<vk::device> device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
 
 		VkRenderPass render_pass;
 
 		vk::result result {
 			(int32) vkCreateRenderPass(
-				(VkDevice) device.handle,
+				(VkDevice) device.value,
 				(VkRenderPassCreateInfo*) &ci,
 				nullptr,
 				(VkRenderPass*) &render_pass
 			)
 		};
 		
-		if(result.success()) return vk::render_pass{ render_pass };
+		if(result.success()) return vk::handle<vk::render_pass>{ render_pass };
 
 		return result;
 	}
 
 	template<typename... Args>
-	vk::render_pass create_render_pass(Args&&... args) {
+	vk::handle<vk::render_pass> create_render_pass(Args&&... args) {
 		auto result = try_create_render_pass(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::render_pass>();
+		return result.template get<vk::handle<vk::render_pass>>();
 	}
 }

@@ -36,7 +36,7 @@ namespace vk {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 		const void* next;
 		flag_enum<swapchain_create_flag> flags;
-		vk::surface surface;
+		vk::handle<vk::surface> surface;
 		vk::min_image_count min_image_count;
 		vk::format format;
 		vk::color_space color_space;
@@ -50,7 +50,7 @@ namespace vk {
 		flag_enum<vk::composite_alpha> composite_alpha;
 		vk::present_mode present_mode;
 		vk::clipped clipped;
-		vk::swapchain old_swapchain;
+		vk::handle<vk::swapchain> old_swapchain;
 	}; // swapchain_create_info
 
 } // vk

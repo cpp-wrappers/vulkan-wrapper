@@ -7,12 +7,14 @@
 #include <core/move.hpp>
 #include <core/exchange.hpp>
 
-#include "../../shared/result.hpp"
 #include "create_info.hpp"
+#include "../../shared/handle.hpp"
 
 namespace vk {
 
-	struct shader_module {
-		uint64 handle;
-	}; // shader_module
-}
+	struct shader_module;
+
+	template<>
+	struct vk::handle<vk::shader_module> : vk::handle_base<vk::non_dispatchable> {
+	};
+} // vk
