@@ -23,6 +23,7 @@ namespace vk {
 	struct render_pass;
 	struct semaphore;
 	struct swapchain;
+	struct buffer;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 
@@ -90,6 +91,13 @@ namespace vk {
 		template<typename... Args>
 		vk::swapchain create_swapchain(Args&&... args) const;
 
+		template<typename... Args>
+		elements::one_of<vk::result, vk::buffer>
+		try_create_buffer(Args&&... args) const;
+
+		template<typename... Args>
+		vk::buffer create_buffer(Args&&... args) const;
+
 		vk::result try_wait_idle() const {
 			return {
 				(int32) vkDeviceWaitIdle(
@@ -130,15 +138,13 @@ vk::device::create_command_pool(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::shader_module>
 vk::device::try_create_shader_module(Args&&... args) const {
-	return vk::try_create_shader_module(*this, args...);
+	return vk::try_create_shader_module(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::shader_module
 vk::device::create_shader_module(Args&&... args) const {
-	auto result = try_create_shader_module(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::shader_module>();
+	return vk::create_shader_module(*this, forward<Args>(args)...);
 }
 
 #include "../framebuffer/create.hpp"
@@ -146,15 +152,13 @@ vk::device::create_shader_module(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::framebuffer>
 vk::device::try_create_framebuffer(Args&&... args) const {
-	return vk::try_create_framebuffer(*this, args...);
+	return vk::try_create_framebuffer(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::framebuffer
 vk::device::create_framebuffer(Args&&... args) const {
-	auto result = try_create_framebuffer(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::framebuffer>();
+	return vk::create_framebuffer(*this, forward<Args>(args)...);
 }
 
 #include "../image/view/create.hpp"
@@ -162,15 +166,13 @@ vk::device::create_framebuffer(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::image_view>
 vk::device::try_create_image_view(Args&&... args) const {
-	return vk::try_create_image_view(*this, args...);
+	return vk::try_create_image_view(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::image_view
 vk::device::create_image_view(Args&&... args) const {
-	auto result = try_create_image_view(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::image_view>();
+	return vk::create_image_view(*this, forward<Args>(args)...);
 }
 
 #include "../pipeline/layout/create.hpp"
@@ -178,15 +180,13 @@ vk::device::create_image_view(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::pipeline_layout>
 vk::device::try_create_pipeline_layout(Args&&... args) const {
-	return vk::try_create_pipeline_layout(*this, args...);
+	return vk::try_create_pipeline_layout(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::pipeline_layout
 vk::device::create_pipeline_layout(Args&&... args) const {
-	auto result = try_create_pipeline_layout(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::pipeline_layout>();
+	return vk::create_pipeline_layout(*this, forward<Args>(args)...);
 }
 
 #include "../pipeline/create.hpp"
@@ -194,15 +194,13 @@ vk::device::create_pipeline_layout(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::pipeline>
 vk::device::try_create_graphics_pipeline(Args&&... args) const {
-	return vk::try_create_graphics_pipeline(*this, args...);
+	return vk::try_create_graphics_pipeline(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::pipeline
 vk::device::create_graphics_pipeline(Args&&... args) const {
-	auto result = try_create_graphics_pipeline(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::pipeline>();
+	return vk::create_graphics_pipeline(*this, forward<Args>(args)...);
 }
 
 #include "../render_pass/create.hpp"
@@ -210,15 +208,13 @@ vk::device::create_graphics_pipeline(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::render_pass>
 vk::device::try_create_render_pass(Args&&... args) const {
-	return vk::try_create_render_pass(*this, args...);
+	return vk::try_create_render_pass(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::render_pass
 vk::device::create_render_pass(Args&&... args) const {
-	auto result = try_create_render_pass(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::render_pass>();
+	return vk::create_render_pass(*this, forward<Args>(args)...);
 }
 
 #include "../semaphore/create.hpp"
@@ -226,15 +222,13 @@ vk::device::create_render_pass(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::semaphore>
 vk::device::try_create_semaphore(Args&&... args) const {
-	return vk::try_create_semaphore(*this, args...);
+	return vk::try_create_semaphore(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::semaphore
 vk::device::create_semaphore(Args&&... args) const {
-	auto result = try_create_semaphore(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::semaphore>();
+	return vk::create_semaphore(*this, forward<Args>(args)...);
 }
 
 #include "../swapchain/create.hpp"
@@ -242,13 +236,24 @@ vk::device::create_semaphore(Args&&... args) const {
 template<typename... Args>
 elements::one_of<vk::result, vk::swapchain>
 vk::device::try_create_swapchain(Args&&... args) const {
-	return vk::try_create_swapchain(*this, args...);
+	return vk::try_create_swapchain(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
 vk::swapchain
 vk::device::create_swapchain(Args&&... args) const {
-	auto result = try_create_swapchain(forward<Args>(args)...);
-	if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-	return result.template get<vk::swapchain>();
+	return vk::create_swapchain(*this, forward<Args>(args)...);
+}
+
+#include "../buffer/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::buffer>
+vk::device::try_create_buffer(Args&&... args) const {
+	return vk::try_create_buffer(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+vk::buffer vk::device::create_buffer(Args&&... args) const {
+	return vk::create_buffer(*this, forward<Args>(args)...);
 }

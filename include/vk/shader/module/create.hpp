@@ -43,4 +43,11 @@ namespace vk {
 
 		return result;
 	}
+
+	template<typename... Args>
+	vk::shader_module create_shader_module(Args&&... args) {
+		auto result = vk::try_create_shader_module(forward<Args>(args)...);
+		if(result.template get_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::shader_module>();
+	}
 }
