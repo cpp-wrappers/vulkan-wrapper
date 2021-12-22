@@ -12,26 +12,7 @@ exit 1
 #endif
 
 #include "vk/instance/guard.hpp"
-#include "vk/physical_device/handle.hpp"
 #include "vk/instance/layer_properties.hpp"
-#include "vk/device/guard.hpp"
-#include "vk/surface/guard.hpp"
-#include "vk/swapchain/guard.hpp"
-#include "vk/render_pass/attachment_description.hpp"
-#include "vk/render_pass/subpass_description.hpp"
-#include "vk/render_pass/create.hpp"
-#include "vk/image/view/create.hpp"
-#include "vk/framebuffer/create.hpp"
-#include "vk/pipeline/create.hpp"
-#include "vk/shader/module/guard.hpp"
-#include "vk/pipeline/layout/create.hpp"
-#include "vk/semaphore/guard.hpp"
-#include "vk/debug/report/callback/create.hpp"
-#include "vk/framebuffer/guard.hpp"
-#include "vk/image/view/guard.hpp"
-
-#include <string.h>
-#include <stdio.h>
 #include "../platform/platform.hpp"
 
 inline vk::guarded<vk::shader_module> read_shader_module(const vk::guarded<vk::device>& device, const char* path) {
@@ -39,6 +20,135 @@ inline vk::guarded<vk::shader_module> read_shader_module(const vk::guarded<vk::d
 	char src[size];
 	platform::read_file(path, src, size);
 	return device.create_guarded_shader_module(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
+}
+
+void inner(
+	vk::physical_device physical_device, vk::guarded<vk::device>& device,
+	vk::queue_family_index queue_family_index, vk::guarded<vk::surface>& surface,
+	vk::guarded<vk::render_pass>& render_pass, vk::guarded<vk::pipeline>& pipeline,
+	vk::surface_format surface_format
+) {
+	auto surface_capabilities = physical_device.get_surface_capabilities(surface);
+
+	auto swapchain = device.create_guarded_swapchain(
+		surface,
+		surface_capabilities.min_image_count,
+		surface_capabilities.current_extent,
+		surface_format,
+		vk::image_usages{ vk::image_usage::color_attachment, vk::image_usage::transfer_dst },
+		vk::sharing_mode::exclusive,
+		vk::present_mode::mailbox,
+		vk::clipped{ true },
+		vk::surface_transform::identity,
+		vk::composite_alpha::opaque
+	);
+
+	uint32 images_count = (uint32)swapchain.get_image_count();
+
+	vk::image images_storage[images_count];
+	span images{ images_storage, images_count };
+	swapchain.get_images(images);
+
+	vk::guarded<vk::image_view> image_views_raw[images_count];
+	span image_views{ image_views_raw, images_count };
+
+	for(nuint i = 0; i < images_count; ++i) {
+		image_views[i] = device.create_guarded_image_view(
+			images[i],
+			surface_format.format,
+			vk::image_view_type::two_d,
+			vk::component_mapping{},
+			vk::image_subresource_range{ vk::image_aspect::color }
+		);
+	}
+
+	vk::guarded<vk::framebuffer> framebuffers_raw[images_count];
+	span framebuffers{ framebuffers_raw, images_count };
+
+	for(nuint i = 0; i < images_count; ++i) {
+		framebuffers[i] = device.create_guarded_framebuffer(
+			render_pass,
+			array{ vk::image_view{ image_views[i].object() } },
+			vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
+		);
+	}
+
+	auto command_pool = device.create_guarded_command_pool(queue_family_index);
+	vk::command_buffer command_buffers_storage[images_count];
+	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
+	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
+
+	for(nuint i = 0; i < images_count; ++i) {
+		auto command_buffer = command_buffers[i];
+
+		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
+
+		vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
+		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
+			.render_pass{ render_pass.object() },
+			.framebuffer{ framebuffers[i].object() },
+			.render_area { .offset{ 0, 0 }, .extent = surface_capabilities.current_extent },
+			.clear_value_count = 1,
+			.clear_values = &clear_value
+		});
+
+		command_buffer.cmd_bind_pipeline(pipeline);
+
+		command_buffer.cmd_set_viewport(
+			vk::viewport {
+				.width = float(surface_capabilities.current_extent.width()),
+				.height = float(surface_capabilities.current_extent.height())
+			}
+		);
+		command_buffer.cmd_set_scissor(vk::rect2d{vk::offset{0, 0}, surface_capabilities.current_extent });
+
+		command_buffer.cmd_draw(3, 1, 0, 0);
+		command_buffer.cmd_end_render_pass();
+
+		command_buffer.end();
+	}
+
+	auto swapchain_image_semaphore = device.create_guarded_semaphore();
+	auto rendering_finished_semaphore = device.create_guarded_semaphore();
+
+	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+
+	while (!platform::should_close()) {
+		platform::begin();
+
+		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.object());
+
+		if(result.is_current<vk::result>()) {
+			vk::result r = result.get<vk::result>();
+
+			if((int32)r == VK_SUBOPTIMAL_KHR || (int32)r == VK_ERROR_OUT_OF_DATE_KHR) break;
+			platform::error("can't acquire next swapchain image").new_line();
+			throw;
+		}
+
+		vk::image_index image_index = result.get<vk::image_index>();
+
+		queue.submit(
+			vk::wait_semaphore{ swapchain_image_semaphore.object() },
+			vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
+			command_buffers[(uint32)image_index],
+			vk::signal_semaphore{ rendering_finished_semaphore.object() }
+		);
+
+		vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.object() }, swapchain.object(), image_index);
+
+		if(!present_result.success()) {
+			if((int32)present_result == VK_SUBOPTIMAL_KHR || (int32)present_result == VK_ERROR_OUT_OF_DATE_KHR) break;
+			platform::error("can't present").new_line();
+			throw;
+		}
+
+		platform::end();
+	}
+
+	device.wait_idle();
+
+	command_pool.free_command_buffers(command_buffers);
 }
 
 void entrypoint() {
@@ -79,36 +189,13 @@ void entrypoint() {
 		throw;
 	}
 
-	auto surface_format = physical_device.get_first_surface_format(surface);
-	auto surface_capabilities = physical_device.get_surface_capabilities(surface);
-
 	auto device = physical_device.create_guarded_device(
 		queue_family_index,
-		array { vk::queue_priority{ 1.0F } },
-		array { vk::extension_name { "VK_KHR_swapchain" } }
+		vk::queue_priority{ 1.0F },
+		vk::extension_name{ "VK_KHR_swapchain" }
 	);
 
-	auto swapchain = device.create_guarded_swapchain(
-		surface,
-		surface_capabilities.min_image_count,
-		surface_capabilities.current_extent,
-		surface_format,
-		vk::image_usages{ vk::image_usage::color_attachment, vk::image_usage::transfer_dst },
-		vk::sharing_mode::exclusive,
-		vk::present_mode::mailbox,
-		vk::clipped{ true },
-		vk::surface_transform::identity,
-		vk::composite_alpha::opaque
-	);
-
-	platform::info("created swapchain").new_line();
-
-	uint32 images_count = (uint32)swapchain.get_image_count();
-	platform::info("swapchain images count: ", images_count).new_line();
-
-	vk::image images_storage[images_count];
-	span images{ images_storage, images_count };
-	swapchain.get_images(images);
+	auto surface_format = physical_device.get_first_surface_format(surface);
 
 	vk::attachment_description attachment_description {
 		surface_format.format,
@@ -124,7 +211,7 @@ void entrypoint() {
 	
 	vk::subpass_description subpass_description { color_attachments };
 
-	vk::subpass_dependency subpass_dependency{
+	vk::subpass_dependency subpass_dependency {
 		vk::src_subpass{ VK_SUBPASS_EXTERNAL },
 		vk::dst_subpass{ 0 },
 		vk::src_stages{ vk::pipeline_stage::color_attachment_output },
@@ -136,30 +223,6 @@ void entrypoint() {
 		array{ attachment_description },
 		array{ subpass_dependency }
 	);
-
-	vk::guarded<vk::image_view> image_views_raw[images_count];
-	span image_views{ image_views_raw, images_count };
-
-	for(nuint i = 0; i < images_count; ++i) {
-		image_views[i] = device.create_guarded_image_view(
-			images[i],
-			surface_format.format,
-			vk::image_view_type::two_d,
-			vk::component_mapping{},
-			vk::image_subresource_range{ vk::image_aspect::color }
-		);
-	}
-
-	vk::guarded<vk::framebuffer> framebuffers_raw[images_count];
-	span framebuffers{ framebuffers_raw, images_count };
-
-	for(nuint i = 0; i < images_count; ++i) {
-		framebuffers[i] = device.create_guarded_framebuffer(
-			render_pass,
-			array{ vk::image_view{ image_views[i].object() } },
-			vk::extent<3>{ 600, 600, 1 }
-		);
-	}
 
 	auto vertex_shader = read_shader_module(device, "triangle.vert.spv");
 	auto fragment_shader = read_shader_module(device, "triangle.frag.spv");
@@ -182,20 +245,9 @@ void entrypoint() {
 		.topology = vk::primitive_topology::triangle_list
 	};
 
-	vk::viewport viewport {
-		.width = 600, .height = 600
-	};
-
-	vk::rect2d scissor {
-		.offset{ 0, 0 },
-		.extent{ 600, 600 }
-	};
-
 	vk::pipeline_viewport_state_create_info pvsci {
 		.viewport_count = 1,
-		.viewports = &viewport,
-		.scissor_count = 1,
-		.scissors = &scissor
+		.scissor_count = 1
 	};
 
 	vk::pipeline_rasterization_state_create_info prsci {
@@ -224,75 +276,20 @@ void entrypoint() {
 
 	auto pipeline_layout = device.create_guarded_pipeline_layout();
 
+	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
+
+	vk::pipeline_dynamic_state_create_info dsci {
+		.dynamic_state_count = dynamic_states.size(),
+		.dynamic_states = dynamic_states.data()
+	};
+
 	auto pipeline = device.create_guarded_graphics_pipeline(
 		shader_stages, pvisci, piasci, pvsci, prsci,
 		pmsci, pcbsci, pipeline_layout, render_pass,
-		vk::subpass{ 0 }
+		dsci, vk::subpass{ 0 }
 	);
 
-	auto command_pool = device.create_guarded_command_pool(queue_family_index);
-	vk::command_buffer command_buffers_storage[images_count];
-	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
-	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
-
-	vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
-
-	for(nuint i = 0; i < images_count; ++i) {
-		auto command_buffer = command_buffers[i];
-
-		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
-
-		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
-			.render_pass{ render_pass.object() },
-			.framebuffer{ framebuffers[i].object() },
-			.render_area {
-				.offset{ 0, 0 },
-				.extent{ 600, 600 }
-			},
-			.clear_value_count = 1,
-			.clear_values = &clear_value
-		});
-
-		command_buffer.cmd_bind_pipeline(pipeline);
-		command_buffer.cmd_draw(3, 1, 0, 0);
-		command_buffer.cmd_end_render_pass();
-
-		command_buffer.end();
+	while(!platform::should_close()) {
+		inner(physical_device, device, queue_family_index, surface, render_pass, pipeline, surface_format);
 	}
-
-	auto swapchain_image_semaphore = device.create_guarded_semaphore();
-	auto rendering_finished_semaphore = device.create_guarded_semaphore();
-
-	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
-
-	while (!platform::should_close()) {
-		platform::begin();
-
-		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.object());
-
-		if(result.is_current<vk::result>()) {
-			vk::result r = result.get<vk::result>();
-
-			if((int32)r == VK_SUBOPTIMAL_KHR) break;
-			platform::error("can't acquire swapchain image").new_line();
-			throw;
-		}
-
-		vk::image_index image_index = result.get<vk::image_index>();
-
-		queue.submit(
-			vk::wait_semaphore{ swapchain_image_semaphore.object() },
-			vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
-			command_buffers[(uint32)image_index],
-			vk::signal_semaphore{ rendering_finished_semaphore.object() }
-		);
-
-		queue.present(vk::wait_semaphore{ rendering_finished_semaphore.object() }, swapchain.object(), image_index);
-
-		platform::end();
-	}
-
-	device.wait_idle();
-
-	command_pool.free_command_buffers(command_buffers);
 }

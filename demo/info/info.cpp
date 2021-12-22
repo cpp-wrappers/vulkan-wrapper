@@ -18,7 +18,7 @@ void print(auto... vs) {
 
 void println(auto... vs) {
 	print(vs...);
-	platform::info('\n');
+	platform::info.new_line();
 }
 
 template<bool t>
@@ -50,26 +50,13 @@ void object_block(auto name, auto f) {
 	object_block(f);
 }
 
-int entrypoint() {
-	bool validation_layer_is_supported = false;
+void entrypoint() {
 	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-
-	vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
-		for(vk::layer_properties p : props) {
-			if(strcmp(p.name, validation_layer_name.begin()) == 0) {
-				validation_layer_is_supported = true;
-				return;
-			}
-		}
-	});
+	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
 
 	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
 
-	vk::instance_guard instance {
-		vk::create_instance(
-			layers
-		)
-	};
+	auto instance = vk::create_guarded_instance(layers);
 
 	array_block("physical devices", [&]() {
 		instance.for_each_physical_device([](vk::physical_device& device) {
@@ -103,7 +90,7 @@ int entrypoint() {
 			println("device type: ", type_name);
 			println("name: ", props.name);
 
-			array_block("queue family properties", [&]{
+			array_block("queue family properties", [&] {
 				device.for_each_queue_family_properties([](auto props) {
 					object_block([&]{
 						println("count: ", props.count);
@@ -131,7 +118,7 @@ int entrypoint() {
 			});
 		});
 
-		array_block("instance_layers", [&]{
+		array_block("instance_layers", [&] {
 			vk::for_each_instance_layer_properties([](auto props) {
 				object_block([&]{
 					println("name: ", props.name);
@@ -142,6 +129,4 @@ int entrypoint() {
 			});
 		});
 	});
-
-	return 0;
 }

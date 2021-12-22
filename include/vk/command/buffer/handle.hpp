@@ -1,23 +1,23 @@
 #pragma once
 
+#include <core/array.hpp>
+#include <core/elements/for_each_of_type.hpp>
+#include <core/elements/of_type.hpp>
+#include <core/elements/range_of_value_type.hpp>
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_type.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
-#include <core/types/first.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/array.hpp>
 
 #include "begin_info.hpp"
-#include "../../shared/result.hpp"
-#include "../../pipeline/stage.hpp"
-#include "../../shared/dependency.hpp"
-#include "../../image/memory_barrier.hpp"
 #include "clear.hpp"
 #include "render_pass_begin_info.hpp"
+#include "../../image/memory_barrier.hpp"
+#include "../../pipeline/stage.hpp"
 #include "../../pipeline/handle.hpp"
+#include "../../shared/result.hpp"
+#include "../../shared/dependency.hpp"
 #include "../../shared/guarded.hpp"
+#include "../../shared/viewport.hpp"
 
 namespace vk {
 
@@ -154,6 +154,24 @@ namespace vk {
 				(VkCommandBuffer) handle,
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
 				(VkPipeline) vk::get_raw_handle<vk::pipeline>(pipeline)
+			);
+		}
+
+		void cmd_set_viewport(vk::viewport viewport) const {
+			vkCmdSetViewport(
+				(VkCommandBuffer) handle,
+				0,
+				1,
+				(VkViewport*) &viewport
+			);
+		}
+
+		void cmd_set_scissor(vk::rect2d scissor) const {
+			vkCmdSetScissor(
+				(VkCommandBuffer) handle,
+				0,
+				1,
+				(VkRect2D*) &scissor
 			);
 		}
 

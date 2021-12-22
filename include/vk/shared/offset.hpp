@@ -19,6 +19,8 @@ namespace vk {
 		int32 x, y;
 	};
 
+	offset(int32, int32) -> offset<2>;
+
 }
 
 static_assert(sizeof(vk::offset<2>) == sizeof(VkOffset2D));

@@ -55,16 +55,19 @@ struct message_buffer {
 static message_buffer info_message_buffer{ ANDROID_LOG_INFO };
 static message_buffer error_message_buffer{ ANDROID_LOG_ERROR };
 
-void platform::logger::string(const char* str, nuint length) const {
+const platform::logger& platform::logger::string(const char* str, nuint length) const {
 	((message_buffer*)raw)->add(str, length);
+	return *this;
 }
 
-void platform::logger::operator () (const char* str) const {
+const platform::logger& platform::logger::operator () (const char* str) const {
 	((message_buffer*)raw)->add(str);
+	return *this;
 }
 
-void platform::logger::operator () (char ch) const {
+const platform::logger& platform::logger::operator () (char ch) const {
 	((message_buffer*)raw)->add(&ch, 1);
+	return *this;
 }
 
 namespace platform {
@@ -88,12 +91,11 @@ void platform::read_file(const char* path, char* buff, nuint size) {
 	AAsset_close(asset);
 }
 
-array<const char*, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_android_surface" };
+static array<vk::extension_name, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_android_surface" };
 
-nuint platform::required_instance_extension_count() { return required_instance_extensions.size(); }
-const char** platform::get_required_instance_extensions() { return required_instance_extensions.data(); }
+span<vk::extension_name> platform::get_required_instance_extensions() { return span{ required_instance_extensions.data(), required_instance_extensions.size() }; }
 
-elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instance instance) {
+vk::guarded<vk::surface> platform::create_surface(vk::instance instance) {
 
 	VkAndroidSurfaceCreateInfoKHR ci {
 		.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR,
@@ -112,10 +114,10 @@ elements::one_of<c_string, vk::surface> platform::try_create_surface(vk::instanc
 	);
 
 	if(result != VK_SUCCESS) {
-		return c_string{ "couldn't create android surface" };
+		throw;
 	}
 
-	return surface;
+	return { surface, instance };
 }
 
 static void poll() {

@@ -22,11 +22,6 @@ namespace vk {
 			: framebuffer{ framebuffer }, device{ device }
 		{}
 
-		template<typename... Args>
-		guarded(vk::device device, Args&&... args)
-			: framebuffer{ vk::create_framebuffer(forward<Args>(args)..., device) }, device{ device }
-		{}
-
 		guarded(guarded&& other)
 			: framebuffer{ exchange(other.framebuffer.handle, 0) }, device{ other.device }
 		{}

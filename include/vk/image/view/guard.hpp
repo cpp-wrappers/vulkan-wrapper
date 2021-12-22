@@ -18,11 +18,6 @@ namespace vk {
 			: image_view{ image_view }, device{ device }
 		{}
 
-		template<typename... Args>
-		guarded(Args&&... args, vk::device device)
-			: image_view{ device.create_image_view(forward<Args>(args)...) }, device{ device }
-		{}
-
 		guarded(guarded&& other)
 			: image_view{ exchange(other.image_view.handle, 0) }, device{ other.device }
 		{}

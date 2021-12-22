@@ -17,11 +17,6 @@ namespace vk {
 			: semaphore{ semaphore }, device{ device }
 		{}
 
-		template<typename... Args>
-		guarded(vk::device device, Args&&... args)
-			: semaphore{ vk::create_semaphore(device, forward<Args>(args)...)  }, device{ device }
-		{}
-
 		guarded(guarded&& other)
 			: semaphore{ exchange(other.semaphore.handle, 0) }, device{ other.device }
 		{}

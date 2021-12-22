@@ -16,11 +16,6 @@ namespace vk {
 			: command_pool{ command_pool }, device{ device }
 		{}
 
-		template<typename... Args>
-		guarded(vk::device device, Args&&... args)
-			: command_pool{ vk::create_command_pool(device, forward<Args>(args)...) }, device{ device }
-		{}
-
 		~guarded() {
 			if(command_pool.handle) {
 				vkDestroyCommandPool(
