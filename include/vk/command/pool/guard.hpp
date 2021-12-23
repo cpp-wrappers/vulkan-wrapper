@@ -2,21 +2,21 @@
 
 #include "handle.hpp"
 #include "create.hpp"
-#include "../../shared/guarded.hpp"
+#include "../../shared/guarded_handle.hpp"
 
 namespace vk {
 
 	template<>
-	class guarded<vk::command_pool> {
+	class guarded_handle<vk::command_pool> {
 		vk::handle<vk::command_pool> command_pool;
 		vk::handle<vk::device> device;
 	public:
 
-		guarded(vk::handle<vk::command_pool> command_pool, vk::handle<vk::device> device)
+		guarded_handle(vk::handle<vk::command_pool> command_pool, vk::handle<vk::device> device)
 			: command_pool{ command_pool }, device{ device }
 		{}
 
-		~guarded() {
+		~guarded_handle() {
 			if(command_pool.value) {
 				vkDestroyCommandPool(
 					(VkDevice) device.value,

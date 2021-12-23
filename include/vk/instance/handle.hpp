@@ -24,7 +24,7 @@ namespace vk {
 	template<>
 	struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 		elements::one_of<vk::result, vk::count>
-		try_enumerate_physical_devices(range::of_value_type<vk::physical_device> auto&& devices) const {
+		try_enumerate_physical_devices(range::of_value_type<vk::handle<vk::physical_device>> auto&& devices) const {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {
@@ -47,7 +47,7 @@ namespace vk {
 		elements::one_of<vk::result, vk::count>
 		try_get_physical_devices_count() const {
 			return try_enumerate_physical_devices(
-				span<vk::physical_device>{ nullptr, 0 }
+				span<vk::handle<vk::physical_device>>{ nullptr, 0 }
 			);
 		}
 
@@ -57,14 +57,14 @@ namespace vk {
 
 		elements::one_of<vk::result, vk::count>
 		try_view_physical_devices(vk::count count, auto&& f) const {
-			vk::physical_device devices_storage[(uint32) count];
+			vk::handle<vk::physical_device> devices_storage[(uint32) count];
 
 			elements::one_of<vk::result, vk::count> result = try_enumerate_physical_devices(
 				span{ devices_storage, (uint32) count }
 			);
 
 			if(!result.is_current<vk::result>())
-				f(span<vk::physical_device>{ devices_storage, (uint32) result.get<vk::count>() });
+				f(span<vk::handle<vk::physical_device>>{ devices_storage, (uint32) result.get<vk::count>() });
 			return result;
 		}
 
@@ -76,16 +76,16 @@ namespace vk {
 			return try_view_physical_devices(result.get<vk::count>(), forward<F>(f));
 		}
 
-		elements::one_of<vk::result, vk::physical_device>
+		elements::one_of<vk::result, vk::handle<vk::physical_device>>
 		try_get_first_physical_device() const {
-			vk::physical_device physical_device;
+			vk::handle<vk::physical_device> physical_device;
 			auto result = try_enumerate_physical_devices(span{ &physical_device, 1 });
 			if(result.is_current<vk::result>()) return result.get<vk::result>();
 			return physical_device;
 		}
 
-		vk::physical_device get_first_physical_device() const {
-			return try_get_first_physical_device().get<vk::physical_device>();
+		vk::handle<vk::physical_device> get_first_physical_device() const {
+			return try_get_first_physical_device().get<vk::handle<vk::physical_device>>();
 		}
 
 		elements::one_of<vk::result, vk::count>
@@ -102,11 +102,11 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		elements::one_of<vk::result, vk::debug_report_callback>
+		elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
 		try_create_debug_report_callback(Args&&... args) const;
 
 		template<typename... Args>
-		vk::debug_report_callback create_debug_report_callback(Args&&... args) const;
+		vk::handle<vk::debug_report_callback> create_debug_report_callback(Args&&... args) const;
 	}; // instance
 
 } // vk
@@ -114,12 +114,12 @@ namespace vk {
 #include "../debug/report/callback/create.hpp"
 
 template<typename... Args>
-elements::one_of<vk::result, vk::debug_report_callback>
-vk::instance::try_create_debug_report_callback(Args&&... args) const {
+elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
+vk::handle<vk::instance>::try_create_debug_report_callback(Args&&... args) const {
 	return vk::try_create_debug_report_callback(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
-vk::debug_report_callback vk::instance::create_debug_report_callback(Args&&... args) const {
+vk::handle<vk::debug_report_callback> vk::handle<vk::instance>::create_debug_report_callback(Args&&... args) const {
 	return vk::create_debug_report_callback(*this, forward<Args>(args)...);
 }

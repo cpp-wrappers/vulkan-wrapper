@@ -18,7 +18,7 @@
 #include "../shared/count.hpp"
 #include "../shared/extension_name.hpp"
 #include "../shared/extension_properties.hpp"
-#include "../shared/guarded.hpp"
+#include "../shared/guarded_handle.hpp"
 #include "../shared/handle.hpp"
 
 namespace vk {
@@ -34,7 +34,7 @@ namespace vk {
 		vk::handle<vk::device> create_device(Args&&... args) const;
 
 		template<typename... Args>
-		vk::guarded<vk::device> create_guarded_device(Args&&... args) const;
+		vk::guarded_handle<vk::device> create_guarded_device(Args&&... args) const;
 
 		vk::physical_device_properties get_properties() const {
 			vk::physical_device_properties props;
@@ -182,13 +182,13 @@ namespace vk {
 		}
 
 		elements::one_of<vk::result, vk::surface_capabilities>
-		try_get_surface_capabilities(vk::ordinary_or_guarded<vk::surface> auto& surface) const {
+		try_get_surface_capabilities(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			vk::surface_capabilities caps;
  
 			vk::result result {
 				(int32) vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 					(VkPhysicalDevice) value,
-					(VkSurfaceKHR) vk::get_raw_handle<vk::surface>(surface),
+					(VkSurfaceKHR) vk::get_handle_value(surface),
 					(VkSurfaceCapabilitiesKHR*) &caps
 				)
 			};
@@ -196,20 +196,20 @@ namespace vk {
 			return result;
 		}
 
-		vk::surface_capabilities get_surface_capabilities(vk::ordinary_or_guarded<vk::surface> auto& surface) const {
+		vk::surface_capabilities get_surface_capabilities(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			auto result = try_get_surface_capabilities(surface);
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::surface_capabilities>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats(vk::ordinary_or_guarded<vk::surface> auto& surface, range::of_value_type<vk::surface_format> auto&& formats) const {
+		try_get_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, range::of_value_type<vk::surface_format> auto&& formats) const {
 			uint32 count = (uint32) formats.size();
  
 			vk::result result {
 				(int32) vkGetPhysicalDeviceSurfaceFormatsKHR(
 					(VkPhysicalDevice) value,
-					(VkSurfaceKHR) vk::get_raw_handle<vk::surface>(surface),
+					(VkSurfaceKHR) vk::get_handle_value(surface),
 					&count,
 					(VkSurfaceFormatKHR*) formats.data()
 				)
@@ -221,25 +221,25 @@ namespace vk {
 		}
 
 		template<range::of_value_type<vk::surface_format> FormatsRange>
-		vk::count get_surface_formats(vk::ordinary_or_guarded<vk::surface> auto& surface, FormatsRange&& formats) const {
+		vk::count get_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, FormatsRange&& formats) const {
 			auto result = try_get_surface_formats(surface, forward<FormatsRange>(formats));
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats_count(vk::ordinary_or_guarded<vk::surface> auto& surface) const {
+		try_get_surface_formats_count(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			return try_get_surface_formats(surface, span<vk::surface_format>{ nullptr, 0 });
 		}
 
-		vk::count get_surface_formats_count(vk::ordinary_or_guarded<vk::surface> auto& surface) const {
+		vk::count get_surface_formats_count(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			auto result = try_get_surface_formats_count(surface);
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
 		}
 
 		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(vk::ordinary_or_guarded<vk::surface> auto& surface, vk::count count, auto&& f) const {
+		try_view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, vk::count count, auto&& f) const {
 			vk::surface_format formats[(uint32) count];
 			auto result = try_get_surface_formats(surface, span{ formats, (uint32) count });
 			if(result.template is_current<vk::result>()) return result;
@@ -250,7 +250,7 @@ namespace vk {
 
 		template<typename F>
 		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(vk::ordinary_or_guarded<vk::surface> auto& surface, F&& f) const {
+		try_view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, F&& f) const {
 			auto result = try_get_surface_formats_count(surface);
 			if(result.template is_current<vk::result>()) return result;
 
@@ -262,13 +262,13 @@ namespace vk {
 		}
 
 		template<typename F>
-		vk::count view_surface_formats(vk::ordinary_or_guarded<vk::surface> auto& surface, F&& f) const {
+		vk::count view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, F&& f) const {
 			auto result = try_view_surface_formats(surface, forward<F>(f));
 			if(result.template get<vk::result>()) throw result.template get<vk::result>();
 			return result.template get<vk::count>();
 		}
 
-		vk::surface_format get_first_surface_format(vk::ordinary_or_guarded<vk::surface> auto& surface) const {
+		vk::surface_format get_first_surface_format(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			vk::surface_format f;
 			get_surface_formats(surface, span{ &f, 1 });
 			return f;
@@ -335,7 +335,7 @@ namespace vk {
 			return result.template get<vk::count>();
 		}
 		
-		template<vk::ordinary_or_guarded<vk::surface> Surface>
+		template<vk::ordinary_or_guarded_handle<vk::surface> Surface>
 		elements::one_of<vk::result, bool>
 		try_get_surface_support(Surface&& surface, vk::queue_family_index queue_family_index) const {
 			uint32 supports;
@@ -344,7 +344,7 @@ namespace vk {
 				(int32) vkGetPhysicalDeviceSurfaceSupportKHR(
 					(VkPhysicalDevice) value,
 					(uint32) queue_family_index,
-					(VkSurfaceKHR) vk::get_raw_handle<vk::surface>(forward<Surface>(surface)),
+					(VkSurfaceKHR) vk::get_handle_value(surface),
 					&supports
 				)
 			};
@@ -354,7 +354,7 @@ namespace vk {
 			return result;
 		}
 
-		template<vk::ordinary_or_guarded<vk::surface> Surface>
+		template<vk::ordinary_or_guarded_handle<vk::surface> Surface>
 		bool get_surface_support(Surface&& surface, vk::queue_family_index queue_family_index) const {
 			auto result = try_get_surface_support(forward<Surface>(surface), queue_family_index);
 			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
@@ -371,9 +371,9 @@ vk::handle<vk::device> vk::handle<vk::physical_device>::create_device(Args&&... 
 	return vk::create_device(*this, forward<Args>(args)...);
 }
 
-#include "../device/guard.hpp"
+#include "../device/guarded_handle.hpp"
 
 template<typename... Args>
-vk::guarded<vk::device> vk::handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
+vk::guarded_handle<vk::device> vk::handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
 	return { vk::create_device(*this, forward<Args>(args)...) };
 }

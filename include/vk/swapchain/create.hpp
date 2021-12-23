@@ -11,7 +11,7 @@
 #include "create_info.hpp"
 #include "../surface/handle.hpp"
 #include "../surface/format.hpp"
-#include "../shared/guarded.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 	template<typename... Args>
@@ -73,7 +73,7 @@ namespace vk {
 
 		vk::result result {
 			(int32) vkCreateSwapchainKHR(
-				(VkDevice) vk::get_raw_handle<vk::device>(device),
+				(VkDevice) vk::get_handle_value(device),
 				(VkSwapchainCreateInfoKHR*) &ci,
 				nullptr,
 				(VkSwapchainKHR*) &swapchain

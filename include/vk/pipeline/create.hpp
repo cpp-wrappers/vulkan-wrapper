@@ -17,7 +17,7 @@
 #include "../device/handle.hpp"
 #include "../shared/subpass.hpp"
 #include "layout/handle.hpp"
-#include "../shared/guarded.hpp"
+#include "../shared/guarded_handle.hpp"
 #include "../shared/headers.hpp"
 
 namespace vk {
@@ -105,7 +105,7 @@ namespace vk {
 
 		vk::result result {
 			(int32) vkCreateGraphicsPipelines(
-				(VkDevice) vk::get_raw_handle<vk::device>(device),
+				(VkDevice) vk::get_handle_value(device),
 				(VkPipelineCache) nullptr,
 				(uint32) 1,
 				(VkGraphicsPipelineCreateInfo*) & ci,

@@ -3,25 +3,25 @@
 #include "handle.hpp"
 #include "create.hpp"
 #include "../device/handle.hpp"
-#include "../shared/guarded.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 
 	template<>
-	class guarded<vk::semaphore> {
+	class guarded_handle<vk::semaphore> {
 		vk::handle<vk::semaphore> semaphore;
 		vk::handle<vk::device> device;
 	public:
 
-		guarded(vk::handle<vk::semaphore> semaphore, vk::handle<vk::device> device)
+		guarded_handle(vk::handle<vk::semaphore> semaphore, vk::handle<vk::device> device)
 			: semaphore{ semaphore }, device{ device }
 		{}
 
-		guarded(guarded&& other)
+		guarded_handle(guarded_handle&& other)
 			: semaphore{ exchange(other.semaphore.value, 0) }, device{ other.device }
 		{}
 
-		~guarded() {
+		~guarded_handle() {
 			if(semaphore.value) {
 				vkDestroySemaphore(
 					(VkDevice) device.value,

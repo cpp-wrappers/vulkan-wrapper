@@ -11,11 +11,11 @@ glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/tri
 exit 1
 #endif
 
-#include "vk/instance/guard.hpp"
+#include "vk/instance/guarded_handle.hpp"
 #include "vk/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 
-inline vk::guarded<vk::shader_module> read_shader_module(const vk::guarded<vk::device>& device, const char* path) {
+inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarded_handle<vk::device>& device, const char* path) {
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
@@ -23,9 +23,9 @@ inline vk::guarded<vk::shader_module> read_shader_module(const vk::guarded<vk::d
 }
 
 void inner(
-	vk::physical_device physical_device, vk::guarded<vk::device>& device,
-	vk::queue_family_index queue_family_index, vk::guarded<vk::surface>& surface,
-	vk::guarded<vk::render_pass>& render_pass, vk::guarded<vk::pipeline>& pipeline,
+	vk::handle<vk::physical_device> physical_device, vk::guarded_handle<vk::device>& device,
+	vk::queue_family_index queue_family_index, vk::guarded_handle<vk::surface>& surface,
+	vk::guarded_handle<vk::render_pass>& render_pass, vk::guarded_handle<vk::pipeline>& pipeline,
 	vk::surface_format surface_format
 ) {
 	auto surface_capabilities = physical_device.get_surface_capabilities(surface);

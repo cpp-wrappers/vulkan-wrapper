@@ -4,9 +4,9 @@
 #include <core/number.hpp>
 #include <core/c_string.hpp>
 #include <core/span.hpp>
-#include "vk/surface/guard.hpp"
+#include "vk/surface/guarded_handle.hpp"
 #include "vk/instance/handle.hpp"
-#include "vk/instance/guard.hpp"
+#include "vk/instance/guarded_handle.hpp"
 
 namespace platform {
 	struct logger {
@@ -57,8 +57,10 @@ namespace platform {
 
 	span<vk::extension_name> get_required_instance_extensions();
 
-	vk::guarded<vk::surface> create_surface(vk::instance);
-	inline vk::guarded<vk::surface> create_surface(const vk::guarded<vk::instance>& instance) { return create_surface(instance.object()); }
+	vk::guarded_handle<vk::surface> create_surface(vk::handle<vk::instance>);
+	inline vk::guarded_handle<vk::surface> create_surface(const vk::guarded_handle<vk::instance>& instance) {
+		return create_surface(instance.handle());
+	}
 
 	bool should_close();
 	void begin();

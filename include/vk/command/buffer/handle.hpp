@@ -16,7 +16,7 @@
 #include "../../pipeline/handle.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/dependency.hpp"
-#include "../../shared/guarded.hpp"
+#include "../../shared/guarded_handle.hpp"
 #include "../../shared/viewport.hpp"
 #include "../../shared/handle.hpp"
 
@@ -152,11 +152,11 @@ namespace vk {
 			);
 		}
 
-		void cmd_bind_pipeline(vk::ordinary_or_guarded<vk::pipeline> auto& pipeline) const {
+		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
 				(VkCommandBuffer) value,
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				(VkPipeline) vk::get_raw_handle<vk::pipeline>(pipeline)
+				(VkPipeline) vk::get_handle_value(pipeline)
 			);
 		}
 

@@ -12,7 +12,7 @@ namespace vk {
 			types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::instance, vk::result>
+	elements::one_of<vk::result, vk::handle<vk::instance>>
 	try_create_instance(const Args&... args) {
 		instance_create_info ici{};
 
@@ -43,15 +43,15 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return vk::instance{ instance };
+		if(result.success()) return vk::handle<vk::instance>{ instance };
 
 		return result;
 	}
 
 	template<typename... Args>
-	vk::instance create_instance(Args&&... args) {
+	vk::handle<vk::instance> create_instance(Args&&... args) {
 		auto result = vk::try_create_instance(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::instance>();
+		return result.template get<vk::handle<vk::instance>>();
 	}
 }

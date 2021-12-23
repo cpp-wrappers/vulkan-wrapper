@@ -12,7 +12,7 @@
 #include "../shared/extent.hpp"
 #include "../shared/result.hpp"
 #include "../device/handle.hpp"
-#include "../shared/guarded.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 
@@ -52,7 +52,7 @@ namespace vk {
 		
 		vk::result result {
 			(int32) vkCreateFramebuffer(
-				(VkDevice) vk::get_raw_handle<vk::device>(device),
+				(VkDevice) vk::get_handle_value(device),
 				(VkFramebufferCreateInfo*) &ci,
 				nullptr,
 				(VkFramebuffer*) &framebuffer
