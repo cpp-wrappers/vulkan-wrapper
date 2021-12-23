@@ -26,8 +26,13 @@ namespace vk {
 		{}
 
 		guarded_handle_base(guarded_handle_base&& other)
-			: m_handle{ exchange(other.m_handle, 0) }
+			: m_handle{ exchange(other.m_handle.value, 0) }
 		{}
+
+		guarded_handle_base& operator = (guarded_handle_base&& other) {
+			m_handle.value = exchange(other.m_handle.value, 0);
+			return *this;
+		}
 
 		const vk::handle<ObjectType>& handle() const {
 			return m_handle;
@@ -41,11 +46,14 @@ namespace vk {
 	template<typename Type>
 	concept some_guarded_handle =
 		type::is_base<
-			vk::guarded_handle_base<typename Type::object_type>
+			vk::guarded_handle_base<typename type::remove_const::for_type<type::remove_reference::for_type<Type>>::object_type>
 		>::ignore_const::ignore_reference::template for_type<Type>;
 
 	template<typename Type, typename ObjectType>
-	concept guarded_handle_of = some_guarded_handle<Type> && type::is_same_as<ObjectType>::template for_type<typename Type::object_type>;
+	concept guarded_handle_of =
+		some_guarded_handle<Type> &&
+		type::is_same_as<ObjectType>::template
+		for_type<typename type::remove_const::for_type<type::remove_reference::for_type<Type>>::object_type>;
 }
 
 namespace type::vk {

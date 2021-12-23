@@ -45,11 +45,11 @@ void inner(
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
 
-	vk::image images_storage[images_count];
+	vk::handle<vk::image> images_storage[images_count];
 	span images{ images_storage, images_count };
 	swapchain.get_images(images);
 
-	vk::guarded<vk::image_view> image_views_raw[images_count];
+	vk::guarded_handle<vk::image_view> image_views_raw[images_count];
 	span image_views{ image_views_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
@@ -62,20 +62,20 @@ void inner(
 		);
 	}
 
-	vk::guarded<vk::framebuffer> framebuffers_raw[images_count];
+	vk::guarded_handle<vk::framebuffer> framebuffers_raw[images_count];
 	span framebuffers{ framebuffers_raw, images_count };
 
 	for(nuint i = 0; i < images_count; ++i) {
 		framebuffers[i] = device.create_guarded_framebuffer(
 			render_pass,
-			array{ vk::image_view{ image_views[i].object() } },
+			array{ vk::handle<vk::image_view>{ image_views[i].handle() } },
 			vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
 		);
 	}
 
 	auto command_pool = device.create_guarded_command_pool(queue_family_index);
-	vk::command_buffer command_buffers_storage[images_count];
-	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
+	vk::handle<vk::command_buffer> command_buffers_storage[images_count];
+	span command_buffers{ command_buffers_storage, images_count };
 	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
 
 	for(nuint i = 0; i < images_count; ++i) {
@@ -85,8 +85,8 @@ void inner(
 
 		vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
 		command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
-			.render_pass{ render_pass.object() },
-			.framebuffer{ framebuffers[i].object() },
+			.render_pass{ render_pass.handle() },
+			.framebuffer{ framebuffers[i].handle() },
 			.render_area { .offset{ 0, 0 }, .extent = surface_capabilities.current_extent },
 			.clear_value_count = 1,
 			.clear_values = &clear_value
@@ -116,7 +116,7 @@ void inner(
 	while (!platform::should_close()) {
 		platform::begin();
 
-		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.object());
+		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.handle());
 
 		if(result.is_current<vk::result>()) {
 			vk::result r = result.get<vk::result>();
@@ -129,13 +129,13 @@ void inner(
 		vk::image_index image_index = result.get<vk::image_index>();
 
 		queue.submit(
-			vk::wait_semaphore{ swapchain_image_semaphore.object() },
+			vk::wait_semaphore{ swapchain_image_semaphore.handle() },
 			vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
 			command_buffers[(uint32)image_index],
-			vk::signal_semaphore{ rendering_finished_semaphore.object() }
+			vk::signal_semaphore{ rendering_finished_semaphore.handle() }
 		);
 
-		vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.object() }, swapchain.object(), image_index);
+		vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.handle() }, swapchain.handle(), image_index);
 
 		if(!present_result.success()) {
 			if((int32)present_result == VK_SUBOPTIMAL_KHR || (int32)present_result == VK_ERROR_OUT_OF_DATE_KHR) break;
@@ -230,12 +230,12 @@ void entrypoint() {
 	array shader_stages {
 		vk::pipeline_shader_stage_create_info {
 			.stage{ vk::shader_stage::vertex },
-			.module{ vertex_shader.object() },
+			.module{ vertex_shader.handle() },
 			.entry_point_name{ "main" }
 		},
 		vk::pipeline_shader_stage_create_info {
 			.stage{ vk::shader_stage::fragment },
-			.module{ fragment_shader.object() },
+			.module{ fragment_shader.handle() },
 			.entry_point_name{ "main" }
 		}
 	};

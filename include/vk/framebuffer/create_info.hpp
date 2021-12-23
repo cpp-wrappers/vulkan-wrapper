@@ -22,7 +22,7 @@ namespace vk {
 		flag_enum<vk::framebuffer_create_flag> flags;
 		vk::handle<vk::render_pass> render_pass;
 		uint32 attachment_count;
-		const vk::image_view* attachments;
+		const vk::handle<vk::image_view>* attachments;
 		uint32 width;
 		uint32 height;
 		uint32 layers;

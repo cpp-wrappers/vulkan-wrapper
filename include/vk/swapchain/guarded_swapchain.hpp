@@ -9,11 +9,12 @@ namespace vk {
 
 	template<>
 	struct guarded_handle<vk::swapchain> : vk::guarded_device_child_handle_base<vk::swapchain> {
+		using vk::guarded_device_child_handle_base<vk::swapchain>::guarded_device_child_handle_base;
 
 		~guarded_handle() {
 			if(handle().value) {
 				vkDestroySwapchainKHR(
-					(VkDevice) handle().value,
+					(VkDevice) device().value,
 					(VkSwapchainKHR) exchange(handle().value, 0),
 					nullptr
 				);

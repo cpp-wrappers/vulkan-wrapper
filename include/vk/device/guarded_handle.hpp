@@ -80,56 +80,56 @@ namespace vk {
 	}; //device_guard
 } // vk
 
-#include "../shader/module/guard.hpp"
+#include "../shader/module/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::shader_module> vk::guarded_handle<vk::device>::create_guarded_shader_module(Args&&... args) const {
 	return { device.create_shader_module(forward<Args>(args)...), this->device };
 }
 
-#include "../command/pool/guard.hpp"
+#include "../command/pool/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::command_pool> vk::guarded_handle<vk::device>::create_guarded_command_pool(Args&&... args) const {
 	return { device.create_command_pool(forward<Args>(args)...), this->device };
 }
 
-#include "../framebuffer/guard.hpp"
+#include "../framebuffer/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::framebuffer> vk::guarded_handle<vk::device>::create_guarded_framebuffer(Args&&... args) const {
 	return { device.create_framebuffer(forward<Args>(args)...), this->device };
 }
 
-#include "../image/view/guard.hpp"
+#include "../image/view/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::image_view> vk::guarded_handle<vk::device>::create_guarded_image_view(Args&&... args) const {
 	return { device.create_image_view(forward<Args>(args)...), this->device };
 }
 
-#include "../pipeline/layout/guard.hpp"
+#include "../pipeline/layout/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::pipeline_layout> vk::guarded_handle<vk::device>::create_guarded_pipeline_layout(Args&&... args) const {
 	return { device.create_pipeline_layout(forward<Args>(args)...), this->device };
 }
 
-#include "../pipeline/guard.hpp"
+#include "../pipeline/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::pipeline> vk::guarded_handle<vk::device>::create_guarded_graphics_pipeline(Args&&... args) const {
 	return { device.create_graphics_pipeline(forward<Args>(args)...), this->device };
 }
 
-#include "../render_pass/guard.hpp"
+#include "../render_pass/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::render_pass> vk::guarded_handle<vk::device>::create_guarded_render_pass(Args&&... args) const {
 	return { device.create_render_pass(forward<Args>(args)...), this->device };
 }
 
-#include "../semaphore/guard.hpp"
+#include "../semaphore/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::semaphore> vk::guarded_handle<vk::device>::create_guarded_semaphore(Args&&... args) const {

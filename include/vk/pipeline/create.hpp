@@ -56,8 +56,8 @@ namespace vk {
 
 		vk::graphics_pipeline_create_info ci {
 			.rasterization_state = &prsci,
-			.layout = vk::get_handle<vk::pipeline_layout>(layout),
-			.render_pass = vk::get_handle<vk::render_pass>(render_pass),
+			.layout = vk::get_handle(layout),
+			.render_pass = vk::get_handle(render_pass),
 			.subpass = subpass
 		};
 
@@ -94,8 +94,8 @@ namespace vk {
 		if constexpr(types::are_contain_type<vk::pipeline_dynamic_state_create_info>::for_types_of<Args...>)
 			ci.dynamic_state = & elements::of_type<const vk::pipeline_dynamic_state_create_info&>::for_elements_of(args...);
 
-		if constexpr(types::are_contain_type<vk::pipeline&>::for_types_of<Args...>)
-			ci.base_pipeline = elements::of_type<vk::pipeline&>::for_elements_of(args...);
+		if constexpr(types::vk::contain_one<vk::pipeline>::for_types_of<Args...>)
+			ci.base_pipeline = elements::vk::of_type<vk::pipeline>::for_elements_of(args...);
 
 		if constexpr(types::are_contain_type<vk::base_pipeline_index>::for_types_of<Args...>)
 			ci.base_pipeline = elements::of_type<const vk::base_pipeline_index&>::for_elements_of(args...);

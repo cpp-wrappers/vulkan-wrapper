@@ -35,7 +35,7 @@ namespace vk {
 		auto& render_pass = elements::vk::of_type<vk::render_pass>::for_elements_of(args...);
 
 		vk::framebuffer_create_info ci {
-			.render_pass = render_pass,
+			.render_pass = vk::get_handle(render_pass),
 			.attachment_count = (uint32) attachments.size(),
 			.attachments = attachments.data()
 		};

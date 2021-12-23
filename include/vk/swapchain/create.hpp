@@ -38,7 +38,7 @@ namespace vk {
 		auto& surface = elements::vk::of_type<vk::surface>::for_elements_of(args...);
 
 		vk::swapchain_create_info ci {
-			.surface = vk::get_handle<vk::surface>(surface),
+			.surface = vk::get_handle(surface),
 			.min_image_count = elements::of_type<vk::min_image_count&>::for_elements_of(args...),
 			.format = elements::of_type<vk::format&>::for_elements_of(args...),
 			.color_space = elements::of_type<vk::color_space&>::for_elements_of(args...),
@@ -95,7 +95,7 @@ namespace vk {
 			type::negated_predicate<type::is_same_as<vk::surface_format>::ignore_reference>
 		>::to_function {
 			[]<typename... Args0>(Args0&&... elements) {
-				return try_create_swapchain(forward<Args0>(elements)...);
+				return vk::try_create_swapchain(forward<Args0>(elements)...);
 			}
 		}.template for_elements_of<vk::format&, vk::color_space&, Args...>(surface_format.format, surface_format.color_space, forward<Args>(args)...);
 	}

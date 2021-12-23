@@ -91,7 +91,7 @@ namespace vk {
 		elements::one_of<vk::result, vk::count>
 		try_for_each_physical_device(auto&& f) const {
 			return try_view_physical_devices([&](auto view) {
-				for(vk::physical_device& device : view) f(device);
+				for(vk::handle<vk::physical_device> device : view) f(device);
 			});
 		}
 

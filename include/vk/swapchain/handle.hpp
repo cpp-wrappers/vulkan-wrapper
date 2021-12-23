@@ -77,7 +77,7 @@ namespace vk {
 
 		template<
 			vk::ordinary_or_guarded_handle<vk::device> Device,
-			range::of_value_type<vk::image> Images
+			range::of_value_type<vk::handle<vk::image>> Images
 		>
 		vk::count get_images(Device& device, Images&& images) const {
 			auto result = try_get_images(device, forward<Images>(images));

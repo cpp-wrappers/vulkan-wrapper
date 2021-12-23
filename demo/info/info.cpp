@@ -3,7 +3,7 @@
 exit 1
 #endif
 
-#include "vk/instance/guard.hpp"
+#include "vk/instance/guarded_handle.hpp"
 #include "vk/physical_device/handle.hpp"
 #include "vk/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
@@ -59,7 +59,7 @@ void entrypoint() {
 	auto instance = vk::create_guarded_instance(layers);
 
 	array_block("physical devices", [&]() {
-		instance.for_each_physical_device([](vk::physical_device& device) {
+		instance.for_each_physical_device([](vk::handle<vk::physical_device> device) {
 			auto props = device.get_properties();
 
 			println("api version: ",

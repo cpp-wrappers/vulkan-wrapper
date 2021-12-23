@@ -3,13 +3,9 @@
 exit 1
 #endif
 
-#include "vk/instance/guard.hpp"
-#include "vk/device/guard.hpp"
+#include "vk/instance/guarded_handle.hpp"
 #include "vk/physical_device/handle.hpp"
-#include "vk/swapchain/guard.hpp"
 #include "vk/command/pool/guard.hpp"
-#include "vk/surface/guard.hpp"
-#include "vk/semaphore/guard.hpp"
 #include "vk/instance/layer_properties.hpp"
 
 #include "../platform/platform.hpp"
@@ -26,7 +22,7 @@ void entrypoint() {
 		platform::get_required_instance_extensions()
 	);
 
-	vk::physical_device physical_device = instance.get_first_physical_device();
+	auto physical_device = instance.get_first_physical_device();
 
 	vk::queue_family_index queue_family_index {
 		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
@@ -42,14 +38,14 @@ void entrypoint() {
 
 	auto surface = platform::create_surface(instance);
 
-	if(!physical_device.get_surface_support(surface.object(), queue_family_index)) {
+	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface is not supported").new_line();
 		throw;
 	}
 
-	vk::surface_format surface_format = physical_device.get_first_surface_format(surface.object());
+	vk::surface_format surface_format = physical_device.get_first_surface_format(surface);
 
-	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface.object());
+	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);
 
 	auto swapchain = device.create_guarded_swapchain(
 		surface,
@@ -65,22 +61,22 @@ void entrypoint() {
 	);
 
 	uint32 images_count = (uint32)swapchain.get_image_count();
-	vk::image images_storage[images_count];
-	span<vk::image> images{ images_storage, images_count };
+	vk::handle<vk::image> images_storage[images_count];
+	span<vk::handle<vk::image>> images{ images_storage, images_count };
 
 	swapchain.get_images(images);
 
 	auto command_pool = device.create_guarded_command_pool(queue_family_index);
 
-	vk::command_buffer command_buffers_storage[images_count];
-	span<vk::command_buffer> command_buffers{ command_buffers_storage, images_count };
+	vk::handle<vk::command_buffer> command_buffers_storage[images_count];
+	span<vk::handle<vk::command_buffer>> command_buffers{ command_buffers_storage, images_count };
 
 	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
 
 	vk::image_subresource_range image_subresource_range { vk::image_aspect::color };
 
 	for(nuint i = 0; i < images_count; ++i) {
-		vk::command_buffer command_buffer = command_buffers[i];
+		auto command_buffer = command_buffers[i];
 
 		vk::image_memory_barrier image_memory_barrier_from_present_to_clear {
 			.src_access = vk::src_access{ vk::access::memory_read },
@@ -129,7 +125,7 @@ void entrypoint() {
 	auto swapchain_image_semaphore = device.create_guarded_semaphore();
 	auto rendering_finished_semaphore = device.create_guarded_semaphore();
 
-	vk::queue presentation_queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+	auto presentation_queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while (!platform::should_close()) {
 		platform::begin();
@@ -162,7 +158,7 @@ void entrypoint() {
 			.wait_semaphore_count = 1,
 			.wait_semaphores = &rendering_finished_semaphore.object(),
 			.swapchain_count = 1,
-			.swapchains = &swapchain.object(),
+			.swapchains = &swapchain.handle(),
 			.image_indices = &image_index
 		});
 
