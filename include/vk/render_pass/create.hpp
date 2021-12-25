@@ -14,44 +14,45 @@
 #include "../shared/result.hpp"
 #include "create_info.hpp"
 #include "../device/handle.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
+			types::vk::contain_one<vk::device>,
 			types::count_of_ranges_of_value_type<vk::subpass_description>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::subpass_dependency>::less_or_equals<1>,
-			types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>,
-			types::count_of_type<vk::handle<vk::device>>::equals<1>
+			types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::handle<vk::render_pass>>
-	try_create_render_pass(const Args&... args) {
+	try_create_render_pass(Args&&... args) {
 		vk::render_pass_create_info ci{};
 
 		auto& subpass_descriptions = elements::range_of_value_type<vk::subpass_description>::for_elements_of(args...);
 		ci.subpass_count = (uint32) subpass_descriptions.size();
 		ci.subpasses = subpass_descriptions.data();
 
-		//if constexpr(types::are_contain_range_of_value_type<vk::subpass_dependency>::for_types_of<Args...>) {
+		if constexpr(types::are_contain_range_of_value_type<vk::subpass_dependency>::for_types_of<Args...>) {
 			auto& subpass_dependencies = elements::range_of_value_type<vk::subpass_dependency>::for_elements_of(args...);
 			ci.dependency_count = (uint32) subpass_dependencies.size();
 			ci.dependencies = subpass_dependencies.data();
-		//}
+		}
 
-		//if constexpr(types::are_contain_range_of_value_type<vk::attachment_description>::for_types_of<Args...>) {
+		if constexpr(types::are_contain_range_of_value_type<vk::attachment_description>::for_types_of<Args...>) {
 			auto& attachment_descriptions = elements::range_of_value_type<vk::attachment_description>::for_elements_of(args...);
 			ci.attachment_count = (uint32) attachment_descriptions.size();
 			ci.attachments = attachment_descriptions.data();
-		//}
+		}
 		
-		vk::handle<vk::device> device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
+		auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
 
 		VkRenderPass render_pass;
 
 		vk::result result {
 			(int32) vkCreateRenderPass(
-				(VkDevice) device.value,
+				(VkDevice) vk::get_handle_value(device),
 				(VkRenderPassCreateInfo*) &ci,
 				nullptr,
 				(VkRenderPass*) &render_pass

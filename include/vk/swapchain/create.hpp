@@ -4,6 +4,7 @@
 #include <core/values/erase_at_index.hpp>
 #include <core/elements/pass_satisfying_type_predicate.hpp>
 #include <core/elements/range_of_value_type.hpp>
+#include <core/types/are_contain_range_of_value_type.hpp>
 #include <core/type/negated_predicate.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 
@@ -18,8 +19,9 @@ namespace vk {
 	requires(
 		types::are_exclusively_satsify_predicates<
 			types::vk::contain_one<vk::device>,
-			types::count_of_type<vk::swapchain_create_flag>::greater_or_equals<0>::ignore_reference,
 			types::vk::contain_one<vk::surface>,
+			types::vk::may_contain_one<vk::swapchain>,
+			types::count_of_type<vk::swapchain_create_flag>::greater_or_equals<0>::ignore_reference,
 			types::count_of_type<vk::min_image_count>::equals<1>::ignore_reference,
 			types::count_of_type<vk::format>::equals<1>::ignore_reference,
 			types::count_of_type<vk::color_space>::equals<1>::ignore_reference,
@@ -49,23 +51,26 @@ namespace vk {
 			.clipped = elements::of_type<vk::clipped&>::for_elements_of(args...)
 		};
 
-		elements::for_each_of_type<vk::swapchain_create_flag&>(
-			[&](auto f) { ci.flags.set(f); },
-			args...
-		);
-		elements::for_each_of_type<vk::surface_transform&>(
-			[&](auto f) { ci.pre_transform.set(f); },
-			args...
-		);
-		elements::for_each_of_type<vk::composite_alpha&>(
-			[&](auto f) { ci.composite_alpha.set(f); },
-			args...
-		);
+		elements::for_each_of_type<vk::swapchain_create_flag>::ignore_const::ignore_reference::function {
+			[&](auto f) { ci.flags.set(f); }
+		}.for_elements_of(args...);
 
-		if constexpr(types::count_of_ranges_of_value_type<vk::queue_family_index>::for_types_of<Args...> == 1) {
+		elements::for_each_of_type<vk::surface_transform>::ignore_const::ignore_reference::function {
+			[&](auto f) { ci.pre_transform.set(f); }
+		}.for_elements_of(args...);
+		
+		elements::for_each_of_type<vk::composite_alpha>::ignore_const::ignore_reference::function {
+			[&](auto f) { ci.composite_alpha.set(f); }
+		}.for_elements_of(args...);
+
+		if constexpr(types::are_contain_range_of_value_type<vk::queue_family_index>::for_types_of<Args...>) {
 			auto& family_indices = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
 			ci.queue_family_index_count = vk::queue_family_index_count{ (uint32) family_indices.size() };
 			ci.queue_family_indices = vk::queue_family_indices{ family_indices.data() };
+		}
+
+		if constexpr(types::vk::contain_one<vk::swapchain>::for_types_of<Args...>) {
+			ci.old_swapchain = vk::get_handle(elements::vk::of_type<vk::swapchain>::for_elements_of(args...));
 		}
 
 		auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
@@ -94,10 +99,14 @@ namespace vk {
 		return elements::pass_satisfying_type_predicate<
 			type::negated_predicate<type::is_same_as<vk::surface_format>::ignore_reference>
 		>::to_function {
-			[]<typename... Args0>(Args0&&... elements) {
-				return vk::try_create_swapchain(forward<Args0>(elements)...);
+			[]<typename... Others>(Others&&... others) {
+				return vk::try_create_swapchain(forward<Others>(others)...);
 			}
-		}.template for_elements_of<vk::format&, vk::color_space&, Args...>(surface_format.format, surface_format.color_space, forward<Args>(args)...);
+		}.for_elements_of(
+			surface_format.format,
+			surface_format.color_space,
+			forward<Args>(args)...
+		);
 	}
 
 	template<typename... Args>

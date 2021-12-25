@@ -269,9 +269,9 @@ namespace vk {
 		}
 
 		vk::surface_format get_first_surface_format(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
-			vk::surface_format f;
-			get_surface_formats(surface, span{ &f, 1 });
-			return f;
+			vk::surface_format surface_format;
+			get_surface_formats(surface, span{ &surface_format, 1 });
+			return surface_format;
 		}
 
 		elements::one_of<vk::result, vk::count>

@@ -11,6 +11,7 @@
 #include "handle.hpp"
 #include "../../shared/queue_family_index.hpp"
 #include "../../shared/result.hpp"
+#include "../../shared/guarded_handle.hpp"
 
 namespace vk {
 
@@ -19,23 +20,28 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>,
-			types::count_of_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::handle<vk::device>>::equals<1>
+			types::vk::contain_one<vk::device>,
+			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>::ignore_const::ignore_reference,
+			types::count_of_type<vk::queue_family_index>::equals<1>::ignore_const::ignore_reference
 		>::for_types_of<Args...>
 	)
-	elements::one_of<vk::result, vk::handle<vk::command_pool>> try_create_command_pool(Args... args) {
+	elements::one_of<vk::result, vk::handle<vk::command_pool>>
+	try_create_command_pool(Args&&... args) {
 		vk::command_pool_create_info ci{};
 
-		vk::handle<vk::device> device = elements::of_type<vk::handle<vk::device>&>::for_elements_of(args...);
-		ci.queue_family_index = elements::of_type<vk::queue_family_index&>::for_elements_of(args...);
-		elements::for_each_of_type<vk::command_pool_create_flag&>([&](auto f){ ci.flags.set(f); }, args...);
+		ci.queue_family_index = elements::of_type<vk::queue_family_index>::ignore_const::ignore_reference::for_elements_of(args...);
+
+		elements::for_each_of_type<vk::command_pool_create_flag>::ignore_const::ignore_reference::function {
+			[&](auto f){ ci.flags.set(f); }
+		}.for_elements_of(args...);
+
+		auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
 
 		VkCommandPool command_pool;
 
 		vk::result result {
 			(int32) vkCreateCommandPool(
-				(VkDevice) device.value,
+				(VkDevice) vk::get_handle_value(device),
 				(VkCommandPoolCreateInfo*) &ci,
 				nullptr,
 				&command_pool
@@ -48,14 +54,9 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>,
-			types::count_of_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::handle<vk::device>>::equals<1>
-		>::for_types_of<Args...>
-	)
-	vk::handle<vk::command_pool> create_command_pool(Args... args) {
-		return try_create_command_pool(args...).template get<vk::handle<vk::command_pool>>();
+	vk::handle<vk::command_pool> create_command_pool(Args&&... args) {
+		auto result = try_create_command_pool(forward<Args>(args)...);
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::handle<vk::command_pool>>();
 	}
 }

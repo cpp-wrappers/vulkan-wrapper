@@ -19,7 +19,7 @@ namespace vk {
 		{}
 
 		guarded_instance_child_handle_base(guarded_instance_child_handle_base&& other)
-			: base_type{ other.handle }, m_instance{ other.m_instance }
+			: base_type{ exchange(other.handle(), vk::handle<ObjectType>{}) }, m_instance{ other.m_instance }
 		{}
 
 		guarded_instance_child_handle_base& operator = (guarded_instance_child_handle_base&& other) {

@@ -36,10 +36,9 @@ namespace vk {
 			>::for_types_of<Args...>
 		)
 		image_subresource_range(Args... args) {
-			elements::for_each_of_type<vk::image_aspect&>(
+			elements::for_each_of_type<vk::image_aspect&>::function {
 				[&](auto af) { aspect_mask.set(af); },
-				args...
-			);
+			}.for_elements_of(args...);
 	
 			if constexpr(types::are_contain_type<vk::base_mip_level>::for_types_of<Args...>) {
 				base_mip_level = elements::of_type<vk::base_mip_level&>::for_elements_of(args...);

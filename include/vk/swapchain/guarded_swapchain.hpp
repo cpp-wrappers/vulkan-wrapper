@@ -9,7 +9,12 @@ namespace vk {
 
 	template<>
 	struct guarded_handle<vk::swapchain> : vk::guarded_device_child_handle_base<vk::swapchain> {
-		using vk::guarded_device_child_handle_base<vk::swapchain>::guarded_device_child_handle_base;
+		using base_type = vk::guarded_device_child_handle_base<vk::swapchain>;
+
+		using base_type::base_type;
+
+		guarded_handle(guarded_handle&&) = default;
+		guarded_handle& operator = (guarded_handle&&) = default;
 
 		~guarded_handle() {
 			if(handle().value) {

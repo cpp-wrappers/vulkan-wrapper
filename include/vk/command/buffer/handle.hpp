@@ -74,7 +74,9 @@ namespace vk {
 				.inheritance_info = nullptr
 			};
 
-			elements::for_each_of_type<vk::command_buffer_usage&>([&](auto f){ bi.usage.set(f); }, args...);
+			elements::for_each_of_type<vk::command_buffer_usage&>::function {
+				[&](auto f){ bi.usage.set(f); }
+			}.for_elements_of(args...);
 
 			return {
 				(int32) vkBeginCommandBuffer(
@@ -169,6 +171,13 @@ namespace vk {
 			);
 		}
 
+		void cmd_set_viewport(vk::extent<2> viewport) const {
+			return cmd_set_viewport(vk::viewport {
+				.width = (float)viewport.width(),
+				.height = (float)viewport.height()
+			});
+		}
+
 		void cmd_set_scissor(vk::rect2d scissor) const {
 			vkCmdSetScissor(
 				(VkCommandBuffer) value,
@@ -176,6 +185,13 @@ namespace vk {
 				1,
 				(VkRect2D*) &scissor
 			);
+		}
+
+		void cmd_set_scissor(vk::extent<2> scissor) const {
+			cmd_set_scissor(vk::rect2d {
+				vk::offset<2>{ 0, 0 },
+				scissor
+			});
 		}
 
 		void cmd_draw(

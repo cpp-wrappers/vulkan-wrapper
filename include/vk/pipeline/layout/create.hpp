@@ -9,6 +9,7 @@
 #include <core/elements/one_of.hpp>
 
 #include "../../shared/result.hpp"
+#include "../../shared/guarded_handle.hpp"
 #include "create_info.hpp"
 #include "handle.hpp"
 #include "../../device/handle.hpp"
@@ -21,13 +22,13 @@ namespace vk {
 	template<typename... Args>
 	requires(
 		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::handle<vk::device>>::equals<1>,
+			types::vk::contain_one<vk::device>,
 			types::count_of_ranges_of_value_type<vk::descriptor_set_layout>::less_or_equals<1>,
 			types::count_of_ranges_of_value_type<vk::push_constant_range>::less_or_equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::handle<vk::pipeline_layout>>
-	try_create_pipeline_layout(const Args&... args) {
+	try_create_pipeline_layout(Args&&... args) {
 		vk::pipeline_layout_create_info ci{};
 
 		if constexpr(types::are_contain_range_of_value_type<vk::descriptor_set_layout>::for_types_of<Args...>) {
@@ -42,13 +43,13 @@ namespace vk {
 			ci.push_constant_ranges = push_constant_ranges.data();
 		}
 
-		vk::handle<vk::device> device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
+		auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
 
 		VkPipelineLayout pipeline_layout;
 
 		vk::result result {
 			(int32) vkCreatePipelineLayout(
-				(VkDevice) device.value,
+				(VkDevice) vk::get_handle_value(device),
 				(VkPipelineLayoutCreateInfo*) &ci,
 				nullptr,
 				(VkPipelineLayout*) &pipeline_layout

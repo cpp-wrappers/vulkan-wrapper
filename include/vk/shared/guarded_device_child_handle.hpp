@@ -19,7 +19,7 @@ namespace vk {
 		{}
 
 		guarded_device_child_handle_base(guarded_device_child_handle_base&& other)
-			: base_type{ other.handle }, m_device{ other.m_device }
+			: base_type{ exchange(other.handle(), vk::handle<ObjectType>{} ) }, m_device{ other.m_device }
 		{}
 
 		guarded_device_child_handle_base& operator = (guarded_device_child_handle_base&& other) {

@@ -17,15 +17,15 @@ namespace vk {
 	requires(
 		types::are_exclusively_satsify_predicates<
 			types::vk::contain_one<vk::instance>,
-			types::count_of_type<vk::debug_report_flags>::equals<1>,
+			types::count_of_type<vk::debug_report_flags>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::debug_report_callback_type>::equals<1>
 		>::for_types_of<Args...>
 	)
 	elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
-	try_create_debug_report_callback(Args... args) {
+	try_create_debug_report_callback(Args&&... args) {
 		auto& instance = elements::vk::of_type<vk::instance>::for_elements_of(args...);
-		auto flags = elements::of_type<vk::debug_report_flags&>::for_elements_of(args...);
-		auto callback = elements::of_type<vk::debug_report_callback_type&>::for_elements_of(args...);
+		auto flags = elements::of_type<vk::debug_report_flags>::ignore_const::ignore_reference::for_elements_of(args...);
+		auto& callback = elements::of_type<vk::debug_report_callback_type>::for_elements_of(args...);
 
 		debug_report_callback_create_info ci {
 			.flags = flags,
@@ -58,7 +58,7 @@ namespace vk {
 	template<typename... Args>
 	vk::handle<vk::debug_report_callback>
 	create_debug_report_callback(Args&&... args) {
-		auto result = try_create_debug_report_callback(forward<Args>(args)...);
+		auto result = vk::try_create_debug_report_callback(forward<Args>(args)...);
 		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
 		return result.template get<vk::handle<vk::debug_report_callback>>();
 	}

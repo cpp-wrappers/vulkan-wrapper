@@ -7,19 +7,20 @@
 #include <core/elements/one_of.hpp>
 
 #include "../shared/headers.hpp"
+#include "../shared/guarded_handle.hpp"
 #include "../shared/result.hpp"
 #include "../device/handle.hpp"
 
 namespace vk {
 	elements::one_of<vk::result, vk::handle<vk::semaphore>>
-	inline try_create_semaphore(vk::handle<vk::device> device) {
+	try_create_semaphore(vk::ordinary_or_guarded_handle<vk::device> auto&& device) {
 		vk::semaphore_create_info ci{};
 
 		VkSemaphore semaphore;
 
 		vk::result result {
 			(int32) vkCreateSemaphore(
-				(VkDevice) device.value,
+				(VkDevice) vk::get_handle_value(device),
 				(VkSemaphoreCreateInfo*) &ci,
 				(VkAllocationCallbacks*) nullptr,
 				&semaphore
@@ -30,9 +31,10 @@ namespace vk {
 		return result;
 	}
 
-	vk::handle<vk::semaphore> inline create_semaphore(vk::handle<vk::device> device) {
-		auto result = try_create_semaphore(device);
-		if(result.is_current<vk::result>()) throw result.get<vk::result>();
-		return result.get<vk::handle<vk::semaphore>>();
+	template<vk::ordinary_or_guarded_handle<vk::device> Device>
+	vk::handle<vk::semaphore> create_semaphore(Device&& device) {
+		auto result = try_create_semaphore(forward<Device>(device));
+		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
+		return result.template get<vk::handle<vk::semaphore>>();
 	}
 }
