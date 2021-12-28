@@ -4,12 +4,16 @@
 #include <core/elements/one_of.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/exchange.hpp>
 
+#include "mapped_memory_range.hpp"
 #include "../shared/headers.hpp"
 #include "../shared/queue_family_index.hpp"
 #include "../shared/result.hpp"
 #include "../shared/handle.hpp"
+#include "../shared/memory_requirements.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 
@@ -26,6 +30,8 @@ namespace vk {
 	struct swapchain;
 	struct buffer;
 	struct device;
+	struct device_memory;
+	struct fence;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 
@@ -99,6 +105,107 @@ namespace vk {
 
 		template<typename... Args>
 		vk::handle<vk::buffer> create_buffer(Args&&... args) const;
+
+		template<typename... Args>
+		elements::one_of<vk::result, vk::handle<vk::buffer>>
+		try_create_buffer(Args&&... args) const;
+
+		template<typename... Args>
+		vk::handle<vk::buffer> create_buffer(Args&&... args) const;
+
+		vk::memory_requirements
+		get_buffer_memory_requirements(vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer) const {
+			vk::memory_requirements memory_requirements;
+			vkGetBufferMemoryRequirements(
+				(VkDevice) vk::get_handle_value(*this),
+				(VkBuffer) vk::get_handle_value(buffer),
+				(VkMemoryRequirements*) &memory_requirements
+			);
+			return memory_requirements;
+		}
+
+		vk::result
+		try_bind_buffer_memory(
+			vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer,
+			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
+			vk::device_size offset = { 0u }
+		) {
+			return {
+				(int32) vkBindBufferMemory(
+					(VkDevice) vk::get_handle_value(*this),
+					(VkBuffer) vk::get_handle_value(buffer),
+					(VkDeviceMemory) vk::get_handle_value(memory),
+					(VkDeviceSize) offset
+				)
+			};
+		}
+
+		void bind_buffer_memory(
+			vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer,
+			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
+			vk::device_size offset = { 0u }
+		) {
+			vk::result result = try_bind_buffer_memory(buffer, memory, offset);
+			if(!result.success()) throw result;
+		}
+
+		vk::result try_map_memory(
+			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
+			vk::device_size offset,
+			vk::device_size size,
+			void** data
+		) {
+			return {
+				(int32) vkMapMemory(
+					(VkDevice) vk::get_handle_value(*this),
+					(VkDeviceMemory) vk::get_handle_value(memory),
+					(VkDeviceSize) offset,
+					(VkDeviceSize) size,
+					(VkMemoryMapFlags) 0,
+					(void**) data
+				)
+			};
+		}
+
+		void map_memory(
+			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
+			vk::device_size offset,
+			vk::device_size size,
+			void** data
+		) {
+			vk::result result = try_map_memory(memory, offset, size, data);
+			if(!result.success()) throw result;
+		}
+
+		vk::result try_flush_mapped_memory_ranges(range::of_value_type<vk::mapped_memory_range> auto&& ranges) const {
+			return {
+				(int32) vkFlushMappedMemoryRanges(
+					(VkDevice) vk::get_handle_value(*this),
+					(uint32) ranges.size(),
+					(VkMappedMemoryRange*) ranges.data()
+				)
+			};
+		}
+
+		void unmap_memory(vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory) const {
+			vkUnmapMemory(
+				(VkDevice) vk::get_handle_value(*this),
+				(VkDeviceMemory) vk::get_handle_value(memory)
+			);
+		}
+
+		template<range::of_value_type<vk::mapped_memory_range> MappedMemoryRanges>
+		void flush_mapped_memory_ranges(MappedMemoryRanges&& ranges) const {
+			vk::result result = try_flush_mapped_memory_ranges(forward<MappedMemoryRanges>(ranges));
+			if(!result.success()) throw result;
+		}
+
+		template<typename... Args>
+		elements::one_of<vk::result, vk::handle<vk::device_memory>>
+		try_allocate_memory(Args&&... args) const;
+
+		template<typename... Args>
+		vk::handle<vk::device_memory> allocate_memory(Args&&... args) const;
 
 		vk::result try_wait_idle() const {
 			return {
@@ -259,4 +366,17 @@ vk::handle<vk::device>::try_create_buffer(Args&&... args) const {
 template<typename... Args>
 vk::handle<vk::buffer> vk::handle<vk::device>::create_buffer(Args&&... args) const {
 	return vk::create_buffer(*this, forward<Args>(args)...);
+}
+
+#include "memory/allocate.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::handle<vk::device_memory>>
+vk::handle<vk::device>::try_allocate_memory(Args&&... args) const {
+	return vk::try_allocate_memory(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+vk::handle<vk::device_memory> vk::handle<vk::device>::allocate_memory(Args&&... args) const {
+	return vk::allocate_memory(*this, forward<Args>(args)...);
 }

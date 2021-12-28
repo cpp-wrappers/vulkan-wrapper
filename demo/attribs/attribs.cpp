@@ -3,10 +3,10 @@ src_dir=`dirname ${BASH_SOURCE[0]}`
 
 mkdir -p ${src_dir}/build
 
-glslangValidator -e main -o ${src_dir}/build/triangle.vert.spv -V ${src_dir}/triangle.vert
-glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/triangle.frag
+glslangValidator -e main -o ${src_dir}/build/attribs.vert.spv -V ${src_dir}/attribs.vert
+glslangValidator -e main -o ${src_dir}/build/attribs.frag.spv -V ${src_dir}/attribs.frag
 
-. ${src_dir}/../build.sh $@ --asset triangle.vert.spv --asset triangle.frag.spv
+. ${src_dir}/../build.sh $@ --asset attribs.vert.spv --asset attribs.frag.spv
 
 exit 1
 #endif
@@ -96,8 +96,8 @@ void entrypoint() {
 		array{ subpass_dependency }
 	);
 
-	auto vertex_shader = read_shader_module(device, "triangle.vert.spv");
-	auto fragment_shader = read_shader_module(device, "triangle.frag.spv");
+	auto vertex_shader = read_shader_module(device, "attribs.vert.spv");
+	auto fragment_shader = read_shader_module(device, "attribs.frag.spv");
 
 	vk::pipeline_color_blend_attachment_state pcbas {
 		.src_color_blend_factor = vk::blend_factor::one,
@@ -113,9 +113,78 @@ void entrypoint() {
 
 	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
 
+	struct data_t {
+		float position[4];
+		float color[4];
+	};
+
+	data_t data[] = {
+		{ { -0.5, -0.5, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 0.0 } },
+		{ {  0.5, -0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 0.0 } },
+		{ { -0.5,  0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 0.0 } },
+		{ {  0.5,  0.5, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 0.0 } }
+	};
+
+	auto buffer = device.create_guarded_buffer(
+		vk::buffer_size{ sizeof(data) },
+		vk::buffer_usages{ vk::buffer_usage::vertex_buffer },
+		vk::sharing_mode::exclusive
+	);
+
+	vk::vertex_input_binding_description vertex_binding_description {
+		vk::binding{ 0 },
+		vk::stride{ sizeof(data) },
+	};
+
+	array vertex_input_attribute_descriptions {
+		vk::vertex_input_attribute_description {
+			vk::location{ 0 },
+			vk::binding{ 0 },
+			vk::format::r32_g32_b32_sfloat,
+			vk::offset<1>{ __builtin_offsetof(data_t, position) }
+		},
+		vk::vertex_input_attribute_description {
+			vk::location{ 1 },
+			vk::binding{ 0 },
+			vk::format::r32_g32_b32_sfloat,
+			vk::offset<1>{ __builtin_offsetof(data_t, color) }
+		}
+	};
+
+	auto buff_requirements = device.get_buffer_memory_requirements(buffer);
+	auto memory_props = physical_device.get_memory_properties();
+	vk::handle<vk::device_memory> device_memory;
+
+	for(uint32 i = 0; i < memory_props.memory_type_count; ++i) {
+		if(buff_requirements.memory_type_bits & (1 << i) && memory_props.memory_types[i].properties.get(vk::memory_property::host_visible)) {
+			device_memory = device.handle().allocate_memory(buff_requirements.size, vk::memory_type_index{i} );
+		}
+	}
+
+	if(!device_memory.value) throw;
+
+	device.handle().bind_buffer_memory(buffer, device_memory);
+
+	uint8* ptr;
+	device.handle().map_memory(device_memory, vk::device_size{0}, vk::device_size{sizeof(data)}, (void**)&ptr);
+
+	for(nuint i = 0; i < sizeof(data); ++i) *ptr++ = ((uint8*)&data)[i];
+
+	device.handle().flush_mapped_memory_ranges(
+		array{
+			vk::mapped_memory_range {
+				.memory{ device_memory },
+				.offset{ 0 },
+				.size{ sizeof(data) }
+			}
+		}
+	);
+
+	device.handle().unmap_memory(device_memory);
+
 	auto pipeline = device.create_guarded_graphics_pipeline(
 		pipeline_layout, render_pass,
-		vk::primitive_topology::triangle_list,
+		vk::primitive_topology::triangle_strip,
 		array {
 			vk::pipeline_shader_stage_create_info {
 				.stage{ vk::shader_stage::vertex },
@@ -129,7 +198,12 @@ void entrypoint() {
 			}
 		},
 		vk::pipeline_multisample_state_create_info{},
-		vk::pipeline_vertex_input_state_create_info{},
+		vk::pipeline_vertex_input_state_create_info{
+			.vertex_binding_description_count = 1,
+			.vertex_binding_descriptions = &vertex_binding_description,
+			.vertex_attribute_description_count = 2,
+			.vertex_attribute_descriptions = vertex_input_attribute_descriptions.data()
+		},
 		vk::pipeline_rasterization_state_create_info {
 			.polygon_mode = vk::polygon_mode::fill,
 			.cull_mode = vk::cull_mode::back,
@@ -151,7 +225,24 @@ void entrypoint() {
 		vk::subpass{ 0 }
 	);
 
-	auto command_pool = device.create_guarded_command_pool(queue_family_index);
+	auto command_pool = device.create_guarded_command_pool(
+		queue_family_index,
+		vk::command_pool_create_flag::reset_command_buffer,
+		vk::command_pool_create_flag::transient
+	);
+
+	vk::handle<vk::command_buffer> command_buffers_storage[2];
+	span command_buffers{ command_buffers_storage, 2 };
+	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
+
+	struct rendering_resource {
+		vk::handle<vk::command_buffer> command_buffer;
+		vk::guarded_handle<vk::semaphore> image_acquire;
+		vk::guarded_handle<vk::semaphore> finish;
+		vk::guarded_handle<vk::fence> fence;
+		vk::guarded_handle<vk::framebuffer> framebuffer;
+	};
+
 	auto swapchain = vk::guarded_handle<vk::swapchain>{};
 
 	while(!platform::should_close()) {
@@ -204,10 +295,6 @@ void entrypoint() {
 				vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
 			);
 		}
-
-		vk::handle<vk::command_buffer> command_buffers_storage[images_count];
-		span command_buffers{ command_buffers_storage, images_count };
-		command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
 
 		for(nuint i = 0; i < images_count; ++i) {
 			auto command_buffer = command_buffers[i];

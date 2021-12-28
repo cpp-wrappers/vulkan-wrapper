@@ -8,6 +8,7 @@
 #include <core/span.hpp>
 
 #include "properties.hpp"
+#include "memory_properties.hpp"
 #include "queue_family_properties.hpp"
 #include "../surface/capabilities.hpp"
 #include "../surface/present_mode.hpp"
@@ -39,8 +40,17 @@ namespace vk {
 		vk::physical_device_properties get_properties() const {
 			vk::physical_device_properties props;
 			vkGetPhysicalDeviceProperties(
-				(VkPhysicalDevice) value,
+				(VkPhysicalDevice) vk::get_handle_value(*this),
 				(VkPhysicalDeviceProperties*) &props
+			);
+			return props;
+		}
+
+		vk::physical_device_memory_properties get_memory_properties() const {
+			vk::physical_device_memory_properties props;
+			vkGetPhysicalDeviceMemoryProperties(
+				(VkPhysicalDevice) vk::get_handle_value(*this),
+				(VkPhysicalDeviceMemoryProperties*) &props
 			);
 			return props;
 		}
@@ -49,7 +59,7 @@ namespace vk {
 			uint32 count = (uint32) range.size();
 
 			vkGetPhysicalDeviceQueueFamilyProperties(
-				(VkPhysicalDevice) value,
+				(VkPhysicalDevice) vk::get_handle_value(*this),
 				&count,
 				(VkQueueFamilyProperties*) range.data()
 			);
@@ -107,7 +117,7 @@ namespace vk {
 
 			vk::result result {
 				(int32) vkEnumerateDeviceExtensionProperties(
-					(VkPhysicalDevice) value,
+					(VkPhysicalDevice) vk::get_handle_value(*this),
 					name,
 					&count,
 					(VkExtensionProperties*) props.data()
@@ -187,7 +197,7 @@ namespace vk {
  
 			vk::result result {
 				(int32) vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-					(VkPhysicalDevice) value,
+					(VkPhysicalDevice) vk::get_handle_value(*this),
 					(VkSurfaceKHR) vk::get_handle_value(surface),
 					(VkSurfaceCapabilitiesKHR*) &caps
 				)
@@ -208,7 +218,7 @@ namespace vk {
  
 			vk::result result {
 				(int32) vkGetPhysicalDeviceSurfaceFormatsKHR(
-					(VkPhysicalDevice) value,
+					(VkPhysicalDevice) vk::get_handle_value(*this),
 					(VkSurfaceKHR) vk::get_handle_value(surface),
 					&count,
 					(VkSurfaceFormatKHR*) formats.data()
@@ -280,7 +290,7 @@ namespace vk {
 
 			vk::result result {
 				(int32) vkGetPhysicalDeviceSurfacePresentModesKHR(
-					(VkPhysicalDevice) value,
+					(VkPhysicalDevice) vk::get_handle_value(*this),
 					(VkSurfaceKHR) surface.value,
 					&count,
 					(VkPresentModeKHR*) present_modes.data()

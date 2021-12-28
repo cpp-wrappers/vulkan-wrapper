@@ -29,5 +29,4 @@ namespace vk {
 	};
 }
 
-static_assert(sizeof(vk::physical_device_type) == sizeof(VkPhysicalDeviceType));
 static_assert(sizeof(vk::physical_device_properties) == sizeof(VkPhysicalDeviceProperties));

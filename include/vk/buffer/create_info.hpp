@@ -6,6 +6,7 @@
 #include "../shared/headers.hpp"
 #include "../shared/sharing_mode.hpp"
 #include "../shared/queue_family_index.hpp"
+#include "../shared/device_size.hpp"
 
 namespace vk {
 
@@ -40,7 +41,7 @@ namespace vk {
 	using buffer_create_flags = flag_enum<vk::buffer_create_flag>;
 	using buffer_usages = flag_enum<vk::buffer_usage>;
 
-	struct buffer_size : wrapper::of_integer<uint64, struct buffer_size_t> {};
+	using buffer_size = vk::device_size;
 
 	struct buffer_create_info {
 		uint32 type = (uint32)VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

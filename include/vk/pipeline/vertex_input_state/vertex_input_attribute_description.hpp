@@ -11,7 +11,7 @@ namespace vk {
 		vk::location location;
 		vk::binding binding;
 		vk::format format;
-		vk::offset<1u> offset;
+		vk::offset<1> offset;
 	};
 
 }

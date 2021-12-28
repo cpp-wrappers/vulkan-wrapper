@@ -21,7 +21,7 @@ namespace vk {
 	requires(
 		types::are_exclusively_satsify_predicates<
 			types::vk::contain_one<vk::device>,
-			types::count_of_type<vk::command_pool_create_flag>::less_or_equals<0>::ignore_const::ignore_reference,
+			types::count_of_type<vk::command_pool_create_flag>::greater_or_equals<0>::ignore_const::ignore_reference,
 			types::count_of_type<vk::queue_family_index>::equals<1>::ignore_const::ignore_reference
 		>::for_types_of<Args...>
 	)

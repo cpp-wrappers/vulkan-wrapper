@@ -24,17 +24,17 @@ namespace vk {
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::binding>::equals<1u>,
-				types::count_of_type<vk::stride>::equals<1u>,
-				types::count_of_type<vk::vertex_input_rate>::less_or_equals<1u>
+				types::count_of_type<vk::binding>::equals<1>::ignore_const::ignore_reference,
+				types::count_of_type<vk::stride>::equals<1>::ignore_const::ignore_reference,
+				types::count_of_type<vk::vertex_input_rate>::less_or_equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		vertex_input_binding_description(Args... args) {
-			binding = elements::of_type<vk::binding&>::for_elements_of(args...);
-			stride = elements::of_type<vk::stride&>::for_elements_of(args...);
+		vertex_input_binding_description(Args&&... args) {
+			binding = elements::of_type<vk::binding>::ignore_const::ignore_reference::for_elements_of(args...);
+			stride = elements::of_type<vk::stride>::ignore_const::ignore_reference::for_elements_of(args...);
 	
-			if constexpr(types::are_contain_type<vk::vertex_input_rate>::for_types_of<Args...>) {
-				vertex_input_rate = elements::of_type<vk::vertex_input_rate&>::for_elements_of(args...);
+			if constexpr(types::are_contain_type<vk::vertex_input_rate>::ignore_const::ignore_reference::for_types_of<Args...>) {
+				vertex_input_rate = elements::of_type<vk::vertex_input_rate>::ignore_const::ignore_reference::for_elements_of(args...);
 			}
 		}
 	};

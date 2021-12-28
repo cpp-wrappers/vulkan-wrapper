@@ -11,6 +11,7 @@
 #include <core/wrapper/of_integer.hpp>
 #include <core/elements/one_of.hpp>
 #include <core/exchange.hpp>
+#include <core/elements/pass_satisfying_type_predicate.hpp>
 
 #include "graphics_pipeline_create_info.hpp"
 #include "../shared/result.hpp"
@@ -115,6 +116,21 @@ namespace vk {
 
 		if(result.success()) return vk::handle<vk::pipeline>{ pipeline };
 		return result;
+	}
+
+	template<typename... Args>
+	requires(types::count_of_type<vk::primitive_topology>::for_types_of<Args...> == 1)
+	elements::one_of<vk::result, vk::handle<vk::pipeline>>
+	try_create_graphics_pipeline(Args&&... args) {
+		vk::primitive_topology topology = elements::of_type<vk::primitive_topology>::ignore_const::ignore_reference::for_elements_of(args...);
+
+		return elements::pass_satisfying_type_predicate<type::is_same_as<vk::primitive_topology>::negate>::to_function {
+			[&]<typename... Others>(Others&&... v) {
+				return vk::try_create_graphics_pipeline(
+					vk::pipeline_input_assembly_state_create_info{ .topology = topology },
+					forward<Others>(v)...
+				); }
+		}.for_elements_of(forward<Args>(args)...);
 	}
 
 	template<typename... Args>
