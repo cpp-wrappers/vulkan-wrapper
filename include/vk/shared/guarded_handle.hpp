@@ -29,8 +29,16 @@ namespace vk {
 			: m_handle{ exchange(other.m_handle.value, 0) }
 		{}
 
+		~guarded_handle_base() {
+			((vk::guarded_handle<ObjectType>*)this)->reset(
+				vk::handle<ObjectType>{}
+			);
+		}
+
 		guarded_handle_base& operator = (guarded_handle_base&& other) {
-			m_handle.value = exchange(other.m_handle.value, 0);
+			((vk::guarded_handle<ObjectType>*)this)->reset(
+				exchange(other.handle(), vk::handle<ObjectType>{})
+			);
 			return *this;
 		}
 

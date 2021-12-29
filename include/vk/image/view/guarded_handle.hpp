@@ -13,14 +13,15 @@ namespace vk {
 		using base_type::base_type;
 		guarded_handle& operator = (guarded_handle&&) = default;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::image_view> v) {
 			if(handle().value) {
 				vkDestroyImageView(
 					(VkDevice) device().value,
-					(VkImageView) exchange(handle().value, 0),
+					(VkImageView) handle().value,
 					(VkAllocationCallbacks*) nullptr
 				);
 			}
+			handle() = v;
 		}
 	};
 }

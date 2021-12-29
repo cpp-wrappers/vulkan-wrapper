@@ -11,5 +11,6 @@ out gl_PerVertex {
 
 void main() {
 	fs_color = color;
-	gl_Position = position;
+	vec4 pos = position;
+	gl_Position = pos;
 }

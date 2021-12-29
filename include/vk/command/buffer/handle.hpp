@@ -19,6 +19,8 @@
 #include "../../shared/guarded_handle.hpp"
 #include "../../shared/viewport.hpp"
 #include "../../shared/handle.hpp"
+#include "../../buffer/handle.hpp"
+#include "../../shared/device_size.hpp"
 
 namespace vk {
 
@@ -61,7 +63,7 @@ namespace vk {
 
 			return {
 				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) value,
+					(VkCommandBuffer) vk::get_handle_value(*this),
 					(VkCommandBufferBeginInfo*) &bi
 				)
 			};
@@ -80,7 +82,7 @@ namespace vk {
 
 			return {
 				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) value,
+					(VkCommandBuffer) vk::get_handle_value(*this),
 					(VkCommandBufferBeginInfo*) &bi
 				)
 			};
@@ -104,7 +106,7 @@ namespace vk {
 			auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>::for_elements_of<Args...>(args...);
 
 			vkCmdPipelineBarrier(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				(VkPipelineStageFlags) elements::of_type<vk::src_stage_flags&>::for_elements_of(args...).value,
 				(VkPipelineStageFlags) elements::of_type<vk::dst_stage_flags&>::for_elements_of(args...).value,
 				(VkDependencyFlags) elements::of_type<vk::dependency_flags&>::for_elements_of(args...).value,
@@ -124,7 +126,7 @@ namespace vk {
 			range::of_value_type<vk::image_subresource_range> auto&& ranges
 		) const {
 			vkCmdClearColorImage(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				(VkImage) image.value,
 				(VkImageLayout) layout,
 				(VkClearColorValue*) &clear_color,
@@ -135,7 +137,7 @@ namespace vk {
 
 		vk::result try_end() const {
 			return {
-				(int32) vkEndCommandBuffer((VkCommandBuffer) value)
+				(int32) vkEndCommandBuffer((VkCommandBuffer) vk::get_handle_value(*this))
 			};
 		}
 
@@ -148,7 +150,7 @@ namespace vk {
 			vk::render_pass_begin_info render_pass_begin_info
 		) const {
 			vkCmdBeginRenderPass(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				(VkRenderPassBeginInfo*) &render_pass_begin_info,
 				VK_SUBPASS_CONTENTS_INLINE
 			);
@@ -156,7 +158,7 @@ namespace vk {
 
 		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				VK_PIPELINE_BIND_POINT_GRAPHICS,
 				(VkPipeline) vk::get_handle_value(pipeline)
 			);
@@ -164,7 +166,7 @@ namespace vk {
 
 		void cmd_set_viewport(vk::viewport viewport) const {
 			vkCmdSetViewport(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				0,
 				1,
 				(VkViewport*) &viewport
@@ -180,7 +182,7 @@ namespace vk {
 
 		void cmd_set_scissor(vk::rect2d scissor) const {
 			vkCmdSetScissor(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				0,
 				1,
 				(VkRect2D*) &scissor
@@ -201,7 +203,7 @@ namespace vk {
 			uint32 first_instance
 		) const {
 			vkCmdDraw(
-				(VkCommandBuffer) value,
+				(VkCommandBuffer) vk::get_handle_value(*this),
 				vertex_count,
 				instance_count,
 				first_vertex,
@@ -210,7 +212,22 @@ namespace vk {
 		}
 
 		void cmd_end_render_pass() const {
-			vkCmdEndRenderPass((VkCommandBuffer) value);
+			vkCmdEndRenderPass((VkCommandBuffer) vk::get_handle_value(*this));
+		}
+
+		void cmd_bind_vertex_buffers(
+			uint32 first_binding,
+			uint32 binding_count,
+			vk::handle<vk::buffer>* buffers,
+			vk::device_size* offsets
+		) const {
+			vkCmdBindVertexBuffers(
+				(VkCommandBuffer) vk::get_handle_value(*this),
+				first_binding,
+				binding_count,
+				(VkBuffer*) buffers,
+				(VkDeviceSize*) offsets
+			);
 		}
 
 	};

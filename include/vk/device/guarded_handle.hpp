@@ -12,13 +12,14 @@ namespace vk {
 		using base_type = vk::guarded_handle_base<vk::device>;
 		using base_type::base_type;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::device> v) {
 			if(handle().value) {
 				vkDestroyDevice(
-					(VkDevice) exchange(handle().value, nullptr),
+					(VkDevice) handle().value,
 					nullptr
 				);
 			}
+			handle() = v;
 		}
 		
 		template<typename... Args>
@@ -55,6 +56,9 @@ namespace vk {
 
 		template<typename... Args>
 		vk::guarded_handle<vk::buffer> create_guarded_buffer(Args&&... args) const;
+
+		template<typename... Args>
+		vk::guarded_handle<vk::fence> create_guarded_fence(Args&&... args) const;
 
 		vk::memory_requirements
 		get_buffer_memory_requirements(vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer) const {
@@ -147,4 +151,11 @@ vk::guarded_handle<vk::swapchain> vk::guarded_handle<vk::device>::create_guarded
 template<typename... Args>
 vk::guarded_handle<vk::buffer> vk::guarded_handle<vk::device>::create_guarded_buffer(Args&&... args) const {
 	return { handle().create_buffer(forward<Args>(args)...), handle() };
+}
+
+#include "../fence/guarded_handle.hpp"
+
+template<typename... Args>
+vk::guarded_handle<vk::fence> vk::guarded_handle<vk::device>::create_guarded_fence(Args&&... args) const {
+	return { handle().create_fence(forward<Args>(args)...), handle() };
 }

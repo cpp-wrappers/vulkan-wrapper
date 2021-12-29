@@ -12,15 +12,17 @@ namespace vk {
 		using base_type = vk::guarded_device_child_handle_base<vk::semaphore>;
 
 		using base_type::base_type;
+		guarded_handle& operator = (guarded_handle&&) = default;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::semaphore> v) {
 			if(handle().value) {
 				vkDestroySemaphore(
 					(VkDevice) device().value,
-					(VkSemaphore) exchange(handle().value, 0),
+					(VkSemaphore) handle().value,
 					(VkAllocationCallbacks*) nullptr
 				);
 			}
+			handle() = v;
 		}
 	};
 } // vk

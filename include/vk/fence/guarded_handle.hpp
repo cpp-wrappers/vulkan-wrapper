@@ -12,7 +12,9 @@ namespace vk {
 
 		using base_type::base_type;
 
-		~guarded_handle() {
+		guarded_handle& operator = (guarded_handle&& other) = default;
+
+		void reset(vk::handle<vk::fence> v) {
 			if(handle().value) {
 				vkDestroyFence(
 					(VkDevice) device().value,
@@ -20,6 +22,7 @@ namespace vk {
 					(VkAllocationCallbacks*) nullptr
 				);
 			}
+			handle() = v;
 		}
 	};
 

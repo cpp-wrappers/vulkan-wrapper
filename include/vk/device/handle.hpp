@@ -14,6 +14,7 @@
 #include "../shared/handle.hpp"
 #include "../shared/memory_requirements.hpp"
 #include "../shared/guarded_handle.hpp"
+#include "../shared/timeout.hpp"
 
 namespace vk {
 
@@ -107,11 +108,11 @@ namespace vk {
 		vk::handle<vk::buffer> create_buffer(Args&&... args) const;
 
 		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::buffer>>
-		try_create_buffer(Args&&... args) const;
+		elements::one_of<vk::result, vk::handle<vk::fence>>
+		try_create_fence(Args&&... args) const;
 
 		template<typename... Args>
-		vk::handle<vk::buffer> create_buffer(Args&&... args) const;
+		vk::handle<vk::fence> create_fence(Args&&... args) const;
 
 		vk::memory_requirements
 		get_buffer_memory_requirements(vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer) const {
@@ -214,7 +215,48 @@ namespace vk {
 				)
 			};
 		}
-		
+
+		vk::result try_wait_for_fences(
+			range::of_value_type<vk::handle<vk::fence>> auto&& fences,
+			bool wait_all,
+			vk::timeout timeout
+		) const {
+			return {
+				(int32) vkWaitForFences(
+					(VkDevice) vk::get_handle_value(*this),
+					(uint32) fences.size(),
+					(VkFence*) fences.data(),
+					uint32{ wait_all },
+					(uint64) timeout
+				)
+			};
+		}
+
+		template<range::of_value_type<vk::handle<vk::fence>> Fences>
+		void wait_for_fences(
+			Fences&& fences,
+			bool wait_all,
+			vk::timeout timeout
+		) const {
+			vk::result result = try_wait_for_fences(forward<Fences>(fences), wait_all, timeout);
+			if(!result.success()) throw result;
+		}
+
+		vk::result try_reset_fences(range::of_value_type<vk::handle<vk::fence>> auto&& fences) const {
+			return {
+				(int) vkResetFences(
+					(VkDevice) vk::get_handle_value(*this),
+					(uint32) fences.size(),
+					(VkFence*) fences.data()
+				)
+			};
+		}
+
+		template<range::of_value_type<vk::handle<vk::fence>> Fences>
+		void reset_fences(Fences&& fences) const {
+			auto result = try_reset_fences(forward<Fences>(fences));
+			if(!result.success()) throw result;
+		}
 	}; // device
 
 } // vk
@@ -379,4 +421,17 @@ vk::handle<vk::device>::try_allocate_memory(Args&&... args) const {
 template<typename... Args>
 vk::handle<vk::device_memory> vk::handle<vk::device>::allocate_memory(Args&&... args) const {
 	return vk::allocate_memory(*this, forward<Args>(args)...);
+}
+
+#include "../fence/create.hpp"
+
+template<typename... Args>
+elements::one_of<vk::result, vk::handle<vk::fence>>
+vk::handle<vk::device>::try_create_fence(Args&&... args) const {
+	return vk::try_create_fence(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+vk::handle<vk::fence> vk::handle<vk::device>::create_fence(Args&&... args) const {
+	return vk::create_fence(*this, forward<Args>(args)...);
 }

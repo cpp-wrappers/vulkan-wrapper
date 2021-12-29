@@ -119,10 +119,10 @@ void entrypoint() {
 	};
 
 	data_t data[] = {
-		{ { -0.5, -0.5, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 0.0 } },
-		{ {  0.5, -0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 0.0 } },
-		{ { -0.5,  0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 0.0 } },
-		{ {  0.5,  0.5, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 0.0 } }
+		{ { -0.5,  0.5, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
+		{ {  0.5,  0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 1.0 } },
+		{ { -0.5, -0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 1.0 } },
+		{ {  0.5, -0.5, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } }
 	};
 
 	auto buffer = device.create_guarded_buffer(
@@ -133,20 +133,20 @@ void entrypoint() {
 
 	vk::vertex_input_binding_description vertex_binding_description {
 		vk::binding{ 0 },
-		vk::stride{ sizeof(data) },
+		vk::stride{ sizeof(data_t) },
 	};
 
 	array vertex_input_attribute_descriptions {
 		vk::vertex_input_attribute_description {
 			vk::location{ 0 },
 			vk::binding{ 0 },
-			vk::format::r32_g32_b32_sfloat,
+			vk::format::r32_g32_b32_a32_sfloat,
 			vk::offset<1>{ __builtin_offsetof(data_t, position) }
 		},
 		vk::vertex_input_attribute_description {
 			vk::location{ 1 },
 			vk::binding{ 0 },
-			vk::format::r32_g32_b32_sfloat,
+			vk::format::r32_g32_b32_a32_sfloat,
 			vk::offset<1>{ __builtin_offsetof(data_t, color) }
 		}
 	};
@@ -158,6 +158,7 @@ void entrypoint() {
 	for(uint32 i = 0; i < memory_props.memory_type_count; ++i) {
 		if(buff_requirements.memory_type_bits & (1 << i) && memory_props.memory_types[i].properties.get(vk::memory_property::host_visible)) {
 			device_memory = device.handle().allocate_memory(buff_requirements.size, vk::memory_type_index{i} );
+			break;
 		}
 	}
 
@@ -231,19 +232,29 @@ void entrypoint() {
 		vk::command_pool_create_flag::transient
 	);
 
-	vk::handle<vk::command_buffer> command_buffers_storage[2];
-	span command_buffers{ command_buffers_storage, 2 };
-	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
-
 	struct rendering_resource {
-		vk::handle<vk::command_buffer> command_buffer;
-		vk::guarded_handle<vk::semaphore> image_acquire;
-		vk::guarded_handle<vk::semaphore> finish;
-		vk::guarded_handle<vk::fence> fence;
-		vk::guarded_handle<vk::framebuffer> framebuffer;
+		vk::handle<vk::command_buffer> command_buffer{};
+		vk::guarded_handle<vk::semaphore> image_acquire{};
+		vk::guarded_handle<vk::semaphore> finish{};
+		vk::guarded_handle<vk::fence> fence{};
+		vk::guarded_handle<vk::framebuffer> framebuffer{};
 	};
 
-	auto swapchain = vk::guarded_handle<vk::swapchain>{};
+	array<rendering_resource, 2> rendering_resources{};
+
+	for(auto& rr : rendering_resources) {
+		command_pool.allocate_command_buffers(
+			vk::command_buffer_level::primary,
+			span<vk::handle<vk::command_buffer>>{ &rr.command_buffer, 1 }
+		);
+		
+		rr.image_acquire = device.create_guarded_semaphore();
+		rr.finish = device.create_guarded_semaphore();
+		rr.fence = device.create_guarded_fence(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+	}
+
+	vk::guarded_handle<vk::swapchain> swapchain{};
+	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while(!platform::should_close()) {
 		auto surface_capabilities = physical_device.get_surface_capabilities(surface);
@@ -285,26 +296,42 @@ void entrypoint() {
 			);
 		}
 
-		vk::guarded_handle<vk::framebuffer> framebuffers_raw[images_count];
-		span framebuffers{ framebuffers_raw, images_count };
+		nuint rendering_resource_index = 0;
 
-		for(nuint i = 0; i < images_count; ++i) {
-			framebuffers[i] = device.create_guarded_framebuffer(
+		while (!platform::should_close()) {
+			platform::begin();
+
+			auto& rr = rendering_resources[rendering_resource_index];
+			if(++rendering_resource_index >= 2) rendering_resource_index = 0;
+
+			device.handle().wait_for_fences(array{ rr.fence.handle() }, true, vk::timeout{ UINT64_MAX });
+			device.handle().reset_fences(array{ rr.fence.handle() });
+
+			auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, rr.image_acquire.handle());
+
+			if(result.is_current<vk::result>()) {
+				vk::result r = result.get<vk::result>();
+				if(r.suboptimal() || r.out_of_date()) break;
+				platform::error("can't acquire next swapchain image").new_line();
+				throw;
+			}
+
+			vk::image_index image_index = result.get<vk::image_index>();
+
+			rr.framebuffer = device.create_guarded_framebuffer(
 				render_pass,
-				array{ vk::handle<vk::image_view>{ image_views[i].handle() } },
+				array{ image_views[(uint32)image_index].handle() },
 				vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
 			);
-		}
 
-		for(nuint i = 0; i < images_count; ++i) {
-			auto command_buffer = command_buffers[i];
+			auto command_buffer = rr.command_buffer;
 
-			command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
+			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
 
 			vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
 			command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
 				.render_pass{ render_pass.handle() },
-				.framebuffer{ framebuffers[i].handle() },
+				.framebuffer{ rr.framebuffer.handle() },
 				.render_area{ .extent = surface_capabilities.current_extent },
 				.clear_value_count = 1,
 				.clear_values = &clear_value
@@ -315,40 +342,27 @@ void entrypoint() {
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
 
-			command_buffer.cmd_draw(3, 1, 0, 0);
+			vk::device_size offset{ 0 };
+			command_buffer.cmd_bind_vertex_buffers(0, 1, &buffer.handle(), &offset);
+
+			command_buffer.cmd_draw(4, 1, 0, 0);
 			command_buffer.cmd_end_render_pass();
 
 			command_buffer.end();
-		}
-
-		auto swapchain_image_semaphore = device.create_guarded_semaphore();
-		auto rendering_finished_semaphore = device.create_guarded_semaphore();
-
-		auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
-
-		while (!platform::should_close()) {
-			platform::begin();
-
-			auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.handle());
-
-			if(result.is_current<vk::result>()) {
-				vk::result r = result.get<vk::result>();
-
-				if(r.suboptimal() || r.out_of_date()) break;
-				platform::error("can't acquire next swapchain image").new_line();
-				throw;
-			}
-
-			vk::image_index image_index = result.get<vk::image_index>();
 
 			queue.submit(
-				vk::wait_semaphore{ swapchain_image_semaphore.handle() },
+				vk::wait_semaphore{ rr.image_acquire.handle() },
 				vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
-				command_buffers[(uint32)image_index],
-				vk::signal_semaphore{ rendering_finished_semaphore.handle() }
+				command_buffer,
+				vk::signal_semaphore{ rr.finish.handle() },
+				rr.fence.handle()
 			);
 
-			vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.handle() }, swapchain.handle(), image_index);
+			vk::result present_result = queue.try_present(
+				vk::wait_semaphore{ rr.finish.handle() },
+				swapchain.handle(),
+				image_index
+			);
 
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
@@ -361,6 +375,14 @@ void entrypoint() {
 
 		device.wait_idle();
 
-		command_pool.free_command_buffers(command_buffers);
+		for(auto& rr : rendering_resources) {
+			rr.fence = device.create_guarded_fence(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+			rr.image_acquire = device.create_guarded_semaphore();
+			rr.finish = device.create_guarded_semaphore();
+		}
+	}
+
+	for(auto& rr : rendering_resources) {
+		command_pool.free_command_buffers(array{ rr.command_buffer });
 	}
 }

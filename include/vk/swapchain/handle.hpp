@@ -11,7 +11,7 @@
 #include <core/span.hpp>
 
 #include "image_index.hpp"
-#include "timeout.hpp"
+#include "../shared/timeout.hpp"
 #include "../shared/headers.hpp"
 #include "../shared/result.hpp"
 #include "../shared/count.hpp"

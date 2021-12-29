@@ -12,14 +12,15 @@ namespace vk {
 
 		using base_type::base_type;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::command_pool> v) {
 			if(handle().value) {
 				vkDestroyCommandPool(
 					(VkDevice) device().value,
-					(VkCommandPool) exchange(handle().value, 0),
+					(VkCommandPool) handle().value,
 					nullptr
 				);
 			}
+			handle() = v;
 		}
 
 		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>

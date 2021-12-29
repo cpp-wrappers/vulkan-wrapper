@@ -12,14 +12,15 @@ namespace vk {
 
 		using base_type::base_type;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::shader_module> v) {
 			if(handle().value) {
 				vkDestroyShaderModule(
 					(VkDevice) device().value,
-					(VkShaderModule) exchange(handle().value, 0),
+					(VkShaderModule) handle().value,
 					nullptr
 				);
 			}
+			handle() = v;
 		}
 	};
 }

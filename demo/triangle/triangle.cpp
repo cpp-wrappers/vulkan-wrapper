@@ -154,6 +154,8 @@ void entrypoint() {
 	auto command_pool = device.create_guarded_command_pool(queue_family_index);
 	auto swapchain = vk::guarded_handle<vk::swapchain>{};
 
+	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+
 	while(!platform::should_close()) {
 		auto surface_capabilities = physical_device.get_surface_capabilities(surface);
 
@@ -236,8 +238,6 @@ void entrypoint() {
 
 		auto swapchain_image_semaphore = device.create_guarded_semaphore();
 		auto rendering_finished_semaphore = device.create_guarded_semaphore();
-
-		auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 		while (!platform::should_close()) {
 			platform::begin();

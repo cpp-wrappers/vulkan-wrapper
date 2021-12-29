@@ -15,16 +15,17 @@ namespace vk {
 
 		using base_type::base_type;
 
-		guarded_handle& operator = (guarded_handle&&) = default;
+		guarded_handle& operator = (guarded_handle&& other) = default;
 
-		~guarded_handle() {
+		void reset(vk::handle<vk::framebuffer> v) {
 			if(handle().value) {
 				vkDestroyFramebuffer(
 					(VkDevice) device().value,
-					(VkFramebuffer) exchange(handle().value, 0),
+					(VkFramebuffer) handle().value,
 					nullptr
 				);
 			}
+			handle() = v;
 		}
 	};
 }
