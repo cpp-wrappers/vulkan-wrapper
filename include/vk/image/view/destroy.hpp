@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../shared/destroy.hpp"
+#include "../../shared/destroy_or_free.hpp"
 #include "handle.hpp"
 #include "../../device/handle.hpp"
 

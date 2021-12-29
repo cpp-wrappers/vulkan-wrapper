@@ -8,9 +8,6 @@
 #include <core/types/count_of_type.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 
-#include "begin_info.hpp"
-#include "clear.hpp"
-#include "render_pass_begin_info.hpp"
 #include "../../image/memory_barrier.hpp"
 #include "../../pipeline/stage.hpp"
 #include "../../pipeline/graphics/handle.hpp"
@@ -21,6 +18,9 @@
 #include "../../shared/handle.hpp"
 #include "../../buffer/handle.hpp"
 #include "../../shared/device_size.hpp"
+#include "begin_info.hpp"
+#include "clear.hpp"
+#include "render_pass_begin_info.hpp"
 
 namespace vk {
 
@@ -28,6 +28,9 @@ namespace vk {
 	struct dst_stage_flags : flag_enum<vk::pipeline_stage> {};
 
 	struct command_buffer;
+
+	template<>
+	constexpr inline bool is_allocatable<vk::command_buffer> = true;
 
 	template<>
 	struct vk::handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {

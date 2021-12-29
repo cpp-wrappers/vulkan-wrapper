@@ -1,14 +1,14 @@
 #pragma once
 
+#include "../../shared/create_or_allocate.hpp"
+#include "../handle.hpp"
 #include "allocate_info.hpp"
 #include "handle.hpp"
-#include "../handle.hpp"
-#include "../../shared/create.hpp"
 
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::device_memory> {
+	struct vk::try_allocate_t<vk::device_memory> {
 
 		template<typename... Args>
 		requires(

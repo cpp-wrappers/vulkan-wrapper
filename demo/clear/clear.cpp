@@ -5,7 +5,6 @@ exit 1
 
 #include "vk/instance/guarded_handle.hpp"
 #include "vk/physical_device/handle.hpp"
-#include "vk/command/pool/guard.hpp"
 #include "vk/instance/layer_properties.hpp"
 
 #include "../platform/platform.hpp"
@@ -47,7 +46,7 @@ void entrypoint() {
 
 	vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);
 
-	auto swapchain = device.create_guarded_swapchain(
+	auto swapchain = device.create_guarded<vk::swapchain>(
 		surface,
 		surface_capabilities.min_image_count,
 		surface_capabilities.current_extent,
@@ -66,7 +65,7 @@ void entrypoint() {
 
 	swapchain.get_images(images);
 
-	auto command_pool = device.create_guarded_command_pool(queue_family_index);
+	auto command_pool = device.create_guarded<vk::command_pool>(queue_family_index);
 
 	vk::handle<vk::command_buffer> command_buffers_storage[images_count];
 	span<vk::handle<vk::command_buffer>> command_buffers{ command_buffers_storage, images_count };
@@ -122,15 +121,15 @@ void entrypoint() {
 		command_buffer.end();
 	}
 
-	auto swapchain_image_semaphore = device.create_guarded_semaphore();
-	auto rendering_finished_semaphore = device.create_guarded_semaphore();
+	auto swapchain_image_semaphore = device.create_guarded<vk::semaphore>();
+	auto rendering_finished_semaphore = device.create_guarded<vk::semaphore>();
 
 	auto presentation_queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while (!platform::should_close()) {
 		platform::begin();
 
-		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.object());
+		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.handle());
 
 		if(result.is_current<vk::result>()) {
 			vk::result r = result.get<vk::result>();
@@ -146,17 +145,17 @@ void entrypoint() {
 
 		presentation_queue.submit(vk::submit_info {
 			.wait_semaphore_count = 1,
-			.wait_semaphores = &swapchain_image_semaphore.object(),
+			.wait_semaphores = &swapchain_image_semaphore.handle(),
 			.wait_dst_stage_mask = &wait_dst_stage_mask,
 			.command_buffer_count = 1,
 			.command_buffers = &command_buffers[(uint32)image_index],
 			.signal_semaphore_count = 1,
-			.signal_semaphores = &rendering_finished_semaphore.object()
+			.signal_semaphores = &rendering_finished_semaphore.handle()
 		});
 
 		presentation_queue.present(vk::present_info {
 			.wait_semaphore_count = 1,
-			.wait_semaphores = &rendering_finished_semaphore.object(),
+			.wait_semaphores = &rendering_finished_semaphore.handle(),
 			.swapchain_count = 1,
 			.swapchains = &swapchain.handle(),
 			.image_indices = &image_index

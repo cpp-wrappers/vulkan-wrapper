@@ -19,7 +19,7 @@ inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarde
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
-	return device.create_guarded_shader_module(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
+	return device.create_guarded<vk::shader_module>(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
 }
 
 uint32 debug_report(
@@ -46,7 +46,7 @@ void entrypoint() {
 
 	auto instance = vk::create_guarded_instance(layers, extensions);
 
-	auto debug_report_callback = instance.create_guarded_debug_report_callback(
+	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
 		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
 		debug_report 
 	);
@@ -90,7 +90,7 @@ void entrypoint() {
 		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
 	};
 
-	auto render_pass = device.create_guarded_render_pass(
+	auto render_pass = device.create_guarded<vk::render_pass>(
 		array{ subpass_description },
 		array{ attachment_description },
 		array{ subpass_dependency }
@@ -109,11 +109,11 @@ void entrypoint() {
 		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	auto pipeline_layout = device.create_guarded_pipeline_layout();
+	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
 
 	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
 
-	auto pipeline = device.create_guarded_graphics_pipeline(
+	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_list,
 		array {
@@ -151,7 +151,7 @@ void entrypoint() {
 		vk::subpass{ 0 }
 	);
 
-	auto command_pool = device.create_guarded_command_pool(queue_family_index);
+	auto command_pool = device.create_guarded<vk::command_pool>(queue_family_index);
 	auto swapchain = vk::guarded_handle<vk::swapchain>{};
 
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
@@ -162,7 +162,7 @@ void entrypoint() {
 		{
 			auto old_swapchain = move(swapchain);
 
-			swapchain = device.create_guarded_swapchain(
+			swapchain = device.create_guarded<vk::swapchain>(
 				surface,
 				surface_capabilities.min_image_count,
 				surface_capabilities.current_extent,
@@ -187,7 +187,7 @@ void entrypoint() {
 		span image_views{ image_views_raw, images_count };
 
 		for(nuint i = 0; i < images_count; ++i) {
-			image_views[i] = device.create_guarded_image_view(
+			image_views[i] = device.create_guarded<vk::image_view>(
 				images[i],
 				surface_format.format,
 				vk::image_view_type::two_d,
@@ -200,7 +200,7 @@ void entrypoint() {
 		span framebuffers{ framebuffers_raw, images_count };
 
 		for(nuint i = 0; i < images_count; ++i) {
-			framebuffers[i] = device.create_guarded_framebuffer(
+			framebuffers[i] = device.create_guarded<vk::framebuffer>(
 				render_pass,
 				array{ vk::handle<vk::image_view>{ image_views[i].handle() } },
 				vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
@@ -236,8 +236,8 @@ void entrypoint() {
 			command_buffer.end();
 		}
 
-		auto swapchain_image_semaphore = device.create_guarded_semaphore();
-		auto rendering_finished_semaphore = device.create_guarded_semaphore();
+		auto swapchain_image_semaphore = device.create_guarded<vk::semaphore>();
+		auto rendering_finished_semaphore = device.create_guarded<vk::semaphore>();
 
 		while (!platform::should_close()) {
 			platform::begin();

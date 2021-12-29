@@ -157,7 +157,7 @@ void entrypoint() {
 
 	for(uint32 i = 0; i < memory_props.memory_type_count; ++i) {
 		if(buff_requirements.memory_type_bits & (1 << i) && memory_props.memory_types[i].properties.get(vk::memory_property::host_visible)) {
-			device_memory = device.create_guarded<vk::device_memory>(buff_requirements.size, vk::memory_type_index{i} );
+			device_memory = device.allocate_guarded<vk::device_memory>(buff_requirements.size, vk::memory_type_index{i} );
 			break;
 		}
 	}
@@ -233,7 +233,7 @@ void entrypoint() {
 	);
 
 	struct rendering_resource {
-		vk::handle<vk::command_buffer> command_buffer{};
+		vk::guarded_handle<vk::command_buffer> command_buffer{};
 		vk::guarded_handle<vk::semaphore> image_acquire{};
 		vk::guarded_handle<vk::semaphore> finish{};
 		vk::guarded_handle<vk::fence> fence{};
@@ -243,14 +243,7 @@ void entrypoint() {
 	array<rendering_resource, 2> rendering_resources{};
 
 	for(auto& rr : rendering_resources) {
-		command_pool.allocate_command_buffers(
-			vk::command_buffer_level::primary,
-			span<vk::handle<vk::command_buffer>>{ &rr.command_buffer, 1 }
-		);
-		
-		rr.image_acquire = device.create_guarded<vk::semaphore>();
-		rr.finish = device.create_guarded<vk::semaphore>();
-		rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+		rr.command_buffer = command_pool.allocate_guarded<vk::command_buffer>(vk::command_buffer_level::primary);
 	}
 
 	vk::guarded_handle<vk::swapchain> swapchain{};
@@ -298,6 +291,12 @@ void entrypoint() {
 
 		nuint rendering_resource_index = 0;
 
+		for(auto& rr : rendering_resources) {
+			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+			rr.image_acquire = device.create_guarded<vk::semaphore>();
+			rr.finish = device.create_guarded<vk::semaphore>();
+		}
+
 		while (!platform::should_close()) {
 			platform::begin();
 
@@ -324,7 +323,7 @@ void entrypoint() {
 				vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
 			);
 
-			auto command_buffer = rr.command_buffer;
+			auto& command_buffer = rr.command_buffer;
 
 			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
 
@@ -353,7 +352,7 @@ void entrypoint() {
 			queue.submit(
 				vk::wait_semaphore{ rr.image_acquire.handle() },
 				vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
-				command_buffer,
+				command_buffer.handle(),
 				vk::signal_semaphore{ rr.finish.handle() },
 				rr.fence.handle()
 			);
@@ -374,15 +373,5 @@ void entrypoint() {
 		}
 
 		device.wait_idle();
-
-		for(auto& rr : rendering_resources) {
-			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
-			rr.image_acquire = device.create_guarded<vk::semaphore>();
-			rr.finish = device.create_guarded<vk::semaphore>();
-		}
-	}
-
-	for(auto& rr : rendering_resources) {
-		command_pool.free_command_buffers(array{ rr.command_buffer });
 	}
 }

@@ -1,10 +1,8 @@
 #pragma once
 
-#include <core/exchange.hpp>
-
+#include "../shared/guarded_handle.hpp"
 #include "handle.hpp"
 #include "destroy.hpp"
-#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 
@@ -21,6 +19,16 @@ namespace vk {
 		template<typename ObjectType, typename... Args>
 		vk::guarded_handle<ObjectType> create_guarded(Args&&... args) const {
 			return { handle().create<ObjectType>(forward<Args>(args)...), handle() };
+		}
+
+		template<typename ObjectType, typename... Args>
+		vk::handle<ObjectType> allocate(Args&&... args) const {
+			return handle().allocate<ObjectType>(forward<Args>(args)...);
+		}
+
+		template<typename ObjectType, typename... Args>
+		vk::guarded_handle<ObjectType> allocate_guarded(Args&&... args) const {
+			return { handle().allocate<ObjectType>(forward<Args>(args)...), handle() };
 		}
 
 		vk::memory_requirements

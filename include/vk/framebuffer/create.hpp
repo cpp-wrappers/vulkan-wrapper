@@ -1,15 +1,12 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
 #include "../shared/extent.hpp"
 #include "../device/handle.hpp"
-#include "../shared/create.hpp"
+#include "../shared/create_or_allocate.hpp"
+#include "handle.hpp"
+#include "create_info.hpp"
 
 namespace vk {
-
-	struct device;
-	struct framebuffer;
 
 	template<>
 	struct vk::try_create_t<vk::framebuffer> {

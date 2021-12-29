@@ -28,9 +28,16 @@ namespace vk {
 			handle().allocate_command_buffers(device(), level, forward<CommandBuffers>(command_buffers));
 		}
 
+		template<typename ObjectType, typename... Args>
+		vk::guarded_handle<ObjectType> allocate_guarded(Args&&... args) const {
+			return { device(), handle(), vk::allocate<ObjectType>(device(), handle(), forward<Args>(args)...) };
+		}
+
 		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		void free_command_buffers(CommandBuffers&& command_buffers) {
 			handle().free_command_buffers(device(), forward<CommandBuffers>(command_buffers));
 		}
 	};
 }
+
+#include "../buffer/guarded_handle.hpp"

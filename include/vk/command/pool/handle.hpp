@@ -15,6 +15,7 @@ namespace vk {
 
 	template<>
 	struct vk::handle<vk::command_pool> : vk::handle_base<vk::non_dispatchable> {
+
 		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		vk::result try_allocate_command_buffers(
 			vk::handle<vk::device> device,

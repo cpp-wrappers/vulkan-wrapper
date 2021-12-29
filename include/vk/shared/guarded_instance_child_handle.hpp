@@ -18,15 +18,8 @@ namespace vk {
 			: base_type{ handle }, m_instance{ instance }
 		{}
 
-		guarded_instance_child_handle_base(guarded_instance_child_handle_base&& other)
-			: base_type{ exchange(other.handle(), vk::handle<ObjectType>{}) }, m_instance{ other.m_instance }
-		{}
-
-		guarded_instance_child_handle_base& operator = (guarded_instance_child_handle_base&& other) {
-			m_instance = other.m_instance;
-			((base_type*)this) -> operator = (move(other));
-			return *this;
-		}
+		guarded_instance_child_handle_base(guarded_instance_child_handle_base&& other) = default;
+		guarded_instance_child_handle_base& operator = (guarded_instance_child_handle_base&& other) = default;
 
 		void destroy() const {
 			vk::destroy<ObjectType>(instance(), ((base_type*)this)->handle());

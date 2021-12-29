@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../shared/destroy.hpp"
-#include "handle.hpp"
+#include "../../shared/destroy_or_free.hpp"
 #include "../handle.hpp"
+#include "handle.hpp"
 
 namespace vk {
 
 	template<>
-	struct vk::destroy_t<vk::device_memory> {
+	struct vk::free_t<vk::device_memory> {
 
 		void operator () (vk::handle<vk::device> device, vk::handle<vk::device_memory> device_memory) const {
 			vkFreeMemory(

@@ -7,7 +7,7 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 #include "../device/handle.hpp"
-#include "../shared/create.hpp"
+#include "../shared/create_or_allocate.hpp"
 
 namespace vk {
 

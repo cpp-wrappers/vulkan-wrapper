@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../shared/guarded_device_child_handle.hpp"
 #include "destroy.hpp"
 #include "handle.hpp"
-#include "../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
 

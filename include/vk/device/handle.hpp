@@ -7,7 +7,6 @@
 #include <core/range/of_value_type.hpp>
 #include <core/exchange.hpp>
 
-#include "mapped_memory_range.hpp"
 #include "../shared/headers.hpp"
 #include "../shared/queue_family_index.hpp"
 #include "../shared/result.hpp"
@@ -15,7 +14,8 @@
 #include "../shared/memory_requirements.hpp"
 #include "../shared/guarded_handle.hpp"
 #include "../shared/timeout.hpp"
-#include "../shared/create.hpp"
+#include "../shared/create_or_allocate.hpp"
+#include "mapped_memory_range.hpp"
 
 namespace vk {
 
@@ -52,6 +52,18 @@ namespace vk {
 		vk::handle<ObjectType>
 		create(Args&&... args) const {
 			return vk::create<ObjectType>(*this, forward<Args>(args)...);
+		}
+
+		template<typename ObjectType, typename... Args>
+		elements::one_of<vk::result, vk::handle<ObjectType>>
+		try_allocate(Args&&... args) const {
+			return vk::try_allocate<ObjectType>(*this, forward<Args>(args)...);
+		}
+
+		template<typename ObjectType, typename... Args>
+		vk::handle<ObjectType>
+		allocate(Args&&... args) const {
+			return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
 		}
 
 		vk::memory_requirements

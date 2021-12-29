@@ -33,6 +33,12 @@ namespace vk {
 
 	template<typename Type, typename ObjectType>
 	concept handle_of = some_handle<Type> && type::is_same_as<vk::handle<ObjectType>>::ignore_const::ignore_reference::template for_type<Type>;
+
+	template<typename ObjectType>
+	inline constexpr bool is_allocatable = false;
+
+	template<typename ObjectType>
+	inline constexpr bool is_creatable = !is_allocatable<ObjectType>;
 }
 
 namespace type::vk {

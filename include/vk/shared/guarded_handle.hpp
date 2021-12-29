@@ -7,7 +7,7 @@
 #include <core/elements/satisfying_predicate.hpp>
 
 #include "handle.hpp"
-#include "destroy.hpp"
+#include "destroy_or_free.hpp"
 
 namespace vk {
 	template<typename>
@@ -30,13 +30,18 @@ namespace vk {
 			: m_handle{ exchange(other.m_handle.value, 0) }
 		{}
 
-		void destroy() const {
+		void destroy() const requires vk::is_creatable<ObjectType> {
 			vk::destroy<ObjectType>(handle());
 		}
 
 		void reset(vk::handle<ObjectType> v = {}) {
 			if(handle().value) {
-				((vk::guarded_handle<ObjectType>*)this)->destroy();
+				if constexpr(vk::is_creatable<ObjectType>) {
+					((vk::guarded_handle<ObjectType>*)this)->destroy();
+				}
+				else {
+					((vk::guarded_handle<ObjectType>*)this)->free();
+				}
 			}
 			handle() = v;
 		}

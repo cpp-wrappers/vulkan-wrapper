@@ -1,11 +1,11 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
-#include "../shared/create.hpp"
+#include "../shared/create_or_allocate.hpp"
 #include "../surface/handle.hpp"
 #include "../surface/format.hpp"
 #include "../shared/guarded_handle.hpp"
+#include "handle.hpp"
+#include "create_info.hpp"
 
 namespace vk {
 

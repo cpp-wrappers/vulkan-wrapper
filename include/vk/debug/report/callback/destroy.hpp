@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../shared/destroy.hpp"
-#include "handle.hpp"
 #include "../../../instance/handle.hpp"
+#include "../../../shared/destroy_or_free.hpp"
+#include "handle.hpp"
 
 namespace vk {
 
