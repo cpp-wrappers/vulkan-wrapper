@@ -15,6 +15,7 @@
 #include "../shared/memory_requirements.hpp"
 #include "../shared/guarded_handle.hpp"
 #include "../shared/timeout.hpp"
+#include "../shared/create.hpp"
 
 namespace vk {
 
@@ -41,78 +42,17 @@ namespace vk {
 
 		inline vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const;
 
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::shader_module>>
-		try_create_shader_module(Args&&... args) const;
+		template<typename ObjectType, typename... Args>
+		elements::one_of<vk::result, vk::handle<ObjectType>>
+		try_create(Args&&... args) const {
+			return vk::try_create<ObjectType>(*this, forward<Args>(args)...);
+		}
 
-		template<typename... Args>
-		vk::handle<vk::shader_module> create_shader_module(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::command_pool> create_command_pool(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::framebuffer>>
-		try_create_framebuffer(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::framebuffer> create_framebuffer(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::image_view>>
-		try_create_image_view(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::image_view> create_image_view(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::pipeline_layout>>
-		try_create_pipeline_layout(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::pipeline_layout> create_pipeline_layout(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::pipeline>>
-		try_create_graphics_pipeline(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::pipeline> create_graphics_pipeline(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::render_pass>>
-		try_create_render_pass(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::render_pass> create_render_pass(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::semaphore>>
-		try_create_semaphore(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::semaphore> create_semaphore(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::swapchain>>
-		try_create_swapchain(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::swapchain> create_swapchain(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::buffer>>
-		try_create_buffer(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::buffer> create_buffer(Args&&... args) const;
-
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::fence>>
-		try_create_fence(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::fence> create_fence(Args&&... args) const;
+		template<typename ObjectType, typename... Args>
+		vk::handle<ObjectType>
+		create(Args&&... args) const {
+			return vk::create<ObjectType>(*this, forward<Args>(args)...);
+		}
 
 		vk::memory_requirements
 		get_buffer_memory_requirements(vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer) const {
@@ -201,13 +141,6 @@ namespace vk {
 			if(!result.success()) throw result;
 		}
 
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::device_memory>>
-		try_allocate_memory(Args&&... args) const;
-
-		template<typename... Args>
-		vk::handle<vk::device_memory> allocate_memory(Args&&... args) const;
-
 		vk::result try_wait_idle() const {
 			return {
 				(int32) vkDeviceWaitIdle(
@@ -278,160 +211,14 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 }
 
 #include "../command/pool/create.hpp"
-
-template<typename... Args>
-vk::handle<vk::command_pool>
-vk::handle<vk::device>::create_command_pool(Args&&... args) const {
-	return vk::create_command_pool(*this, forward<Args>(args)...);
-}
-
 #include "../shader/module/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::shader_module>>
-vk::handle<vk::device>::try_create_shader_module(Args&&... args) const {
-	return vk::try_create_shader_module(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::shader_module>
-vk::handle<vk::device>::create_shader_module(Args&&... args) const {
-	return vk::create_shader_module(*this, forward<Args>(args)...);
-}
-
 #include "../framebuffer/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::framebuffer>>
-vk::handle<vk::device>::try_create_framebuffer(Args&&... args) const {
-	return vk::try_create_framebuffer(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::framebuffer>
-vk::handle<vk::device>::create_framebuffer(Args&&... args) const {
-	return vk::create_framebuffer(*this, forward<Args>(args)...);
-}
-
 #include "../image/view/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::image_view>>
-vk::handle<vk::device>::try_create_image_view(Args&&... args) const {
-	return vk::try_create_image_view(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::image_view>
-vk::handle<vk::device>::create_image_view(Args&&... args) const {
-	return vk::create_image_view(*this, forward<Args>(args)...);
-}
-
 #include "../pipeline/layout/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::pipeline_layout>>
-vk::handle<vk::device>::try_create_pipeline_layout(Args&&... args) const {
-	return vk::try_create_pipeline_layout(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::pipeline_layout>
-vk::handle<vk::device>::create_pipeline_layout(Args&&... args) const {
-	return vk::create_pipeline_layout(*this, forward<Args>(args)...);
-}
-
-#include "../pipeline/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::pipeline>>
-vk::handle<vk::device>::try_create_graphics_pipeline(Args&&... args) const {
-	return vk::try_create_graphics_pipeline(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::pipeline>
-vk::handle<vk::device>::create_graphics_pipeline(Args&&... args) const {
-	return vk::create_graphics_pipeline(*this, forward<Args>(args)...);
-}
-
+#include "../pipeline/graphics/create.hpp"
 #include "../render_pass/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::render_pass>>
-vk::handle<vk::device>::try_create_render_pass(Args&&... args) const {
-	return vk::try_create_render_pass(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::render_pass>
-vk::handle<vk::device>::create_render_pass(Args&&... args) const {
-	return vk::create_render_pass(*this, forward<Args>(args)...);
-}
-
 #include "../semaphore/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::semaphore>>
-vk::handle<vk::device>::try_create_semaphore(Args&&... args) const {
-	return vk::try_create_semaphore(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::semaphore>
-vk::handle<vk::device>::create_semaphore(Args&&... args) const {
-	return vk::create_semaphore(*this, forward<Args>(args)...);
-}
-
 #include "../swapchain/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::swapchain>>
-vk::handle<vk::device>::try_create_swapchain(Args&&... args) const {
-	return vk::try_create_swapchain(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::swapchain>
-vk::handle<vk::device>::create_swapchain(Args&&... args) const {
-	return vk::create_swapchain(*this, forward<Args>(args)...);
-}
-
 #include "../buffer/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::buffer>>
-vk::handle<vk::device>::try_create_buffer(Args&&... args) const {
-	return vk::try_create_buffer(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::buffer> vk::handle<vk::device>::create_buffer(Args&&... args) const {
-	return vk::create_buffer(*this, forward<Args>(args)...);
-}
-
 #include "memory/allocate.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::device_memory>>
-vk::handle<vk::device>::try_allocate_memory(Args&&... args) const {
-	return vk::try_allocate_memory(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::device_memory> vk::handle<vk::device>::allocate_memory(Args&&... args) const {
-	return vk::allocate_memory(*this, forward<Args>(args)...);
-}
-
 #include "../fence/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::fence>>
-vk::handle<vk::device>::try_create_fence(Args&&... args) const {
-	return vk::try_create_fence(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::fence> vk::handle<vk::device>::create_fence(Args&&... args) const {
-	return vk::create_fence(*this, forward<Args>(args)...);
-}

@@ -1,10 +1,7 @@
 #pragma once
 
-#include <core/exchange.hpp>
-
 #include "handle.hpp"
-#include "../device/handle.hpp"
-#include "../shared/headers.hpp"
+#include "destroy.hpp"
 #include "../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
@@ -16,16 +13,5 @@ namespace vk {
 		using base_type::base_type;
 
 		guarded_handle& operator = (guarded_handle&& other) = default;
-
-		void reset(vk::handle<vk::framebuffer> v) {
-			if(handle().value) {
-				vkDestroyFramebuffer(
-					(VkDevice) device().value,
-					(VkFramebuffer) handle().value,
-					nullptr
-				);
-			}
-			handle() = v;
-		}
 	};
 }

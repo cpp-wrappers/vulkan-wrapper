@@ -3,21 +3,21 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "shader_stage_create_info.hpp"
-#include "vertex_input_state/create_info.hpp"
-#include "input_assembly_state_create_info.hpp"
-#include "tesselation_state_create_info.hpp"
-#include "viewport_state_create_info.hpp"
-#include "rasterization_state_create_info.hpp"
-#include "multisample_state_create_info.hpp"
-#include "depth_stencil_state_create_info.hpp"
-#include "color_blend_state_create_info.hpp"
-#include "dynamic_state_create_info.hpp"
-#include "../render_pass/handle.hpp"
-#include "layout/handle.hpp"
+#include "../shader_stage_create_info.hpp"
+#include "../vertex_input_state/create_info.hpp"
+#include "../input_assembly_state_create_info.hpp"
+#include "../tesselation_state_create_info.hpp"
+#include "../viewport_state_create_info.hpp"
+#include "../rasterization_state_create_info.hpp"
+#include "../multisample_state_create_info.hpp"
+#include "../depth_stencil_state_create_info.hpp"
+#include "../color_blend_state_create_info.hpp"
+#include "../dynamic_state_create_info.hpp"
+#include "../../render_pass/handle.hpp"
+#include "../layout/handle.hpp"
 #include "handle.hpp"
-#include "../shared/headers.hpp"
-#include "../shared/subpass.hpp"
+#include "../../shared/headers.hpp"
+#include "../../shared/subpass.hpp"
 
 namespace vk {
 
@@ -62,7 +62,7 @@ namespace vk {
 		vk::handle<vk::pipeline_layout> layout;
 		vk::handle<vk::render_pass> render_pass;
 		vk::subpass subpass;
-		vk::handle<vk::pipeline> base_pipeline;
+		vk::handle<vk::graphics_pipeline> base_pipeline;
 		int32 base_pipeline_index;
 	};
 }

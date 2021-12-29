@@ -1,8 +1,7 @@
 #pragma once
 
 #include "handle.hpp"
-#include "create.hpp"
-#include "../device/handle.hpp"
+#include "destroy.hpp"
 #include "../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
@@ -15,16 +14,6 @@ namespace vk {
 
 		guarded_handle(guarded_handle&&) = default;
 		guarded_handle& operator = (guarded_handle&&) = default;
-
-		~guarded_handle() {
-			if(handle().value) {
-				vkDestroySwapchainKHR(
-					(VkDevice) device().value,
-					(VkSwapchainKHR) exchange(handle().value, 0),
-					nullptr
-				);
-			}
-		}
 
 		elements::one_of<vk::result, vk::image_index>
 		try_acquire_next_image(

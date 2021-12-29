@@ -28,6 +28,10 @@ namespace vk {
 			return *this;
 		}
 
+		void destroy() const {
+			vk::destroy<ObjectType>(instance(), ((base_type*)this)->handle());
+		}
+
 		const vk::handle<vk::instance>& instance() const {
 			return m_instance;
 		}

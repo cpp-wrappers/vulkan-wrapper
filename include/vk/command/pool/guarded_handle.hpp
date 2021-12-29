@@ -1,7 +1,7 @@
 #pragma once
 
 #include "handle.hpp"
-#include "create.hpp"
+#include "destroy.hpp"
 #include "../../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
@@ -11,17 +11,6 @@ namespace vk {
 		using base_type = vk::guarded_device_child_handle_base<vk::command_pool>;
 
 		using base_type::base_type;
-
-		void reset(vk::handle<vk::command_pool> v) {
-			if(handle().value) {
-				vkDestroyCommandPool(
-					(VkDevice) device().value,
-					(VkCommandPool) handle().value,
-					nullptr
-				);
-			}
-			handle() = v;
-		}
 
 		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		vk::result try_allocate_command_buffers(

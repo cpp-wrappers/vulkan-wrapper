@@ -1,7 +1,7 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../device/handle.hpp"
+#include "destroy.hpp"
 #include "../../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
@@ -12,16 +12,5 @@ namespace vk {
 
 		using base_type::base_type;
 		guarded_handle& operator = (guarded_handle&&) = default;
-
-		void reset(vk::handle<vk::image_view> v) {
-			if(handle().value) {
-				vkDestroyImageView(
-					(VkDevice) device().value,
-					(VkImageView) handle().value,
-					(VkAllocationCallbacks*) nullptr
-				);
-			}
-			handle() = v;
-		}
 	};
 }

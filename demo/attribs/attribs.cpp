@@ -19,7 +19,7 @@ inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarde
 	auto size = platform::file_size(path);
 	char src[size];
 	platform::read_file(path, src, size);
-	return device.create_guarded_shader_module(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
+	return device.create_guarded<vk::shader_module>(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
 }
 
 uint32 debug_report(
@@ -46,7 +46,7 @@ void entrypoint() {
 
 	auto instance = vk::create_guarded_instance(layers, extensions);
 
-	auto debug_report_callback = instance.create_guarded_debug_report_callback(
+	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
 		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
 		debug_report 
 	);
@@ -90,7 +90,7 @@ void entrypoint() {
 		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
 	};
 
-	auto render_pass = device.create_guarded_render_pass(
+	auto render_pass = device.create_guarded<vk::render_pass>(
 		array{ subpass_description },
 		array{ attachment_description },
 		array{ subpass_dependency }
@@ -109,7 +109,7 @@ void entrypoint() {
 		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	auto pipeline_layout = device.create_guarded_pipeline_layout();
+	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
 
 	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
 
@@ -125,7 +125,7 @@ void entrypoint() {
 		{ {  0.5, -0.5, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } }
 	};
 
-	auto buffer = device.create_guarded_buffer(
+	auto buffer = device.create_guarded<vk::buffer>(
 		vk::buffer_size{ sizeof(data) },
 		vk::buffer_usages{ vk::buffer_usage::vertex_buffer },
 		vk::sharing_mode::exclusive
@@ -153,16 +153,16 @@ void entrypoint() {
 
 	auto buff_requirements = device.get_buffer_memory_requirements(buffer);
 	auto memory_props = physical_device.get_memory_properties();
-	vk::handle<vk::device_memory> device_memory;
+	vk::guarded_handle<vk::device_memory> device_memory{};
 
 	for(uint32 i = 0; i < memory_props.memory_type_count; ++i) {
 		if(buff_requirements.memory_type_bits & (1 << i) && memory_props.memory_types[i].properties.get(vk::memory_property::host_visible)) {
-			device_memory = device.handle().allocate_memory(buff_requirements.size, vk::memory_type_index{i} );
+			device_memory = device.create_guarded<vk::device_memory>(buff_requirements.size, vk::memory_type_index{i} );
 			break;
 		}
 	}
 
-	if(!device_memory.value) throw;
+	if(!device_memory.handle().value) throw;
 
 	device.handle().bind_buffer_memory(buffer, device_memory);
 
@@ -174,7 +174,7 @@ void entrypoint() {
 	device.handle().flush_mapped_memory_ranges(
 		array{
 			vk::mapped_memory_range {
-				.memory{ device_memory },
+				.memory{ device_memory.handle() },
 				.offset{ 0 },
 				.size{ sizeof(data) }
 			}
@@ -183,7 +183,7 @@ void entrypoint() {
 
 	device.handle().unmap_memory(device_memory);
 
-	auto pipeline = device.create_guarded_graphics_pipeline(
+	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_strip,
 		array {
@@ -226,7 +226,7 @@ void entrypoint() {
 		vk::subpass{ 0 }
 	);
 
-	auto command_pool = device.create_guarded_command_pool(
+	auto command_pool = device.create_guarded<vk::command_pool>(
 		queue_family_index,
 		vk::command_pool_create_flag::reset_command_buffer,
 		vk::command_pool_create_flag::transient
@@ -248,9 +248,9 @@ void entrypoint() {
 			span<vk::handle<vk::command_buffer>>{ &rr.command_buffer, 1 }
 		);
 		
-		rr.image_acquire = device.create_guarded_semaphore();
-		rr.finish = device.create_guarded_semaphore();
-		rr.fence = device.create_guarded_fence(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+		rr.image_acquire = device.create_guarded<vk::semaphore>();
+		rr.finish = device.create_guarded<vk::semaphore>();
+		rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
 	}
 
 	vk::guarded_handle<vk::swapchain> swapchain{};
@@ -262,7 +262,7 @@ void entrypoint() {
 		{
 			auto old_swapchain = move(swapchain);
 
-			swapchain = device.create_guarded_swapchain(
+			swapchain = device.create_guarded<vk::swapchain>(
 				surface,
 				surface_capabilities.min_image_count,
 				surface_capabilities.current_extent,
@@ -287,7 +287,7 @@ void entrypoint() {
 		span image_views{ image_views_raw, images_count };
 
 		for(nuint i = 0; i < images_count; ++i) {
-			image_views[i] = device.create_guarded_image_view(
+			image_views[i] = device.create_guarded<vk::image_view>(
 				images[i],
 				surface_format.format,
 				vk::image_view_type::two_d,
@@ -318,7 +318,7 @@ void entrypoint() {
 
 			vk::image_index image_index = result.get<vk::image_index>();
 
-			rr.framebuffer = device.create_guarded_framebuffer(
+			rr.framebuffer = device.create_guarded<vk::framebuffer>(
 				render_pass,
 				array{ image_views[(uint32)image_index].handle() },
 				vk::extent<3>{ surface_capabilities.current_extent.width(), surface_capabilities.current_extent.height(), 1 }
@@ -376,9 +376,9 @@ void entrypoint() {
 		device.wait_idle();
 
 		for(auto& rr : rendering_resources) {
-			rr.fence = device.create_guarded_fence(vk::fence_create_flags{ vk::fence_create_flag::signaled });
-			rr.image_acquire = device.create_guarded_semaphore();
-			rr.finish = device.create_guarded_semaphore();
+			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+			rr.image_acquire = device.create_guarded<vk::semaphore>();
+			rr.finish = device.create_guarded<vk::semaphore>();
 		}
 	}
 

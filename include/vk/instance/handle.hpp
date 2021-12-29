@@ -110,26 +110,18 @@ namespace vk {
 			return try_for_each_physical_device(forward<F>(f)).template get<vk::count>();
 		}
 
-		template<typename... Args>
-		elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
-		try_create_debug_report_callback(Args&&... args) const;
+		template<typename ObjectType, typename... Args>
+		elements::one_of<vk::result, vk::handle<ObjectType>>
+		try_create(Args&&... args) const {
+			return vk::try_create<ObjectType>(*this, forward<Args>(args)...);
+		}
 
-		template<typename... Args>
-		vk::handle<vk::debug_report_callback> create_debug_report_callback(Args&&... args) const;
+		template<typename ObjectType, typename... Args>
+		vk::handle<ObjectType> create(Args&&... args) const {
+			return vk::create<ObjectType>(*this, forward<Args>(args)...);
+		}
 	}; // instance
 
 } // vk
 
 #include "../debug/report/callback/create.hpp"
-
-template<typename... Args>
-elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
-vk::handle<vk::instance>::try_create_debug_report_callback(Args&&... args) const {
-	return vk::try_create_debug_report_callback(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-vk::handle<vk::debug_report_callback>
-vk::handle<vk::instance>::create_debug_report_callback(Args&&... args) const {
-	return vk::create_debug_report_callback(*this, forward<Args>(args)...);
-}

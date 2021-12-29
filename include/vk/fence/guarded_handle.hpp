@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../shared/guarded_device_child_handle.hpp"
-
+#include "destroy.hpp"
 #include "handle.hpp"
+#include "../shared/guarded_device_child_handle.hpp"
 
 namespace vk {
 
@@ -13,17 +13,6 @@ namespace vk {
 		using base_type::base_type;
 
 		guarded_handle& operator = (guarded_handle&& other) = default;
-
-		void reset(vk::handle<vk::fence> v) {
-			if(handle().value) {
-				vkDestroyFence(
-					(VkDevice) device().value,
-					(VkFence) exchange(handle().value, 0),
-					(VkAllocationCallbacks*) nullptr
-				);
-			}
-			handle() = v;
-		}
 	};
 
 }

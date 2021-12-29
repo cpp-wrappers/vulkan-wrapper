@@ -1,7 +1,7 @@
 #pragma once
 
 #include "handle.hpp"
-#include "create.hpp"
+#include "destroy.hpp"
 #include "../device/handle.hpp"
 #include "../shared/guarded_device_child_handle.hpp"
 
@@ -13,16 +13,5 @@ namespace vk {
 
 		using base_type::base_type;
 		guarded_handle& operator = (guarded_handle&&) = default;
-
-		void reset(vk::handle<vk::semaphore> v) {
-			if(handle().value) {
-				vkDestroySemaphore(
-					(VkDevice) device().value,
-					(VkSemaphore) handle().value,
-					(VkAllocationCallbacks*) nullptr
-				);
-			}
-			handle() = v;
-		}
 	};
 } // vk

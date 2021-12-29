@@ -1,53 +1,47 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/one_of.hpp>
-
-#include "../../shared/result.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../../shared/create.hpp"
 #include "../../device/handle.hpp"
 
 namespace vk {
 
-	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::handle<vk::device>>::equals<1>,
-			types::count_of_type<vk::code_size>::equals<1>,
-			types::count_of_type<vk::code>::equals<1>
-		>::for_types_of<Args...>
-	)
-	elements::one_of<vk::result, vk::handle<vk::shader_module>> try_create_shader_module(const Args&... args) {
-		vk::shader_module_create_info ci {
-			.code_size = elements::of_type<const vk::code_size&>::for_elements_of(args...),
-			.code = elements::of_type<const vk::code&>::for_elements_of(args...)
-		};
-		
-		const vk::handle<vk::device>& device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
+	template<>
+	struct vk::try_create_t<vk::shader_module> {
 
-		VkShaderModule shader_module;
-		
-		vk::result result {
-			(int32) vkCreateShaderModule(
-				(VkDevice) device.value,
-				(VkShaderModuleCreateInfo*) &ci,
-				nullptr,
-				(VkShaderModule*) &shader_module
-			)
-		};
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::count_of_type<vk::handle<vk::device>>::equals<1>,
+				types::count_of_type<vk::code_size>::equals<1>,
+				types::count_of_type<vk::code>::equals<1>
+			>::for_types_of<Args...>
+		)
+		elements::one_of<vk::result, vk::handle<vk::shader_module>>
+		operator () (const Args&... args) const {
+			vk::shader_module_create_info ci {
+				.code_size = elements::of_type<const vk::code_size&>::for_elements_of(args...),
+				.code = elements::of_type<const vk::code&>::for_elements_of(args...)
+			};
 
-		if(result.success()) return vk::handle<vk::shader_module>{ shader_module };
+			const vk::handle<vk::device>& device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
 
-		return result;
-	}
+			VkShaderModule shader_module;
 
-	template<typename... Args>
-	vk::handle<vk::shader_module> create_shader_module(Args&&... args) {
-		auto result = vk::try_create_shader_module(forward<Args>(args)...);
-		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::handle<vk::shader_module>>();
-	}
+			vk::result result {
+				(int32) vkCreateShaderModule(
+					(VkDevice) device.value,
+					(VkShaderModuleCreateInfo*) &ci,
+					nullptr,
+					(VkShaderModule*) &shader_module
+				)
+			};
+
+			if(result.success()) return vk::handle<vk::shader_module>{ shader_module };
+
+			return result;
+		}
+
+	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../device/handle.hpp"
+#include "destroy.hpp"
 
 namespace vk {
 	struct device;
@@ -26,6 +27,10 @@ namespace vk {
 			m_device = other.m_device;
 			((base_type*)this) -> operator = (move(other));
 			return *this;
+		}
+
+		void destroy() const {
+			vk::destroy<ObjectType>(device(), ((base_type*)this)->handle());
 		}
 
 		const vk::handle<vk::device>& device() const {

@@ -13,7 +13,7 @@
 #include "render_pass_begin_info.hpp"
 #include "../../image/memory_barrier.hpp"
 #include "../../pipeline/stage.hpp"
-#include "../../pipeline/handle.hpp"
+#include "../../pipeline/graphics/handle.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/dependency.hpp"
 #include "../../shared/guarded_handle.hpp"
@@ -156,7 +156,7 @@ namespace vk {
 			);
 		}
 
-		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::pipeline> auto& pipeline) const {
+		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::graphics_pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
 				(VkCommandBuffer) vk::get_handle_value(*this),
 				VK_PIPELINE_BIND_POINT_GRAPHICS,

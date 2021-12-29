@@ -43,7 +43,7 @@ fi
 
 declare -a libs
 
-if [ $OS == Windows_NT ]; then
+if [[ $OS == Windows_NT ]]; then
 	libs+=(-lglfw3)
 	libs+=(/c/Windows/System32/vulkan-1.dll)
 else

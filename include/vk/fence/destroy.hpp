@@ -7,16 +7,14 @@
 namespace vk {
 
 	template<>
-	struct vk::destroy_t<vk::buffer> {
-
-		void operator () (vk::handle<vk::device> device, vk::handle<vk::buffer> buffer) const {
-			vkDestroyBuffer(
+	struct vk::destroy_t<vk::fence> {
+		void operator() (vk::handle<vk::device> device, vk::handle<vk::fence> fence) const {
+			vkDestroyFence(
 				(VkDevice) device.value,
-				(VkBuffer) buffer.value,
+				(VkFence) fence.value,
 				nullptr
 			);
 		}
-
 	};
 
 }

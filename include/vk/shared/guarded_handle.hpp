@@ -7,6 +7,7 @@
 #include <core/elements/satisfying_predicate.hpp>
 
 #include "handle.hpp"
+#include "destroy.hpp"
 
 namespace vk {
 	template<typename>
@@ -14,7 +15,7 @@ namespace vk {
 
 	template<typename ObjectType>
 	class guarded_handle_base {
-		vk::handle<ObjectType> m_handle;
+		vk::handle<ObjectType> m_handle{};
 
 	public:
 		using object_type = ObjectType;
@@ -29,16 +30,24 @@ namespace vk {
 			: m_handle{ exchange(other.m_handle.value, 0) }
 		{}
 
+		void destroy() const {
+			vk::destroy<ObjectType>(handle());
+		}
+
+		void reset(vk::handle<ObjectType> v = {}) {
+			if(handle().value) {
+				((vk::guarded_handle<ObjectType>*)this)->destroy();
+			}
+			handle() = v;
+		}
+
 		~guarded_handle_base() {
-			((vk::guarded_handle<ObjectType>*)this)->reset(
-				vk::handle<ObjectType>{}
-			);
+			reset();
 		}
 
 		guarded_handle_base& operator = (guarded_handle_base&& other) {
-			((vk::guarded_handle<ObjectType>*)this)->reset(
-				exchange(other.handle(), vk::handle<ObjectType>{})
-			);
+			reset(other.handle());
+			other.handle().value = 0;
 			return *this;
 		}
 
