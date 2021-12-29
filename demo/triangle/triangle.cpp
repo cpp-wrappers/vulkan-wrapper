@@ -70,30 +70,28 @@ void entrypoint() {
 
 	auto surface_format = physical_device.get_first_surface_format(surface);
 
-	vk::attachment_description attachment_description {
-		surface_format.format,
-		vk::load_op{ vk::attachment_load_op::clear },
-		vk::store_op{ vk::attachment_store_op::store },
-		vk::final_layout{ vk::image_layout::present_src_khr }
-	};
-
 	array color_attachments {
 		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
 	};
-	
-	vk::subpass_description subpass_description { color_attachments };
-
-	vk::subpass_dependency subpass_dependency {
-		vk::src_subpass{ VK_SUBPASS_EXTERNAL },
-		vk::dst_subpass{ 0 },
-		vk::src_stages{ vk::pipeline_stage::color_attachment_output },
-		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
-	};
 
 	auto render_pass = device.create_guarded<vk::render_pass>(
-		array{ subpass_description },
-		array{ attachment_description },
-		array{ subpass_dependency }
+		array{ vk::subpass_description{ color_attachments } },
+		array{
+			vk::attachment_description {
+				surface_format.format,
+				vk::load_op{ vk::attachment_load_op::clear },
+				vk::store_op{ vk::attachment_store_op::store },
+				vk::final_layout{ vk::image_layout::present_src_khr }
+			}
+		},
+		array{
+			vk::subpass_dependency {
+				vk::src_subpass{ VK_SUBPASS_EXTERNAL },
+				vk::dst_subpass{ 0 },
+				vk::src_stages{ vk::pipeline_stage::color_attachment_output },
+				vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
+			}
+		}
 	);
 
 	auto vertex_shader = read_shader_module(device, "triangle.vert.spv");
@@ -217,13 +215,11 @@ void entrypoint() {
 			command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
 
 			vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
-			command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
-				.render_pass{ render_pass.handle() },
-				.framebuffer{ framebuffers[i].handle() },
-				.render_area{ .extent = surface_capabilities.current_extent },
-				.clear_value_count = 1,
-				.clear_values = &clear_value
-			});
+			command_buffer.cmd_begin_render_pass(
+				render_pass, framebuffers[i],
+				vk::render_area{ vk::offset<2>{}, surface_capabilities.current_extent },
+				array{ clear_value }
+			);
 
 			command_buffer.cmd_bind_pipeline(pipeline);
 
@@ -248,24 +244,24 @@ void entrypoint() {
 				vk::result r = result.get<vk::result>();
 
 				if(r.suboptimal() || r.out_of_date()) break;
-				platform::error("can't acquire next swapchain image").new_line();
+				platform::error("acquire next image").new_line();
 				throw;
 			}
 
 			vk::image_index image_index = result.get<vk::image_index>();
 
 			queue.submit(
-				vk::wait_semaphore{ swapchain_image_semaphore.handle() },
+				vk::wait_semaphore{ swapchain_image_semaphore },
 				vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
 				command_buffers[(uint32)image_index],
-				vk::signal_semaphore{ rendering_finished_semaphore.handle() }
+				vk::signal_semaphore{ rendering_finished_semaphore }
 			);
 
 			vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.handle() }, swapchain.handle(), image_index);
 
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
-				platform::error("can't present").new_line();
+				platform::error("present").new_line();
 				throw;
 			}
 

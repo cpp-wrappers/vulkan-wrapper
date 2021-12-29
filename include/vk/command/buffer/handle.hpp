@@ -151,15 +151,8 @@ namespace vk {
 			if(!result.success()) throw result;
 		}
 
-		void cmd_begin_render_pass(
-			vk::render_pass_begin_info render_pass_begin_info
-		) const {
-			vkCmdBeginRenderPass(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				(VkRenderPassBeginInfo*) &render_pass_begin_info,
-				VK_SUBPASS_CONTENTS_INLINE
-			);
-		}
+		template<typename... Args>
+		void cmd_begin_render_pass(Args&&... args) const;
 
 		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::graphics_pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
@@ -238,3 +231,10 @@ namespace vk {
 	};
 
 } // vk
+
+#include "cmd_begin_render_pass.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_begin_render_pass(Args&&... args) const {
+	vk::cmd_begin_render_pass(*this, forward<Args>(args)...);
+}

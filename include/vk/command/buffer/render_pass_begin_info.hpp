@@ -10,12 +10,14 @@
 
 namespace vk {
 
+	struct render_area : wrapper::of<vk::rect2d> {};
+
 	struct render_pass_begin_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		const void* next;
 		vk::handle<vk::render_pass> render_pass;
 		vk::handle<vk::framebuffer> framebuffer;
-		vk::rect2d render_area;
+		vk::render_area render_area;
 		uint32 clear_value_count;
 		vk::clear_value* clear_values;
 	};

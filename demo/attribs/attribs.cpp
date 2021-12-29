@@ -307,7 +307,7 @@ void entrypoint() {
 			if(result.is_current<vk::result>()) {
 				vk::result r = result.get<vk::result>();
 				if(r.suboptimal() || r.out_of_date()) break;
-				platform::error("can't acquire next swapchain image").new_line();
+				platform::error("acquire next image").new_line();
 				throw;
 			}
 
@@ -324,13 +324,11 @@ void entrypoint() {
 			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
 
 			vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
-			command_buffer.cmd_begin_render_pass(vk::render_pass_begin_info {
-				.render_pass{ render_pass.handle() },
-				.framebuffer{ rr.framebuffer.handle() },
-				.render_area{ .extent = surface_capabilities.current_extent },
-				.clear_value_count = 1,
-				.clear_values = &clear_value
-			});
+			command_buffer.cmd_begin_render_pass(
+				render_pass, rr.framebuffer,
+				vk::render_area{ vk::offset<2>{}, surface_capabilities.current_extent },
+				array{ clear_value }
+			);
 
 			command_buffer.cmd_bind_pipeline(pipeline);
 
@@ -360,7 +358,7 @@ void entrypoint() {
 
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
-				platform::error("can't present").new_line();
+				platform::error("present").new_line();
 				throw;
 			}
 
