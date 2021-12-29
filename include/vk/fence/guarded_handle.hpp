@@ -3,6 +3,8 @@
 #include "../shared/guarded_device_child_handle.hpp"
 #include "destroy.hpp"
 #include "handle.hpp"
+#include "wait_for_fence.hpp"
+#include "reset_fence.hpp"
 
 namespace vk {
 
@@ -13,6 +15,15 @@ namespace vk {
 		using base_type::base_type;
 
 		guarded_handle& operator = (guarded_handle&& other) = default;
+
+		template<typename... Args>
+		void wait(Args&&... args) const {
+			vk::wait_for_fence(device(), handle(), forward<Args>(args)...);
+		}
+
+		void reset() const {
+			vk::reset_fence(device(), handle());
+		}
 	};
 
 }

@@ -129,12 +129,12 @@ void entrypoint() {
 	while (!platform::should_close()) {
 		platform::begin();
 
-		auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.handle());
+		auto result = swapchain.try_acquire_next_image(swapchain_image_semaphore);
 
 		if(result.is_current<vk::result>()) {
 			vk::result r = result.get<vk::result>();
 
-			if((int32)r == VK_SUBOPTIMAL_KHR) break;
+			if(r.suboptimal()) break;
 			platform::error("can't acquire swapchain image").new_line();
 			throw;
 		}

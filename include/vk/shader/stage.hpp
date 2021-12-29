@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/flag_enum.hpp>
+
 #include "../shared/headers.hpp"
 
 namespace vk {
@@ -23,5 +25,7 @@ namespace vk {
 		mesh = VK_SHADER_STAGE_MESH_BIT_NV,
 		//subpass_shading = VK_SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI
 	};
+
+	using shader_stages = flag_enum<vk::shader_stage>;
 
 } // vk

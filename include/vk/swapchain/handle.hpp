@@ -2,6 +2,7 @@
 
 #include <core/forward.hpp>
 #include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/are_contain_type.hpp>
 #include <core/types/count_of_type.hpp>
 #include <core/elements/for_each_of_type.hpp>
 #include <core/elements/of_type.hpp>
@@ -17,6 +18,8 @@
 #include "../shared/count.hpp"
 #include "../shared/guarded_handle.hpp"
 #include "../shared/handle.hpp"
+#include "../semaphore/handle.hpp"
+#include "../fence/handle.hpp"
 
 namespace vk {
 
@@ -30,19 +33,43 @@ namespace vk {
 	template<>
 	struct vk::handle<vk::swapchain> : vk::handle_base<vk::non_dispatchable> {
 
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::contain_one<vk::device>,
+				types::vk::may_contain_one<vk::semaphore>,
+				types::vk::may_contain_one<vk::fence>,
+				types::count_of_type<vk::timeout>::less_or_equals<1>
+			>::for_types_of<Args...>
+		)
 		elements::one_of<vk::result, vk::image_index>
-		try_acquire_next_image(
-			const vk::ordinary_or_guarded_handle<vk::device> auto& device,
-			vk::timeout timeout,
-			const vk::ordinary_or_guarded_handle<vk::semaphore> auto& semaphore,
-			const vk::ordinary_or_guarded_handle<vk::fence> auto& fence
-		) const {
+		try_acquire_next_image(Args&&... args) const {
+			auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
+			
+			vk::timeout timeout{ UINT64_MAX };
+
+			if constexpr(types::are_contain_type<vk::timeout>::ignore_const::ignore_reference::for_types_of<Args...>) {
+				timeout = elements::of_type<vk::timeout>::ignore_const::ignore_reference::for_elements_of(args...);
+			}
+
+			vk::handle<vk::semaphore> semaphore{ VK_NULL_HANDLE };
+
+			if constexpr(types::vk::contain_one<vk::semaphore>::for_types_of<Args...>) {
+				semaphore = vk::get_handle(elements::vk::of_type<vk::semaphore>::for_elements_of(args...));
+			}
+
+			vk::handle<vk::fence> fence{ VK_NULL_HANDLE };
+
+			if constexpr(types::vk::contain_one<vk::fence>::for_types_of<Args...>) {
+				fence = vk::get_handle(elements::of_type<vk::fence>::for_elements_of(args...));
+			}
+
 			uint32 index;
 
 			vk::result result {
 				(int32) vkAcquireNextImageKHR(
 					(VkDevice) vk::get_handle_value(device),
-					(VkSwapchainKHR) value,
+					(VkSwapchainKHR) vk::get_handle_value(*this),
 					(uint64) timeout,
 					(VkSemaphore) vk::get_handle_value(semaphore),
 					(VkFence) vk::get_handle_value(fence),

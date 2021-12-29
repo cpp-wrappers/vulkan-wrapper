@@ -3,10 +3,12 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 #include <core/c_string.hpp>
+#include <core/types/are_exclusively_satsify_predicates.hpp>
 
 #include "../shared/headers.hpp"
 #include "../shader/stage.hpp"
 #include "../shader/module/handle.hpp"
+#include "../shared/guarded_handle.hpp"
 
 namespace vk {
 
@@ -15,13 +17,43 @@ namespace vk {
 		require_full_subgroups = VK_PIPELINE_SHADER_STAGE_CREATE_REQUIRE_FULL_SUBGROUPS_BIT_EXT
 	};
 
+	struct entrypoint_name : wrapper::of<c_string> {};
+
 	struct pipeline_shader_stage_create_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		const void* next;
-		flag_enum<vk::shader_stage_create_flag> flags;
-		flag_enum<vk::shader_stage> stage;
+		const void* next = nullptr;
+		flag_enum<vk::shader_stage_create_flag> flags{};
+		vk::shader_stages stages;
 		vk::handle<vk::shader_module> module;
-		c_string entry_point_name;
-		const void* specialization_info;
+		vk::entrypoint_name entrypoint_name;
+		const void* specialization_info = nullptr;
+
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::contain_one<vk::shader_module>,
+				types::count_of_type<vk::shader_stages>::equals<1>::ignore_const::ignore_reference,
+				types::count_of_type<vk::entrypoint_name>::equals<1>::ignore_const::ignore_reference
+			>::for_types_of<Args...>
+		)
+		pipeline_shader_stage_create_info(Args&&... args) {
+			stages = elements::of_type<vk::shader_stages>::ignore_const::ignore_reference::for_elements_of(args...);
+			module = vk::get_handle(elements::vk::of_type<vk::shader_module>::for_elements_of(args...));
+			entrypoint_name = elements::of_type<vk::entrypoint_name>::ignore_const::ignore_reference::for_elements_of(args...);
+		}
+
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::contain_one<vk::shader_module>,
+				types::count_of_type<vk::shader_stage>::equals<1>::ignore_const::ignore_reference,
+				types::count_of_type<vk::entrypoint_name>::equals<1>::ignore_const::ignore_reference
+			>::for_types_of<Args...>
+		)
+		pipeline_shader_stage_create_info(Args&&... args) {
+			stages = elements::of_type<vk::shader_stage>::ignore_const::ignore_reference::for_elements_of(args...);
+			module = vk::get_handle(elements::vk::of_type<vk::shader_module>::for_elements_of(args...));
+			entrypoint_name = elements::of_type<vk::entrypoint_name>::ignore_const::ignore_reference::for_elements_of(args...);
+		}
 	};
 }

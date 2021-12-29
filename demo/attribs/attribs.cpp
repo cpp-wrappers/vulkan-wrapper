@@ -188,18 +188,18 @@ void entrypoint() {
 		vk::primitive_topology::triangle_strip,
 		array {
 			vk::pipeline_shader_stage_create_info {
-				.stage{ vk::shader_stage::vertex },
-				.module{ vertex_shader.handle() },
-				.entry_point_name{ "main" }
+				vk::shader_stage::vertex,
+				vertex_shader,
+				vk::entrypoint_name{ "main" }
 			},
 			vk::pipeline_shader_stage_create_info {
-				.stage{ vk::shader_stage::fragment },
-				.module{ fragment_shader.handle() },
-				.entry_point_name{ "main" }
+				vk::shader_stage::fragment,
+				fragment_shader,
+				vk::entrypoint_name{ "main" }
 			}
 		},
 		vk::pipeline_multisample_state_create_info{},
-		vk::pipeline_vertex_input_state_create_info{
+		vk::pipeline_vertex_input_state_create_info {
 			.vertex_binding_description_count = 1,
 			.vertex_binding_descriptions = &vertex_binding_description,
 			.vertex_attribute_description_count = 2,
@@ -233,11 +233,11 @@ void entrypoint() {
 	);
 
 	struct rendering_resource {
-		vk::guarded_handle<vk::command_buffer> command_buffer{};
-		vk::guarded_handle<vk::semaphore> image_acquire{};
-		vk::guarded_handle<vk::semaphore> finish{};
-		vk::guarded_handle<vk::fence> fence{};
-		vk::guarded_handle<vk::framebuffer> framebuffer{};
+		vk::guarded_handle<vk::command_buffer> command_buffer;
+		vk::guarded_handle<vk::semaphore> image_acquire;
+		vk::guarded_handle<vk::semaphore> finish;
+		vk::guarded_handle<vk::fence> fence;
+		vk::guarded_handle<vk::framebuffer> framebuffer;
 	};
 
 	array<rendering_resource, 2> rendering_resources{};
@@ -289,24 +289,24 @@ void entrypoint() {
 			);
 		}
 
-		nuint rendering_resource_index = 0;
-
 		for(auto& rr : rendering_resources) {
 			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
 			rr.image_acquire = device.create_guarded<vk::semaphore>();
 			rr.finish = device.create_guarded<vk::semaphore>();
 		}
 
-		while (!platform::should_close()) {
-			platform::begin();
+		nuint rendering_resource_index = 0;
 
+		while (!platform::should_close()) {
 			auto& rr = rendering_resources[rendering_resource_index];
 			if(++rendering_resource_index >= 2) rendering_resource_index = 0;
+			
+			platform::begin();
 
-			device.handle().wait_for_fences(array{ rr.fence.handle() }, true, vk::timeout{ UINT64_MAX });
-			device.handle().reset_fences(array{ rr.fence.handle() });
+			rr.fence.wait();
+			rr.fence.reset();
 
-			auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, rr.image_acquire.handle());
+			auto result = swapchain.try_acquire_next_image(rr.image_acquire);
 
 			if(result.is_current<vk::result>()) {
 				vk::result r = result.get<vk::result>();

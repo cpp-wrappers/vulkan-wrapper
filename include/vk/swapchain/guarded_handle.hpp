@@ -15,13 +15,10 @@ namespace vk {
 		guarded_handle(guarded_handle&&) = default;
 		guarded_handle& operator = (guarded_handle&&) = default;
 
+		template<typename... Args>
 		elements::one_of<vk::result, vk::image_index>
-		try_acquire_next_image(
-			vk::timeout timeout,
-			vk::handle<vk::semaphore> semaphore = { VK_NULL_HANDLE },
-			vk::handle<vk::fence> fence = {VK_NULL_HANDLE}
-		) const {
-			return handle().try_acquire_next_image(device(), timeout, semaphore, fence);
+		try_acquire_next_image(Args&&... args) const {
+			return handle().try_acquire_next_image(device(), forward<Args>(args)...);
 		}
 
 		template<range::of_value_type<vk::handle<vk::image>> Images>

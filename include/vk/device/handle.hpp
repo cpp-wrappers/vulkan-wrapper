@@ -3,6 +3,7 @@
 #include <core/forward.hpp>
 #include <core/elements/one_of.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
+#include <core/types/are_contain_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/exchange.hpp>
@@ -36,6 +37,7 @@ namespace vk {
 	struct fence;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
+	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
 
 	template<>
 	struct vk::handle<vk::device> : vk::handle_base<vk::dispatchable> {
@@ -159,48 +161,6 @@ namespace vk {
 					(VkDevice) value
 				)
 			};
-		}
-
-		vk::result try_wait_for_fences(
-			range::of_value_type<vk::handle<vk::fence>> auto&& fences,
-			bool wait_all,
-			vk::timeout timeout
-		) const {
-			return {
-				(int32) vkWaitForFences(
-					(VkDevice) vk::get_handle_value(*this),
-					(uint32) fences.size(),
-					(VkFence*) fences.data(),
-					uint32{ wait_all },
-					(uint64) timeout
-				)
-			};
-		}
-
-		template<range::of_value_type<vk::handle<vk::fence>> Fences>
-		void wait_for_fences(
-			Fences&& fences,
-			bool wait_all,
-			vk::timeout timeout
-		) const {
-			vk::result result = try_wait_for_fences(forward<Fences>(fences), wait_all, timeout);
-			if(!result.success()) throw result;
-		}
-
-		vk::result try_reset_fences(range::of_value_type<vk::handle<vk::fence>> auto&& fences) const {
-			return {
-				(int) vkResetFences(
-					(VkDevice) vk::get_handle_value(*this),
-					(uint32) fences.size(),
-					(VkFence*) fences.data()
-				)
-			};
-		}
-
-		template<range::of_value_type<vk::handle<vk::fence>> Fences>
-		void reset_fences(Fences&& fences) const {
-			auto result = try_reset_fences(forward<Fences>(fences));
-			if(!result.success()) throw result;
 		}
 	}; // device
 

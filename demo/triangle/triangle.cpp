@@ -118,14 +118,14 @@ void entrypoint() {
 		vk::primitive_topology::triangle_list,
 		array {
 			vk::pipeline_shader_stage_create_info {
-				.stage{ vk::shader_stage::vertex },
-				.module{ vertex_shader.handle() },
-				.entry_point_name{ "main" }
+				vk::shader_stage::vertex,
+				vertex_shader,
+				vk::entrypoint_name{ "main" }
 			},
 			vk::pipeline_shader_stage_create_info {
-				.stage{ vk::shader_stage::fragment },
-				.module{ fragment_shader.handle() },
-				.entry_point_name{ "main" }
+				vk::shader_stage::fragment,
+				fragment_shader.handle(),
+				vk::entrypoint_name{ "main" }
 			}
 		},
 		vk::pipeline_multisample_state_create_info{},
@@ -242,7 +242,7 @@ void entrypoint() {
 		while (!platform::should_close()) {
 			platform::begin();
 
-			auto result = swapchain.try_acquire_next_image(vk::timeout{ UINT64_MAX }, swapchain_image_semaphore.handle());
+			auto result = swapchain.try_acquire_next_image(swapchain_image_semaphore);
 
 			if(result.is_current<vk::result>()) {
 				vk::result r = result.get<vk::result>();
