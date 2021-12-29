@@ -63,6 +63,10 @@ namespace vk {
 		vk::handle<ObjectType>& handle() {
 			return m_handle;
 		}
+
+		operator vk::handle<ObjectType> () const {
+			return handle();
+		}
 	};
 
 	template<typename Type>

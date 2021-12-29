@@ -47,8 +47,8 @@ void entrypoint() {
 	auto instance = vk::create_guarded_instance(layers, extensions);
 
 	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
-		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
-		debug_report 
+		vk::debug_report::error, vk::debug_report::warning, vk::debug_report::information,
+		debug_report
 	);
 
 	auto surface = platform::create_surface(instance);
@@ -68,52 +68,7 @@ void entrypoint() {
 		vk::extension_name{ "VK_KHR_swapchain" }
 	);
 
-	auto surface_format = physical_device.get_first_surface_format(surface);
-
-	vk::attachment_description attachment_description {
-		surface_format.format,
-		vk::load_op{ vk::attachment_load_op::clear },
-		vk::store_op{ vk::attachment_store_op::store },
-		vk::final_layout{ vk::image_layout::present_src_khr }
-	};
-
-	array color_attachments {
-		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
-	};
-	
-	vk::subpass_description subpass_description { color_attachments };
-
-	vk::subpass_dependency subpass_dependency {
-		vk::src_subpass{ VK_SUBPASS_EXTERNAL },
-		vk::dst_subpass{ 0 },
-		vk::src_stages{ vk::pipeline_stage::color_attachment_output },
-		vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
-	};
-
-	auto render_pass = device.create_guarded<vk::render_pass>(
-		array{ subpass_description },
-		array{ attachment_description },
-		array{ subpass_dependency }
-	);
-
-	auto vertex_shader = read_shader_module(device, "attribs.vert.spv");
-	auto fragment_shader = read_shader_module(device, "attribs.frag.spv");
-
-	vk::pipeline_color_blend_attachment_state pcbas {
-		.src_color_blend_factor = vk::blend_factor::one,
-		.dst_color_blend_factor = vk::blend_factor::zero,
-		.color_blend_op = vk::blend_op::add,
-		.src_alpha_blend_factor = vk::blend_factor::one,
-		.dst_alpha_blend_factor = vk::blend_factor::zero,
-		.alpha_blend_op = vk::blend_op::add,
-		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
-	};
-
-	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
-
-	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
-
-	struct data_t {
+		struct data_t {
 		float position[4];
 		float color[4];
 	};
@@ -182,6 +137,47 @@ void entrypoint() {
 	);
 
 	device.handle().unmap_memory(device_memory);
+
+	auto surface_format = physical_device.get_first_surface_format(surface);
+
+	array color_attachments {
+		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
+	};
+
+	auto render_pass = device.create_guarded<vk::render_pass>(
+		array{ vk::subpass_description {
+			color_attachments
+		} },
+		array{ vk::subpass_dependency {
+			vk::src_subpass{ VK_SUBPASS_EXTERNAL },
+			vk::dst_subpass{ 0 },
+			vk::src_stages{ vk::pipeline_stage::color_attachment_output },
+			vk::dst_stages{ vk::pipeline_stage::color_attachment_output }
+		} },
+		array{ vk::attachment_description {
+			surface_format.format,
+			vk::load_op{ vk::attachment_load_op::clear },
+			vk::store_op{ vk::attachment_store_op::store },
+			vk::final_layout{ vk::image_layout::present_src_khr }
+		} }
+	);
+
+	auto vertex_shader = read_shader_module(device, "attribs.vert.spv");
+	auto fragment_shader = read_shader_module(device, "attribs.frag.spv");
+
+	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
+
+	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
+
+	vk::pipeline_color_blend_attachment_state pcbas {
+		.src_color_blend_factor = vk::blend_factor::one,
+		.dst_color_blend_factor = vk::blend_factor::zero,
+		.color_blend_op = vk::blend_op::add,
+		.src_alpha_blend_factor = vk::blend_factor::one,
+		.dst_alpha_blend_factor = vk::blend_factor::zero,
+		.alpha_blend_op = vk::blend_op::add,
+		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
+	};
 
 	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
 		pipeline_layout, render_pass,
@@ -350,15 +346,14 @@ void entrypoint() {
 			command_buffer.end();
 
 			queue.submit(
-				vk::wait_semaphore{ rr.image_acquire.handle() },
+				command_buffer,
+				vk::wait_semaphore{ rr.image_acquire }, vk::signal_semaphore{ rr.finish },
 				vk::pipeline_stages{ vk::pipeline_stage::color_attachment_output },
-				command_buffer.handle(),
-				vk::signal_semaphore{ rr.finish.handle() },
-				rr.fence.handle()
+				rr.fence
 			);
 
 			vk::result present_result = queue.try_present(
-				vk::wait_semaphore{ rr.finish.handle() },
+				vk::wait_semaphore{ rr.finish },
 				swapchain.handle(),
 				image_index
 			);

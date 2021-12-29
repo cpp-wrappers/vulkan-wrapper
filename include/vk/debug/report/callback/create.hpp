@@ -51,6 +51,30 @@ namespace vk {
 
 			return result;
 		};
+
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::contain_one<vk::instance>,
+				types::count_of_type<vk::debug_report_flag>::greater_or_equals<1>::ignore_const::ignore_reference,
+				types::count_of_type<vk::debug_report_callback_type>::equals<1>
+			>::for_types_of<Args...>
+		)
+		elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
+		operator () (Args&&... args) const {
+			vk::debug_report_flags flags{};
+
+			elements::for_each_of_type<vk::debug_report_flag>::ignore_const::ignore_reference::function {
+				[&](auto flag) {
+					flags.set(flag);
+				}
+			}.for_elements_of(args...);
+
+			auto& instance = elements::vk::of_type<vk::instance>::for_elements_of(args...);
+			auto& callback = elements::of_type<vk::debug_report_callback_type>::for_elements_of(args...);
+
+			return this->operator () (flags, instance, callback);
+		}
 	};
 
 }

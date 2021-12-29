@@ -37,7 +37,10 @@ namespace vk {
 			return m_command_pool;
 		}
 
-		template<typename... Args> auto begin(Args&&... args) const { return handle().begin(forward<Args>(args)...); }
+		template<typename... Args>
+		requires(sizeof...(Args) > 0)
+		auto begin(Args&&... args) const { return handle().begin(forward<Args>(args)...); }
+
 		template<typename... Args> auto cmd_begin_render_pass(Args&&... args) const { return handle().cmd_begin_render_pass(forward<Args>(args)...); }
 		template<typename... Args> auto cmd_bind_pipeline(Args&&... args) const { return handle().cmd_bind_pipeline(forward<Args>(args)...); }
 		template<typename... Args> auto cmd_set_viewport(Args&&... args) const { return handle().cmd_set_viewport(forward<Args>(args)...); }

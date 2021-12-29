@@ -12,5 +12,7 @@ namespace vk {
 		debug = VK_DEBUG_REPORT_DEBUG_BIT_EXT,
 	};
 
+	using debug_report = debug_report_flag;
+
 	using debug_report_flags = flag_enum<vk::debug_report_flag>;
 }

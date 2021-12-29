@@ -73,7 +73,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires(types::are_same::for_types_of<Args..., vk::command_buffer_usage>)
+		requires(sizeof...(Args) > 0 && types::are_same::for_types_of<Args..., vk::command_buffer_usage>)
 		vk::result try_begin(Args... args) const {
 			vk::command_buffer_begin_info bi {
 				.inheritance_info = nullptr
@@ -91,7 +91,9 @@ namespace vk {
 			};
 		}
 
-		void begin(auto... args) const {
+		template<typename... Args>
+		requires(sizeof...(Args) > 0 && types::are_same::for_types_of<Args..., vk::command_buffer_usage>)
+		void begin(Args... args) const {
 			vk::result result = try_begin(args...);
 			if(!result.success()) throw result;
 		}
