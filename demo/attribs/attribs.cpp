@@ -68,7 +68,7 @@ void entrypoint() {
 		vk::extension_name{ "VK_KHR_swapchain" }
 	);
 
-		struct data_t {
+	struct data_t {
 		float position[4];
 		float color[4];
 	};
@@ -286,7 +286,7 @@ void entrypoint() {
 		}
 
 		for(auto& rr : rendering_resources) {
-			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flags{ vk::fence_create_flag::signaled });
+			rr.fence = device.create_guarded<vk::fence>(vk::fence_create_flag::signaled);
 			rr.image_acquire = device.create_guarded<vk::semaphore>();
 			rr.finish = device.create_guarded<vk::semaphore>();
 		}
@@ -295,7 +295,7 @@ void entrypoint() {
 
 		while (!platform::should_close()) {
 			auto& rr = rendering_resources[rendering_resource_index];
-			if(++rendering_resource_index >= 2) rendering_resource_index = 0;
+			if(++rendering_resource_index >= rendering_resources.size()) rendering_resource_index = 0;
 			
 			platform::begin();
 
@@ -323,22 +323,18 @@ void entrypoint() {
 
 			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
 
-			vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
 			command_buffer.cmd_begin_render_pass(
 				render_pass, rr.framebuffer,
-				vk::render_area{ vk::offset<2>{}, surface_capabilities.current_extent },
-				array{ clear_value }
+				vk::render_area{ surface_capabilities.current_extent },
+				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
 			);
 
 			command_buffer.cmd_bind_pipeline(pipeline);
 
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
-
-			vk::device_size offset{ 0 };
-			command_buffer.cmd_bind_vertex_buffers(0, 1, &buffer.handle(), &offset);
-
-			command_buffer.cmd_draw(4, 1, 0, 0);
+			command_buffer.cmd_bind_vertex_buffer(buffer);
+			command_buffer.cmd_draw(vk::vertex_count{ 4 });
 			command_buffer.cmd_end_render_pass();
 
 			command_buffer.end();
@@ -352,7 +348,7 @@ void entrypoint() {
 
 			vk::result present_result = queue.try_present(
 				vk::wait_semaphore{ rr.finish },
-				swapchain.handle(),
+				swapchain,
 				image_index
 			);
 

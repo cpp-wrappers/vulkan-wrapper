@@ -44,6 +44,26 @@ namespace vk {
 	
 			return result;
 		}
+
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::contain_one<vk::device>,
+				types::count_of_type<vk::fence_create_flag>::greater_or_equals<0>::ignore_const::ignore_reference
+			>::for_types_of<Args...>
+		)
+		elements::one_of<vk::result, vk::handle<vk::fence>>
+		operator () (Args&&... args) const {
+			auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
+
+			vk::fence_create_flags create_flags;
+
+			elements::for_each_of_type<vk::fence_create_flag>::ignore_const::ignore_reference::function {
+				[&](vk::fence_create_flag flag){ create_flags.set(flag); }
+			}.for_elements_of(args...);
+
+			return this-> operator() (device, create_flags);
+		}
 	};
 
 }

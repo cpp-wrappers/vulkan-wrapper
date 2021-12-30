@@ -1,9 +1,17 @@
 #pragma once
 
-#include "handle.hpp"
+#include <core/types/count_of_ranges_of_value_type.hpp>
+#include <core/elements/range_of_value_type.hpp>
+#include <core/types/count_of_type.hpp>
+#include <core/elements/of_type.hpp>
+
+#include "../shared/guarded_handle.hpp"
+#include "../fence/handle.hpp"
+#include "../command/buffer/handle.hpp"
 #include "wait_semaphore.hpp"
 #include "signal_semaphore.hpp"
-#include "../fence/handle.hpp"
+#include "submit_info.hpp"
+#include "handle.hpp"
 
 namespace vk {
 

@@ -4,6 +4,7 @@
 #include <core/types/count_of_type.hpp>
 
 #include "handle.hpp"
+#include "render_pass_begin_info.hpp"
 
 namespace vk {
 	

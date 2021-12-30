@@ -18,9 +18,10 @@
 #include "../../shared/handle.hpp"
 #include "../../buffer/handle.hpp"
 #include "../../shared/device_size.hpp"
-#include "begin_info.hpp"
+#include "../../shared/extent.hpp"
+#include "../../shared/rect2d.hpp"
 #include "clear.hpp"
-#include "render_pass_begin_info.hpp"
+#include "begin_info.hpp"
 
 namespace vk {
 
@@ -35,68 +36,8 @@ namespace vk {
 	template<>
 	struct vk::handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 
-		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::command_buffer_usage>::greater_or_equals<0>,
-				types::count_of_type<vk::render_pass>::equals<1>,
-				types::count_of_type<vk::framebuffer>::equals<1>,
-				types::count_of_type<vk::subpass>::equals<1>,
-				types::count_of_type<vk::occlusion_query_enable>::less_or_equals<1>,
-				types::count_of_type<vk::query_control>::greater_or_equals<0>,
-				types::count_of_type<vk::query_pipeline_statistics>::greater_or_equals<0>
-			>::for_types_of<Args...>
-		)
-		vk::result try_begin(Args... args) const {
-			vk::command_buffer_inheritance_info ii {
-				.render_pass = elements::of_type<vk::command_buffer>::for_elements_of<Args...>(args...),
-				.subpass = elements::of_type<vk::subpass>::for_elements_of<Args...>(args...),
-				.framebuffer = elements::of_type<vk::framebuffer>::for_elements_of<Args...>(args...),
-				.occlusion_query_enable = elements::of_type<vk::occlusion_query_enable>::for_elements_of<Args...>(args...)
-			};
-
-			elements::for_each_of_type<vk::query_control>([&](auto f){ ii.query_flags.set(f); }, args...);
-			elements::for_each_of_type<vk::query_pipeline_statistics>([&](auto f){ ii.pipeline_statistics.set(f); }, args...);
-
-			vk::command_buffer_begin_info bi {
-				.inheritance_info = &ii
-			};
-
-			elements::for_each_of_type<vk::command_buffer_usage>([&](auto f){ bi.usage.set(f); }, args...);
-
-			return {
-				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) vk::get_handle_value(*this),
-					(VkCommandBufferBeginInfo*) &bi
-				)
-			};
-		}
-
-		template<typename... Args>
-		requires(sizeof...(Args) > 0 && types::are_same::for_types_of<Args..., vk::command_buffer_usage>)
-		vk::result try_begin(Args... args) const {
-			vk::command_buffer_begin_info bi {
-				.inheritance_info = nullptr
-			};
-
-			elements::for_each_of_type<vk::command_buffer_usage&>::function {
-				[&](auto f){ bi.usage.set(f); }
-			}.for_elements_of(args...);
-
-			return {
-				(int32) vkBeginCommandBuffer(
-					(VkCommandBuffer) vk::get_handle_value(*this),
-					(VkCommandBufferBeginInfo*) &bi
-				)
-			};
-		}
-
-		template<typename... Args>
-		requires(sizeof...(Args) > 0 && types::are_same::for_types_of<Args..., vk::command_buffer_usage>)
-		void begin(Args... args) const {
-			vk::result result = try_begin(args...);
-			if(!result.success()) throw result;
-		}
+		template<typename... Args> vk::result try_begin(Args&&... args) const;
+		template<typename... Args> void begin(Args&&... args) const;
 
 		template<typename... Args>
 		requires(
@@ -151,8 +92,7 @@ namespace vk {
 			if(!result.success()) throw result;
 		}
 
-		template<typename... Args>
-		void cmd_begin_render_pass(Args&&... args) const;
+		template<typename... Args> void cmd_begin_render_pass(Args&&... args) const;
 
 		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::graphics_pipeline> auto& pipeline) const {
 			vkCmdBindPipeline(
@@ -194,47 +134,54 @@ namespace vk {
 			});
 		}
 
-		void cmd_draw(
-			uint32 vertex_count,
-			uint32 instance_count,
-			uint32 first_vertex,
-			uint32 first_instance
-		) const {
-			vkCmdDraw(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				vertex_count,
-				instance_count,
-				first_vertex,
-				first_instance
-			);
-		}
+		template<typename... Args> void cmd_draw(Args&&... args) const;
 
 		void cmd_end_render_pass() const {
 			vkCmdEndRenderPass((VkCommandBuffer) vk::get_handle_value(*this));
 		}
 
-		void cmd_bind_vertex_buffers(
-			uint32 first_binding,
-			uint32 binding_count,
-			vk::handle<vk::buffer>* buffers,
-			vk::device_size* offsets
-		) const {
-			vkCmdBindVertexBuffers(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				first_binding,
-				binding_count,
-				(VkBuffer*) buffers,
-				(VkDeviceSize*) offsets
-			);
-		}
-
+		template<typename... Args> void cmd_bind_vertex_buffers(Args&&... args) const;
+		template<typename... Args> void cmd_bind_vertex_buffer(Args&&... args) const;
 	};
 
 } // vk
+
+#include "begin.hpp"
+
+template<typename... Args>
+vk::result vk::handle<vk::command_buffer>::try_begin(Args&&... args) const {
+	return vk::try_begin_command_buffer(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::begin(Args&&... args) const {
+	vk::begin_command_buffer(*this, forward<Args>(args)...);
+}
 
 #include "cmd_begin_render_pass.hpp"
 
 template<typename... Args>
 void vk::handle<vk::command_buffer>::cmd_begin_render_pass(Args&&... args) const {
 	vk::cmd_begin_render_pass(*this, forward<Args>(args)...);
+}
+
+#include "cmd_draw.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_draw(Args&&... args) const {
+	vk::cmd_draw(*this, forward<Args>(args)...);
+}
+
+#include "cmd_bind_vertex_buffers.hpp"
+
+template<typename... Args> 
+void vk::handle<vk::command_buffer>::cmd_bind_vertex_buffers(Args&&... args) const {
+	vk::cmd_bind_vertex_buffers(*this, forward<Args>(args)...);
+}
+
+#include "cmd_bind_vertex_buffer.hpp"
+
+template<typename... Args> 
+void vk::handle<vk::command_buffer>::cmd_bind_vertex_buffer(Args&&... args) const {
+	vk::cmd_bind_vertex_buffer(*this, forward<Args>(args)...);
 }

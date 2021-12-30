@@ -2,12 +2,13 @@
 
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
+
 #include "../../shared/headers.hpp"
 #include "../../render_pass/handle.hpp"
 #include "../../framebuffer/handle.hpp"
-#include "query_control.hpp"
-#include "query_pipeline_statistics.hpp"
 #include "../../shared/subpass.hpp"
+#include "query_control.hpp"
+#include "query_pipeline_statistic.hpp"
 
 namespace vk {
 
@@ -20,8 +21,8 @@ namespace vk {
 		vk::subpass subpass;
 		vk::handle<vk::framebuffer> framebuffer;
 		vk::occlusion_query_enable occlusion_query_enable;
-		flag_enum<vk::query_control> query_flags;
-		flag_enum<vk::query_pipeline_statistics> pipeline_statistics;
+		vk::query_control_flags query_flags;
+		vk::query_pipeline_statistic_flags pipeline_statistics_flags;
 	};
 }
 

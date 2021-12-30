@@ -1,7 +1,9 @@
 #pragma once
 
+#include <core/flag_enum.hpp>
+
 namespace vk {
-	enum class query_pipeline_statistics {
+	enum class query_pipeline_statistic_flag {
 		input_assembly_vertices                    = 1<<0,
 		input_assembly_primitives                  = 1<<1,
 		vertex_shader_invocations                  = 1<<2,
@@ -14,4 +16,6 @@ namespace vk {
 		tessellation_evaluation_shader_invocations = 1<<9,
 		compute_shader_invocations                 = 1<<10,
 	};
+
+	using query_pipeline_statistic_flags = flag_enum<vk::query_pipeline_statistic_flag>;
 }

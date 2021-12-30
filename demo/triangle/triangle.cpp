@@ -214,11 +214,10 @@ void entrypoint() {
 
 			command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
 
-			vk::clear_value clear_value{ vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } };
 			command_buffer.cmd_begin_render_pass(
 				render_pass, framebuffers[i],
-				vk::render_area{ vk::offset<2>{}, surface_capabilities.current_extent },
-				array{ clear_value }
+				vk::render_area{ surface_capabilities.current_extent },
+				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
 			);
 
 			command_buffer.cmd_bind_pipeline(pipeline);
@@ -226,7 +225,7 @@ void entrypoint() {
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
 
-			command_buffer.cmd_draw(3, 1, 0, 0);
+			command_buffer.cmd_draw(vk::vertex_count{ 3 });
 			command_buffer.cmd_end_render_pass();
 
 			command_buffer.end();
@@ -257,7 +256,7 @@ void entrypoint() {
 				vk::signal_semaphore{ rendering_finished_semaphore }
 			);
 
-			vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore.handle() }, swapchain.handle(), image_index);
+			vk::result present_result = queue.try_present(vk::wait_semaphore{ rendering_finished_semaphore }, swapchain, image_index);
 
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
