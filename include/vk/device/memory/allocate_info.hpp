@@ -4,10 +4,9 @@
 
 #include "../../shared/headers.hpp"
 #include "../../shared/device_size.hpp"
+#include "../../shared/memory_type_index.hpp"
 
 namespace vk {
-
-	struct memory_type_index : wrapper::of_integer<uint32, struct memory_type_index_t> {};
 
 	struct memory_allocate_info {
 		const uint32 type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;

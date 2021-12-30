@@ -6,7 +6,7 @@ namespace vk {
 
 	struct memory_type {
 		vk::memory_properties properties;
-		uint32 head_index;
+		uint32 heap_index;
 	};
 } // vk
 

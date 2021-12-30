@@ -79,31 +79,6 @@ namespace vk {
 			return memory_requirements;
 		}
 
-		vk::result
-		try_bind_buffer_memory(
-			vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer,
-			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
-			vk::device_size offset = { 0u }
-		) {
-			return {
-				(int32) vkBindBufferMemory(
-					(VkDevice) vk::get_handle_value(*this),
-					(VkBuffer) vk::get_handle_value(buffer),
-					(VkDeviceMemory) vk::get_handle_value(memory),
-					(VkDeviceSize) offset
-				)
-			};
-		}
-
-		void bind_buffer_memory(
-			vk::ordinary_or_guarded_handle<vk::buffer> auto& buffer,
-			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
-			vk::device_size offset = { 0u }
-		) {
-			vk::result result = try_bind_buffer_memory(buffer, memory, offset);
-			if(!result.success()) throw result;
-		}
-
 		vk::result try_map_memory(
 			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
 			vk::device_size offset,

@@ -21,6 +21,7 @@
 #include "../shared/extension_properties.hpp"
 #include "../shared/guarded_handle.hpp"
 #include "../shared/handle.hpp"
+#include "../shared/memory_type_index.hpp"
 
 namespace vk {
 
@@ -53,6 +54,25 @@ namespace vk {
 				(VkPhysicalDeviceMemoryProperties*) &props
 			);
 			return props;
+		}
+
+		vk::memory_type_index get_index_of_first_memory_type(
+			vk::memory_properties required_properties,
+			vk::memory_type_indices required_indices
+		) const {
+			auto physical_device_memory_properties = get_memory_properties();
+
+			for(uint32 i = 0; i < physical_device_memory_properties.memory_type_count; ++i) {
+				bool required_type = required_indices.at(i);
+				auto memory_type = physical_device_memory_properties.memory_types[i];
+				bool meets_required_properties = (memory_type.properties.value & required_properties.value) == required_properties.value;
+
+				if(required_type && meets_required_properties) {
+					return (vk::memory_type_index) i;
+				}
+			}
+
+			throw; // TODO handle properly
 		}
 
 		vk::count get_queue_family_properties(range::of_value_type<vk::queue_family_properties> auto&& range) const {

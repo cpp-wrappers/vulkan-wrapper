@@ -14,4 +14,6 @@ namespace vk {
 		vk::offset<1> offset;
 	};
 
-}
+} // vk
+
+static_assert(sizeof(vk::vertex_input_attribute_description) == sizeof(VkVertexInputAttributeDescription));

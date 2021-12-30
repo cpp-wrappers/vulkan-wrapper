@@ -96,30 +96,25 @@ void entrypoint() {
 			vk::location{ 0 },
 			vk::binding{ 0 },
 			vk::format::r32_g32_b32_a32_sfloat,
-			vk::offset<1>{ __builtin_offsetof(data_t, position) }
+			vk::offset{ (uint32)__builtin_offsetof(data_t, position) }
 		},
 		vk::vertex_input_attribute_description {
 			vk::location{ 1 },
 			vk::binding{ 0 },
 			vk::format::r32_g32_b32_a32_sfloat,
-			vk::offset<1>{ __builtin_offsetof(data_t, color) }
+			vk::offset{ (uint32)__builtin_offsetof(data_t, color) }
 		}
 	};
 
-	auto buff_requirements = device.get_buffer_memory_requirements(buffer);
-	auto memory_props = physical_device.get_memory_properties();
-	vk::guarded_handle<vk::device_memory> device_memory{};
+	vk::guarded_handle<vk::device_memory> device_memory = device.allocate_guarded<vk::device_memory>(
+		physical_device.get_index_of_first_memory_type(
+			vk::memory_properties{ vk::memory_property::host_visible },
+			device.get_buffer_memory_requirements(buffer).memory_type_bits
+		),
+		vk::device_size{ sizeof(data) }
+	);
 
-	for(uint32 i = 0; i < memory_props.memory_type_count; ++i) {
-		if(buff_requirements.memory_type_bits & (1 << i) && memory_props.memory_types[i].properties.get(vk::memory_property::host_visible)) {
-			device_memory = device.allocate_guarded<vk::device_memory>(buff_requirements.size, vk::memory_type_index{i} );
-			break;
-		}
-	}
-
-	if(!device_memory.handle().value) throw;
-
-	device.handle().bind_buffer_memory(buffer, device_memory);
+	buffer.bind_memory(device_memory);
 
 	uint8* ptr;
 	device.handle().map_memory(device_memory, vk::device_size{0}, vk::device_size{sizeof(data)}, (void**)&ptr);
@@ -295,7 +290,8 @@ void entrypoint() {
 
 		while (!platform::should_close()) {
 			auto& rr = rendering_resources[rendering_resource_index];
-			if(++rendering_resource_index >= rendering_resources.size()) rendering_resource_index = 0;
+			
+			++rendering_resource_index %= rendering_resources.size();
 			
 			platform::begin();
 
@@ -330,7 +326,6 @@ void entrypoint() {
 			);
 
 			command_buffer.cmd_bind_pipeline(pipeline);
-
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
 			command_buffer.cmd_bind_vertex_buffer(buffer);

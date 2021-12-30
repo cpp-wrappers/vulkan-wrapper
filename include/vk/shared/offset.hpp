@@ -6,7 +6,7 @@
 
 namespace vk {
 
-	template<nuint Dim = 1>
+	template<nuint Dim>
 	struct offset;
 
 	template<>
