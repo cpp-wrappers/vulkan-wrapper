@@ -13,5 +13,4 @@ namespace vk {
 	struct vk::handle<vk::device_memory> : vk::handle_base<vk::non_dispatchable> {
 	};
 
-
-}
+} // vk

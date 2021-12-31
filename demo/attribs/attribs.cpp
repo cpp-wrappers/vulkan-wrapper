@@ -96,13 +96,13 @@ void entrypoint() {
 			vk::location{ 0 },
 			vk::binding{ 0 },
 			vk::format::r32_g32_b32_a32_sfloat,
-			vk::offset{ (uint32)__builtin_offsetof(data_t, position) }
+			vk::offset{ __builtin_offsetof(data_t, position) }
 		},
 		vk::vertex_input_attribute_description {
 			vk::location{ 1 },
 			vk::binding{ 0 },
 			vk::format::r32_g32_b32_a32_sfloat,
-			vk::offset{ (uint32)__builtin_offsetof(data_t, color) }
+			vk::offset{ __builtin_offsetof(data_t, color) }
 		}
 	};
 
@@ -117,21 +117,12 @@ void entrypoint() {
 	buffer.bind_memory(device_memory);
 
 	uint8* ptr;
-	device.handle().map_memory(device_memory, vk::device_size{0}, vk::device_size{sizeof(data)}, (void**)&ptr);
+	device_memory.map(vk::memory_size{ sizeof(data) }, (void**) &ptr);
 
 	for(nuint i = 0; i < sizeof(data); ++i) *ptr++ = ((uint8*)&data)[i];
 
-	device.handle().flush_mapped_memory_ranges(
-		array{
-			vk::mapped_memory_range {
-				.memory{ device_memory.handle() },
-				.offset{ 0 },
-				.size{ sizeof(data) }
-			}
-		}
-	);
-
-	device.handle().unmap_memory(device_memory);
+	device_memory.flush_mapped(vk::memory_size{ sizeof(data) });
+	device_memory.unmap();
 
 	auto surface_format = physical_device.get_first_surface_format(surface);
 

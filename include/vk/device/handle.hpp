@@ -16,7 +16,6 @@
 #include "../shared/guarded_handle.hpp"
 #include "../shared/timeout.hpp"
 #include "../shared/create_or_allocate.hpp"
-#include "mapped_memory_range.hpp"
 
 namespace vk {
 
@@ -95,39 +94,6 @@ namespace vk {
 					(void**) data
 				)
 			};
-		}
-
-		void map_memory(
-			vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory,
-			vk::device_size offset,
-			vk::device_size size,
-			void** data
-		) {
-			vk::result result = try_map_memory(memory, offset, size, data);
-			if(!result.success()) throw result;
-		}
-
-		vk::result try_flush_mapped_memory_ranges(range::of_value_type<vk::mapped_memory_range> auto&& ranges) const {
-			return {
-				(int32) vkFlushMappedMemoryRanges(
-					(VkDevice) vk::get_handle_value(*this),
-					(uint32) ranges.size(),
-					(VkMappedMemoryRange*) ranges.data()
-				)
-			};
-		}
-
-		void unmap_memory(vk::ordinary_or_guarded_handle<vk::device_memory> auto& memory) const {
-			vkUnmapMemory(
-				(VkDevice) vk::get_handle_value(*this),
-				(VkDeviceMemory) vk::get_handle_value(memory)
-			);
-		}
-
-		template<range::of_value_type<vk::mapped_memory_range> MappedMemoryRanges>
-		void flush_mapped_memory_ranges(MappedMemoryRanges&& ranges) const {
-			vk::result result = try_flush_mapped_memory_ranges(forward<MappedMemoryRanges>(ranges));
-			if(!result.success()) throw result;
 		}
 
 		vk::result try_wait_idle() const {
