@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/flag_enum.hpp>
+
 #include "../shared/headers.hpp"
 
 namespace vk {
@@ -17,5 +19,7 @@ namespace vk {
 		memory_plane_2 = VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT,
 		memory_plane_3 = VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT,
 	};
+
+	using image_aspects = flag_enum<vk::image_aspect>;
 
 }

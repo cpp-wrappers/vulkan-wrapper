@@ -19,26 +19,24 @@ namespace vk {
 	struct layer_count : wrapper::of_integer<uint32> {};
 	
 	struct image_subresource_range {
-		flag_enum<vk::image_aspect> aspect_mask{};
-		vk::base_mip_level base_mip_level{ 0u };
-		vk::level_count level_count{ 1u };
-		vk::base_array_layer base_array_layer{ 0u };
-		vk::layer_count layer_count{ 1u };
+		vk::image_aspects aspect_mask{};
+		vk::base_mip_level base_mip_level{ 0 };
+		vk::level_count level_count{ 1 };
+		vk::base_array_layer base_array_layer{ 0 };
+		vk::layer_count layer_count{ 1 };
 	
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::image_aspect>::greater_or_equals<1u>,
-				types::count_of_type<vk::base_mip_level>::less_or_equals<1u>,
-				types::count_of_type<vk::level_count>::less_or_equals<1u>,
-				types::count_of_type<vk::base_array_layer>::less_or_equals<1u>,
-				types::count_of_type<vk::layer_count>::less_or_equals<1u>
+				types::count_of_type<vk::image_aspects>::equals<1>,
+				types::count_of_type<vk::base_mip_level>::less_or_equals<1>,
+				types::count_of_type<vk::level_count>::less_or_equals<1>,
+				types::count_of_type<vk::base_array_layer>::less_or_equals<1>,
+				types::count_of_type<vk::layer_count>::less_or_equals<1>
 			>::for_types_of<Args...>
 		)
 		image_subresource_range(Args... args) {
-			elements::for_each_of_type<vk::image_aspect&>::function {
-				[&](auto af) { aspect_mask.set(af); },
-			}.for_elements_of(args...);
+			aspect_mask = elements::of_type<vk::image_aspects&>::for_elements_of(args...);
 	
 			if constexpr(types::are_contain_type<vk::base_mip_level>::for_types_of<Args...>) {
 				base_mip_level = elements::of_type<vk::base_mip_level&>::for_elements_of(args...);

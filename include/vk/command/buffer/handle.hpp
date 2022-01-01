@@ -1,32 +1,10 @@
 #pragma once
 
-#include <core/array.hpp>
-#include <core/elements/for_each_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/types/count_of_ranges_of_value_type.hpp>
-
-#include "../../image/memory_barrier.hpp"
-#include "../../pipeline/stage.hpp"
-#include "../../pipeline/graphics/handle.hpp"
-#include "../../shared/result.hpp"
-#include "../../shared/dependency.hpp"
-#include "../../shared/guarded_handle.hpp"
-#include "../../shared/viewport.hpp"
 #include "../../shared/handle.hpp"
-#include "../../buffer/handle.hpp"
-#include "../../shared/device_size.hpp"
-#include "../../shared/extent.hpp"
-#include "../../shared/rect2d.hpp"
-#include "clear.hpp"
-#include "begin_info.hpp"
+#include "../../shared/guarded_handle.hpp"
+#include "../../shared/result.hpp"
 
 namespace vk {
-
-	struct src_stage_flags : flag_enum<vk::pipeline_stage> {};
-	struct dst_stage_flags : flag_enum<vk::pipeline_stage> {};
 
 	struct command_buffer;
 
@@ -39,58 +17,14 @@ namespace vk {
 		template<typename... Args> vk::result try_begin(Args&&... args) const;
 		template<typename... Args> void begin(Args&&... args) const;
 
+		vk::result try_end() const;
+		void end() const;
+
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::src_stage_flags>::equals<1>,
-				types::count_of_type<vk::dst_stage_flags>::equals<1>,
-				types::count_of_type<vk::dependency_flags>::equals<1>,
-				types::count_of_ranges_of_value_type<vk::image_memory_barrier>::greater_or_equals<0>
-			>::for_types_of<Args...>
-		)
-		void cmd_pipeline_barrier(Args... args) const {
-			auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>::for_elements_of<Args...>(args...);
+		void cmd_pipeline_barrier(Args&&... args) const;
 
-			vkCmdPipelineBarrier(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				(VkPipelineStageFlags) elements::of_type<vk::src_stage_flags&>::for_elements_of(args...).value,
-				(VkPipelineStageFlags) elements::of_type<vk::dst_stage_flags&>::for_elements_of(args...).value,
-				(VkDependencyFlags) elements::of_type<vk::dependency_flags&>::for_elements_of(args...).value,
-				0,
-				nullptr,
-				0,
-				nullptr,
-				(uint32) image_barriers.size(),
-				(VkImageMemoryBarrier*) image_barriers.data()
-			);
-		}
-
-		void cmd_clear_color_image(
-			vk::handle<vk::image> image,
-			vk::image_layout layout,
-			vk::clear_color_value clear_color,
-			range::of_value_type<vk::image_subresource_range> auto&& ranges
-		) const {
-			vkCmdClearColorImage(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				(VkImage) image.value,
-				(VkImageLayout) layout,
-				(VkClearColorValue*) &clear_color,
-				(uint32) ranges.size(),
-				(VkImageSubresourceRange*) ranges.data()
-			);
-		}
-
-		vk::result try_end() const {
-			return {
-				(int32) vkEndCommandBuffer((VkCommandBuffer) vk::get_handle_value(*this))
-			};
-		}
-
-		void end() const {
-			vk::result result = try_end();
-			if(!result.success()) throw result;
-		}
+		template<typename... Args>
+		void cmd_clear_color_image(Args&&... args) const;
 
 		template<typename... Args> void cmd_begin_render_pass(Args&&... args) const;
 
@@ -156,6 +90,31 @@ vk::result vk::handle<vk::command_buffer>::try_begin(Args&&... args) const {
 template<typename... Args>
 void vk::handle<vk::command_buffer>::begin(Args&&... args) const {
 	vk::begin_command_buffer(*this, forward<Args>(args)...);
+}
+
+#include "end.hpp"
+
+vk::result vk::handle<vk::command_buffer>::try_end() const {
+	return vk::try_end_command_buffer(*this);
+}
+
+void vk::handle<vk::command_buffer>::end() const {
+	vk::end_command_buffer(*this);
+}
+
+#include "cmd_pipeline_barrier.hpp"
+
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_pipeline_barrier(Args&&... args) const {
+	vk::cmd_pipeline_barrier(*this, forward<Args>(args)...);
+}
+
+#include "cmd_clear_color_image.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_clear_color_image(Args&&... args) const {
+	vk::cmd_clear_color_image(*this, forward<Args>(args)...);
 }
 
 #include "cmd_begin_render_pass.hpp"

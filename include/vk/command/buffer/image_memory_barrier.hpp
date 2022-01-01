@@ -1,12 +1,13 @@
 #pragma once
 
 #include <core/integer.hpp>
-#include "../shared/headers.hpp"
-#include "../shared/access.hpp"
-#include "layout.hpp"
-#include "../shared/queue_family_index.hpp"
-#include "handle.hpp"
-#include "subresource_range.hpp"
+
+#include "../../shared/headers.hpp"
+#include "../../shared/access.hpp"
+#include "../../image/layout.hpp"
+#include "../../shared/queue_family_index.hpp"
+#include "../../image/handle.hpp"
+#include "../../image/subresource_range.hpp"
 
 namespace vk {
 	struct old_layout : flag_enum<vk::image_layout> {};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/array.hpp>
+#include "headers.hpp"
 
 namespace vk {
 
@@ -30,4 +31,7 @@ namespace vk {
 	};
 
 	extent(uint32, uint32, uint32) -> extent<3>;
-}
+} // vk
+
+static_assert(sizeof(vk::extent<2>) == sizeof(VkExtent2D));
+static_assert(sizeof(vk::extent<3>) == sizeof(VkExtent3D));

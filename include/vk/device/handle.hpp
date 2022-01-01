@@ -34,6 +34,7 @@ namespace vk {
 	struct device;
 	struct device_memory;
 	struct fence;
+	struct image;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
@@ -73,6 +74,17 @@ namespace vk {
 			vkGetBufferMemoryRequirements(
 				(VkDevice) vk::get_handle_value(*this),
 				(VkBuffer) vk::get_handle_value(buffer),
+				(VkMemoryRequirements*) &memory_requirements
+			);
+			return memory_requirements;
+		}
+
+		vk::memory_requirements
+		get_image_memory_requirements(vk::ordinary_or_guarded_handle<vk::image> auto& image) const {
+			vk::memory_requirements memory_requirements;
+			vkGetImageMemoryRequirements(
+				(VkDevice) vk::get_handle_value(*this),
+				(VkImage) vk::get_handle_value(image),
 				(VkMemoryRequirements*) &memory_requirements
 			);
 			return memory_requirements;

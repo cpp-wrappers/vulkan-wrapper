@@ -4,6 +4,7 @@
 #include <core/elements/of_type.hpp>
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_type.hpp>
+#include <core/types/are_contain_type.hpp>
 
 #include "handle.hpp"
 #include "begin_info.hpp"

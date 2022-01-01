@@ -11,6 +11,6 @@ namespace vk {
 		view_local = VK_DEPENDENCY_VIEW_LOCAL_BIT
 	};
 
-	using dependency_flags = flag_enum<dependency>;
+	using dependencies = flag_enum<dependency>;
 
 }

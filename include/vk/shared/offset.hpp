@@ -21,6 +21,14 @@ namespace vk {
 
 	offset(int32, int32) -> offset<2>;
 
+	template<>
+	struct offset<3> {
+		int32 x, y, z;
+	};
+
+	offset(int32, int32, int32) -> offset<3>;
+
 }
 
 static_assert(sizeof(vk::offset<2>) == sizeof(VkOffset2D));
+static_assert(sizeof(vk::offset<3>) == sizeof(VkOffset3D));
