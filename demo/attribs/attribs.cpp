@@ -267,7 +267,7 @@ void entrypoint() {
 				surface_format.format,
 				vk::image_view_type::two_d,
 				vk::component_mapping{},
-				vk::image_subresource_range{ vk::image_aspect::color }
+				vk::image_subresource_range{ vk::image_aspects{ vk::image_aspect::color } }
 			);
 		}
 

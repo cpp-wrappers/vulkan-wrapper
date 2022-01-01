@@ -38,4 +38,7 @@ namespace vk {
 
 
 	using pipeline_stages = flag_enum<pipeline_stage>;
+
+	struct src_stages : pipeline_stages {};
+	struct dst_stages : pipeline_stages {};
 }

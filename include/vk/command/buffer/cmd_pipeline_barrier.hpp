@@ -10,8 +10,6 @@
 #include "image_memory_barrier.hpp"
 
 namespace vk {
-	struct src_stages : flag_enum<vk::pipeline_stage> {};
-	struct dst_stages : flag_enum<vk::pipeline_stage> {};
 
 	template<typename... Args>
 	requires(

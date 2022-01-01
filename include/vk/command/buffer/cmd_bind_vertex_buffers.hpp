@@ -4,11 +4,11 @@
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 
 #include "../../buffer/handle.hpp"
+#include "../../shared/first_binding.hpp"
+#include "../../shared/memory_offset.hpp"
 #include "handle.hpp"
 
 namespace vk {
-
-	struct first_binding : wrapper::of_integer<uint32, struct first_binding_t> {};
 
 	template<typename... Args>
 	requires(
@@ -16,7 +16,7 @@ namespace vk {
 			types::vk::contain_one<vk::command_buffer>,
 			types::count_of_type<vk::first_binding>::less_or_equals<1>::ignore_const::ignore_reference,
 			types::count_of_ranges_of_value_type<vk::handle<vk::buffer>>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::device_size>::equals<1>
+			types::count_of_ranges_of_value_type<vk::memory_offset>::equals<1>
 		>::for_types_of<Args...>
 	)
 	void cmd_bind_vertex_buffers(Args&&... args) {
@@ -28,7 +28,7 @@ namespace vk {
 		}
 
 		auto& buffers = elements::range_of_value_type<vk::handle<vk::buffer>>::for_elements_of(args...);
-		auto& offsets = elements::range_of_value_type<vk::device_size>::for_elements_of(args...);
+		auto& offsets = elements::range_of_value_type<vk::memory_offset>::for_elements_of(args...);
 
 		vkCmdBindVertexBuffers(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),

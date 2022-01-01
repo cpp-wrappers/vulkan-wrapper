@@ -14,68 +14,31 @@ namespace vk {
 	template<>
 	struct vk::handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 
-		template<typename... Args> vk::result try_begin(Args&&... args) const;
-		template<typename... Args> void begin(Args&&... args) const;
+		template<typename... Args> vk::result try_begin(Args&&...) const;
+		template<typename... Args> void begin(Args&&...) const;
 
-		vk::result try_end() const;
-		void end() const;
-
-		template<typename... Args>
-		void cmd_pipeline_barrier(Args&&... args) const;
+		inline vk::result try_end() const;
+		inline void end() const;
 
 		template<typename... Args>
-		void cmd_clear_color_image(Args&&... args) const;
+		void cmd_pipeline_barrier(Args&&...) const;
 
-		template<typename... Args> void cmd_begin_render_pass(Args&&... args) const;
+		template<typename... Args>
+		void cmd_clear_color_image(Args&&...) const;
 
-		void cmd_bind_pipeline(vk::ordinary_or_guarded_handle<vk::graphics_pipeline> auto& pipeline) const {
-			vkCmdBindPipeline(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				VK_PIPELINE_BIND_POINT_GRAPHICS,
-				(VkPipeline) vk::get_handle_value(pipeline)
-			);
-		}
+		template<typename... Args> void cmd_begin_render_pass(Args&&...) const;
+		inline void cmd_end_render_pass() const;
 
-		void cmd_set_viewport(vk::viewport viewport) const {
-			vkCmdSetViewport(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				0,
-				1,
-				(VkViewport*) &viewport
-			);
-		}
+		template<typename... Args> void cmd_bind_pipeline(Args&&...) const;
 
-		void cmd_set_viewport(vk::extent<2> viewport) const {
-			return cmd_set_viewport(vk::viewport {
-				.width = (float)viewport.width(),
-				.height = (float)viewport.height()
-			});
-		}
+		template<typename... Args> void cmd_set_viewport(Args&&...) const;
 
-		void cmd_set_scissor(vk::rect2d scissor) const {
-			vkCmdSetScissor(
-				(VkCommandBuffer) vk::get_handle_value(*this),
-				0,
-				1,
-				(VkRect2D*) &scissor
-			);
-		}
+		template<typename... Args> void cmd_set_scissor(Args&&...) const;
 
-		void cmd_set_scissor(vk::extent<2> scissor) const {
-			cmd_set_scissor(vk::rect2d {
-				vk::offset<2>{ 0, 0 },
-				scissor
-			});
-		}
+		template<typename... Args> void cmd_draw(Args&&...) const;
 
-		template<typename... Args> void cmd_draw(Args&&... args) const;
-
-		void cmd_end_render_pass() const {
-			vkCmdEndRenderPass((VkCommandBuffer) vk::get_handle_value(*this));
-		}
-
-		template<typename... Args> void cmd_bind_vertex_buffers(Args&&... args) const;
-		template<typename... Args> void cmd_bind_vertex_buffer(Args&&... args) const;
+		template<typename... Args> void cmd_bind_vertex_buffers(Args&&...) const;
+		template<typename... Args> void cmd_bind_vertex_buffer(Args&&...) const;
 	};
 
 } // vk
@@ -94,11 +57,11 @@ void vk::handle<vk::command_buffer>::begin(Args&&... args) const {
 
 #include "end.hpp"
 
-vk::result vk::handle<vk::command_buffer>::try_end() const {
+inline vk::result vk::handle<vk::command_buffer>::try_end() const {
 	return vk::try_end_command_buffer(*this);
 }
 
-void vk::handle<vk::command_buffer>::end() const {
+inline void vk::handle<vk::command_buffer>::end() const {
 	vk::end_command_buffer(*this);
 }
 
@@ -122,6 +85,33 @@ void vk::handle<vk::command_buffer>::cmd_clear_color_image(Args&&... args) const
 template<typename... Args>
 void vk::handle<vk::command_buffer>::cmd_begin_render_pass(Args&&... args) const {
 	vk::cmd_begin_render_pass(*this, forward<Args>(args)...);
+}
+
+#include "cmd_end_render_pass.hpp"
+
+inline void vk::handle<vk::command_buffer>::cmd_end_render_pass() const {
+	vk::cmd_end_render_pass(*this);
+}
+
+#include "cmd_bind_pipeline.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_bind_pipeline(Args&&... args) const {
+	vk::cmd_bind_pipeline(*this, forward<Args>(args)...);
+}
+
+#include "cmd_set_viewport.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_set_viewport(Args&&... args) const {
+	vk::cmd_set_viewport(*this, forward<Args>(args)...);
+}
+
+#include "cmd_set_scissor.hpp"
+
+template<typename... Args>
+void vk::handle<vk::command_buffer>::cmd_set_scissor(Args&&... args) const {
+	vk::cmd_set_scissor(*this, forward<Args>(args)...);
 }
 
 #include "cmd_draw.hpp"
