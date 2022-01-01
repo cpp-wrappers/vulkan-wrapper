@@ -126,6 +126,7 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "../command/pool/create.hpp"
 #include "../shader/module/create.hpp"
 #include "../framebuffer/create.hpp"
+#include "../image/create.hpp"
 #include "../image/view/create.hpp"
 #include "../pipeline/layout/create.hpp"
 #include "../pipeline/graphics/create.hpp"

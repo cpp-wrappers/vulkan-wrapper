@@ -57,6 +57,7 @@ namespace vk {
 #include "../shader/module/guarded_handle.hpp"
 #include "../command/pool/guarded_handle.hpp"
 #include "../framebuffer/guarded_handle.hpp"
+#include "../image/guarded_handle.hpp"
 #include "../image/view/guarded_handle.hpp"
 #include "../pipeline/layout/guarded_handle.hpp"
 #include "../pipeline/guarded_handle.hpp"

@@ -26,9 +26,6 @@ namespace vk {
 	struct stencil_load_op : wrapper::of<vk::attachment_load_op> {};
 	struct stencil_store_op : wrapper::of<vk::attachment_store_op> {};
 	
-	struct initial_layout : wrapper::of<vk::image_layout> {};
-	struct final_layout : wrapper::of<vk::image_layout> {};
-	
 	struct attachment_description {
 		flag_enum<attachment_description_flag> flags;
 		vk::format format;
