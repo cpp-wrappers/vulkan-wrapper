@@ -8,7 +8,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::shader_module> {
+	struct vk::create_t<vk::shader_module> {
 
 		template<typename... Args>
 		requires(
@@ -18,7 +18,7 @@ namespace vk {
 				types::count_of_type<vk::code>::equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::shader_module>>
+		vk::expected<vk::handle<vk::shader_module>>
 		operator () (const Args&... args) const {
 			vk::shader_module_create_info ci {
 				.code_size = elements::of_type<const vk::code_size&>::for_elements_of(args...),

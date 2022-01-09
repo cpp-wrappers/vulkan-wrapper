@@ -11,7 +11,7 @@
 namespace vk {
 
 	template<>
-	struct try_create_t<vk::fence> {
+	struct vk::create_t<vk::fence> {
 
 		template<typename... Args>
 		requires(
@@ -20,7 +20,7 @@ namespace vk {
 				types::count_of_type<vk::fence_create_flags>::less_or_equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::fence>>
+		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
 			vk::fence_create_info ci {};
 	

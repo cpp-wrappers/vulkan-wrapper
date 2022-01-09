@@ -13,7 +13,7 @@ namespace vk {
 	struct image_view;
 
 	template<>
-	struct vk::try_create_t<vk::image_view> {
+	struct vk::create_t<vk::image_view> {
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
@@ -25,7 +25,7 @@ namespace vk {
 				types::count_of_type<vk::image_subresource_range>::equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::image_view>>
+		vk::expected<vk::handle<vk::image_view>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::of_type<vk::device>::for_elements_of(args...);
 			auto& image = elements::vk::of_type<vk::image>::for_elements_of(args...);

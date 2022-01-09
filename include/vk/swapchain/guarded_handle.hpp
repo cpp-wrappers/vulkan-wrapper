@@ -16,7 +16,7 @@ namespace vk {
 		guarded_handle& operator = (guarded_handle&&) = default;
 
 		template<typename... Args>
-		elements::one_of<vk::result, vk::image_index>
+		vk::expected<vk::image_index>
 		try_acquire_next_image(Args&&... args) const {
 			return handle().try_acquire_next_image(device(), forward<Args>(args)...);
 		}

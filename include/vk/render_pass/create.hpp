@@ -9,7 +9,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::render_pass> {
+	struct vk::create_t<vk::render_pass> {
 
 		template<typename... Args>
 		requires(
@@ -20,7 +20,7 @@ namespace vk {
 				types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::render_pass>>
+		vk::expected<vk::handle<vk::render_pass>>
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
 

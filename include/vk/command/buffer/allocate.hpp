@@ -31,9 +31,9 @@ namespace vk {
 	}
 
 	template<>
-	struct vk::try_allocate_t<vk::command_buffer> {
+	struct vk::allocate_t<vk::command_buffer> {
 
-		elements::one_of<vk::result, vk::handle<vk::command_buffer>>
+		vk::expected<vk::handle<vk::command_buffer>>
 		operator () (
 			vk::handle<vk::device> device,
 			vk::handle<vk::command_pool> command_pool,

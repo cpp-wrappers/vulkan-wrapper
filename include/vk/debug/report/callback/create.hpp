@@ -8,7 +8,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::debug_report_callback> {
+	struct vk::create_t<vk::debug_report_callback> {
 
 		template<typename... Args>
 		requires(
@@ -18,7 +18,7 @@ namespace vk {
 				types::count_of_type<vk::debug_report_callback_type>::equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::debug_report_callback>>
+		vk::expected<vk::handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
 			auto& instance = elements::vk::of_type<vk::instance>::for_elements_of(args...);
 			auto flags = elements::of_type<vk::debug_report_flags>::ignore_const::ignore_reference::for_elements_of(args...);

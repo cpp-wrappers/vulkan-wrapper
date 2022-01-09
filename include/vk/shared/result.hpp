@@ -1,6 +1,8 @@
 #pragma once
 
-#include "core/wrapper/of_integer.hpp"
+#include <core/wrapper/of_integer.hpp>
+#include <core/expected.hpp>
+
 #include "headers.hpp"
 
 namespace vk {
@@ -78,6 +80,13 @@ namespace vk {
 		bool success() const { return (int32) *this == VK_SUCCESS; }
 
 		bool out_of_date() const { return (int32) *this == VK_ERROR_OUT_OF_DATE_KHR; }
+	};
+
+	template<typename Type>
+	struct expected : ::expected<Type, vk::result> {
+		using base_type = ::expected<Type, vk::result>;
+
+		using base_type::base_type;
 	};
 
 } // vk

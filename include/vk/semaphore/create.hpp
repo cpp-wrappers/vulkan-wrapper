@@ -8,9 +8,9 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::semaphore> {
+	struct vk::create_t<vk::semaphore> {
 
-		elements::one_of<vk::result, vk::handle<vk::semaphore>>
+		vk::expected<vk::handle<vk::semaphore>>
 		operator () (vk::ordinary_or_guarded_handle<vk::device> auto&& device) const {
 			vk::semaphore_create_info ci{};
 

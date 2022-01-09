@@ -7,7 +7,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::instance> {
+	struct vk::create_t<vk::instance> {
 
 		template<typename... Args>
 		requires(
@@ -17,7 +17,7 @@ namespace vk {
 				types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::instance>>
+		vk::expected<vk::handle<vk::instance>>
 		operator () (Args&&... args) const {
 			instance_create_info ici{};
 

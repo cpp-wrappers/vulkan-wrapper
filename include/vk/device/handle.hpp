@@ -45,25 +45,13 @@ namespace vk {
 		inline vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const;
 
 		template<typename ObjectType, typename... Args>
-		elements::one_of<vk::result, vk::handle<ObjectType>>
-		try_create(Args&&... args) const {
-			return vk::try_create<ObjectType>(*this, forward<Args>(args)...);
-		}
-
-		template<typename ObjectType, typename... Args>
-		vk::handle<ObjectType>
+		vk::expected<vk::handle<ObjectType>>
 		create(Args&&... args) const {
 			return vk::create<ObjectType>(*this, forward<Args>(args)...);
 		}
 
 		template<typename ObjectType, typename... Args>
-		elements::one_of<vk::result, vk::handle<ObjectType>>
-		try_allocate(Args&&... args) const {
-			return vk::try_allocate<ObjectType>(*this, forward<Args>(args)...);
-		}
-
-		template<typename ObjectType, typename... Args>
-		vk::handle<ObjectType>
+		vk::expected<vk::handle<ObjectType>>
 		allocate(Args&&... args) const {
 			return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
 		}

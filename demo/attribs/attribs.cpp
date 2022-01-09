@@ -8,7 +8,7 @@ glslangValidator -e main -o ${src_dir}/build/attribs.frag.spv -V ${src_dir}/attr
 
 . ${src_dir}/../build.sh $@ --asset attribs.vert.spv --asset attribs.frag.spv
 
-exit 1
+exit 0
 #endif
 
 #include "vk/instance/guarded_handle.hpp"

@@ -9,7 +9,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::framebuffer> {
+	struct vk::create_t<vk::framebuffer> {
 
 		template<typename... Args>
 		requires(
@@ -20,7 +20,7 @@ namespace vk {
 				types::count_of_type<vk::extent<3>>::equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::framebuffer>>
+		vk::expected<vk::handle<vk::framebuffer>>
 		operator () (const Args&... args) const {
 			auto& attachments = elements::range_of_value_type<vk::handle<vk::image_view>>::for_elements_of(args...);
 

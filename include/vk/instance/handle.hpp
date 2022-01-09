@@ -24,8 +24,8 @@ namespace vk {
 	template<>
 	struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
-		elements::one_of<vk::result, vk::count>
-		try_enumerate_physical_devices(range::of_value_type<vk::handle<vk::physical_device>> auto&& devices) const {
+		vk::expected<vk::count>
+		enumerate_physical_devices(range::of_value_type<vk::handle<vk::physical_device>> auto&& devices) const {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {
@@ -40,80 +40,52 @@ namespace vk {
 			return result;
 		}
 
-		template<typename... Args>
-		vk::count enumerate_physical_devices(Args&&... args) const {
-			auto result = try_enumerate_physical_devices(forward<Args>(args)...);
-			if(result.template is_current<vk::result>) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_get_physical_devices_count() const {
-			return try_enumerate_physical_devices(
+		vk::expected<vk::count>
+		get_physical_devices_count() const {
+			return enumerate_physical_devices(
 				span<vk::handle<vk::physical_device>>{ nullptr, 0 }
 			);
 		}
 
-		vk::count get_physical_devices_count() const {
-			auto result = try_get_physical_devices_count();
-			if(result.is_current<vk::result>()) throw result.get<vk::result>();
-			return result.get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_view_physical_devices(vk::count count, auto&& f) const {
+		vk::expected<vk::count>
+		view_physical_devices(auto&& f, vk::count count) const {
 			vk::handle<vk::physical_device> devices_storage[(uint32) count];
 
-			elements::one_of<vk::result, vk::count> result = try_enumerate_physical_devices(
+			auto result = enumerate_physical_devices(
 				span{ devices_storage, (uint32) count }
 			);
 
-			if(!result.is_current<vk::result>()) {
-				f(span<vk::handle<vk::physical_device>>{ devices_storage, (uint32) result.get<vk::count>() });
+			if(result.is_expected()) {
+				f(span<vk::handle<vk::physical_device>>{ devices_storage, (uint32) result.get_expected() });
 			}
 			
 			return result;
 		}
 
-		template<typename F>
-		elements::one_of<vk::result, vk::count>
-		try_view_physical_devices(F&& f) const {
-			auto result = try_get_physical_devices_count();
-			if(result.is_current<vk::result>()) return result;
-			return try_view_physical_devices(result.get<vk::count>(), forward<F>(f));
-		}
-
-		elements::one_of<vk::result, vk::handle<vk::physical_device>>
-		try_get_first_physical_device() const {
+		vk::expected<vk::handle<vk::physical_device>>
+		get_first_physical_device() const {
 			vk::handle<vk::physical_device> physical_device;
-			auto result = try_enumerate_physical_devices(span{ &physical_device, 1 });
-			if(result.is_current<vk::result>()) return result.get<vk::result>();
+			auto result = enumerate_physical_devices(span{ &physical_device, 1 });
+			if(result.is_unexpected()) return result.get_unexpected();
 			return physical_device;
 		}
 
-		vk::handle<vk::physical_device> get_first_physical_device() const {
-			auto result = try_get_first_physical_device();
-			if(result.is_current<vk::result>()) throw result.get<vk::result>();
-			return result.get<vk::handle<vk::physical_device>>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_for_each_physical_device(auto&& f) const {
-			return try_view_physical_devices([&](auto view) {
+		vk::expected<vk::count>
+		for_each_physical_device(auto&& f, vk::count count) const {
+			return view_physical_devices([&](auto view) {
 				for(vk::handle<vk::physical_device> device : view) f(device);
-			});
+			}, count);
 		}
 
 		template<typename F>
-		vk::count
+		vk::expected<vk::count>
 		for_each_physical_device(F&& f) const {
-			return try_for_each_physical_device(forward<F>(f)).template get<vk::count>();
-		}
-
-		template<typename ObjectType, typename... Args>
-		elements::one_of<vk::result, vk::handle<ObjectType>>
-		try_create(Args&&... args) const {
-			return vk::try_create<ObjectType>(*this, forward<Args>(args)...);
+			auto result = get_physical_devices_count();
+			if(result.is_unexpected()) return result;
+			return for_each_physical_device(
+				forward<F>(f),
+				result.get_expected()
+			);
 		}
 
 		template<typename ObjectType, typename... Args>

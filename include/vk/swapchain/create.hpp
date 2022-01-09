@@ -10,7 +10,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::swapchain> {
+	struct vk::create_t<vk::swapchain> {
 
 		template<typename... Args>
 		requires(
@@ -32,7 +32,7 @@ namespace vk {
 				types::count_of_type<vk::clipped>::equals<1>::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::swapchain>>
+		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			auto& surface = elements::vk::of_type<vk::surface>::for_elements_of(args...);
 
@@ -89,7 +89,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires(types::count_of_type<vk::surface_format>::equals<1>::ignore_reference::for_types_of<Args...>)
-		elements::one_of<vk::result, vk::handle<vk::swapchain>>
+		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			vk::surface_format surface_format = elements::of_type<vk::surface_format&>::for_elements_of(args...);
 

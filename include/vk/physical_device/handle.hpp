@@ -130,8 +130,8 @@ namespace vk {
 			);
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_enumerate_extension_properties(range::of_value_type<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
+		vk::expected<vk::count>
+		enumerate_extension_properties(range::of_value_type<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
 			uint32 count = (uint32) props.size();
 			const char* name = extension_name.begin();
 
@@ -148,71 +148,44 @@ namespace vk {
 			return result;
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_get_extension_properties_count(vk::extension_name name = {}) const {
-			return try_enumerate_extension_properties(span<vk::extension_properties>{ nullptr, 0 }, name);
+		expected<vk::count>
+		get_extension_properties_count(vk::extension_name name = {}) const {
+			return enumerate_extension_properties(span<vk::extension_properties>{ nullptr, 0 }, name);
 		}
 
-		vk::count get_extension_properties_count(vk::extension_name name = {}) const {
-			auto result = try_get_extension_properties_count(name);
-			if(result.is_current<vk::result>()) throw result.get<vk::result>();
-			return result.get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_view_extension_properties(vk::count count, auto&& f, vk::extension_name name = {}) const {
+		expected<vk::count>
+		view_extension_properties(vk::count count, auto&& f, vk::extension_name name = {}) const {
 			vk::extension_properties props[(uint32) count];
-			auto result = try_enumerate_extension_properties(span{ props, (uint32) count }, name);
-			if(result.is_current<vk::result>()) return result;
+			auto result = enumerate_extension_properties(span{ props, (uint32) count }, name);
+			if(result.is_unexpected()) return result;
 
-			count = result.get<vk::count>();
+			count = result.get_expected();
 			f(span{ props, (uint32) count });
 			return count;
 		}
 
 		template<typename F>
-		vk::count view_extension_properties(vk::count count, F&& f, vk::extension_name name = {}) const {
-			auto result = try_view_extension_properties(count, forward<F>(f), name);
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		template<typename F>
-		elements::one_of<vk::result, vk::count>
-		try_view_extension_properties(F&& f, vk::extension_name name = {}) const {
-			auto result = try_get_extension_properties_count(name);
-			if(result.is_current<vk::result>()) return result.get<vk::result>();
-			vk::count count = result.get<vk::count>();
-			return try_view_extension_properties(
+		vk::expected<vk::count>
+		view_extension_properties(F&& f, vk::extension_name name = {}) const {
+			auto result = get_extension_properties_count(name);
+			if(result.is_unexpected()) return result;
+			vk::count count = result.get_expected();
+			return view_extension_properties(
 				count,
 				forward<F>(f),
 				name
 			);
 		}
 
-		template<typename F>
-		vk::count view_extension_properties(F&& f, vk::extension_name name = {}) const {
-			auto result = try_view_extension_properties(forward<F>(f), name);
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_for_each_extension_properties(auto&& f) {
-			return try_view_extension_properties([&](auto view) {
+		vk::expected<vk::count>
+		for_each_extension_properties(auto&& f) {
+			return view_extension_properties([&](auto view) {
 				for(auto props : view) f(props);
 			});
 		}
 
-		template<typename F>
-		vk::count for_each_extension_properties(F&& f) {
-			auto result = try_for_each_extension_properties(forward<F>(f));
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::surface_capabilities>
-		try_get_surface_capabilities(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
+		vk::expected<vk::surface_capabilities>
+		get_surface_capabilities(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
 			vk::surface_capabilities caps;
  
 			vk::result result {
@@ -226,14 +199,11 @@ namespace vk {
 			return result;
 		}
 
-		vk::surface_capabilities get_surface_capabilities(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
-			auto result = try_get_surface_capabilities(surface);
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::surface_capabilities>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, range::of_value_type<vk::surface_format> auto&& formats) const {
+		vk::expected<vk::count>
+		get_surface_formats(
+			vk::ordinary_or_guarded_handle<vk::surface> auto& surface,
+			range::of_value_type<vk::surface_format> auto&& formats
+		) const {
 			uint32 count = (uint32) formats.size();
  
 			vk::result result {
@@ -250,62 +220,47 @@ namespace vk {
 			return result;
 		}
 
-		template<range::of_value_type<vk::surface_format> FormatsRange>
-		vk::count get_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, FormatsRange&& formats) const {
-			auto result = try_get_surface_formats(surface, forward<FormatsRange>(formats));
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
+		vk::expected<vk::surface_format>
+		get_first_surface_format(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
+			vk::surface_format surface_format;
+			vk::expected<vk::count> result = get_surface_formats(surface, span{ &surface_format, 1 });
+			if(result.is_unexpected()) return result.get_unexpected();
+			return surface_format;
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_get_surface_formats_count(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
-			return try_get_surface_formats(surface, span<vk::surface_format>{ nullptr, 0 });
+		vk::expected<vk::count>
+		get_surface_formats_count(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
+			return get_surface_formats(surface, span<vk::surface_format>{ nullptr, 0 });
 		}
 
-		vk::count get_surface_formats_count(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
-			auto result = try_get_surface_formats_count(surface);
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, vk::count count, auto&& f) const {
+		vk::expected<vk::count>
+		view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, vk::count count, auto&& f) const {
 			vk::surface_format formats[(uint32) count];
-			auto result = try_get_surface_formats(surface, span{ formats, (uint32) count });
-			if(result.template is_current<vk::result>()) return result;
-			count = result.template get<vk::count>();
+			vk::expected<vk::count> result = get_surface_formats(surface, span{ formats, (uint32) count });
+			if(result.is_unexpected()) return result;
+			count = result.get_expected();
 			f(span{ formats, (uint32) count });
 			return count;
 		}
 
 		template<typename F>
-		elements::one_of<vk::result, vk::count>
-		try_view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, F&& f) const {
-			auto result = try_get_surface_formats_count(surface);
-			if(result.template is_current<vk::result>()) return result;
+		vk::expected<vk::count>
+		view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, F&& f) const {
+			vk::expected<vk::count> result = get_surface_formats_count(surface);
+			if(result.is_unexpected()) return result;
 
-			return try_view_surface_formats(
+			return view_surface_formats(
 				surface,
-				result.template get<vk::count>(),
+				result.get_expected(),
 				forward<F>(f)
 			);
 		}
 
-		template<typename F>
-		vk::count view_surface_formats(vk::ordinary_or_guarded_handle<vk::surface> auto& surface, F&& f) const {
-			auto result = try_view_surface_formats(surface, forward<F>(f));
-			if(result.template get<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
-
-		vk::surface_format get_first_surface_format(vk::ordinary_or_guarded_handle<vk::surface> auto& surface) const {
-			vk::surface_format surface_format;
-			get_surface_formats(surface, span{ &surface_format, 1 });
-			return surface_format;
-		}
-
-		elements::one_of<vk::result, vk::count>
-		try_get_surface_present_modes(vk::handle<vk::surface> surface, range::of_value_type<vk::present_mode> auto&& present_modes) const {
+		vk::expected<vk::count>
+		get_surface_present_modes(
+			vk::handle<vk::surface> surface,
+			range::of_value_type<vk::present_mode> auto&& present_modes
+		) const {
 			uint32 count = (uint32) present_modes.size();
 
 			vk::result result {
@@ -321,53 +276,45 @@ namespace vk {
 			return result;
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_get_surface_present_mode_count(vk::handle<vk::surface> surface) const {
-			return try_get_surface_present_modes(surface, span<vk::present_mode>{ nullptr, 0 });
+		vk::expected<vk::count>
+		get_surface_present_mode_count(vk::handle<vk::surface> surface) const {
+			return get_surface_present_modes(surface, span<vk::present_mode>{ nullptr, 0 });
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_view_surface_present_modes(vk::handle<vk::surface> surface, vk::count count, auto&& f) const {
+		vk::expected<vk::count>
+		view_surface_present_modes(vk::handle<vk::surface> surface, vk::count count, auto&& f) const {
 			vk::present_mode present_modes[(uint32) count];
-			auto result = try_get_surface_present_modes(surface, span{ present_modes, (uint32) count });
-			if(result.is_current<vk::result>()) return result;
-
-			count = result.get<vk::count>();
+			auto result = get_surface_present_modes(surface, span{ present_modes, (uint32) count });
+			if(result.is_unexpected()) return result;
+			count = result.get_expected();
 			f(span{ present_modes, (uint32) count});
 			return count;
 		}
 
 		template<typename F>
-		elements::one_of<vk::result, vk::count>
-		try_view_surface_present_modes(vk::handle<vk::surface> surface, F&& f) const {
-			auto result = try_get_surface_present_mode_count(surface);
-			if(result.is_current<vk::result>()) return result;
-			return try_view_surface_present_modes(
+		vk::expected<vk::count>
+		view_surface_present_modes(vk::handle<vk::surface> surface, F&& f) const {
+			auto result = get_surface_present_mode_count(surface);
+			if(result.is_unexpected()) return result;
+			return view_surface_present_modes(
 				surface,
-				result.get<vk::count>(),
+				result.get_expected(),
 				forward<F>(f)
 			);
 		}
 
-		elements::one_of<vk::result, vk::count>
-		try_for_each_surface_presesnt_mode(vk::handle<vk::surface> surface, auto&& f) const {
-			return try_view_surface_present_modes(surface, [&](auto view) {
+		vk::expected<vk::count>
+		for_each_surface_presesnt_mode(vk::handle<vk::surface> surface, auto&& f) const {
+			return view_surface_present_modes(surface, [&](auto view) {
 				for(auto present_mode : view) {
 					f(present_mode);
 				}
 			});
 		}
-
-		template<typename F>
-		vk::count for_each_surface_present_mode(vk::handle<vk::surface> surface, F&& f) const {
-			auto result = try_for_each_surface_presesnt_mode(surface, forward<F>(f));
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<vk::count>();
-		}
 		
 		template<vk::ordinary_or_guarded_handle<vk::surface> Surface>
-		elements::one_of<vk::result, bool>
-		try_get_surface_support(Surface&& surface, vk::queue_family_index queue_family_index) const {
+		vk::expected<bool>
+		get_surface_support(Surface&& surface, vk::queue_family_index queue_family_index) const {
 			uint32 supports;
 
 			vk::result result {
@@ -383,13 +330,6 @@ namespace vk {
 
 			return result;
 		}
-
-		template<vk::ordinary_or_guarded_handle<vk::surface> Surface>
-		bool get_surface_support(Surface&& surface, vk::queue_family_index queue_family_index) const {
-			auto result = try_get_surface_support(forward<Surface>(surface), queue_family_index);
-			if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-			return result.template get<bool>();
-		}
 	};
 
 }
@@ -398,12 +338,12 @@ namespace vk {
 
 template<typename... Args>
 vk::handle<vk::device> vk::handle<vk::physical_device>::create_device(Args&&... args) const {
-	return vk::create_device(*this, forward<Args>(args)...);
+	return vk::create<vk::device>(*this, forward<Args>(args)...);
 }
 
 #include "../device/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::device> vk::handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
-	return { vk::create_device(*this, forward<Args>(args)...) };
+	return { (vk::handle<vk::device>) vk::create<vk::device>(*this, forward<Args>(args)...) };
 }

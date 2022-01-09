@@ -19,32 +19,15 @@ namespace vk {
 
 	template<typename ObjectType>
 	requires(vk::is_creatable<ObjectType>)
-	struct try_create_t;
+	struct create_t;
 
 	template<typename ObjectType>
-	constexpr inline vk::try_create_t<ObjectType> try_create = vk::try_create_t<ObjectType>{};
-
-	template<typename ObjectType, typename... Args>
-	vk::handle<ObjectType>
-	create(Args&&... args) {
-		auto result = vk::try_create<ObjectType>(forward<Args>(args)...);
-		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::handle<ObjectType>>();
-	}
+	constexpr inline vk::create_t<ObjectType> create = vk::create_t<ObjectType>{};
 
 	template<typename ObjectType>
 	requires(vk::is_allocatable<ObjectType>)
-	struct try_allocate_t;
+	struct allocate_t;
 
 	template<typename ObjectType>
-	constexpr inline vk::try_allocate_t<ObjectType> try_allocate = vk::try_allocate_t<ObjectType>{};
-
-	template<typename ObjectType, typename... Args>
-	vk::handle<ObjectType>
-	allocate(Args&&... args) {
-		auto result = vk::try_allocate<ObjectType>(forward<Args>(args)...);
-		if(result.template is_current<vk::result>()) throw result.template get<vk::result>();
-		return result.template get<vk::handle<ObjectType>>();
-	}
-
+	constexpr inline vk::allocate_t<ObjectType> allocate = vk::allocate_t<ObjectType>{};
 }

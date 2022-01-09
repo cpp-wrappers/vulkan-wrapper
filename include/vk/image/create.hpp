@@ -10,7 +10,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::image> {
+	struct vk::create_t<vk::image> {
 
 		template<typename... Args>
 		requires(
@@ -29,7 +29,7 @@ namespace vk {
 				types::count_of_type<vk::initial_layout>::equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::image>>
+		vk::expected<vk::handle<vk::image>>
 		operator () (Args&&... args) {
 			vk::image_create_flags flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
 			vk::image_type image_type = elements::of_type<vk::image_type>::ignore_const::ignore_reference::for_elements_of(args...);

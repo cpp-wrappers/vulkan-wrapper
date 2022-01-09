@@ -8,7 +8,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::pipeline_layout> {
+	struct vk::create_t<vk::pipeline_layout> {
 
 		template<typename... Args>
 		requires(
@@ -18,7 +18,7 @@ namespace vk {
 				types::count_of_ranges_of_value_type<vk::push_constant_range>::less_or_equals<1>
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::pipeline_layout>>
+		vk::expected<vk::handle<vk::pipeline_layout>>
 		operator () (Args&&... args) const {
 			vk::pipeline_layout_create_info ci{};
 

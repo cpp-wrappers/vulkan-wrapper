@@ -1,6 +1,6 @@
 #if 0
 . ./`dirname ${BASH_SOURCE[0]}`/../build.sh $@
-exit 1
+exit 0
 #endif
 
 #include "vk/instance/guarded_handle.hpp"

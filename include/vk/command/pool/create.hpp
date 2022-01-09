@@ -8,7 +8,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_create_t<vk::command_pool> {
+	struct vk::create_t<vk::command_pool> {
 
 		template<typename... Args>
 		requires(
@@ -18,7 +18,7 @@ namespace vk {
 				types::count_of_type<vk::queue_family_index>::equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::command_pool>>
+		vk::expected<vk::handle<vk::command_pool>>
 		operator () (Args&&... args) const {
 			vk::command_pool_create_info ci{};
 

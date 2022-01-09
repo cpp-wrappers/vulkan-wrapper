@@ -12,7 +12,7 @@ namespace vk {
 	struct base_pipeline_index : wrapper::of_integer<uint32> {};
 
 	template<>
-	struct vk::try_create_t<vk::graphics_pipeline> {
+	struct vk::create_t<vk::graphics_pipeline> {
 
 		template<typename... Args>
 		requires(
@@ -36,7 +36,7 @@ namespace vk {
 				types::count_of_type<vk::base_pipeline_index>::less_or_equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::result, vk::handle<vk::graphics_pipeline>>
+		vk::expected<vk::handle<vk::graphics_pipeline>>
 		operator () (Args&&... args) const {
 			vk::pipeline_rasterization_state_create_info prsci = elements::of_type<vk::pipeline_rasterization_state_create_info>::ignore_const::ignore_reference::for_elements_of(args...);
 
@@ -112,7 +112,7 @@ namespace vk {
 		requires(
 			types::count_of_type<vk::primitive_topology>::for_types_of<Args...> == 1
 		)
-		elements::one_of<vk::result, vk::handle<vk::graphics_pipeline>>
+		vk::expected<vk::handle<vk::graphics_pipeline>>
 		operator () (Args&&... args) const {
 			vk::primitive_topology topology = elements::of_type<vk::primitive_topology>::ignore_const::ignore_reference::for_elements_of(args...);
 

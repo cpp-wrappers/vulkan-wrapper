@@ -8,7 +8,7 @@ glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/tri
 
 . ${src_dir}/../build.sh $@ --asset triangle.vert.spv --asset triangle.frag.spv
 
-exit 1
+exit 0
 #endif
 
 #include "vk/instance/guarded_handle.hpp"
@@ -68,7 +68,7 @@ void entrypoint() {
 		vk::extension_name{ "VK_KHR_swapchain" }
 	);
 
-	auto surface_format = physical_device.get_first_surface_format(surface);
+	vk::surface_format surface_format = physical_device.get_first_surface_format(surface);
 
 	array color_attachments {
 		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
@@ -155,7 +155,7 @@ void entrypoint() {
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while(!platform::should_close()) {
-		auto surface_capabilities = physical_device.get_surface_capabilities(surface);
+		vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);
 
 		{
 			auto old_swapchain = move(swapchain);
@@ -190,7 +190,7 @@ void entrypoint() {
 				surface_format.format,
 				vk::image_view_type::two_d,
 				vk::component_mapping{},
-				vk::image_subresource_range{ vk::image_aspect::color }
+				vk::image_subresource_range{ vk::image_aspects{ vk::image_aspect::color } }
 			);
 		}
 
@@ -238,16 +238,14 @@ void entrypoint() {
 			platform::begin();
 
 			auto result = swapchain.try_acquire_next_image(swapchain_image_semaphore);
-
-			if(result.is_current<vk::result>()) {
-				vk::result r = result.get<vk::result>();
-
-				if(r.suboptimal() || r.out_of_date()) break;
+			if(result.is_unexpected()) {
+				result.set_handled(true);
+				if(result.get_unexpected().suboptimal() || result.get_unexpected().out_of_date()) break;
 				platform::error("acquire next image").new_line();
-				throw;
+				return;
 			}
 
-			vk::image_index image_index = result.get<vk::image_index>();
+			vk::image_index image_index = result;
 
 			queue.submit(
 				vk::wait_semaphore{ swapchain_image_semaphore },
@@ -261,7 +259,7 @@ void entrypoint() {
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
 				platform::error("present").new_line();
-				throw;
+				return;
 			}
 
 			platform::end();

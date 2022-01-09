@@ -8,7 +8,7 @@
 namespace vk {
 
 	template<>
-	struct vk::try_allocate_t<vk::device_memory> {
+	struct vk::allocate_t<vk::device_memory> {
 
 		template<typename... Args>
 		requires(
@@ -18,7 +18,7 @@ namespace vk {
 				types::count_of_type<vk::memory_type_index>::equals<1>::ignore_const::ignore_reference
 			>::for_types_of<Args...>
 		)
-		elements::one_of<vk::handle<vk::device_memory>, vk::result>
+		vk::expected<vk::handle<vk::device_memory>>
 		operator () (Args&&... args) const {
 			vk::memory_allocate_info ai {
 				.size = elements::of_type<vk::device_size>::ignore_const::ignore_reference::for_elements_of(args...),
