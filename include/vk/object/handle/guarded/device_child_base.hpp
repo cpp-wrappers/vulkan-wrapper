@@ -30,12 +30,9 @@ namespace vk {
 			vk::free<ObjectType>(device(), ((base_type*)this)->handle());
 		}
 
-		const vk::handle<vk::device>& device() const {
-			return m_device;
-		}
-
-		vk::handle<vk::device>& device() {
-			return m_device;
-		}
+		const vk::handle<vk::device>& device() const &  { return m_device; }
+		      vk::handle<vk::device>& device()       &  { return m_device; }
+		      vk::handle<vk::device>  device() const && { return m_device; }
+		      vk::handle<vk::device>  device()       && { return m_device; }
 	};
 }

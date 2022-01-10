@@ -58,8 +58,24 @@ namespace platform {
 	span<vk::extension_name> get_required_instance_extensions();
 
 	vk::guarded_handle<vk::surface> create_surface(vk::handle<vk::instance>);
+
 	inline vk::guarded_handle<vk::surface> create_surface(const vk::guarded_handle<vk::instance>& instance) {
 		return create_surface(instance.handle());
+	}
+
+	inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarded_handle<vk::device>& device, const char* path) {
+		auto size = platform::file_size(path);
+		char src[size];
+		platform::read_file(path, src, size);
+		return device.create_guarded<vk::shader_module>(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
+	}
+
+	inline uint32 debug_report(
+		flag_enum<vk::debug_report_flag>, vk::debug_report_object_type, uint64, nuint,
+		int32, c_string, c_string message, void*
+	) {
+		platform::info("[vk] ", message).new_line();
+		return 0;
 	}
 
 	bool should_close();

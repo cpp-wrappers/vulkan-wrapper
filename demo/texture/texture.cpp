@@ -3,10 +3,10 @@ src_dir=`dirname ${BASH_SOURCE[0]}`
 
 mkdir -p ${src_dir}/build
 
-glslangValidator -e main -o ${src_dir}/build/attribs.vert.spv -V ${src_dir}/attribs.vert
-glslangValidator -e main -o ${src_dir}/build/attribs.frag.spv -V ${src_dir}/attribs.frag
+glslangValidator -e main -o ${src_dir}/build/texture.vert.spv -V ${src_dir}/texture.vert
+glslangValidator -e main -o ${src_dir}/build/texture.frag.spv -V ${src_dir}/texture.frag
 
-. ${src_dir}/../build.sh $@ --asset attribs.vert.spv --asset attribs.frag.spv
+. ${src_dir}/../build.sh $@ --asset texture.vert.spv --asset texture.frag.spv
 
 exit 0
 #endif

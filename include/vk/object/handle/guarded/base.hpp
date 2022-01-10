@@ -50,13 +50,10 @@ namespace vk {
 			return *this;
 		}
 
-		const vk::handle<ObjectType>& handle() const {
-			return m_handle;
-		}
-
-		vk::handle<ObjectType>& handle() {
-			return m_handle;
-		}
+		const vk::handle<ObjectType>& handle() const &  { return m_handle; }
+		      vk::handle<ObjectType>& handle()       &  { return m_handle; }
+		      vk::handle<ObjectType>  handle() const && { return m_handle; }
+		      vk::handle<ObjectType>  handle()       && { return m_handle; }
 
 		operator vk::handle<ObjectType> () const {
 			return handle();

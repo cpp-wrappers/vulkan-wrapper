@@ -25,12 +25,9 @@ namespace vk {
 			vk::destroy<ObjectType>(instance(), ((base_type*)this)->handle());
 		}
 
-		const vk::handle<vk::instance>& instance() const {
-			return m_instance;
-		}
-
-		vk::handle<vk::instance>& instance() {
-			return m_instance;
-		}
+		const vk::handle<vk::instance>& instance() const &  { return m_instance; }
+		      vk::handle<vk::instance>& instance()       &  { return m_instance; }
+		      vk::handle<vk::instance>  instance() const && { return m_instance; }
+		      vk::handle<vk::instance>  instance()       && { return m_instance; }
 	};
 }

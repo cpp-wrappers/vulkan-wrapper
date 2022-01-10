@@ -67,4 +67,5 @@ namespace vk {
 #include "../swapchain/guarded_handle.hpp"
 #include "../buffer/guarded_handle.hpp"
 #include "../fence/guarded_handle.hpp"
+#include "../sampler/guarded_handle.hpp"
 #include "memory/guarded_handle.hpp"

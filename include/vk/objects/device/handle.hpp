@@ -134,5 +134,6 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "../semaphore/create.hpp"
 #include "../swapchain/create.hpp"
 #include "../buffer/create.hpp"
-#include "memory/allocate.hpp"
 #include "../fence/create.hpp"
+#include "../sampler/create.hpp"
+#include "memory/allocate.hpp"

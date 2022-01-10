@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../shared/memory_offset.hpp"
-#include "../../shared/offset.hpp"
-#include "../../shared/extent.hpp"
+#include "../../../shared/memory_offset.hpp"
+#include "../../../shared/offset.hpp"
+#include "../../../shared/extent.hpp"
 #include "../../image/subresource_layers.hpp"
 
 namespace vk {

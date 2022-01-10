@@ -3,9 +3,8 @@
 exit 0
 #endif
 
-#include "vk/instance/guarded_handle.hpp"
-#include "vk/physical_device/handle.hpp"
-#include "vk/instance/layer_properties.hpp"
+#include "vk/objects/instance/guarded_handle.hpp"
+#include "vk/objects/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 #include <string.h>
 

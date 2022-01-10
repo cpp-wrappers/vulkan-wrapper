@@ -3,7 +3,7 @@
 #include <core/integer.hpp>
 
 #include "../../shared/headers.hpp"
-#include "../../shared/compare_op.hpp"
+#include "../../fragment_operations/compare_op.hpp"
 #include "../../shared/stencil_op_state.hpp"
 
 namespace vk {
