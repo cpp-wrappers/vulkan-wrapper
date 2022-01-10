@@ -7,14 +7,14 @@
 #include <core/elements/of_type.hpp>
 #include <core/elements/for_each_of_type.hpp>
 
-#include "../../shared/headers.hpp"
-#include "descriptor_type.hpp"
-#include "../shader/stage.hpp"
+#include "../../../shared/headers.hpp"
+#include "../../shader/stage.hpp"
+#include "../count.hpp"
+#include "../type.hpp"
 
 namespace vk {
 
 	struct descriptor_binding : wrapper::of_integer<uint32> {};
-	struct descriptor_count : wrapper::of_integer<uint32> {};
 
 	struct descriptor_set_layout_binding {
 		vk::descriptor_binding descriptor_binding;
