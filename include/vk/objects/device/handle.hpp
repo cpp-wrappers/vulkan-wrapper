@@ -136,4 +136,5 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "../buffer/create.hpp"
 #include "../fence/create.hpp"
 #include "../sampler/create.hpp"
+#include "../descriptor_set_layout/create.hpp"
 #include "memory/allocate.hpp"

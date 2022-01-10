@@ -8,46 +8,55 @@
 #include <core/elements/for_each_of_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
 
+#include "../../shared/result.hpp"
+#include "../../object/create_or_allocate.hpp"
+#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../device/handle.hpp"
 #include "create_info.hpp"
-#include "../result.hpp"
+#include "handle.hpp"
 
 namespace vk {
-	struct device;
-	struct descriptor_set_layout;
 
-	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::device&>::equals<1u>,
-			types::count_of_type<vk::descriptor_set_layout_create_flag>::remove_reference::greater_or_equals<0u>,
-			types::count_of_ranges_of_value_type<vk::descriptor_set_layout_binding>::less_or_equals<1u>
-		>::for_types_of<Args...>
-	)
-	descriptor_set_layout& create_descriptor_set_layout(Args&&... args) {
-		vk::descriptor_set_layout_create_info ci {};
+	template<>
+	struct vk::create_t<vk::descriptor_set_layout> {
 
-		elements::for_each_of_type_remove_reference<vk::descriptor_set_layout_create_flag>(
-			[&](auto f) { ci.flags.set(f); },
-			args...
-		);
+		template<typename... Args>
+		requires(
+			types::are_exclusively_satsify_predicates<
+				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+				types::count_of_type<vk::descriptor_set_layout_create_flags>::equals<1>::ignore_const::ignore_reference,
+				types::count_of_ranges_of_value_type<vk::descriptor_set_layout_binding>::equals<1>
+			>::for_types_of<Args...>
+		)
+		expected<vk::handle<vk::descriptor_set_layout>>
+		operator () (Args&&... args) const {
+			auto flags = elements::of_type<vk::descriptor_set_layout_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
+			auto& bindings = elements::range_of_value_type<vk::descriptor_set_layout_binding>::for_elements_of(args...);
 
-		if constexpr(types::are_contain_range_of_value_type<vk::descriptor_set_layout_binding>::for_types_of<Args...>) {
-			auto& bindings = elements::range_of_value_type<vk::descriptor_set_layout_binding&>::for_elements_of(args...);
-			ci.binding_count = (primitive::uint32)(primitive::uint) bindings.size();
-			ci.bindings = bindings.data();
+			vk::descriptor_set_layout_create_info ci {
+				.flags = flags,
+				.binding_count = (uint32) bindings.size(),
+				.bindings = bindings.data()
+			};
+
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+
+			VkDescriptorSetLayout descriptor_set_layout;
+
+			vk::result result {
+				(int32) vkCreateDescriptorSetLayout(
+					(VkDevice) vk::get_handle_value(device),
+					(VkDescriptorSetLayoutCreateInfo*) &ci,
+					(VkAllocationCallbacks*) nullptr,
+					(VkDescriptorSetLayout*) &descriptor_set_layout
+				)
+			};
+
+			if(!result.success()) return result;
+
+			return vk::handle<vk::descriptor_set_layout>{ descriptor_set_layout };
 		}
 
-		vk::descriptor_set_layout* descriptor_set_layout;
+	};
 
-		vk::throw_if_error(
-			vkCreateDescriptorSetLayout(
-				(VkDevice) elements::of_type<vk::device&>::for_elements_of(args...),
-				(VkDescriptorSetLayoutCreateInfo*) &ci,
-				nullptr,
-				(VkDescriptorSetLayout*) &descriptor_set_layout
-			)
-		);
-
-		return *descriptor_set_layout;
-	}
-}
+} // vk

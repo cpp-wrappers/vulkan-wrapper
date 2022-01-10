@@ -7,7 +7,7 @@
 #include <core/elements/of_type.hpp>
 #include <core/elements/for_each_of_type.hpp>
 
-#include "../shared/headers.hpp"
+#include "../../shared/headers.hpp"
 #include "descriptor_type.hpp"
 #include "../shader/stage.hpp"
 
@@ -19,7 +19,7 @@ namespace vk {
 	struct descriptor_set_layout_binding {
 		vk::descriptor_binding descriptor_binding;
 		vk::descriptor_type descriptor_type;
-		flag_enum<vk::shader_stage> stage_flags;
+		vk::shader_stages stage_flags;
 		const void* immutable_samplers{};
 
 		template<typename... Args>

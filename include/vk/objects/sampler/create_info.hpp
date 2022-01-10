@@ -3,7 +3,7 @@
 #include <core/flag_enum.hpp>
 
 #include "../../shared/headers.hpp"
-#include "../../fragment_operations/compare_op.hpp"
+#include "../../shared/compare_op.hpp"
 #include "border_color.hpp"
 #include "filter.hpp"
 #include "mipmap_mode.hpp"
