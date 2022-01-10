@@ -124,7 +124,7 @@ void entrypoint() {
 	device_memory.flush_mapped(vk::memory_size{ sizeof(data) });
 	device_memory.unmap();
 
-	auto surface_format = physical_device.get_first_surface_format(surface);
+	vk::surface_format surface_format = physical_device.get_first_surface_format(surface);
 
 	array color_attachments {
 		vk::color_attachment_reference{ 0, vk::image_layout::color_attachment_optimal }
@@ -232,7 +232,7 @@ void entrypoint() {
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
 	while(!platform::should_close()) {
-		auto surface_capabilities = physical_device.get_surface_capabilities(surface);
+		vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);
 
 		{
 			auto old_swapchain = move(swapchain);
@@ -290,15 +290,14 @@ void entrypoint() {
 			rr.fence.reset();
 
 			auto result = swapchain.try_acquire_next_image(rr.image_acquire);
-
-			if(result.is_current<vk::result>()) {
-				vk::result r = result.get<vk::result>();
-				if(r.suboptimal() || r.out_of_date()) break;
+			if(result.is_unexpected()) {
+				result.set_handled(true);
+				if(result.get_unexpected().suboptimal() || result.get_unexpected().out_of_date()) break;
 				platform::error("acquire next image").new_line();
-				throw;
+				return;
 			}
 
-			vk::image_index image_index = result.get<vk::image_index>();
+			vk::image_index image_index = result;
 
 			rr.framebuffer = device.create_guarded<vk::framebuffer>(
 				render_pass,

@@ -72,7 +72,7 @@ void entrypoint() {
 
 	command_pool.allocate_command_buffers(vk::command_buffer_level::primary, command_buffers);
 
-	vk::image_subresource_range image_subresource_range { vk::image_aspect::color };
+	vk::image_subresource_range image_subresource_range { vk::image_aspects{ vk::image_aspect::color } };
 
 	for(nuint i = 0; i < images_count; ++i) {
 		auto command_buffer = command_buffers[i];
@@ -101,9 +101,9 @@ void entrypoint() {
 
 		command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
 		command_buffer.cmd_pipeline_barrier(
-			vk::src_stage_flags { vk::pipeline_stage::transfer },
-			vk::dst_stage_flags { vk::pipeline_stage::transfer },
-			vk::dependency_flags{},
+			vk::src_stages { vk::pipeline_stage::transfer },
+			vk::dst_stages { vk::pipeline_stage::transfer },
+			vk::dependencies{},
 			array{ image_memory_barrier_from_present_to_clear }
 		);
 		command_buffer.cmd_clear_color_image(
@@ -113,9 +113,9 @@ void entrypoint() {
 			array{ image_subresource_range }
 		);
 		command_buffer.cmd_pipeline_barrier(
-			vk::src_stage_flags { vk::pipeline_stage::transfer },
-			vk::dst_stage_flags { vk::pipeline_stage::bottom_of_pipe },
-			vk::dependency_flags{},
+			vk::src_stages { vk::pipeline_stage::transfer },
+			vk::dst_stages { vk::pipeline_stage::bottom_of_pipe },
+			vk::dependencies{},
 			array{ image_memory_barrier_from_clear_to_present }
 		);
 		command_buffer.end();
@@ -130,16 +130,14 @@ void entrypoint() {
 		platform::begin();
 
 		auto result = swapchain.try_acquire_next_image(swapchain_image_semaphore);
-
-		if(result.is_current<vk::result>()) {
-			vk::result r = result.get<vk::result>();
-
-			if(r.suboptimal()) break;
+		if(result.is_unexpected()) {
+			result.set_handled(true);
+			if(result.get_unexpected().suboptimal()) break;
 			platform::error("can't acquire swapchain image").new_line();
 			throw;
 		}
 
-		vk::image_index image_index = result.get<vk::image_index>();
+		vk::image_index image_index = result;
 
 		vk::pipeline_stages wait_dst_stage_mask{ vk::pipeline_stage::transfer };
 

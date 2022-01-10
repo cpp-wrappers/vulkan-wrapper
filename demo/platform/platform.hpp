@@ -4,9 +4,9 @@
 #include <core/number.hpp>
 #include <core/c_string.hpp>
 #include <core/span.hpp>
-#include "vk/surface/guarded_handle.hpp"
-#include "vk/instance/handle.hpp"
-#include "vk/instance/guarded_handle.hpp"
+#include "vk/objects/surface/guarded_handle.hpp"
+#include "vk/objects/instance/handle.hpp"
+#include "vk/objects/instance/guarded_handle.hpp"
 
 namespace platform {
 	struct logger {

@@ -11,8 +11,8 @@ glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/tri
 exit 0
 #endif
 
-#include "vk/instance/guarded_handle.hpp"
-#include "vk/instance/layer_properties.hpp"
+#include "vk/objects/instance/guarded_handle.hpp"
+#include "vk/objects/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 
 inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarded_handle<vk::device>& device, const char* path) {
