@@ -3,7 +3,7 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../../shared/headers.hpp"
+#include "../../../../shared/headers.hpp"
 #include "binding.hpp"
 
 namespace vk {
@@ -21,7 +21,7 @@ namespace vk {
 		const void * const next;
 		vk::descriptor_set_layout_create_flags flags;
 		uint32 binding_count;
-		vk::descriptor_set_layout_binding* bindings;
+		const vk::descriptor_set_layout_binding* bindings;
 	};
 }
 

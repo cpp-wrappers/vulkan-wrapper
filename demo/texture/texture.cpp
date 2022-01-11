@@ -6,7 +6,7 @@ mkdir -p ${src_dir}/build
 glslangValidator -e main -o ${src_dir}/build/texture.vert.spv -V ${src_dir}/texture.vert
 glslangValidator -e main -o ${src_dir}/build/texture.frag.spv -V ${src_dir}/texture.frag
 
-. ${src_dir}/../build.sh $@ --asset texture.vert.spv --asset texture.frag.spv
+. ${src_dir}/../build.sh $@ --asset texture.vert.spv --asset texture.frag.spv --asset leaf.png
 
 exit 0
 #endif
@@ -133,8 +133,8 @@ void entrypoint() {
 		} }
 	);
 
-	auto vertex_shader = platform::read_shader_module(device, "attribs.vert.spv");
-	auto fragment_shader = platform::read_shader_module(device, "attribs.frag.spv");
+	auto vertex_shader = platform::read_shader_module(device, "texture.vert.spv");
+	auto fragment_shader = platform::read_shader_module(device, "texture.frag.spv");
 
 	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
 
@@ -215,6 +215,31 @@ void entrypoint() {
 
 	vk::guarded_handle<vk::swapchain> swapchain{};
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+
+	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
+		vk::descriptor_pool_create_flags{ },
+		vk::max_sets{ 1 },
+		array {
+			vk::descriptor_pool_size {
+				.type = vk::descriptor_type::combined_image_sampler,
+				.descriptor_count{ 1 }
+			}
+		}
+	);
+
+	auto set_layout = device.create_guarded<vk::descriptor_set_layout>(
+		vk::descriptor_set_layout_create_flags{},
+		array {
+			vk::descriptor_set_layout_binding {
+				vk::descriptor_binding{ 0 },
+				vk::descriptor_type::combined_image_sampler,
+				vk::descriptor_count{ 1 },
+				vk::shader_stages{ vk::shader_stage::fragment }
+			}
+		}
+	);
+
+	auto set = descriptor_pool.allocate_descriptor_set(set_layout);
 
 	while(!platform::should_close()) {
 		vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);

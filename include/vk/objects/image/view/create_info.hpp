@@ -4,7 +4,7 @@
 #include <core/flag_enum.hpp>
 
 #include "../../../shared/headers.hpp"
-#include "../format.hpp"
+#include "../../../shared/format.hpp"
 #include "../component_mapping.hpp"
 #include "../subresource_range.hpp"
 #include "../handle.hpp"

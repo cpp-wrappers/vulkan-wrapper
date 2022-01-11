@@ -3,7 +3,7 @@
 #include <core/flag_enum.hpp>
 
 #include "../../../shared/headers.hpp"
-#include "../../descriptor/set_layout/handle.hpp"
+#include "../../descriptor/set/layout/handle.hpp"
 #include "../push_constant_range.hpp"
 
 namespace vk {

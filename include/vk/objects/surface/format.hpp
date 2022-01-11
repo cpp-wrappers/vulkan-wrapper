@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../image/format.hpp"
+#include "../../shared/format.hpp"
 #include "../image/color_space.hpp"
 
 namespace vk {
 
-struct surface_format {
-	vk::format format;
-	vk::color_space color_space;
-};
+	struct surface_format {
+		vk::format format;
+		vk::color_space color_space;
+	};
 
 } // vk
 

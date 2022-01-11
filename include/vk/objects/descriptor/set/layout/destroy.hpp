@@ -4,9 +4,9 @@
 #include <core/types/count_of_type.hpp>
 #include <core/elements/of_type.hpp>
 
-#include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
-#include "../../../object/destroy_or_free.hpp"
-#include "../../device/handle.hpp"
+#include "../../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../../../object/destroy_or_free.hpp"
+#include "../../../device/handle.hpp"
 
 #include "handle.hpp"
 
@@ -24,7 +24,7 @@ namespace vk {
 		)
 		void operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-			auto handle = elements::of_type<vk::descriptor_set_layout>::ignore_const::ignore_reference::for_elements_of(args...);
+			auto handle = elements::of_type<vk::handle<vk::descriptor_set_layout>>::ignore_const::ignore_reference::for_elements_of(args...);
 
 			vkDestroyDescriptorSetLayout(
 				(VkDevice) vk::get_handle_value(device),

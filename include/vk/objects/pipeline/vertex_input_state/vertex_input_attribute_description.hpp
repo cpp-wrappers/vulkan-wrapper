@@ -3,7 +3,7 @@
 #include "../../../shared/location.hpp"
 #include "../../../shared/binding.hpp"
 #include "../../../shared/offset.hpp"
-#include "../../image/format.hpp"
+#include "../../../shared/format.hpp"
 
 namespace vk {
 

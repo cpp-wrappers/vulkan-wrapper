@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../shared/headers.hpp"
+#include "headers.hpp"
 
 namespace vk {
 

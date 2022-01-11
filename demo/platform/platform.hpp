@@ -54,6 +54,7 @@ namespace platform {
 
 	nuint file_size(const char*);
 	void read_file(const char*, char* buff, nuint size);
+	void read_image_data(const char*, char* buff, nuint size);
 
 	span<vk::extension_name> get_required_instance_extensions();
 

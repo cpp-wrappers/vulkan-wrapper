@@ -36,7 +36,8 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::count{ count };
+			if(result.error()) return vk::count{ count };
+
 			return result;
 		}
 
@@ -66,7 +67,10 @@ namespace vk {
 		get_first_physical_device() const {
 			vk::handle<vk::physical_device> physical_device;
 			auto result = enumerate_physical_devices(span{ &physical_device, 1 });
-			if(result.is_unexpected()) return result.get_unexpected();
+			if(result.is_unexpected()) {
+				result.set_handled();
+				return result.get_unexpected();
+			}
 			return physical_device;
 		}
 

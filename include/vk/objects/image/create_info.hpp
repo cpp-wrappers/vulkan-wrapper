@@ -8,7 +8,7 @@
 #include "../../shared/sample_count.hpp"
 #include "../../shared/sharing_mode.hpp"
 #include "../../shared/queue_family_index.hpp"
-#include "format.hpp"
+#include "../../shared/format.hpp"
 #include "tiling.hpp"
 #include "usage.hpp"
 #include "layout.hpp"

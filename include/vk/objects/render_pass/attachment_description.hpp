@@ -9,7 +9,7 @@
 
 #include "../../shared/headers.hpp"
 #include "../../shared/sample_count.hpp"
-#include "../image/format.hpp"
+#include "../../shared/format.hpp"
 #include "../image/layout.hpp"
 #include "attachment_load_op.hpp"
 #include "attachment_store_op.hpp"

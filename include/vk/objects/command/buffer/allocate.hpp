@@ -9,7 +9,7 @@
 
 namespace vk {
 
-	vk::result try_allocate_command_buffers(
+	[[nodiscard]] vk::result allocate_command_buffers(
 		vk::handle<vk::device> device,
 		vk::handle<vk::command_pool> command_pool,
 		vk::command_buffer_level level,

@@ -145,8 +145,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::count{ count };
-			return result;
+			if(result.error()) return result;
+
+			return vk::count{ count };
 		}
 
 		expected<vk::count>
@@ -196,8 +197,10 @@ namespace vk {
 					(VkSurfaceCapabilitiesKHR*) &caps
 				)
 			};
-			if(result.success()) return caps;
-			return result;
+
+			if(result.error()) return result;
+
+			return caps;
 		}
 
 		vk::expected<vk::count>
@@ -216,9 +219,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success() || result.incomplete()) return vk::count{ count };
+			if(result.error()) return result;
 
-			return result;
+			return vk::count{ count };
 		}
 
 		vk::expected<vk::surface_format>
@@ -273,8 +276,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::count{ count };
-			return result;
+			if(result.error()) return result;
+
+			return vk::count{ count };
 		}
 
 		vk::expected<vk::count>
@@ -327,9 +331,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return { (bool)supports };
+			if(result.error()) return result;
 
-			return result;
+			return { (bool)supports };
 		}
 	};
 
