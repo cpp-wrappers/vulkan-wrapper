@@ -9,12 +9,10 @@
 namespace vk {
 	
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::render_pass_begin_info>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::render_pass_begin_info>::equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	void cmd_begin_render_pass(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		auto& render_pass_begin_info = elements::of_type<vk::render_pass_begin_info>::ignore_const::ignore_reference::for_elements_of(args...);
@@ -27,15 +25,13 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
-			types::count_of_type<vk::render_area>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_ranges_of_value_type<vk::clear_value>::equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
+		types::count_of_type<vk::render_area>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_ranges_of_value_type<vk::clear_value>::equals<1>
+	>::for_types_of<Args...>
 	void cmd_begin_render_pass(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>::for_elements_of(args...);
@@ -54,4 +50,5 @@ namespace vk {
 			}
 		);
 	}
-}
+
+} // vk

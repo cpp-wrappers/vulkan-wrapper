@@ -14,4 +14,5 @@ namespace vk {
 
 		guarded_handle& operator = (guarded_handle&& other) = default;
 	};
-}
+
+} // vk

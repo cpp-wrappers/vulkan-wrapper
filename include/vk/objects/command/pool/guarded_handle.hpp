@@ -12,12 +12,9 @@ namespace vk {
 
 		using base_type::base_type;
 
-		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
-		[[nodiscard]] vk::result allocate_command_buffers(
-			vk::command_buffer_level level,
-			CommandBuffers&& command_buffers
-		) {
-			return handle().allocate_command_buffers(device(), level, forward<CommandBuffers>(command_buffers));
+		template<typename... Args>
+		void allocate_command_buffers(Args&&... args) {
+			return handle().allocate_command_buffers(device(), forward<Args>(args)...);
 		}
 
 		template<typename ObjectType, typename... Args>
@@ -29,7 +26,9 @@ namespace vk {
 		void free_command_buffers(CommandBuffers&& command_buffers) {
 			handle().free_command_buffers(device(), forward<CommandBuffers>(command_buffers));
 		}
+
 	};
-}
+
+} // vk
 
 #include "../buffer/guarded_handle.hpp"

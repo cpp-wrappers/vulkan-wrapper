@@ -55,4 +55,4 @@ namespace vk {
 
 	};
 
-}
+} // vk

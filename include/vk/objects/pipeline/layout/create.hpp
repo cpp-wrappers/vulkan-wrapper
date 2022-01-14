@@ -34,7 +34,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkPipelineLayout pipeline_layout;
+			vk::handle<vk::pipeline_layout> pipeline_layout;
 
 			vk::result result {
 				(int32) vkCreatePipelineLayout(
@@ -47,7 +47,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::pipeline_layout>{ pipeline_layout };
+			return pipeline_layout;
 		}
 
 	};

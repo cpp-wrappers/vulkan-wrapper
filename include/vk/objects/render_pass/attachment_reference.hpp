@@ -10,6 +10,6 @@ namespace vk {
 		vk::image_layout layout;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::attachment_reference) == sizeof(VkAttachmentReference));

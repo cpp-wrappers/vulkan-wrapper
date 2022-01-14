@@ -14,4 +14,4 @@ namespace vk {
 		a = VK_COMPONENT_SWIZZLE_A
 	};
 
-}
+} // vk

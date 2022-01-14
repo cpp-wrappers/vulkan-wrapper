@@ -44,7 +44,7 @@ void entrypoint() {
 
 	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface isn't supported").new_line();
-		throw;
+		return;
 	}
 
 	auto device = physical_device.create_guarded_device(
@@ -325,7 +325,7 @@ void entrypoint() {
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
 				platform::error("present").new_line();
-				throw;
+				return;
 			}
 
 			platform::end();

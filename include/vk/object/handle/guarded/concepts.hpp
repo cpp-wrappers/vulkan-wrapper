@@ -4,6 +4,7 @@
 #include "base.hpp"
 
 namespace vk {
+
 	template<typename>
 	struct guarded_handle;
 
@@ -18,4 +19,5 @@ namespace vk {
 		some_guarded_handle<Type> &&
 		type::is_same_as<ObjectType>::template
 		for_type<typename type::remove_const::for_type<type::remove_reference::for_type<Type>>::object_type>;
-}
+
+} // vk

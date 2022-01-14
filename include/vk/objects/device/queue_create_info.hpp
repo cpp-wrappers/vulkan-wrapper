@@ -21,8 +21,8 @@ namespace vk {
 	};
 
 	class queue_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		const void* next = nullptr;
+		const uint32 type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		const void* const next = nullptr;
 		flag_enum<queue_create_flag> flags;
 		vk::queue_family_index queue_family_index;
 		vk::queue_count queue_count;
@@ -31,18 +31,17 @@ namespace vk {
 	public:
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::queue_family_index>::equals<1>,
-				types::count_of_type<vk::queue_count>::equals<1>,
-				types::count_of_type<vk::queue_priorities>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::queue_family_index>::equals<1>,
+			types::count_of_type<vk::queue_count>::equals<1>,
+			types::count_of_type<vk::queue_priorities>::equals<1>
+		>::for_types_of<Args...>
 		queue_create_info(Args... args) {
 			queue_family_index = elements::of_type<vk::queue_family_index&>::for_elements_of(args...);
 			queue_count = elements::of_type<vk::queue_count&>::for_elements_of(args...);
 			queue_priorities = elements::of_type<vk::queue_priorities&>::for_elements_of(args...);
 		}
+
 	}; // device_queue_create_info
 	
 } // vk

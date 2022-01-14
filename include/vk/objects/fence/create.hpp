@@ -44,12 +44,10 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::fence_create_flag>::greater_or_equals<0>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::fence_create_flag>::greater_or_equals<0>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
@@ -62,6 +60,7 @@ namespace vk {
 
 			return this-> operator() (device, create_flags);
 		}
+
 	};
 
 } // vk

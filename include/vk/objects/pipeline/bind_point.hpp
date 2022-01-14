@@ -12,4 +12,4 @@ namespace vk {
 		ray_tracing_nv = VK_PIPELINE_BIND_POINT_RAY_TRACING_NV
 	};
 
-}
+} // vk

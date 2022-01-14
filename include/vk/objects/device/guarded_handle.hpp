@@ -49,9 +49,11 @@ namespace vk {
 
 		void wait_idle() const {
 			auto result = try_wait_idle();
-			if(!result.success()) throw result;
+			if(result.error()) default_unexpected_handler(result);
 		}
+
 	}; //device_guard
+
 } // vk
 
 #include "../shader/module/guarded_handle.hpp"

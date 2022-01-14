@@ -3,6 +3,7 @@
 #include <core/flag_enum.hpp>
 
 namespace vk {
+
 	enum class query_pipeline_statistic_flag {
 		input_assembly_vertices                    = 1<<0,
 		input_assembly_primitives                  = 1<<1,
@@ -18,4 +19,5 @@ namespace vk {
 	};
 
 	using query_pipeline_statistic_flags = flag_enum<vk::query_pipeline_statistic_flag>;
-}
+
+} // vk

@@ -40,4 +40,4 @@ namespace vk {
 	struct initial_layout : wrapper::of<vk::image_layout> {};
 	struct final_layout : wrapper::of<vk::image_layout> {};
 
-}
+} // vk

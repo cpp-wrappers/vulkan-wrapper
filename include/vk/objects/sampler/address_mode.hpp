@@ -5,6 +5,7 @@
 #include "../../shared/headers.hpp"
 
 namespace vk {
+
 	enum class sampler_address_mode {
 		repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT,
 		mirrored_repeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
@@ -19,4 +20,5 @@ namespace vk {
 	struct address_mode_u : wrapper::of<vk::address_mode, struct address_mode_u_t> {};
 	struct address_mode_v : wrapper::of<vk::address_mode, struct address_mode_v_t> {};
 	struct address_mode_w : wrapper::of<vk::address_mode, struct address_mode_w_t> {};
-}
+
+} // vk

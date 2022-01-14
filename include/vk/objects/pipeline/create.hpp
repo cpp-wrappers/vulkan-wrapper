@@ -108,9 +108,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires(
-			types::count_of_type<vk::primitive_topology>::for_types_of<Args...> == 1
-		)
+		requires types::count_of_type<vk::primitive_topology>::equals<1>::ignore_const::ignore_reference::for_types_of<Args...>
 		vk::expected<vk::handle<vk::pipeline>>
 		operator () (Args&&... args) const {
 			vk::primitive_topology topology = elements::of_type<vk::primitive_topology>::ignore_const::ignore_reference::for_elements_of(args...);

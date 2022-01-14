@@ -35,4 +35,5 @@ namespace vk {
 			return handle().for_each_image(device(), forward<F>(f));
 		}
 	};
-}
+
+} // vk

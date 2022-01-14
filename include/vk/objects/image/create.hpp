@@ -29,38 +29,28 @@ namespace vk {
 		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::image>>
 		operator () (Args&&... args) {
-			vk::image_create_flags flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::image_type image_type = elements::of_type<vk::image_type>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::format format = elements::of_type<vk::format>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::extent<3> extent = elements::of_type<vk::extent<3>>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::mip_levels mip_levels = elements::of_type<vk::mip_levels>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::array_layers layers = elements::of_type<vk::array_layers>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::sample_count samples = elements::of_type<vk::sample_count>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::image_tiling tiling = elements::of_type<vk::image_tiling>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::image_usages usages = elements::of_type<vk::image_usages>::ignore_const::ignore_reference::for_elements_of(args...);
-			vk::sharing_mode sharing_mode = elements::of_type<vk::sharing_mode>::ignore_const::ignore_reference::for_elements_of(args...);
-			auto& queues = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
-			vk::initial_layout initial_layout = elements::of_type<vk::initial_layout>::ignore_const::ignore_reference::for_elements_of(args...);
+			vk::image_create_info ci{};
 
-			vk::image_create_info ci {
-				.flags = flags,
-				.image_type = image_type,
-				.format = format,
-				.extent = extent,
-				.mip_levels = mip_levels,
-				.array_layers = layers,
-				.samples = samples,
-				.tiling = tiling,
-				.usages = usages,
-				.sharing_mode = sharing_mode,
-				.queue_family_index_count = (int32) queues.size(),
-				.queue_family_indices = queues.data(),
-				.initial_layout = initial_layout
-			};
+			ci.flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.image_type = elements::of_type<vk::image_type>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.format = elements::of_type<vk::format>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.extent = elements::of_type<vk::extent<3>>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.mip_levels = elements::of_type<vk::mip_levels>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.array_layers = elements::of_type<vk::array_layers>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.samples = elements::of_type<vk::sample_count>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.tiling = elements::of_type<vk::image_tiling>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.usages = elements::of_type<vk::image_usages>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.sharing_mode = elements::of_type<vk::sharing_mode>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.initial_layout = elements::of_type<vk::initial_layout>::ignore_const::ignore_reference::for_elements_of(args...);
+
+			auto& queues = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
+
+			ci.queue_family_index_count = (uint32) queues.size();
+			ci.queue_family_indices = queues.data();
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkImage image;
+			vk::handle<vk::image> image;
 
 			vk::result result {
 				(int32) vkCreateImage(
@@ -73,7 +63,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::image>{ image };
+			return image;
 		};
 
 	};

@@ -113,7 +113,7 @@ namespace vk {
 		uint64 optimal_buffer_copy_offset_alignment;
 		uint64 optimal_buffer_copy_row_pitch_alignment;
 		uint64 non_coherent_atom_size;
-	}; // physical_device_limits
+	};
 
 } // vk
 

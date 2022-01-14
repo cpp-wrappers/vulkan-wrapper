@@ -28,6 +28,7 @@ namespace vk {
 		vk::physical_device_limits limits;
 		vk::physical_device_sparse_properties sparse_properties;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::physical_device_properties) == sizeof(VkPhysicalDeviceProperties));

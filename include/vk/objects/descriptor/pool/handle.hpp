@@ -10,4 +10,5 @@ namespace vk {
 	struct vk::handle<vk::descriptor_pool> : vk::handle_base<vk::non_dispatchable> {
 		
 	};
-}
+
+} // vk

@@ -12,4 +12,5 @@ namespace vk {
 	decltype(auto) get_handle(vk::some_guarded_handle auto& guarded_handle) {
 		return guarded_handle.handle();
 	}
-}
+
+} // vk

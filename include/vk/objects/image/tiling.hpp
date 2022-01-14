@@ -9,4 +9,4 @@ namespace vk {
 		linear = VK_IMAGE_TILING_LINEAR
 	};
 
-}
+} // vk

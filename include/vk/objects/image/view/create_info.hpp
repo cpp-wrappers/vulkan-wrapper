@@ -27,8 +27,8 @@ namespace vk {
 	};
 
 	struct image_view_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		const void* const next;
 		flag_enum<image_view_create_flag> flags;
 		vk::handle<vk::image> image;
 		vk::image_view_type view_type;
@@ -36,6 +36,7 @@ namespace vk {
 		vk::component_mapping components;
 		vk::image_subresource_range subresource_range;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::image_view_create_info) == sizeof(VkImageViewCreateInfo));

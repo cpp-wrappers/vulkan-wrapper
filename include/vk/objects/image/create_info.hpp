@@ -51,7 +51,7 @@ namespace vk {
 	struct array_layers : wrapper::of_integer<uint32, struct array_layers_t> {};
 	
 	struct image_create_info {
-		uint32 const type = (uint32) VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		uint32 const type = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		void * const next;
 		vk::image_create_flags flags;
 		vk::image_type image_type;
@@ -68,6 +68,6 @@ namespace vk {
 		vk::initial_layout initial_layout;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::image_create_info) == sizeof(VkImageCreateInfo));

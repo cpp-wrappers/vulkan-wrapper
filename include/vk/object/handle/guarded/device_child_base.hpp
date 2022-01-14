@@ -4,6 +4,7 @@
 #include "../../destroy_or_free.hpp"
 
 namespace vk {
+
 	struct device;
 
 	template<typename ObjectType>
@@ -35,4 +36,5 @@ namespace vk {
 		      vk::handle<vk::device>  device() const && { return m_device; }
 		      vk::handle<vk::device>  device()       && { return m_device; }
 	};
-}
+
+} // vk

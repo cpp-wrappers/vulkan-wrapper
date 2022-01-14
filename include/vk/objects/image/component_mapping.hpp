@@ -43,8 +43,8 @@ namespace vk {
 
 			if constexpr(types::are_contain_type<vk::a>::for_types_of<Args...>)
 				a = elements::of_type<vk::a&>::for_elements_of(args...);
-		};
+		}
+
 	};
 
-}
-
+} // vk

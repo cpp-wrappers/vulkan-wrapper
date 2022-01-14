@@ -36,14 +36,12 @@ namespace vk {
 	struct vk::handle<vk::swapchain> : vk::handle_base<vk::non_dispatchable> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
-				types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,
-				types::count_of_type<vk::timeout>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
+			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,
+			types::count_of_type<vk::timeout>::less_or_equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::image_index>
 		try_acquire_next_image(Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
@@ -79,9 +77,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::image_index{ index };
+			if(result.error()) return result;
 
-			return result;
+			return vk::image_index{ index };
 		}
 
 		vk::expected<vk::count>
@@ -100,8 +98,8 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::count{ count };
-			return result;
+			if(result.error()) return result;
+			return vk::count{ count };
 		}
 
 		vk::expected<vk::count>

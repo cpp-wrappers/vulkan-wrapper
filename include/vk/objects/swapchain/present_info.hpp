@@ -2,8 +2,8 @@
 
 #include <core/integer.hpp>
 
-#include "../shared/headers.hpp"
-#include "../shared/result.hpp"
+#include "../../shared/headers.hpp"
+#include "../../shared/result.hpp"
 #include "image_index.hpp"
 
 namespace vk {
@@ -12,8 +12,8 @@ namespace vk {
 	struct swapchain;
 
 	struct present_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		const void* const next;
 		uint32 wait_semaphore_count;
 		const vk::semaphore* wait_semaphores;
 		uint32 swapchain_count;
@@ -22,6 +22,6 @@ namespace vk {
 		vk::result* results;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::present_info) == sizeof(VkPresentInfoKHR));

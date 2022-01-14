@@ -20,8 +20,8 @@ namespace vk {
 	struct engine_version : wrapper::of_integer<uint32> {};
 
 	struct application_info {
-		const uint32 m_type = (uint32) VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		const void* next;
+		const uint32 m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		const void* const next;
 		vk::application_name app_name;
 		vk::application_version app_version;
 		vk::engine_name engine_name;
@@ -29,15 +29,13 @@ namespace vk {
 		vk::api_version api_version;
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::application_name>::less_or_equals<1>,
-				types::count_of_type<vk::application_version>::less_or_equals<1>,
-				types::count_of_type<vk::engine_name>::less_or_equals<1>,
-				types::count_of_type<vk::engine_version>::less_or_equals<1>,
-				types::count_of_type<vk::api_version>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::application_name>::less_or_equals<1>,
+			types::count_of_type<vk::application_version>::less_or_equals<1>,
+			types::count_of_type<vk::engine_name>::less_or_equals<1>,
+			types::count_of_type<vk::engine_version>::less_or_equals<1>,
+			types::count_of_type<vk::api_version>::equals<1>
+		>::for_types_of<Args...>
 		application_info(Args... args)
 			: api_version{ elements::of_type<vk::api_version&>::for_elements_of(args...) }
 		{
@@ -50,7 +48,7 @@ namespace vk {
 			if constexpr(types::are_contain_type<vk::engine_version>::for_types_of<Args...>)
 				engine_version = elements::of_type<vk::engine_version&>::for_elements_of(args...);
 		}
-	}; // application_info
+	};
 
 } // vk
 

@@ -10,6 +10,7 @@
 #include "address_mode.hpp"
 
 namespace vk {
+
 	enum class sampler_create_flag {
 		subsampled = VK_SAMPLER_CREATE_SUBSAMPLED_BIT_EXT,
 		subsampled_coarse_reconstruction = VK_SAMPLER_CREATE_SUBSAMPLED_COARSE_RECONSTRUCTION_BIT_EXT,
@@ -45,6 +46,7 @@ namespace vk {
 		vk::border_color border_color;
 		vk::unnormalized_coordinates unnormalized_coordinates;
 	};
+
 } // vk
 
 static_assert(sizeof(vk::sampler_create_info) == sizeof(VkSamplerCreateInfo));

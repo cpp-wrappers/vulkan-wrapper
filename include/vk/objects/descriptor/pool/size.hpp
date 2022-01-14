@@ -10,4 +10,4 @@ namespace vk {
 		vk::descriptor_count descriptor_count;
 	};
 
-}
+} // vk

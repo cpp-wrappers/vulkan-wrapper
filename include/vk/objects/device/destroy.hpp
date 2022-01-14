@@ -16,4 +16,5 @@ namespace vk {
 		}
 
 	};
-}
+
+} // vk

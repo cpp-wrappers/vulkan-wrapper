@@ -6,4 +6,4 @@ namespace vk {
 		dispatchable, non_dispatchable
 	};
 
-}
+} // vk

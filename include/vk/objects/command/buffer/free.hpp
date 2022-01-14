@@ -47,4 +47,4 @@ namespace vk {
 
 	};
 
-}
+} // vk

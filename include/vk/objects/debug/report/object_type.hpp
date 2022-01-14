@@ -3,6 +3,7 @@
 #include "../../../shared/headers.hpp"
 
 namespace vk {
+
 	enum class debug_report_object_type {
 		unknown = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT,
 		instance = VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT,
@@ -48,4 +49,5 @@ namespace vk {
 		descriptor_update_template_khr = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT,
 		sampler_ycbcr_conversion_khr = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT
 	};
-}
+
+} // vk

@@ -21,6 +21,6 @@ namespace vk {
 		vk::extent<3> min_image_transfer_granularity;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::queue_family_properties) == sizeof(VkQueueFamilyProperties));

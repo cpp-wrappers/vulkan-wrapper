@@ -68,20 +68,20 @@ namespace vk {
 			}
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-			VkSwapchainKHR swapchain;
+			vk::handle<vk::swapchain> swapchain;
 
 			vk::result result {
 				(int32) vkCreateSwapchainKHR(
 					(VkDevice) vk::get_handle_value(device),
 					(VkSwapchainCreateInfoKHR*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkSwapchainKHR*) &swapchain
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::swapchain>{ swapchain };
+			if(result.error()) return result;
 
-			return result;
+			return swapchain;
 		}
 
 		template<typename... Args>

@@ -33,7 +33,7 @@ namespace vk {
 
 	struct debug_report_callback_create_info {
 		const uint32 type = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-		const void* next;
+		const void* const next;
 		flag_enum<vk::debug_report_flag> flags;
 		debug_report_callback_type callback;
 		void* user_data;

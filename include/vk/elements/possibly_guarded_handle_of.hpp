@@ -6,13 +6,7 @@
 namespace elements::vk {
 
 	template<typename ObjectType>
-	struct possibly_guarded_handle_of {
-		
-		template<typename... Types>
-		static auto& for_elements_of(Types&... elements) {
-			return elements::satisfying_predicate<type::vk::is_possibly_guarded_handle_of<ObjectType>>
-				::for_elements_of(elements...);
-		}
-	};
+	struct possibly_guarded_handle_of
+		: elements::satisfying_predicate<type::vk::is_possibly_guarded_handle_of<ObjectType>> {};
 
-}
+} // vk

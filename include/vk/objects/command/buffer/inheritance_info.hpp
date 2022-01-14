@@ -24,6 +24,7 @@ namespace vk {
 		vk::query_control_flags query_flags;
 		vk::query_pipeline_statistic_flags pipeline_statistics_flags;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::command_buffer_inheritance_info) == sizeof(VkCommandBufferInheritanceInfo));

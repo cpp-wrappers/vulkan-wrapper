@@ -2,6 +2,7 @@
 -Wall
 -Wextra
 -nostdinc++
+-fno-exceptions
 -Iinclude
 -ftemplate-backtrace-limit=0
 -I../core/include

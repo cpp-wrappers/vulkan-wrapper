@@ -11,14 +11,12 @@
 namespace vk {
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::first_binding>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_ranges_of_value_type<vk::handle<vk::buffer>>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::memory_offset>::equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::first_binding>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_ranges_of_value_type<vk::handle<vk::buffer>>::equals<1>,
+		types::count_of_ranges_of_value_type<vk::memory_offset>::equals<1>
+	>::for_types_of<Args...>
 	void cmd_bind_vertex_buffers(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		
@@ -38,4 +36,5 @@ namespace vk {
 			(VkDeviceSize*) offsets.data()
 		);
 	}
-}
+
+} // vk

@@ -25,7 +25,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkShaderModule shader_module;
+			vk::handle<vk::shader_module> shader_module;
 
 			vk::result result {
 				(int32) vkCreateShaderModule(
@@ -38,7 +38,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::shader_module>{ shader_module };
+			return shader_module;
 		}
 
 	};

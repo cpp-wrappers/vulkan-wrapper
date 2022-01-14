@@ -40,7 +40,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkRenderPass render_pass;
+			vk::handle<vk::render_pass> render_pass;
 
 			vk::result result {
 				(int32) vkCreateRenderPass(
@@ -53,7 +53,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::render_pass>{ render_pass };
+			return render_pass;
 		}
 
 	};

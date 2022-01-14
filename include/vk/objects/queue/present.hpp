@@ -91,7 +91,7 @@ namespace vk {
 	template<typename... Args>
 	void queue_present(Args&&... args) {
 		vk::result result = vk::try_queue_present(forward<Args>(args)...);
-		if(result.success()) throw result;
+		if(result.error()) default_unexpected_handler(result);
 	}
 
 } // vk

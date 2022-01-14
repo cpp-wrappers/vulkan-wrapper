@@ -22,4 +22,4 @@ namespace vk {
 
 	using image_aspects = flag_enum<vk::image_aspect>;
 
-}
+} // vk

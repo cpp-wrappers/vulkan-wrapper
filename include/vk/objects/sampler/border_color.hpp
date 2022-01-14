@@ -14,4 +14,5 @@ namespace vk {
 		float_custom_ext = VK_BORDER_COLOR_FLOAT_CUSTOM_EXT,
 		int_custom_ext = VK_BORDER_COLOR_INT_CUSTOM_EXT,
 	};
-}
+
+} // vk

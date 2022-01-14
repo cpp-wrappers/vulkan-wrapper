@@ -18,11 +18,11 @@ namespace vk {
 
 	struct command_pool_create_info {
 		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		const void* next;
+		const void* const next;
 		vk::command_pool_create_flags flags;
 		vk::queue_family_index queue_family_index;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::command_pool_create_info) == sizeof(VkCommandPoolCreateInfo));

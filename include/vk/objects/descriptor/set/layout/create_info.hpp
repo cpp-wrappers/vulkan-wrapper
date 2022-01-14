@@ -23,6 +23,7 @@ namespace vk {
 		uint32 binding_count;
 		const vk::descriptor_set_layout_binding* bindings;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::descriptor_set_layout_create_info) == sizeof(VkDescriptorSetLayoutCreateInfo));

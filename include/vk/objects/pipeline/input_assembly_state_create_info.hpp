@@ -21,12 +21,13 @@ namespace vk {
 	};
 
 	struct pipeline_input_assembly_state_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		const void* const next;
 		uint32 flags;
 		vk::primitive_topology topology;
 		uint32 enable_primitive_restart;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::primitive_topology) == sizeof(VkPrimitiveTopology));

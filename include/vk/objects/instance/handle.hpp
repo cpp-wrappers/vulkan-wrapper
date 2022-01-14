@@ -95,7 +95,7 @@ namespace vk {
 		template<typename ObjectType, typename... Args>
 		vk::handle<ObjectType> create(Args&&... args) const {
 			return (vk::handle<ObjectType>) vk::create<ObjectType>(*this, forward<Args>(args)...);
-		} // TODO
+		}
 	}; // instance
 
 } // vk

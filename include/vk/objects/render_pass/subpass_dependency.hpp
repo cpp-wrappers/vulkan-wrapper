@@ -27,16 +27,14 @@ namespace vk {
 	public:
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::src_subpass>::equals<1>,
-				types::count_of_type<vk::dst_subpass>::equals<1>,
-				types::count_of_type<vk::src_stages>::equals<1>,
-				types::count_of_type<vk::dst_stages>::equals<1>,
-				types::count_of_type<vk::src_access>::less_or_equals<1>,
-				types::count_of_type<vk::dst_access>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::src_subpass>::equals<1>,
+			types::count_of_type<vk::dst_subpass>::equals<1>,
+			types::count_of_type<vk::src_stages>::equals<1>,
+			types::count_of_type<vk::dst_stages>::equals<1>,
+			types::count_of_type<vk::src_access>::less_or_equals<1>,
+			types::count_of_type<vk::dst_access>::less_or_equals<1>
+		>::for_types_of<Args...>
 		subpass_dependency(Args... args) {
 			src_subpass = elements::of_type<vk::src_subpass&>::for_elements_of(args...);
 			dst_subpass = elements::of_type<vk::dst_subpass&>::for_elements_of(args...);
@@ -51,6 +49,6 @@ namespace vk {
 		}
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::subpass_dependency) == sizeof(VkSubpassDependency));

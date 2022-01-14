@@ -73,7 +73,7 @@ namespace vk {
 				}
 			}
 
-			throw; // TODO handle properly
+			default_unexpected_handler();
 		}
 
 		vk::count get_queue_family_properties(range::of_value_type<vk::queue_family_properties> auto&& range) const {
@@ -335,9 +335,10 @@ namespace vk {
 
 			return { (bool)supports };
 		}
+
 	};
 
-}
+} // vk
 
 #include "../device/create.hpp"
 

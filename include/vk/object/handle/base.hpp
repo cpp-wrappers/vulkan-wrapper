@@ -19,4 +19,5 @@ namespace vk {
 	struct vk::handle_base<vk::non_dispatchable> {
 		uint64 value;
 	};
-}
+
+} // vk

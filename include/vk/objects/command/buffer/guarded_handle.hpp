@@ -55,4 +55,4 @@ namespace vk {
 		template<typename... Args> auto& end(Args&&... args) const { handle().end(forward<Args>(args)...); return *this; }
 	};
 
-}
+} // vk

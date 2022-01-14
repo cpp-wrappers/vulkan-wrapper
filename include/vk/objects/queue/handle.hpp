@@ -16,7 +16,8 @@ namespace vk {
 		template<typename... Args> vk::result try_present(Args&&...) const;
 		template<typename... Args> void present(Args&&...) const;
 	};
-}
+
+} // vk
 
 #include "submit.hpp"
 

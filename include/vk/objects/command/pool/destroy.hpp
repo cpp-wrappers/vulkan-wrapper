@@ -24,6 +24,7 @@ namespace vk {
 				(VkAllocationCallbacks*) nullptr
 			);
 		}
+
 	};
 
-}
+} // vk

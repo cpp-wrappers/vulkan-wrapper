@@ -17,4 +17,5 @@ namespace vk {
 		vk::memory_offset offset;
 		vk::memory_size size;
 	};
-}
+
+} // vk

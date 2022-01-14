@@ -9,4 +9,4 @@ namespace vk {
 		secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY
 	};
 
-}
+} // vk

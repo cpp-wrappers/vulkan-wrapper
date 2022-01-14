@@ -38,18 +38,16 @@ namespace vk {
 		vk::final_layout final_layout{ vk::image_layout::undefined };
 	
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::format>::equals<1>,
-				types::count_of_type<vk::sample_count>::less_or_equals<1>,
-				types::count_of_type<vk::load_op>::less_or_equals<1>,
-				types::count_of_type<vk::store_op>::less_or_equals<1>,
-				types::count_of_type<vk::stencil_load_op>::less_or_equals<1>,
-				types::count_of_type<vk::stencil_store_op>::less_or_equals<1>,
-				types::count_of_type<vk::initial_layout>::less_or_equals<1>,
-				types::count_of_type<vk::final_layout>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::format>::equals<1>,
+			types::count_of_type<vk::sample_count>::less_or_equals<1>,
+			types::count_of_type<vk::load_op>::less_or_equals<1>,
+			types::count_of_type<vk::store_op>::less_or_equals<1>,
+			types::count_of_type<vk::stencil_load_op>::less_or_equals<1>,
+			types::count_of_type<vk::stencil_store_op>::less_or_equals<1>,
+			types::count_of_type<vk::initial_layout>::less_or_equals<1>,
+			types::count_of_type<vk::final_layout>::less_or_equals<1>
+		>::for_types_of<Args...>
 		attachment_description(Args... args) {
 			format = elements::of_type<vk::format&>::for_elements_of(args...);
 	
@@ -76,6 +74,6 @@ namespace vk {
 		}
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::attachment_description) == sizeof(VkAttachmentDescription));

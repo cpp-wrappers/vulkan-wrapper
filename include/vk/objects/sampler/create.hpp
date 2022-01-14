@@ -56,7 +56,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkSampler sampler;
+			vk::handle<vk::sampler> sampler;
 
 			vk::result result {
 				(int32) vkCreateSampler(
@@ -69,7 +69,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::sampler>{ sampler };
+			return sampler;
 		}
 
 	};

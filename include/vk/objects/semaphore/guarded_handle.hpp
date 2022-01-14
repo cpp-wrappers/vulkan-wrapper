@@ -14,4 +14,5 @@ namespace vk {
 		using base_type::base_type;
 		guarded_handle& operator = (guarded_handle&&) = default;
 	};
+
 } // vk

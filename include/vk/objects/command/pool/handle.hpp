@@ -16,12 +16,8 @@ namespace vk {
 	template<>
 	struct vk::handle<vk::command_pool> : vk::handle_base<vk::non_dispatchable> {
 
-		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
-		[[nodiscard]] vk::result allocate_command_buffers(
-			vk::handle<vk::device> device,
-			vk::command_buffer_level level,
-			CommandBuffers&& command_buffers
-		);
+		template<typename... Args>
+		void allocate_command_buffers(Args&&...);
 
 		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
 		void free_command_buffers(
@@ -35,13 +31,9 @@ namespace vk {
 #include "../buffer/free.hpp"
 #include "../../device/handle.hpp"
 
-template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
-vk::result vk::handle<vk::command_pool>::allocate_command_buffers(
-	vk::handle<vk::device> device,
-	vk::command_buffer_level level,
-	CommandBuffers&& command_buffers
-) {
-	return vk::allocate_command_buffers(device, *this, level, forward<CommandBuffers>(command_buffers));
+template<typename... Args>
+void vk::handle<vk::command_pool>::allocate_command_buffers(Args&&... args) {
+	vk::allocate_command_buffers(forward<Args>(args)...);
 }
 
 template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>

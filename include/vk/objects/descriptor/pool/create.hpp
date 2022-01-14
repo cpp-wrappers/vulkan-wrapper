@@ -39,7 +39,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkDescriptorPool descriptor_pool;
+			vk::handle<vk::descriptor_pool> descriptor_pool;
 
 			vk::result result {
 				(int) vkCreateDescriptorPool(
@@ -50,10 +50,11 @@ namespace vk {
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
-			return vk::handle<vk::descriptor_pool>{ descriptor_pool };
+			return descriptor_pool;
 		}
+
 	};
 
 } // vk

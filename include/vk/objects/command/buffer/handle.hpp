@@ -38,6 +38,7 @@ namespace vk {
 		template<typename... Args> void cmd_draw(Args&&...) const;
 
 		template<typename... Args> void cmd_bind_vertex_buffers(Args&&...) const;
+
 		template<typename... Args> void cmd_bind_vertex_buffer(Args&&...) const;
 	};
 

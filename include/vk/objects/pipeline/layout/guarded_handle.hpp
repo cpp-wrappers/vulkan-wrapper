@@ -13,4 +13,5 @@ namespace vk {
 
 		using base_type::base_type;
 	};
-}
+
+} // vk

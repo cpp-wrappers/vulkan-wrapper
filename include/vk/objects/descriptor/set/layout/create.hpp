@@ -39,7 +39,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkDescriptorSetLayout descriptor_set_layout;
+			vk::handle<vk::descriptor_set_layout> descriptor_set_layout;
 
 			vk::result result {
 				(int32) vkCreateDescriptorSetLayout(
@@ -52,7 +52,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::descriptor_set_layout>{ descriptor_set_layout };
+			return descriptor_set_layout;
 		}
 
 	};

@@ -22,10 +22,10 @@ namespace vk {
 			fn(
 				(VkInstance) instance.value,
 				(VkDebugReportCallbackEXT) debug_report_callback.value,
-				nullptr
+				(VkAllocationCallbacks*) nullptr
 			);
 		}
 
 	};
 
-}
+} // vk

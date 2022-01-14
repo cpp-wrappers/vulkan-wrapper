@@ -3,6 +3,7 @@
 #include "../../../objects/instance/handle.hpp"
 
 namespace vk {
+
 	struct instance;
 
 	template<typename ObjectType>
@@ -30,4 +31,5 @@ namespace vk {
 		      vk::handle<vk::instance>  instance() const && { return m_instance; }
 		      vk::handle<vk::instance>  instance()       && { return m_instance; }
 	};
-}
+
+} // vk

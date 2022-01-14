@@ -27,14 +27,14 @@ namespace vk {
 				.callback = callback
 			};
 
-			VkDebugReportCallbackEXT debug_report_callback;
+			vk::handle<vk::debug_report_callback> debug_report_callback;
 
 			auto fn = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(
 				(VkInstance) vk::get_handle_value(instance),
 				"vkCreateDebugReportCallbackEXT"
 			);
 
-			if(fn == nullptr) throw;
+			if(fn == nullptr) default_unexpected_handler();
 
 			vk::result result {
 				(int32) fn(
@@ -45,9 +45,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::debug_report_callback>{ debug_report_callback };
+			if(result.error()) return result;
 
-			return result;
+			return debug_report_callback;
 		};
 
 		template<typename... Args>
@@ -71,6 +71,7 @@ namespace vk {
 
 			return this->operator () (flags, instance, callback);
 		}
+
 	};
 
-}
+} // vk

@@ -10,8 +10,8 @@
 namespace vk {
 
 	struct pipeline_rasterization_state_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		const void* const next;
 		uint32 flags;
 		uint32 enable_depth_clamp;
 		uint32 enable_rasterizer_discard;
@@ -25,6 +25,6 @@ namespace vk {
 		float line_width{ 1.0 };
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::pipeline_rasterization_state_create_info) == sizeof(VkPipelineRasterizationStateCreateInfo));

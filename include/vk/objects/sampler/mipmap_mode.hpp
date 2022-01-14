@@ -10,4 +10,5 @@ namespace vk {
 	};
 
 	using mipmap_mode = vk::sampler_mipmap_mode;
-}
+
+} // vk

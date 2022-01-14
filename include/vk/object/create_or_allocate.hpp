@@ -32,4 +32,5 @@ namespace vk {
 
 	template<typename ObjectType>
 	constexpr inline vk::allocate_t<ObjectType> allocate = vk::allocate_t<ObjectType>{};
-}
+
+} // vk

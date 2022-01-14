@@ -33,8 +33,8 @@ namespace vk {
 	struct clipped : wrapper::of_integer<uint32> {};
 
 	struct swapchain_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		const void* const next;
 		flag_enum<swapchain_create_flag> flags;
 		vk::handle<vk::surface> surface;
 		vk::min_image_count min_image_count;

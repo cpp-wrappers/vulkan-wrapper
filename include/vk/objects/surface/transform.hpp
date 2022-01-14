@@ -16,4 +16,4 @@ namespace vk {
 		inherit = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
 	};
 
-}
+} // vk

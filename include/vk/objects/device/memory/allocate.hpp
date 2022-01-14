@@ -27,21 +27,22 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkDeviceMemory device_memory;
+			vk::handle<vk::device_memory> device_memory;
 
 			vk::result result {
 				(int32) vkAllocateMemory(
 					(VkDevice) vk::get_handle_value(device),
 					(VkMemoryAllocateInfo*) &ai,
 					(VkAllocationCallbacks*) nullptr,
-					&device_memory
+					(VkDeviceMemory*) &device_memory
 				)
 			};
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::device_memory>{ device_memory };
+			return device_memory;
 		}
+
 	};
 
 } // vk

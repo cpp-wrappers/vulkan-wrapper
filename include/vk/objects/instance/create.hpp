@@ -38,7 +38,7 @@ namespace vk {
 				ici.enabled_layer_names = range.data();
 			}
 
-			VkInstance instance;
+			vk::handle<vk::instance> instance;
 
 			vk::result result {
 				(int32) vkCreateInstance(
@@ -50,7 +50,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::instance>{ instance };
+			return instance;
 		}
 
 	};

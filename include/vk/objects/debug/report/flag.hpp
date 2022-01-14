@@ -4,6 +4,7 @@
 #include "../../../shared/headers.hpp"
 
 namespace vk {
+
 	enum class debug_report_flag {
 		information = VK_DEBUG_REPORT_INFORMATION_BIT_EXT,
 		warning = VK_DEBUG_REPORT_WARNING_BIT_EXT,
@@ -15,4 +16,5 @@ namespace vk {
 	using debug_report = debug_report_flag;
 
 	using debug_report_flags = flag_enum<vk::debug_report_flag>;
-}
+
+} // vk

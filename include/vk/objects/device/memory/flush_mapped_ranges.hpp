@@ -12,12 +12,10 @@
 namespace vk {
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_ranges_of_value_type<vk::mapped_memory_range>::equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::count_of_ranges_of_value_type<vk::mapped_memory_range>::equals<1>
+	>::for_types_of<Args...>
 	vk::result try_flush_mapped_device_memory_ranges(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 		auto& ranges = elements::range_of_value_type<vk::mapped_memory_range>::for_elements_of(args...);
@@ -34,6 +32,7 @@ namespace vk {
 	template<typename... Args>
 	void flush_mapped_device_memory_ranges(Args&&... args) {
 		vk::result result = vk::try_flush_mapped_device_memory_ranges(forward<Args>(args)...);
-		if(!result.success()) throw result;
+		if(result.error()) default_unexpected_handler(result);
 	}
-}
+
+} // vk

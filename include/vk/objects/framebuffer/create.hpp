@@ -38,7 +38,7 @@ namespace vk {
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
-			VkFramebuffer framebuffer;
+			vk::handle<vk::framebuffer> framebuffer;
 
 			vk::result result {
 				(int32) vkCreateFramebuffer(
@@ -51,7 +51,7 @@ namespace vk {
 
 			if(!result.success()) return result;
 
-			return vk::handle<vk::framebuffer>{ framebuffer };
+			return framebuffer;
 		}
 	};
 

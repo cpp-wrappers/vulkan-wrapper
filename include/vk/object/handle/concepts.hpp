@@ -29,4 +29,5 @@ namespace vk {
 	concept possibly_guarded_handle_of =
 		vk::handle_of<Type, ObjectType> ||
 		vk::guarded_handle_of<Type, ObjectType>;
-}
+
+} // vk

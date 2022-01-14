@@ -12,13 +12,11 @@ namespace vk {
 	struct first_viewport_index : wrapper::of_integer<uint32> {};
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_ranges_of_value_type<vk::viewport>::equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_ranges_of_value_type<vk::viewport>::equals<1>
+	>::for_types_of<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		vk::first_viewport_index first{ 0 };
@@ -38,13 +36,11 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::viewport>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::viewport>::equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		vk::first_viewport_index first{ 0 };
@@ -59,13 +55,11 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::extent<2>>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::first_viewport_index>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::extent<2>>::equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		vk::first_viewport_index first{ 0 };
@@ -85,4 +79,5 @@ namespace vk {
 			}
 		);
 	}
-}
+
+} // vk

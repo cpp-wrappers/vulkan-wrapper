@@ -47,8 +47,8 @@ namespace vk {
 	using pipeline_create_flags = flag_enum<vk::pipeline_create_flag>;
 
 	struct graphics_pipeline_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		const void* const next;
 		vk::pipeline_create_flags flags;
 		uint32 stage_count;
 		const vk::pipeline_shader_stage_create_info* stages;
@@ -67,6 +67,7 @@ namespace vk {
 		vk::handle<vk::pipeline> base_pipeline;
 		int32 base_pipeline_index;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::graphics_pipeline_create_info) == sizeof(VkGraphicsPipelineCreateInfo));

@@ -87,6 +87,7 @@ namespace vk {
 	template<typename... Args>
 	void begin_command_buffer(Args&&... args) {
 		vk::result result = vk::try_begin_command_buffer(forward<Args>(args)...);
-		if(!result.success()) throw result;
+		if(result.error()) default_unexpected_handler(result);
 	}
-}
+
+} // vk

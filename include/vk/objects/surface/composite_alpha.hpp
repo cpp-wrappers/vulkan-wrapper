@@ -11,4 +11,4 @@ namespace vk {
 		inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
 	};
 
-}
+} // vk

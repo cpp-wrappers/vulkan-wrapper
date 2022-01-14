@@ -41,4 +41,5 @@ namespace vk {
 
 	struct src_stages : pipeline_stages {};
 	struct dst_stages : pipeline_stages {};
-}
+
+} // vk

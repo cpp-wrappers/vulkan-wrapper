@@ -16,7 +16,7 @@ namespace vk {
 		uint32 variant : 3;
 	
 		constexpr api_version(vk::variant variant, vk::major major, vk::minor minor, vk::patch patch = {})
-			: variant{ variant }, major{ major }, minor{ minor }, patch{ patch }
+			: patch{ patch }, minor{ minor }, major{ major }, variant{ variant }
 		{}
 	
 		constexpr api_version(vk::major major = {}, vk::minor minor = {}, vk::patch patch = {})
@@ -27,6 +27,7 @@ namespace vk {
 			return *((uint32*)this);
 		}
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::api_version) == sizeof(uint32));

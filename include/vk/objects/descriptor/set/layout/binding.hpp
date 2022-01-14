@@ -36,7 +36,8 @@ namespace vk {
 			descriptor_count = elements::of_type<vk::descriptor_count&>::for_elements_of(args...);
 			stage_flags = elements::of_type<vk::shader_stages&>::for_elements_of(args...);
 		}
-	}; // descriptor_set_layout_binding
+
+	};
 
 } // vk
 

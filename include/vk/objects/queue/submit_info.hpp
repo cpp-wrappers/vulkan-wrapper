@@ -12,8 +12,8 @@ namespace vk {
 	struct command_buffer;
 
 	struct submit_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		const void* const next;
 		uint32 wait_semaphore_count;
 		const vk::handle<vk::semaphore>* wait_semaphores;
 		const vk::pipeline_stages* wait_dst_stage_mask;
@@ -22,6 +22,7 @@ namespace vk {
 		uint32 signal_semaphore_count;
 		const vk::handle<vk::semaphore>* signal_semaphores;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::submit_info) == sizeof(VkSubmitInfo));

@@ -26,15 +26,13 @@ namespace vk {
 		vk::layer_count layer_count{ 1 };
 	
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::image_aspects>::equals<1>,
-				types::count_of_type<vk::base_mip_level>::less_or_equals<1>,
-				types::count_of_type<vk::level_count>::less_or_equals<1>,
-				types::count_of_type<vk::base_array_layer>::less_or_equals<1>,
-				types::count_of_type<vk::layer_count>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::image_aspects>::equals<1>,
+			types::count_of_type<vk::base_mip_level>::less_or_equals<1>,
+			types::count_of_type<vk::level_count>::less_or_equals<1>,
+			types::count_of_type<vk::base_array_layer>::less_or_equals<1>,
+			types::count_of_type<vk::layer_count>::less_or_equals<1>
+		>::for_types_of<Args...>
 		image_subresource_range(Args... args) {
 			aspect_mask = elements::of_type<vk::image_aspects&>::for_elements_of(args...);
 	
@@ -57,6 +55,6 @@ namespace vk {
 	
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::image_subresource_range) == sizeof(VkImageSubresourceRange));

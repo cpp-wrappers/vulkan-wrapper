@@ -29,16 +29,7 @@ namespace vk {
 	struct resolve_attachment_reference : attachment_reference {};
 	struct depth_stencil_attachment_reference : attachment_reference {};
 	struct preserve_attachment_reference : attachment_reference {};
-	
-	//struct input_attachment_count : wrapper::of_integer<uint32> {};
-	//struct input_attachments : wrapper::of_pointer_to<const vk::attachment_reference> {};
-	//struct color_attachment_count : wrapper::of_integer<uint32> {};
-	//struct color_attachments : wrapper::of_pointer_to<const vk::attachment_reference> {};
-	//struct resolve_attachments : wrapper::of_pointer_to<const vk::attachment_reference> {};
-	//struct depth_stencil_attachments : wrapper::of_pointer_to<const vk::attachment_reference> {};
-	//struct preserve_attachment_count : wrapper::of_integer<uint32> {};
-	//struct preserve_attachments : wrapper::of_pointer_to<const uint32> {};
-	
+
 	struct subpass_description {
 		flag_enum<vk::subpass_description_flag> flags;
 		vk::pipeline_bind_point pipeline_bind_point{ vk::pipeline_bind_point::graphics };
@@ -52,15 +43,13 @@ namespace vk {
 		vk::preserve_attachment_reference* preserve_attachments = nullptr;
 	
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_ranges_of_value_type<vk::input_attachment_reference>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::color_attachment_reference>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::resolve_attachment_reference>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::depth_stencil_attachment_reference>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::preserve_attachment_reference>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_ranges_of_value_type<vk::input_attachment_reference>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::color_attachment_reference>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::resolve_attachment_reference>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::depth_stencil_attachment_reference>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::preserve_attachment_reference>::less_or_equals<1>
+		>::for_types_of<Args...>
 		subpass_description(Args&... args) {
 	
 			if constexpr(types::count_of_ranges_of_value_type<vk::input_attachment_reference>::for_types_of<Args...> == 1) {
@@ -94,6 +83,6 @@ namespace vk {
 
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::subpass_description) == sizeof(VkSubpassDescription));

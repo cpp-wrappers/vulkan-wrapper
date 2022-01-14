@@ -19,6 +19,7 @@ namespace vk {
 		vk::blend_op alpha_blend_op;
 		flag_enum<vk::color_component> color_write_mask;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::pipeline_color_blend_attachment_state) == sizeof(VkPipelineColorBlendAttachmentState));

@@ -15,6 +15,6 @@ namespace vk {
 	struct shader_module;
 
 	template<>
-	struct vk::handle<vk::shader_module> : vk::handle_base<vk::non_dispatchable> {
-	};
+	struct vk::handle<vk::shader_module> : vk::handle_base<vk::non_dispatchable> {};
+
 } // vk

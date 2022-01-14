@@ -9,4 +9,5 @@ namespace vk {
 	template<>
 	struct vk::handle<vk::buffer> : vk::handle_base<vk::non_dispatchable> {
 	};
-}
+
+} // vk

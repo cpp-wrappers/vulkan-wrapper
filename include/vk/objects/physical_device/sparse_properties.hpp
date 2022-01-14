@@ -14,6 +14,6 @@ namespace vk {
 		uint32 residency_non_resident_strict;
 	};
 
-}
+} // vk
 
 static_assert(sizeof(vk::physical_device_sparse_properties) == sizeof(VkPhysicalDeviceSparseProperties));

@@ -17,6 +17,7 @@ namespace vk {
 
 	template<>
 	struct vk::create_t<vk::image_view> {
+
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
@@ -39,20 +40,20 @@ namespace vk {
 				.subresource_range = elements::of_type<vk::image_subresource_range>::ignore_const::ignore_reference::for_elements_of(args...)
 			};
 
-			VkImage image_view;
+			vk::handle<vk::image_view> image_view;
 
 			vk::result result {
 				(int32) vkCreateImageView(
 					(VkDevice) vk::get_handle_value(device),
 					(VkImageViewCreateInfo*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkImageView*) &image_view
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
-			return vk::handle<vk::image_view>{ image_view };
+			return image_view;
 		}
 
 	};

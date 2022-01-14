@@ -9,6 +9,7 @@
 #include "../render_pass/handle.hpp"
 
 namespace vk {
+
 	struct render_pass;
 	struct image_view;
 
@@ -17,8 +18,8 @@ namespace vk {
 	};
 
 	struct framebuffer_create_info {
-		const uint32 type = (uint32) VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		const void* next;
+		const uint32 type = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		const void* const next;
 		flag_enum<vk::framebuffer_create_flag> flags;
 		vk::handle<vk::render_pass> render_pass;
 		uint32 attachment_count;
@@ -27,6 +28,7 @@ namespace vk {
 		uint32 height;
 		uint32 layers;
 	};
+
 } // vk
 
 static_assert(sizeof(vk::framebuffer_create_info) == sizeof(VkFramebufferCreateInfo));

@@ -43,6 +43,7 @@ namespace vk {
 
 			return vk::handle<vk::command_pool>{ command_pool };
 		}
+
 	};
 
 } // vk

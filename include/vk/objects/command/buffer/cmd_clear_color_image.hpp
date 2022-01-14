@@ -13,15 +13,13 @@
 namespace vk {
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
-			types::count_of_type<vk::image_layout>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::clear_color_value>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_ranges_of_value_type<vk::image_subresource_range>::equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
+		types::count_of_type<vk::image_layout>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::clear_color_value>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_ranges_of_value_type<vk::image_subresource_range>::equals<1>
+	>::for_types_of<Args...>
 	void cmd_clear_color_image(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
 		auto& image = elements::vk::possibly_guarded_handle_of<vk::image>::for_elements_of(args...);
@@ -38,4 +36,5 @@ namespace vk {
 			(VkImageSubresourceRange*) ranges.data()
 		);
 	}
-}
+
+} // vk

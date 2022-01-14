@@ -10,4 +10,5 @@ namespace vk {
 			(VkCommandBuffer) vk::get_handle_value(command_buffer)
 		);
 	}
+
 } // vk

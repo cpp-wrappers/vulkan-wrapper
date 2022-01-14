@@ -62,8 +62,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires
-	types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
 		types::count_of_type<vk::pipeline_stages>::equals<1>::ignore_const::ignore_reference,
@@ -102,7 +101,7 @@ namespace vk {
 	template<typename... Args>
 	void queue_submit(Args&&... args) {
 		vk::result result = vk::try_queue_submit(forward<Args>(args)...);
-		if(!result.success()) throw result;
+		if(result.error()) default_unexpected_handler(result);
 	}
 
 } // vk

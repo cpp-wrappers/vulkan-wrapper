@@ -8,14 +8,12 @@
 
 namespace vk {
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>,
-			types::count_of_type<vk::wait_all>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::timeout>::less_or_equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>,
+		types::count_of_type<vk::wait_all>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::timeout>::less_or_equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	vk::result try_wait_for_fence(Args&&... args) {
 		auto& fence = elements::vk::possibly_guarded_handle_of<vk::fence>::for_elements_of(args...);
 
@@ -32,6 +30,7 @@ namespace vk {
 	template<typename... Args>
 	void wait_for_fence(Args&&... args) {
 		vk::result result = vk::try_wait_for_fence(forward<Args>(args)...);
-		if(!result.success()) throw result;
+		if(result.error()) default_unexpected_handler(result);
 	}
-}
+
+} // vk

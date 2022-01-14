@@ -40,12 +40,11 @@ namespace vk {
 
 	using buffer_create_flags = flag_enum<vk::buffer_create_flag>;
 	using buffer_usages = flag_enum<vk::buffer_usage>;
-
 	using buffer_size = vk::device_size;
 
 	struct buffer_create_info {
-		uint32 type = (uint32)VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		const void* next = nullptr;
+		uint32 type = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		const void* const next = nullptr;
 		vk::buffer_create_flags flags;
 		vk::buffer_size size;
 		vk::buffer_usages usage;
@@ -53,6 +52,7 @@ namespace vk {
 		uint32 queue_family_index_count;
 		const vk::queue_family_index* queue_fanily_indices;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::buffer_create_info) == sizeof(VkBufferCreateInfo));

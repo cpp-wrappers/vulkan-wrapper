@@ -26,8 +26,8 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return vk::count{ count };
-		return result;
+		if(result.error()) return result;
+		return vk::count{ count };
 	}
 
 	vk::expected<vk::count>
@@ -92,4 +92,4 @@ namespace vk {
 		return supported;
 	}
 
-}
+} // vk

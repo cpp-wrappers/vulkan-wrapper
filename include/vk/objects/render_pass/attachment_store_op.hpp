@@ -9,4 +9,4 @@ namespace vk {
 		dont_care = VK_ATTACHMENT_STORE_OP_DONT_CARE
 	};
 	
-}
+} // vk
