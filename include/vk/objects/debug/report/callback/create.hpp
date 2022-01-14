@@ -11,13 +11,11 @@ namespace vk {
 	struct vk::create_t<vk::debug_report_callback> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
-				types::count_of_type<vk::debug_report_flags>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::debug_report_callback_type>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::count_of_type<vk::debug_report_flags>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::debug_report_callback_type>::equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
 			auto& instance = elements::vk::possibly_guarded_handle_of<vk::instance>::for_elements_of(args...);
@@ -53,13 +51,11 @@ namespace vk {
 		};
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
-				types::count_of_type<vk::debug_report_flag>::greater_or_equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::debug_report_callback_type>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::count_of_type<vk::debug_report_flag>::greater_or_equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::debug_report_callback_type>::equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
 			vk::debug_report_flags flags{};

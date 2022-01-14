@@ -12,14 +12,12 @@ namespace vk {
 	struct vk::create_t<vk::render_pass> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_ranges_of_value_type<vk::subpass_description>::equals<1>,
-				types::count_of_ranges_of_value_type<vk::subpass_dependency>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_ranges_of_value_type<vk::subpass_description>::equals<1>,
+			types::count_of_ranges_of_value_type<vk::subpass_dependency>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::attachment_description>::less_or_equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::render_pass>>
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
@@ -48,15 +46,16 @@ namespace vk {
 				(int32) vkCreateRenderPass(
 					(VkDevice) vk::get_handle_value(device),
 					(VkRenderPassCreateInfo*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkRenderPass*) &render_pass
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::render_pass>{ render_pass };
+			if(result.error()) return result;
 
-			return result;
+			return vk::handle<vk::render_pass>{ render_pass };
 		}
+
 	};
 
-}
+} // vk

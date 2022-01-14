@@ -63,7 +63,7 @@ namespace vk {
 				span{ &set, 1 }
 			);
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
 			return set;
 		}

@@ -10,13 +10,11 @@ namespace vk {
 	struct vk::create_t<vk::instance> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::application_info>::less_or_equals<1>::ignore_const::ignore_reference,
-				types::count_of_ranges_of_value_type<vk::layer_name>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::count_of_type<vk::application_info>::less_or_equals<1>::ignore_const::ignore_reference,
+			types::count_of_ranges_of_value_type<vk::layer_name>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::instance>>
 		operator () (Args&&... args) const {
 			instance_create_info ici{};
@@ -45,15 +43,16 @@ namespace vk {
 			vk::result result {
 				(int32) vkCreateInstance(
 					(VkInstanceCreateInfo*) &ici,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkInstance*) &instance
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::instance>{ instance };
+			if(result.error()) return result;
 
-			return result;
+			return vk::handle<vk::instance>{ instance };
 		}
 
 	};
-}
+
+} // vk

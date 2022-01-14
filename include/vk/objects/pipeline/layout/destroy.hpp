@@ -8,14 +8,18 @@ namespace vk {
 	template<>
 	struct vk::destroy_t<vk::pipeline_layout> {
 
-		void operator () (vk::handle<vk::device> device, vk::handle<vk::pipeline_layout> pipeline_layout) const {
+		template<typename... Args>
+		void operator () (Args&&... args) const {
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto layout = elements::of_type<vk::handle<vk::pipeline_layout>>::ignore_const::ignore_reference::for_elements_of(args...);
+
 			vkDestroyPipelineLayout(
-				(VkDevice) device.value,
-				(VkPipelineLayout) pipeline_layout.value,
+				(VkDevice) vk::get_handle_value(device),
+				(VkPipelineLayout) vk::get_handle_value(layout),
 				(VkAllocationCallbacks*) nullptr
 			);
 		}
 
 	};
 
-}
+} // vk

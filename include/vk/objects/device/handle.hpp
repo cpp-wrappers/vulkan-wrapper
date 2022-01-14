@@ -129,7 +129,7 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "../image/create.hpp"
 #include "../image/view/create.hpp"
 #include "../pipeline/layout/create.hpp"
-#include "../pipeline/graphics/create.hpp"
+#include "../pipeline/create.hpp"
 #include "../render_pass/create.hpp"
 #include "../semaphore/create.hpp"
 #include "../swapchain/create.hpp"

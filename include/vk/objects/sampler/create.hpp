@@ -14,27 +14,25 @@ namespace vk {
 	struct vk::create_t<vk::sampler> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::sampler_create_flags>::less_or_equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::mag_filter>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::min_filter>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::mipmap_mode>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::address_mode_u>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::address_mode_v>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::address_mode_w>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::mip_lod_bias>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::anisotropy_enable>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::max_anisotropy>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::compare_enable>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::compare_op>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::min_lod>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::max_lod>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::border_color>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::unnormalized_coordinates>::equals<1>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::sampler_create_flags>::less_or_equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::mag_filter>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::min_filter>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::mipmap_mode>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::address_mode_u>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::address_mode_v>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::address_mode_w>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::mip_lod_bias>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::anisotropy_enable>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::max_anisotropy>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::compare_enable>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::compare_op>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::min_lod>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::max_lod>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::border_color>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::unnormalized_coordinates>::equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::sampler>>
 		operator () (Args&&... args) const {
 			vk::sampler_create_info ci {
@@ -69,10 +67,11 @@ namespace vk {
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
 			return vk::handle<vk::sampler>{ sampler };
 		}
+
 	};
 
-}
+} // vk

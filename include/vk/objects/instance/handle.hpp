@@ -36,9 +36,9 @@ namespace vk {
 				)
 			};
 
-			if(result.error()) return vk::count{ count };
+			if(result.error()) return result;
 
-			return result;
+			return vk::count{ count };
 		}
 
 		vk::expected<vk::count>

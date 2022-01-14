@@ -11,37 +11,36 @@ namespace vk {
 	struct vk::create_t<vk::shader_module> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::handle<vk::device>>::equals<1>,
-				types::count_of_type<vk::code_size>::equals<1>,
-				types::count_of_type<vk::code>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::code_size>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::code>::equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::shader_module>>
-		operator () (const Args&... args) const {
-			vk::shader_module_create_info ci {
-				.code_size = elements::of_type<const vk::code_size&>::for_elements_of(args...),
-				.code = elements::of_type<const vk::code&>::for_elements_of(args...)
-			};
+		operator () (Args&&... args) const {
+			vk::shader_module_create_info ci{};
 
-			const vk::handle<vk::device>& device = elements::of_type<const vk::handle<vk::device>&>::for_elements_of(args...);
+			ci.code_size = elements::of_type<vk::code_size>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.code = elements::of_type<vk::code>::ignore_const::ignore_reference::for_elements_of(args...);
+
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
 
 			VkShaderModule shader_module;
 
 			vk::result result {
 				(int32) vkCreateShaderModule(
-					(VkDevice) device.value,
+					(VkDevice) vk::get_handle_value(device),
 					(VkShaderModuleCreateInfo*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkShaderModule*) &shader_module
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::shader_module>{ shader_module };
+			if(result.error()) return result;
 
-			return result;
+			return vk::handle<vk::shader_module>{ shader_module };
 		}
 
 	};
-}
+
+} // vk

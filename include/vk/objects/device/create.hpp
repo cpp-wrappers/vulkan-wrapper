@@ -18,13 +18,11 @@ namespace vk {
 	struct vk::create_t<vk::device> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::physical_device>,
-				types::count_of_ranges_of_value_type<vk::queue_create_info>::less_or_equals<1>,
-				types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::physical_device>,
+			types::count_of_ranges_of_value_type<vk::queue_create_info>::less_or_equals<1>,
+			types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::device>>
 		operator () (Args&&... args) const {
 			vk::device_create_info ci{};
@@ -48,12 +46,12 @@ namespace vk {
 				(int32) vkCreateDevice(
 					(VkPhysicalDevice) physical_device.value,
 					(VkDeviceCreateInfo*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkDevice*) &device
 				)
 			};
-			if(result.success()) return device;
-			return result;
+			if(result.error()) return result;
+			return vk::handle<vk::device>{ device };
 		}
 
 		template<typename... Args>

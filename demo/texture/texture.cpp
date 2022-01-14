@@ -150,7 +150,7 @@ void entrypoint() {
 		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
+	auto pipeline = device.create_guarded<vk::pipeline>(
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_strip,
 		array {
@@ -325,7 +325,7 @@ void entrypoint() {
 				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
 			);
 
-			command_buffer.cmd_bind_pipeline(pipeline);
+			command_buffer.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics);
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
 			command_buffer.cmd_bind_vertex_buffer(buffer);

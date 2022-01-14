@@ -10,10 +10,11 @@ namespace vk {
 
 		void operator () (vk::handle<vk::instance> instance) const {
 			vkDestroyInstance(
-				(VkInstance) instance.value,
-				nullptr
+				(VkInstance) vk::get_handle_value(instance),
+				(VkAllocationCallbacks*) nullptr
 			);
 		}
 
 	};
-}
+
+} // vk

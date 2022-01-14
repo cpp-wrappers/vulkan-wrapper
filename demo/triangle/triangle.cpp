@@ -111,7 +111,7 @@ void entrypoint() {
 
 	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
 
-	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
+	auto pipeline = device.create_guarded<vk::pipeline>(
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_list,
 		array {
@@ -220,7 +220,7 @@ void entrypoint() {
 				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
 			);
 
-			command_buffer.cmd_bind_pipeline(pipeline);
+			command_buffer.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics);
 
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);

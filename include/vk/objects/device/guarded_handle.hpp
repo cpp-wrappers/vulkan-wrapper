@@ -61,7 +61,6 @@ namespace vk {
 #include "../image/view/guarded_handle.hpp"
 #include "../pipeline/layout/guarded_handle.hpp"
 #include "../pipeline/guarded_handle.hpp"
-#include "../pipeline/graphics/guarded_handle.hpp"
 #include "../render_pass/guarded_handle.hpp"
 #include "../semaphore/guarded_handle.hpp"
 #include "../swapchain/guarded_handle.hpp"

@@ -13,14 +13,13 @@
 #include "begin_info.hpp"
 
 namespace vk {
+
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::command_buffer_usages>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::command_buffer_inheritance_info>::less_or_equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::command_buffer_usages>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::command_buffer_inheritance_info>::less_or_equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
 		vk::command_buffer_begin_info bi {
 			.usages = elements::of_type<vk::command_buffer_usages>::ignore_const::ignore_reference::for_elements_of(args...)
@@ -41,19 +40,17 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::command_buffer_usages>::equals<1>::ignore_const::ignore_reference,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
-			types::count_of_type<vk::subpass>::equals<1>,
-			types::count_of_type<vk::occlusion_query_enable>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::query_control_flags>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::query_pipeline_statistic_flags>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
-	vk::result try_begin_command_buffer(Args... args) {
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::command_buffer_usages>::equals<1>::ignore_const::ignore_reference,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
+		types::count_of_type<vk::subpass>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::occlusion_query_enable>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::query_control_flags>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::query_pipeline_statistic_flags>::equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
+	vk::result try_begin_command_buffer(Args&&... args) {
 		vk::command_buffer_inheritance_info inheritance_info {
 			.render_pass = elements::of_type<vk::command_buffer>::for_elements_of<Args...>(args...),
 			.subpass = elements::of_type<vk::subpass>::for_elements_of<Args...>(args...),
@@ -70,12 +67,10 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::command_buffer_usage>::greater_or_equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::command_buffer_usage>::greater_or_equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
 		vk::command_buffer_usages usages;
 

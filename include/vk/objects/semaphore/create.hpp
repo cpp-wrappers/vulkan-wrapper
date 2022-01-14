@@ -21,13 +21,14 @@ namespace vk {
 					(VkDevice) vk::get_handle_value(device),
 					(VkSemaphoreCreateInfo*) &ci,
 					(VkAllocationCallbacks*) nullptr,
-					&semaphore
+					(VkSemaphore*) &semaphore
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::semaphore>{ semaphore };
-			return result;
+			if(result.error()) return result;
+			return vk::handle<vk::semaphore>{ semaphore };
 		}
+
 	};
 
 }

@@ -14,12 +14,10 @@ namespace vk {
 	struct vk::create_t<vk::fence> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::fence_create_flags>::less_or_equals<1>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::fence_create_flags>::less_or_equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
 			vk::fence_create_info ci {};
@@ -66,4 +64,4 @@ namespace vk {
 		}
 	};
 
-}
+} // vk

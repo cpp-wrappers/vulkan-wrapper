@@ -3,20 +3,20 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../render_pass/handle.hpp"
-#include "../../../shared/headers.hpp"
-#include "../../../shared/subpass.hpp"
-#include "../shader_stage_create_info.hpp"
-#include "../vertex_input_state/create_info.hpp"
-#include "../input_assembly_state_create_info.hpp"
-#include "../tesselation_state_create_info.hpp"
-#include "../viewport_state_create_info.hpp"
-#include "../rasterization_state_create_info.hpp"
-#include "../multisample_state_create_info.hpp"
-#include "../depth_stencil_state_create_info.hpp"
-#include "../color_blend_state_create_info.hpp"
-#include "../dynamic_state_create_info.hpp"
-#include "../layout/handle.hpp"
+#include "../render_pass/handle.hpp"
+#include "../../shared/headers.hpp"
+#include "../../shared/subpass.hpp"
+#include "shader_stage_create_info.hpp"
+#include "vertex_input_state/create_info.hpp"
+#include "input_assembly_state_create_info.hpp"
+#include "tesselation_state_create_info.hpp"
+#include "viewport_state_create_info.hpp"
+#include "rasterization_state_create_info.hpp"
+#include "multisample_state_create_info.hpp"
+#include "depth_stencil_state_create_info.hpp"
+#include "color_blend_state_create_info.hpp"
+#include "dynamic_state_create_info.hpp"
+#include "layout/handle.hpp"
 #include "handle.hpp"
 
 namespace vk {
@@ -44,10 +44,12 @@ namespace vk {
 		//ray_tracing_allow_motion = VK_PIPELINE_CREATE_RAY_TRACING_ALLOW_MOTION_BIT_NV
 	};
 
+	using pipeline_create_flags = flag_enum<vk::pipeline_create_flag>;
+
 	struct graphics_pipeline_create_info {
 		const uint32 type = (uint32) VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		const void* next;
-		flag_enum<pipeline_create_flag> flags;
+		vk::pipeline_create_flags flags;
 		uint32 stage_count;
 		const vk::pipeline_shader_stage_create_info* stages;
 		const vk::pipeline_vertex_input_state_create_info* vertex_input_state;
@@ -62,7 +64,7 @@ namespace vk {
 		vk::handle<vk::pipeline_layout> layout;
 		vk::handle<vk::render_pass> render_pass;
 		vk::subpass subpass;
-		vk::handle<vk::graphics_pipeline> base_pipeline;
+		vk::handle<vk::pipeline> base_pipeline;
 		int32 base_pipeline_index;
 	};
 }

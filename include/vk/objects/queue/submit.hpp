@@ -17,13 +17,11 @@
 namespace vk {
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_ranges_of_value_type<vk::submit_info>::equals<1>,
-			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_ranges_of_value_type<vk::submit_info>::equals<1>,
+		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+	>::for_types_of<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
@@ -45,13 +43,11 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_type<vk::submit_info>::equals<1>::ignore_const::ignore_reference,
-			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_type<vk::submit_info>::equals<1>::ignore_const::ignore_reference,
+		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+	>::for_types_of<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
@@ -66,16 +62,15 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::pipeline_stages>::equals<1>::ignore_const::ignore_reference,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-			types::count_of_type<vk::signal_semaphore>::equals<1>::ignore_const::ignore_reference,
-			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-		>::for_types_of<Args...>
-	)
+	requires
+	types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::pipeline_stages>::equals<1>::ignore_const::ignore_reference,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::count_of_type<vk::signal_semaphore>::equals<1>::ignore_const::ignore_reference,
+		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+	>::for_types_of<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
@@ -109,4 +104,5 @@ namespace vk {
 		vk::result result = vk::try_queue_submit(forward<Args>(args)...);
 		if(!result.success()) throw result;
 	}
-}
+
+} // vk

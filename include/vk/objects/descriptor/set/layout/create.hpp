@@ -21,13 +21,11 @@ namespace vk {
 	struct vk::create_t<vk::descriptor_set_layout> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::descriptor_set_layout_create_flags>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_ranges_of_value_type<vk::descriptor_set_layout_binding>::equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::descriptor_set_layout_create_flags>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_ranges_of_value_type<vk::descriptor_set_layout_binding>::equals<1>
+		>::for_types_of<Args...>
 		expected<vk::handle<vk::descriptor_set_layout>>
 		operator () (Args&&... args) const {
 			auto flags = elements::of_type<vk::descriptor_set_layout_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
@@ -52,7 +50,7 @@ namespace vk {
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
 			return vk::handle<vk::descriptor_set_layout>{ descriptor_set_layout };
 		}

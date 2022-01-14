@@ -10,8 +10,8 @@ namespace vk {
 
 		void operator () (vk::handle<vk::device> device) const {
 			vkDestroyDevice(
-				(VkDevice) device.value,
-				nullptr
+				(VkDevice) vk::get_handle_value(device),
+				(VkAllocationCallbacks*) nullptr
 			);
 		}
 

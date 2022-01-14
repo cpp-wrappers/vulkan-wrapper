@@ -13,13 +13,11 @@ namespace vk {
 	struct vk::allocate_t<vk::device_memory> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::device_size>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::memory_type_index>::equals<1>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::device_size>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::memory_type_index>::equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::device_memory>>
 		operator () (Args&&... args) const {
 			vk::memory_allocate_info ai {
@@ -40,9 +38,9 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::device_memory>{ device_memory };
+			if(result.error()) return result;
 
-			return result;
+			return vk::handle<vk::device_memory>{ device_memory };
 		}
 	};
 

@@ -14,10 +14,12 @@ namespace vk {
 		рrotected = VK_COMMAND_POOL_CREATE_PROTECTED_BIT
 	};
 
+	using command_pool_create_flags = flag_enum<vk::command_pool_create_flag>;
+
 	struct command_pool_create_info {
 		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 		const void* next;
-		flag_enum<command_pool_create_flag> flags;
+		vk::command_pool_create_flags flags;
 		vk::queue_family_index queue_family_index;
 	};
 

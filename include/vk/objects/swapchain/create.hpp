@@ -12,25 +12,23 @@ namespace vk {
 	struct vk::create_t<vk::swapchain> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::surface>,
-				types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
-				types::count_of_type<vk::swapchain_create_flag>::greater_or_equals<0>::ignore_reference,
-				types::count_of_type<vk::min_image_count>::equals<1>::ignore_reference,
-				types::count_of_type<vk::format>::equals<1>::ignore_reference,
-				types::count_of_type<vk::color_space>::equals<1>::ignore_reference,
-				types::count_of_type<vk::extent<2>>::equals<1>::ignore_reference,
-				types::count_of_type<vk::image_usages>::equals<1>::ignore_reference,
-				types::count_of_type<vk::sharing_mode>::equals<1>::ignore_reference,
-				types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>,
-				types::count_of_type<vk::surface_transform>::greater_or_equals<0>::ignore_reference,
-				types::count_of_type<vk::composite_alpha>::greater_or_equals<0>::ignore_reference,
-				types::count_of_type<vk::present_mode>::equals<1>::ignore_reference,
-				types::count_of_type<vk::clipped>::equals<1>::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::surface>,
+			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+			types::count_of_type<vk::swapchain_create_flag>::greater_or_equals<0>::ignore_reference,
+			types::count_of_type<vk::min_image_count>::equals<1>::ignore_reference,
+			types::count_of_type<vk::format>::equals<1>::ignore_reference,
+			types::count_of_type<vk::color_space>::equals<1>::ignore_reference,
+			types::count_of_type<vk::extent<2>>::equals<1>::ignore_reference,
+			types::count_of_type<vk::image_usages>::equals<1>::ignore_reference,
+			types::count_of_type<vk::sharing_mode>::equals<1>::ignore_reference,
+			types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>,
+			types::count_of_type<vk::surface_transform>::greater_or_equals<0>::ignore_reference,
+			types::count_of_type<vk::composite_alpha>::greater_or_equals<0>::ignore_reference,
+			types::count_of_type<vk::present_mode>::equals<1>::ignore_reference,
+			types::count_of_type<vk::clipped>::equals<1>::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			auto& surface = elements::vk::possibly_guarded_handle_of<vk::surface>::for_elements_of(args...);
@@ -87,7 +85,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires(types::count_of_type<vk::surface_format>::equals<1>::ignore_reference::for_types_of<Args...>)
+		requires types::count_of_type<vk::surface_format>::equals<1>::ignore_reference::for_types_of<Args...>
 		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			vk::surface_format surface_format = elements::of_type<vk::surface_format&>::for_elements_of(args...);
@@ -106,4 +104,5 @@ namespace vk {
 		}
 
 	};
-}
+
+} // vk

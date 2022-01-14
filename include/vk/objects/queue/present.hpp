@@ -11,12 +11,10 @@
 namespace vk {
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_type<vk::present_info>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_type<vk::present_info>::equals<1>::ignore_const::ignore_reference
+	>::for_types_of<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
 		auto present_info = elements::of_type<vk::present_info>::ignore_const::ignore_reference::for_elements_of(args...);
@@ -30,15 +28,13 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_ranges_of_value_type<vk::wait_semaphore>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::handle<vk::swapchain>>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::image_index>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::result>::less_or_equals<1>
-		>::for_types_of<Args...>
-	)
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_ranges_of_value_type<vk::wait_semaphore>::equals<1>,
+		types::count_of_ranges_of_value_type<vk::handle<vk::swapchain>>::equals<1>,
+		types::count_of_ranges_of_value_type<vk::image_index>::equals<1>,
+		types::count_of_ranges_of_value_type<vk::result>::less_or_equals<1>
+	>::for_types_of<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
 		auto& wait_semaphores = elements::range_of_value_type<vk::wait_semaphore>::for_elements_of(args...);
@@ -60,16 +56,14 @@ namespace vk {
 		return vk::try_queue_present(queue, present_info);
 	}
 
-		template<typename... Args>
-	requires(
-		types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-			types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
-			types::count_of_type<vk::image_index>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::result&>::less_or_equals<1>
-		>::for_types_of<Args...>
-	)
+	template<typename... Args>
+	requires types::are_exclusively_satsify_predicates<
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
+		types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+		types::count_of_type<vk::image_index>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::result&>::less_or_equals<1>
+	>::for_types_of<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
 
@@ -100,4 +94,4 @@ namespace vk {
 		if(result.success()) throw result;
 	}
 
-}
+} // vk

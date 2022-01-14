@@ -13,22 +13,20 @@ namespace vk {
 	struct vk::create_t<vk::image> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::image_create_flags>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::image_type>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::mip_levels>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::array_layers>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::sample_count>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::image_tiling>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::image_usages>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_ranges_of_value_type<vk::queue_family_index>::equals<1>,
-				types::count_of_type<vk::initial_layout>::equals<1>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::image_create_flags>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_type>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::mip_levels>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::array_layers>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::sample_count>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_tiling>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_usages>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_ranges_of_value_type<vk::queue_family_index>::equals<1>,
+			types::count_of_type<vk::initial_layout>::equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::image>>
 		operator () (Args&&... args) {
 			vk::image_create_flags flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
@@ -73,11 +71,11 @@ namespace vk {
 				)
 			};
 
-			if(result.success()) return vk::handle<vk::image>{ image };
+			if(result.error()) return result;
 
-			return result;
+			return vk::handle<vk::image>{ image };
 		};
 
 	};
 
-}
+} // vk

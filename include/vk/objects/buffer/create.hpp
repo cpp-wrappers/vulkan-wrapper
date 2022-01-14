@@ -4,10 +4,10 @@
 #include <core/types/are_exclusively_satsify_predicates.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 
-#include "handle.hpp"
-#include "create_info.hpp"
 #include "../../object/create_or_allocate.hpp"
 #include "../device/handle.hpp"
+#include "handle.hpp"
+#include "create_info.hpp"
 
 namespace vk {
 
@@ -15,16 +15,14 @@ namespace vk {
 	struct vk::create_t<vk::buffer> {
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::count_of_type<vk::buffer_create_flags>::less_or_equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::buffer_size>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::buffer_usages>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::count_of_type<vk::buffer_create_flags>::less_or_equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::buffer_size>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::buffer_usages>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::buffer>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
@@ -56,7 +54,7 @@ namespace vk {
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
 			return vk::handle<vk::buffer>{ buffer };
 		}

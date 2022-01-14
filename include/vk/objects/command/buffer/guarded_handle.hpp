@@ -39,17 +39,20 @@ namespace vk {
 
 		template<typename... Args>
 		requires(sizeof...(Args) > 0) // TODO
-		auto begin(Args&&... args) const { return handle().begin(forward<Args>(args)...); }
+		auto& begin(Args&&... args) const {
+			handle().begin(forward<Args>(args)...);
+			return *this;
+		}
 
-		template<typename... Args> auto cmd_begin_render_pass(Args&&... args) const { return handle().cmd_begin_render_pass(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_bind_pipeline(Args&&... args) const { return handle().cmd_bind_pipeline(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_set_viewport(Args&&... args) const { return handle().cmd_set_viewport(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_set_scissor(Args&&... args) const { return handle().cmd_set_scissor(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_bind_vertex_buffers(Args&&... args) const { return handle().cmd_bind_vertex_buffers(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_bind_vertex_buffer(Args&&... args) const { return handle().cmd_bind_vertex_buffer(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_draw(Args&&... args) const { return handle().cmd_draw(forward<Args>(args)...); }
-		template<typename... Args> auto cmd_end_render_pass(Args&&... args) const { return handle().cmd_end_render_pass(forward<Args>(args)...); }
-		template<typename... Args> auto end(Args&&... args) const { return handle().end(forward<Args>(args)...); }
+		template<typename... Args> auto& cmd_begin_render_pass(Args&&... args) const { handle().cmd_begin_render_pass(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_bind_pipeline(Args&&... args) const { handle().cmd_bind_pipeline(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_set_viewport(Args&&... args) const { handle().cmd_set_viewport(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_set_scissor(Args&&... args) const { handle().cmd_set_scissor(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_bind_vertex_buffers(Args&&... args) const { handle().cmd_bind_vertex_buffers(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_bind_vertex_buffer(Args&&... args) const { handle().cmd_bind_vertex_buffer(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_draw(Args&&... args) const { handle().cmd_draw(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_end_render_pass(Args&&... args) const { handle().cmd_end_render_pass(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& end(Args&&... args) const { handle().end(forward<Args>(args)...); return *this; }
 	};
 
 }

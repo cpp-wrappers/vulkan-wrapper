@@ -18,16 +18,14 @@ namespace vk {
 	template<>
 	struct vk::create_t<vk::image_view> {
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
-				types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::image_view_type>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::component_mapping>::equals<1>::ignore_const::ignore_reference,
-				types::count_of_type<vk::image_subresource_range>::equals<1>::ignore_const::ignore_reference
-			>::for_types_of<Args...>
-		)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
+			types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_view_type>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::component_mapping>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_subresource_range>::equals<1>::ignore_const::ignore_reference
+		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::image_view>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
@@ -56,6 +54,7 @@ namespace vk {
 
 			return vk::handle<vk::image_view>{ image_view };
 		}
+
 	};
-	
-}
+
+} // vk

@@ -150,7 +150,7 @@ void entrypoint() {
 		.color_write_mask = { vk::color_component::r, vk::color_component::g, vk::color_component::b, vk::color_component::a }
 	};
 
-	auto pipeline = device.create_guarded<vk::graphics_pipeline>(
+	auto pipeline = device.create_guarded<vk::pipeline>(
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_strip,
 		array {
@@ -195,8 +195,10 @@ void entrypoint() {
 
 	auto command_pool = device.create_guarded<vk::command_pool>(
 		queue_family_index,
-		vk::command_pool_create_flag::reset_command_buffer,
-		vk::command_pool_create_flag::transient
+		vk::command_pool_create_flags {
+			vk::command_pool_create_flag::reset_command_buffer,
+			vk::command_pool_create_flag::transient
+		}
 	);
 
 	struct rendering_resource {
@@ -265,7 +267,7 @@ void entrypoint() {
 		nuint rendering_resource_index = 0;
 
 		while (!platform::should_close()) {
-			auto& rr = rendering_resources[rendering_resource_index];
+			rendering_resource& rr = rendering_resources[rendering_resource_index];
 			
 			++rendering_resource_index %= rendering_resources.size();
 			
@@ -292,22 +294,20 @@ void entrypoint() {
 
 			auto& command_buffer = rr.command_buffer;
 
-			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
-
-			command_buffer.cmd_begin_render_pass(
-				render_pass, rr.framebuffer,
-				vk::render_area{ surface_capabilities.current_extent },
-				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
-			);
-
-			command_buffer.cmd_bind_pipeline(pipeline);
-			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
-			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
-			command_buffer.cmd_bind_vertex_buffer(buffer);
-			command_buffer.cmd_draw(vk::vertex_count{ 4 });
-			command_buffer.cmd_end_render_pass();
-
-			command_buffer.end();
+			command_buffer
+				.begin(vk::command_buffer_usage::one_time_submit)
+				.cmd_begin_render_pass(
+					render_pass, rr.framebuffer,
+					vk::render_area{ surface_capabilities.current_extent },
+					array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
+				)
+				.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics)
+				.cmd_set_viewport(surface_capabilities.current_extent)
+				.cmd_set_scissor(surface_capabilities.current_extent)
+				.cmd_bind_vertex_buffer(buffer)
+				.cmd_draw(vk::vertex_count{ 4 })
+				.cmd_end_render_pass()
+				.end();
 
 			queue.submit(
 				command_buffer,
