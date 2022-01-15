@@ -59,7 +59,7 @@ void entrypoint() {
 
 	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface isn't supported").new_line();
-		throw;
+		return;
 	}
 
 	auto device = physical_device.create_guarded_device(
@@ -212,23 +212,19 @@ void entrypoint() {
 		for(nuint i = 0; i < images_count; ++i) {
 			auto command_buffer = command_buffers[i];
 
-			command_buffer.begin(vk::command_buffer_usage::simultaneius_use);
-
-			command_buffer.cmd_begin_render_pass(
-				render_pass, framebuffers[i],
-				vk::render_area{ surface_capabilities.current_extent },
-				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
-			);
-
-			command_buffer.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics);
-
-			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
-			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
-
-			command_buffer.cmd_draw(vk::vertex_count{ 3 });
-			command_buffer.cmd_end_render_pass();
-
-			command_buffer.end();
+			command_buffer
+				.begin(vk::command_buffer_usage::simultaneius_use)
+				.cmd_begin_render_pass(
+					render_pass, framebuffers[i],
+					vk::render_area{ surface_capabilities.current_extent },
+					array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
+				)
+				.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics)
+				.cmd_set_viewport(surface_capabilities.current_extent)
+				.cmd_set_scissor(surface_capabilities.current_extent)
+				.cmd_draw(vk::vertex_count{ 3 })
+				.cmd_end_render_pass()
+				.end();
 		}
 
 		auto swapchain_image_semaphore = device.create_guarded<vk::semaphore>();

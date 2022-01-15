@@ -21,9 +21,11 @@ args+=(-std=c++20)
 args+=(-g)
 args+=(-nostdinc++)
 args+=(-fmodules)
+args+=(-fno-exceptions)
 args+=(-I${root_dir}/../core/include)
 args+=(-Xclang -fimplicit-module-maps)
 args+=(-I${root_dir}/include)
+args+=(-lpng)
 
 if [ -v sanitize ]; then
 	args+=(-fsanitize=address)

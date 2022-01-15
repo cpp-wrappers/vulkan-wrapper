@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/types/are_may_contain_one_type.hpp>
+
 #include "../../object/create_or_allocate.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
@@ -11,7 +13,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::application_info>::less_or_equals<1>::ignore_const::ignore_reference,
+			types::are_may_contain_one_type<vk::application_info>::decay,
 			types::count_of_ranges_of_value_type<vk::layer_name>::less_or_equals<1>,
 			types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
 		>::for_types_of<Args...>
@@ -19,7 +21,7 @@ namespace vk {
 		operator () (Args&&... args) const {
 			instance_create_info ici{};
 
-			if constexpr(types::are_contain_type<vk::application_info>::for_types_of<Args...>) {
+			if constexpr(types::are_contain_type<vk::application_info>::decay::for_types_of<Args...>) {
 				ici.application_info =
 					& elements::of_type<
 						vk::application_info

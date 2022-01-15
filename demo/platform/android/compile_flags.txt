@@ -1,5 +1,6 @@
 -std=c++20
 -nostdinc++
+-fno-exceptions
 --sysroot=/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot
 -isystem/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
 -isystem/home/fewizz/android/ndk/24.0.7856742/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android

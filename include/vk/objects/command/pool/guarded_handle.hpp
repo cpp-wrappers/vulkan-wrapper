@@ -14,7 +14,7 @@ namespace vk {
 
 		template<typename... Args>
 		void allocate_command_buffers(Args&&... args) {
-			return handle().allocate_command_buffers(device(), forward<Args>(args)...);
+			return handle().allocate_command_buffers(device(), handle(), forward<Args>(args)...);
 		}
 
 		template<typename ObjectType, typename... Args>

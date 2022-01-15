@@ -11,7 +11,7 @@ namespace vk {
 	enum class descriptor_pool_create_flag {
 		free_descriptor_set_bit = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
 		update_after_bind_bit = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT,
-		host_only_bit_valve = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
+		//host_only_bit_valve = VK_DESCRIPTOR_POOL_CREATE_HOST_ONLY_BIT_VALVE,
 		update_after_bind_bit_ext = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT,
 	};
 

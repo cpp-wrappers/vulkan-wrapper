@@ -1,3 +1,6 @@
+#include <string.h>
+#include <stdlib.h>
+
 #include <android/looper.h>
 #include <android/native_app_glue/android_native_app_glue.h>
 #include <android/asset_manager.h>
@@ -9,8 +12,6 @@
 #include "vulkan/vulkan_android.h"
 
 #include "../platform.hpp"
-#include <string.h>
-#include <assert.h>
 
 struct message_buffer {
 	int prio;
@@ -24,13 +25,13 @@ struct message_buffer {
 			++str;
 
 			if(ch == '\n') {
-				assert(size < buf_size);
+				if(size < buf_size) abort();
 				buf[size] = 0;
 				__android_log_write(prio, "vulkan", buf);
 				size = 0;
 			}
 			else {
-				assert(size < buf_size - 1);
+				if(size < buf_size - 1) abort();
 				buf[size++] = ch;
 			}
 		}
@@ -39,13 +40,13 @@ struct message_buffer {
 	void add(const char* str) {
 		while(char ch = *(str++)) {
 			if(ch == '\n') {
-				assert(size < buf_size);
+				if(size < buf_size) abort();
 				buf[size] = 0;
 				__android_log_write(prio, "vulkan", buf);
 				size = 0;
 			}
 			else {
-				assert(size < buf_size - 1);
+				if(size < buf_size - 1) abort();
 				buf[size++] = ch;
 			}
 		}
@@ -95,26 +96,25 @@ static array<vk::extension_name, 2> required_instance_extensions{ "VK_KHR_surfac
 
 span<vk::extension_name> platform::get_required_instance_extensions() { return span{ required_instance_extensions.data(), required_instance_extensions.size() }; }
 
-vk::guarded<vk::surface> platform::create_surface(vk::instance instance) {
+vk::guarded_handle<vk::surface> platform::create_surface(vk::handle<vk::instance> instance) {
 
 	VkAndroidSurfaceCreateInfoKHR ci {
 		.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR,
-		.pNext = nullptr,
-		.flags = 0,
 		.window = app->window
 	};
 
-	vk::surface surface;
+	vk::handle<vk::surface> surface;
 
 	VkResult result = vkCreateAndroidSurfaceKHR(
-		(VkInstance) instance.handle,
+		(VkInstance) vk::get_handle_value(instance),
 		&ci,
 		nullptr,
 		(VkSurfaceKHR*) &surface
 	);
 
 	if(result != VK_SUCCESS) {
-		throw;
+		error("couldn't create surface").new_line();
+		abort();
 	}
 
 	return { surface, instance };

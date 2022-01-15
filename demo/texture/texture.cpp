@@ -5,6 +5,7 @@ mkdir -p ${src_dir}/build
 
 glslangValidator -e main -o ${src_dir}/build/texture.vert.spv -V ${src_dir}/texture.vert
 glslangValidator -e main -o ${src_dir}/build/texture.frag.spv -V ${src_dir}/texture.frag
+cp ${src_dir}/leaf.png ${src_dir}/build/leaf.png
 
 . ${src_dir}/../build.sh $@ --asset texture.vert.spv --asset texture.frag.spv --asset leaf.png
 
@@ -44,13 +45,77 @@ void entrypoint() {
 
 	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface isn't supported").new_line();
-		throw;
+		return;
 	}
 
 	auto device = physical_device.create_guarded_device(
 		queue_family_index,
 		vk::queue_priority{ 1.0F },
 		vk::extension_name{ "VK_KHR_swapchain" }
+	);
+
+	platform::image_info image_info = platform::read_image_info("leaf.png");
+	platform::info("image width: ", image_info.width, ", height: ", image_info.height, ", size: ", image_info.size).new_line();
+	char image_data_storage[image_info.size];
+	span image_data{ image_data_storage, image_info.size };
+	platform::read_image_data("leaf.png", image_data);
+
+	auto image = device.create_guarded<vk::image>(
+		vk::image_create_flags{},
+		vk::image_type::two_d,
+		vk::format::r8_g8_b8_a8_unorm,
+		vk::extent<3>{ image_info.width, image_info.height, 1 },
+		vk::mip_levels{ 1 },
+		vk::array_layers{ 1 },
+		vk::sample_count{ 1 },
+		vk::image_tiling::optimal,
+		vk::image_usages{
+			vk::image_usage::transfer_dst,
+			vk::image_usage::sampled
+		},
+		vk::sharing_mode::exclusive,
+		span<vk::queue_family_index>{ nullptr, 0 },
+		vk::initial_layout{ vk::image_layout::undefined }
+	);
+
+	auto image_memory = device.allocate_guarded<vk::device_memory>(
+		vk::device_size{ image_info.size },
+		physical_device.get_index_of_first_memory_type(
+			vk::memory_properties{ vk::memory_property::device_local },
+			device.get_image_memory_requirements(image).memory_type_bits
+		)
+	);
+
+	image.bind_memory(image_memory);
+
+	auto staging_buffer = device.create_guarded<vk::buffer>(
+		vk::buffer_size{ image_info.size },
+		vk::buffer_usages{ vk::buffer_usage::transfer_src },
+		vk::sharing_mode::exclusive
+	);
+
+	auto staging_buffer_memory = device.allocate_guarded<vk::device_memory>(
+		vk::device_size{ image_info.size },
+		physical_device.get_index_of_first_memory_type(
+			vk::memory_properties{ vk::memory_property::host_visible },
+			device.get_buffer_memory_requirements(staging_buffer).memory_type_bits
+		)
+	);
+
+	staging_buffer.bind_memory(staging_buffer_memory);
+
+	uint8* image_data_ptr;
+	staging_buffer_memory.map(vk::memory_size{ image_info.size }, (void**)&image_data_ptr);
+	for(unsigned i = 0; i < image_info.size; ++i) image_data_ptr[i] = image_data[i];
+	staging_buffer_memory.flush_mapped(vk::memory_size{ image_info.size });
+	staging_buffer_memory.unmap();
+
+	auto image_view = device.create_guarded<vk::image_view>(
+		image,
+		vk::format::r8_g8_b8_a8_unorm,
+		vk::image_view_type::two_d,
+		vk::component_mapping{},
+		vk::image_subresource_range{ vk::image_aspects{ vk::image_aspect::color } }
 	);
 
 	struct data_t {
@@ -195,8 +260,10 @@ void entrypoint() {
 
 	auto command_pool = device.create_guarded<vk::command_pool>(
 		queue_family_index,
-		vk::command_pool_create_flag::reset_command_buffer,
-		vk::command_pool_create_flag::transient
+		vk::command_pool_create_flags{
+			vk::command_pool_create_flag::reset_command_buffer,
+			vk::command_pool_create_flag::transient
+		}
 	);
 
 	struct rendering_resource {
@@ -213,8 +280,84 @@ void entrypoint() {
 		rr.command_buffer = command_pool.allocate_guarded<vk::command_buffer>(vk::command_buffer_level::primary);
 	}
 
+	rendering_resources[0].command_buffer
+		.begin(vk::command_buffer_usages{ vk::command_buffer_usage::one_time_submit })
+		.cmd_pipeline_barrier(
+			vk::src_stages{ vk::pipeline_stage::top_of_pipe },
+			vk::dst_stages{ vk::pipeline_stage::transfer },
+			vk::dependencies{},
+			array {
+				vk::image_memory_barrier {
+					.dst_access{ vk::access::transfer_write },
+					.old_layout{ vk::image_layout::undefined },
+					.new_layout{ vk::image_layout::transfer_dst_optimal },
+					.image = vk::get_handle(image),
+					.subresource_range {
+						vk::image_aspects{ vk::image_aspect::color }
+					}
+				}
+			}
+		)
+		.cmd_copy_buffer_to_image(
+			staging_buffer, image, vk::image_layout::transfer_dst_optimal,
+			array{
+				vk::buffer_image_copy {
+					.image_subresource {
+						.aspects{ vk::image_aspect::color },
+						.layer_count = 1
+					},
+					.image_extent{
+						image_info.width, image_info.height, 1
+					}
+				}
+			}
+		)
+		.cmd_pipeline_barrier(
+			vk::src_stages{ vk::pipeline_stage::transfer },
+			vk::dst_stages{ vk::pipeline_stage::fragment_shader },
+			vk::dependencies{},
+			array {
+				vk::image_memory_barrier {
+					.src_access{ vk::access::transfer_write },
+					.dst_access{ vk::access::shader_read },
+					.old_layout{ vk::image_layout::transfer_dst_optimal },
+					.new_layout{ vk::image_layout::shader_read_only_optimal },
+					.image = vk::get_handle(image),
+					.subresource_range {
+						vk::image_aspects{ vk::image_aspect::color }
+					}
+				}
+			}
+		)
+		.end();
+
+
 	vk::guarded_handle<vk::swapchain> swapchain{};
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
+
+	queue.submit(vk::submit_info {
+		.command_buffer_count = 1,
+		.command_buffers = &vk::get_handle(rendering_resources[0].command_buffer)
+	});
+
+	device.wait_idle();
+
+	auto sampler = device.create_guarded<vk::sampler>(
+		vk::mag_filter{ vk::filter::nearest },
+		vk::min_filter{ vk::filter::nearest },
+		vk::mipmap_mode::nearest,
+		vk::address_mode_u{ vk::address_mode::clamp_to_edge },
+		vk::address_mode_v{ vk::address_mode::clamp_to_edge },
+		vk::address_mode_w{ vk::address_mode::clamp_to_edge },
+		vk::mip_lod_bias{ 0.0 },
+		vk::anisotropy_enable{ false },
+		vk::compare_enable{ false },
+		vk::compare_op::always,
+		vk::min_lod{ 0.0F },
+		vk::max_lod{ 0.0F },
+		vk::border_color::float_transparent_black,
+		vk::unnormalized_coordinates{ false }
+	);
 
 	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
 		vk::descriptor_pool_create_flags{ },
@@ -350,7 +493,7 @@ void entrypoint() {
 			if(!present_result.success()) {
 				if(present_result.suboptimal() || present_result.out_of_date()) break;
 				platform::error("present").new_line();
-				throw;
+				return;
 			}
 
 			platform::end();

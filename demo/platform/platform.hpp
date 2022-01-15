@@ -53,8 +53,17 @@ namespace platform {
 	extern logger error;
 
 	nuint file_size(const char*);
-	void read_file(const char*, char* buff, nuint size);
-	void read_image_data(const char*, char* buff, nuint size);
+	void read_file(const char*, span<char> buffer);
+
+	struct image_info {
+		uint32 width;
+		uint32 height;
+		nuint size;
+	};
+
+	image_info read_image_info(const char* path);
+
+	void read_image_data(const char* path, span<char> buffer);
 
 	span<vk::extension_name> get_required_instance_extensions();
 
@@ -67,7 +76,7 @@ namespace platform {
 	inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarded_handle<vk::device>& device, const char* path) {
 		auto size = platform::file_size(path);
 		char src[size];
-		platform::read_file(path, src, size);
+		platform::read_file(path, span{ src, size });
 		return device.create_guarded<vk::shader_module>(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
 	}
 

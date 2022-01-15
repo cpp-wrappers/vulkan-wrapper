@@ -9,10 +9,12 @@
 #include "../../../elements/possibly_guarded_handle_of.hpp"
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../object/handle/get_value.hpp"
-#include "handle.hpp"
+#include "../../../shared/result.hpp"
 #include "begin_info.hpp"
 
 namespace vk {
+
+	struct command_buffer;
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<

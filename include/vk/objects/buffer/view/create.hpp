@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/types/are_contain_one_type.hpp>
+
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../object/create_or_allocate.hpp"
 #include "../../../shared/result.hpp"
@@ -16,7 +18,7 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-			types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
+			types::are_contain_one_type<vk::format>::decay,
 			types::count_of_type<vk::memory_offset>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::memory_size>::equals<1>::ignore_const::ignore_reference
 		>::for_types_of<Args...>

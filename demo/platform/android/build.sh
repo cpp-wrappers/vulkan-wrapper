@@ -48,7 +48,6 @@ fi
 
 args+=(-std=c++20)
 args+=(-nostdinc++)
-args+=(-fexceptions)
 
 if ! $CXX \
 	-c \

@@ -35,7 +35,7 @@ namespace vk {
 		acceleration_structure_build_input_read_only = 0x00080000,
 		acceleration_structure_storage = 0x00100000,
 		shader_binding_table = 0x00000400,
-		ray_tracing = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR
+		//ray_tracing = VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR
 	};
 
 	using buffer_create_flags = flag_enum<vk::buffer_create_flag>;

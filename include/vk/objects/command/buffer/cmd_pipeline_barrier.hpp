@@ -1,23 +1,25 @@
 #pragma once
 
 #include <core/types/are_exclusively_satsify_predicates.hpp>
+#include <core/types/are_contain_one_type.hpp>
 #include <core/types/count_of_ranges_of_value_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
 
 #include "../../../shared/dependency.hpp"
 #include "../../../elements/possibly_guarded_handle_of.hpp"
+#include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../pipeline/stage.hpp"
-#include "handle.hpp"
 #include "image_memory_barrier.hpp"
+#include "handle.hpp"
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::src_stages>::equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::dst_stages>::equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::dependencies>::equals<1>::ignore_const::ignore_reference,
+		types::are_contain_one_type<vk::src_stages>::decay,
+		types::are_contain_one_type<vk::dst_stages>::decay,
+		types::are_contain_one_type<vk::dependencies>::decay,
 		types::count_of_ranges_of_value_type<vk::image_memory_barrier>::less_or_equals<1>
 	>::for_types_of<Args...>
 	void cmd_pipeline_barrier(Args&&... args) {

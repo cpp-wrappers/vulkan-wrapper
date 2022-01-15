@@ -19,7 +19,7 @@ namespace vk {
 		inline_uniform_block_ext = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
 		acceleration_structure_khr = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
 		acceleration_structure_nv = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV,
-		mutable_valve = VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+		//mutable_valve = VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
 	};
 
 } // vk

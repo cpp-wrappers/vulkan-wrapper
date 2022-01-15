@@ -15,7 +15,7 @@ namespace vk {
 		__protected = VK_MEMORY_PROPERTY_PROTECTED_BIT,
 		device_coherent = VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD,
 		device_uncached = VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD,
-		rdma_capable = VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV,
+		//rdma_capable = VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV,
 	};
 	
 	using memory_properties = flag_enum<vk::memory_property>;

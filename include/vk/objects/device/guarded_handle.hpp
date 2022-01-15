@@ -36,8 +36,10 @@ namespace vk {
 			return handle().get_buffer_memory_requirements(buffer);
 		}
 
-		template<typename... Args>
-		vk::guarded_handle<vk::device_memory> allocate_guarded_memory(Args&&... args) const;
+		vk::memory_requirements
+		get_image_memory_requirements(vk::possibly_guarded_handle_of<vk::image> auto& buffer) const {
+			return handle().get_image_memory_requirements(buffer);
+		}
 
 		vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			return handle().get_queue(queue_family_index, queue_index);

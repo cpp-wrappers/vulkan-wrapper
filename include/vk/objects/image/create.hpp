@@ -18,6 +18,7 @@ namespace vk {
 			types::count_of_type<vk::image_create_flags>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::image_type>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::extent<3>>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::mip_levels>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::array_layers>::equals<1>::ignore_const::ignore_reference,
 			types::count_of_type<vk::sample_count>::equals<1>::ignore_const::ignore_reference,
@@ -28,7 +29,7 @@ namespace vk {
 			types::count_of_type<vk::initial_layout>::equals<1>::ignore_const::ignore_reference
 		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::image>>
-		operator () (Args&&... args) {
+		operator () (Args&&... args) const {
 			vk::image_create_info ci{};
 
 			ci.flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);

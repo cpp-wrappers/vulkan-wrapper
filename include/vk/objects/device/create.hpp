@@ -5,6 +5,7 @@
 #include <core/type/negated_predicate.hpp>
 #include <core/type/remove_const.hpp>
 #include <core/types/are_contain_range_of_value_type.hpp>
+#include <core/types/are_contain_one_type.hpp>
 
 #include "handle.hpp"
 #include "create_info.hpp"
@@ -56,7 +57,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::queue_family_index>::equals<1>::ignore_const::ignore_reference,
+			types::are_contain_one_type<vk::queue_family_index>::decay,
 			types::count_of_ranges_of_value_type<vk::queue_priority>::equals<1>
 		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::device>>

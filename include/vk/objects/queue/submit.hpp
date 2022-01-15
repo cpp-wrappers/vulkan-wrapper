@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/types/count_of_ranges_of_value_type.hpp>
+#include <core/types/are_contain_one_type.hpp>
 #include <core/elements/range_of_value_type.hpp>
 #include <core/types/count_of_type.hpp>
 #include <core/elements/of_type.hpp>
@@ -45,7 +46,7 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_type<vk::submit_info>::equals<1>::ignore_const::ignore_reference,
+		types::are_contain_one_type<vk::submit_info>::decay,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types_of<Args...>
 	vk::result try_queue_submit(Args&&... args) {
@@ -64,10 +65,10 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::pipeline_stages>::equals<1>::ignore_const::ignore_reference,
+		types::are_contain_one_type<vk::wait_semaphore>::decay,
+		types::are_contain_one_type<vk::pipeline_stages>::decay,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::signal_semaphore>::equals<1>::ignore_const::ignore_reference,
+		types::are_contain_one_type<vk::signal_semaphore>::decay,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types_of<Args...>
 	vk::result try_queue_submit(Args&&... args) {
