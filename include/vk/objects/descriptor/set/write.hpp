@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../shared/headers.hpp"
+#include "../../../shared/count.hpp"
 #include "../../buffer/view/handle.hpp"
 #include "../binding.hpp"
 #include "../type.hpp"
@@ -17,6 +18,7 @@ namespace vk {
 		vk::handle<vk::descriptor_set> dst_set;
 		vk::dst_binding dst_binding;
 		vk::dst_array_element dst_array_element;
+		vk::count count;
 		vk::descriptor_type descriptor_type;
 		const vk::descriptor_image_info* image_info;
 		const vk::descriptor_buffer_info* buffer_info;

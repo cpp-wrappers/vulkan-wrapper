@@ -109,14 +109,12 @@ void platform::read_image_data(const char* path, span<char> buffer) {
 
 	png_init_io(png_ptr, f);
 
-	//char* data = buffer.data();
-	//png_set_rows(png_ptr, png_info, (png_bytepp) &data);
 	png_read_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, nullptr);
 
 	auto rows = png_get_rows(png_ptr, info_ptr);
 
 	for(unsigned r = 0; r < png_get_image_height(png_ptr, info_ptr); ++r) {
-		for(unsigned x = 0; x < png_get_image_width(png_ptr, info_ptr); ++x) {
+		for(unsigned x = 0; x < png_get_rowbytes(png_ptr, info_ptr); ++x) {
 			buffer[png_get_rowbytes(png_ptr, info_ptr) * r + x] = rows[r][x];
 		}
 	}

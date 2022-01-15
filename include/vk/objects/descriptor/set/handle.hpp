@@ -8,7 +8,6 @@ namespace vk {
 
 	template<>
 	struct vk::handle<vk::descriptor_set> : vk::handle_base<vk::non_dispatchable> {
-
 	};
 
 } // vk

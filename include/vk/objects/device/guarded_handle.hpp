@@ -54,6 +54,11 @@ namespace vk {
 			if(result.error()) default_unexpected_handler(result);
 		}
 
+		template<typename... Args>
+		void update_descriptor_sets(Args&&... args) const {
+			handle().update_descriptor_sets(forward<Args>(args)...);
+		}
+
 	}; //device_guard
 
 } // vk

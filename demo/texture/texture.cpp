@@ -120,14 +120,14 @@ void entrypoint() {
 
 	struct data_t {
 		float position[4];
-		float color[4];
+		float tex[2];
 	};
 
 	data_t data[] = {
-		{ { -0.5,  0.5, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
-		{ {  0.5,  0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 1.0 } },
-		{ { -0.5, -0.5, 0.0, 1.0 }, { 1.0, 1.0, 1.0, 1.0 } },
-		{ {  0.5, -0.5, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } }
+		{ { -0.5,  0.5, 0.0, 1.0 }, { 0.0, 1.0 } },
+		{ {  0.5,  0.5, 0.0, 1.0 }, { 1.0, 1.0 } },
+		{ { -0.5, -0.5, 0.0, 1.0 }, { 0.0, 0.0 } },
+		{ {  0.5, -0.5, 0.0, 1.0 }, { 1.0, 0.0 } }
 	};
 
 	auto buffer = device.create_guarded<vk::buffer>(
@@ -151,8 +151,8 @@ void entrypoint() {
 		vk::vertex_input_attribute_description {
 			vk::location{ 1 },
 			vk::binding{ 0 },
-			vk::format::r32_g32_b32_a32_sfloat,
-			vk::offset{ __builtin_offsetof(data_t, color) }
+			vk::format::r32_g32_sfloat,
+			vk::offset{ __builtin_offsetof(data_t, tex) }
 		}
 	};
 
@@ -201,7 +201,70 @@ void entrypoint() {
 	auto vertex_shader = platform::read_shader_module(device, "texture.vert.spv");
 	auto fragment_shader = platform::read_shader_module(device, "texture.frag.spv");
 
-	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>();
+	auto sampler = device.create_guarded<vk::sampler>(
+		vk::mag_filter{ vk::filter::nearest },
+		vk::min_filter{ vk::filter::nearest },
+		vk::mipmap_mode::nearest,
+		vk::address_mode_u{ vk::address_mode::clamp_to_edge },
+		vk::address_mode_v{ vk::address_mode::clamp_to_edge },
+		vk::address_mode_w{ vk::address_mode::clamp_to_edge },
+		vk::mip_lod_bias{ 0.0 },
+		vk::anisotropy_enable{ false },
+		vk::compare_enable{ false },
+		vk::compare_op::always,
+		vk::min_lod{ 0.0F },
+		vk::max_lod{ 0.0F },
+		vk::border_color::float_transparent_black,
+		vk::unnormalized_coordinates{ false }
+	);
+
+	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
+		vk::descriptor_pool_create_flags{ },
+		vk::max_sets{ 1 },
+		array {
+			vk::descriptor_pool_size {
+				.type = vk::descriptor_type::combined_image_sampler,
+				.descriptor_count{ 1 }
+			}
+		}
+	);
+
+	auto set_layout = device.create_guarded<vk::descriptor_set_layout>(
+		vk::descriptor_set_layout_create_flags{},
+		array {
+			vk::descriptor_set_layout_binding {
+				vk::descriptor_binding{ 0 },
+				vk::descriptor_type::combined_image_sampler,
+				vk::descriptor_count{ 1 },
+				vk::shader_stages{ vk::shader_stage::fragment }
+			}
+		}
+	);
+
+	auto set = descriptor_pool.allocate_descriptor_set(set_layout);
+
+	vk::descriptor_image_info descriptor_image_info {
+		.sampler{ vk::get_handle(sampler) },
+		.image_view{ vk::get_handle(image_view) },
+		.image_layout = vk::image_layout::shader_read_only_optimal
+	};
+
+	device.update_descriptor_sets(
+		array{
+			vk::write_descriptor_set {
+				.dst_set = vk::get_handle(set),
+				.dst_binding{ 0 },
+				.dst_array_element{ 0 },
+				.count{ 1 },
+				.descriptor_type = vk::descriptor_type::combined_image_sampler,
+				.image_info = &descriptor_image_info
+			}
+		}
+	);
+
+	auto pipeline_layout = device.create_guarded<vk::pipeline_layout>(
+		array{ vk::get_handle(set_layout) }
+	);
 
 	array dynamic_states { vk::dynamic_state::viewport, vk::dynamic_state::scissor };
 
@@ -342,48 +405,6 @@ void entrypoint() {
 
 	device.wait_idle();
 
-	auto sampler = device.create_guarded<vk::sampler>(
-		vk::mag_filter{ vk::filter::nearest },
-		vk::min_filter{ vk::filter::nearest },
-		vk::mipmap_mode::nearest,
-		vk::address_mode_u{ vk::address_mode::clamp_to_edge },
-		vk::address_mode_v{ vk::address_mode::clamp_to_edge },
-		vk::address_mode_w{ vk::address_mode::clamp_to_edge },
-		vk::mip_lod_bias{ 0.0 },
-		vk::anisotropy_enable{ false },
-		vk::compare_enable{ false },
-		vk::compare_op::always,
-		vk::min_lod{ 0.0F },
-		vk::max_lod{ 0.0F },
-		vk::border_color::float_transparent_black,
-		vk::unnormalized_coordinates{ false }
-	);
-
-	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
-		vk::descriptor_pool_create_flags{ },
-		vk::max_sets{ 1 },
-		array {
-			vk::descriptor_pool_size {
-				.type = vk::descriptor_type::combined_image_sampler,
-				.descriptor_count{ 1 }
-			}
-		}
-	);
-
-	auto set_layout = device.create_guarded<vk::descriptor_set_layout>(
-		vk::descriptor_set_layout_create_flags{},
-		array {
-			vk::descriptor_set_layout_binding {
-				vk::descriptor_binding{ 0 },
-				vk::descriptor_type::combined_image_sampler,
-				vk::descriptor_count{ 1 },
-				vk::shader_stages{ vk::shader_stage::fragment }
-			}
-		}
-	);
-
-	auto set = descriptor_pool.allocate_descriptor_set(set_layout);
-
 	while(!platform::should_close()) {
 		vk::surface_capabilities surface_capabilities = physical_device.get_surface_capabilities(surface);
 
@@ -469,6 +490,11 @@ void entrypoint() {
 			);
 
 			command_buffer.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics);
+			command_buffer.cmd_bind_descriptor_sets(
+				vk::pipeline_bind_point::graphics,
+				pipeline_layout,
+				array{ vk::get_handle(set) }
+			);
 			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
 			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
 			command_buffer.cmd_bind_vertex_buffer(buffer);

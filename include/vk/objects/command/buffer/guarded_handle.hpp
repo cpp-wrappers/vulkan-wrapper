@@ -52,6 +52,7 @@ namespace vk {
 		template<typename... Args> auto& cmd_set_scissor(Args&&... args) const { handle().cmd_set_scissor(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_bind_vertex_buffers(Args&&... args) const { handle().cmd_bind_vertex_buffers(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_bind_vertex_buffer(Args&&... args) const { handle().cmd_bind_vertex_buffer(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_bind_descriptor_sets(Args&&... args) const { handle().cmd_bind_descriptor_sets(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_draw(Args&&... args) const { handle().cmd_draw(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_end_render_pass(Args&&... args) const { handle().cmd_end_render_pass(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& end(Args&&... args) const { handle().end(forward<Args>(args)...); return *this; }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../shared/subpass.hpp"
 #include "../../object/create_or_allocate.hpp"
 #include "../device/handle.hpp"

@@ -103,25 +103,12 @@ namespace vk {
 				)
 			};
 		}
+
+		template<typename... Args>
+		void update_descriptor_sets(Args&&... args) const;
 	}; // device
 
 } // vk
-
-#include "../queue/handle.hpp"
-
-inline vk::handle<vk::queue>
-vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
-	VkQueue queue;
-
-	vkGetDeviceQueue(
-		(VkDevice) value,
-		(uint32) queue_family_index,
-		(uint32) queue_index,
-		(VkQueue*) &queue
-	);
-
-	return { queue };
-}
 
 #include "../command/pool/create.hpp"
 #include "../shader/module/create.hpp"
@@ -140,3 +127,26 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "../descriptor/set/layout/create.hpp"
 #include "../descriptor/pool/create.hpp"
 #include "memory/allocate.hpp"
+
+#include "../queue/handle.hpp"
+
+inline vk::handle<vk::queue>
+vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
+	VkQueue queue;
+
+	vkGetDeviceQueue(
+		(VkDevice) value,
+		(uint32) queue_family_index,
+		(uint32) queue_index,
+		(VkQueue*) &queue
+	);
+
+	return { queue };
+}
+
+#include "../descriptor/set/update.hpp"
+
+template<typename... Args>
+void vk::handle<vk::device>::update_descriptor_sets(Args&&... args) const {
+	vk::update_descriptor_sets(*this, forward<Args>(args)...);
+}
