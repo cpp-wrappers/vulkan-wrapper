@@ -143,7 +143,7 @@ vk::guarded_handle<vk::surface> platform::create_surface(vk::handle<vk::instance
 	});
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	window = glfwCreateWindow(640, 640, "Vulkan Clear", nullptr, nullptr);
+	window = glfwCreateWindow(640, 640, "Vulkan", nullptr, nullptr);
 
 	if (!window) {
 		platform::error("window creation failed").new_line();

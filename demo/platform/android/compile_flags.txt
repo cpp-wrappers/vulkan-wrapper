@@ -9,3 +9,4 @@
 -ftemplate-backtrace-limit=0
 -I/home/fewizz/core/include
 -I/home/fewizz/vulkan-wrapper/include
+-I/home/fewizz/libspng/spng

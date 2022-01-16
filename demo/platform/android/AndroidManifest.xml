@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ru.fewizz.vulkan">
 	<application
-		android:label="Vulkan Test"
+		android:label="Vulkan"
 		android:hasCode="false"
 	>
 		<activity android:name="android.app.NativeActivity">

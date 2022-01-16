@@ -25,6 +25,7 @@ args+=(-isystem${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot
 args+=(-isystem${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1)
 args+=(-isystem${ANDROID_NDK_ROOT}/sources)
 args+=(-I${root_dir}/../core/include)
+args+=(-I${root_dir}/../libspng/spng)
 args+=(-I${root_dir}/include)
 
 if [ -v sanitize ]; then
@@ -46,6 +47,17 @@ if ! $C \
 	exit 1
 fi
 
+if ! $C \
+	-c \
+	${args[@]} \
+	-ftemplate-backtrace-limit=0 \
+	-o ${platform_dir}/build/spng.o \
+	${root_dir}/../libspng/spng/spng.c
+
+	then
+	exit 1
+fi
+
 args+=(-std=c++20)
 args+=(-nostdinc++)
 
@@ -53,7 +65,7 @@ if ! $CXX \
 	-c \
 	${args[@]} \
 	-o ${platform_dir}/build/platform.o \
-	${platform_dir}/platform.cpp
+	${platform_dir}/platform.cpp \
 
 	then
 	exit 1
@@ -75,6 +87,8 @@ if ! $CXX \
 	-lvulkan -landroid -llog -lc -lm \
 	${platform_dir}/build/platform.o \
 	${platform_dir}/build/glue.o \
+	${platform_dir}/build/spng.o \
+	-l:libz.a \
 	-o ${shared_lib_path} \
 	${src_path}
 
@@ -104,7 +118,7 @@ done
 
 $aapt_path add ${unsigned_output_path} ${shared_lib_path} ${apk_assets[@]}
 
-jarsigner -keystore ${platform_dir}/key.keystore -signedjar ${output_path} ${unsigned_output_path} key
+jarsigner -keystore ${platform_dir}/debug.keystore -storepass android -signedjar ${output_path} ${unsigned_output_path} key
 
 if [ -v run ]; then
 	${ANDROID_SDK_ROOT}/platform-tools/adb install -r ${output_path}

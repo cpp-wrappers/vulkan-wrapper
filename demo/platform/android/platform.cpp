@@ -8,6 +8,8 @@
 #include <android/log.h>
 #include <android/native_window.h>
 
+#include <spng.h>
+
 #include "vk/shared/headers.hpp"
 #include "vulkan/vulkan_android.h"
 
@@ -25,13 +27,13 @@ struct message_buffer {
 			++str;
 
 			if(ch == '\n') {
-				if(size < buf_size) abort();
+				if(size >= buf_size) abort();
 				buf[size] = 0;
 				__android_log_write(prio, "vulkan", buf);
 				size = 0;
 			}
 			else {
-				if(size < buf_size - 1) abort();
+				if(size >= buf_size - 1) abort();
 				buf[size++] = ch;
 			}
 		}
@@ -40,13 +42,13 @@ struct message_buffer {
 	void add(const char* str) {
 		while(char ch = *(str++)) {
 			if(ch == '\n') {
-				if(size < buf_size) abort();
+				if(size >= buf_size) abort();
 				buf[size] = 0;
 				__android_log_write(prio, "vulkan", buf);
 				size = 0;
 			}
 			else {
-				if(size < buf_size - 1) abort();
+				if(size >= buf_size - 1) abort();
 				buf[size++] = ch;
 			}
 		}
@@ -85,11 +87,63 @@ nuint platform::file_size(const char* path) {
 	return size;
 }
 
-void platform::read_file(const char* path, char* buff, nuint size) {
+void platform::read_file(const char* path, span<char> buff) {
 	AAsset* asset = AAssetManager_open(app->activity->assetManager, path, AASSET_MODE_BUFFER);
 	char* asset_buff = (char*) AAsset_getBuffer(asset);
-	memcpy(buff, asset_buff, size);
+	memcpy(buff.data(), asset_buff, buff.size());
 	AAsset_close(asset);
+}
+
+platform::image_info platform::read_image_info(const char *path) {
+	auto file_size = platform::file_size(path);
+	char storage[file_size];
+	span buff{ storage, file_size };
+
+	read_file(path, buff);
+
+	spng_ctx *ctx = spng_ctx_new(0);
+	spng_set_png_buffer(ctx, buff.data(), buff.size());
+
+	spng_ihdr ihdr;
+	if(spng_get_ihdr(ctx, &ihdr)) {
+		platform::error("couldn't get ihdr").new_line();
+		abort();
+	}
+
+	nuint size;
+	spng_decoded_image_size(ctx, SPNG_FMT_RGBA8, &size);
+
+	spng_ctx_free(ctx);
+
+	return {
+		.width = (uint32) ihdr.width,
+		.height = (uint32) ihdr.height,
+		.size = size
+	};
+}
+
+void platform::read_image_data(const char *path, span<char> buff) {
+	auto file_size = platform::file_size(path);
+	char storage[file_size];
+	span file_buff{ storage, file_size };
+
+	read_file(path, file_buff);
+
+	spng_ctx *ctx = spng_ctx_new(0);
+	spng_set_png_buffer(ctx, file_buff.data(), file_buff.size());
+
+	//spng_ihdr ihdr;
+	//if(spng_get_ihdr(ctx, &ihdr)) {
+	//	platform::error("couldn't get ihdr").new_line();
+	//	abort();
+	//}
+
+	//nuint size;
+	//spng_decoded_image_size(ctx, SPNG_FMT_RGBA8, &size);
+
+	spng_decode_image(ctx, buff.data(), buff.size(), SPNG_FMT_RGBA8, 0);
+
+	spng_ctx_free(ctx);
 }
 
 static array<vk::extension_name, 2> required_instance_extensions{ "VK_KHR_surface", "VK_KHR_android_surface" };
