@@ -17,8 +17,8 @@ namespace vk {
 		types::count_of_ranges_of_value_type<vk::mapped_memory_range>::equals<1>
 	>::for_types_of<Args...>
 	vk::result try_flush_mapped_device_memory_ranges(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-		auto& ranges = elements::range_of_value_type<vk::mapped_memory_range>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+		auto& ranges = elements::range_of_value_type<vk::mapped_memory_range>(args...);
 
 		return {
 			(int32) vkFlushMappedMemoryRanges(

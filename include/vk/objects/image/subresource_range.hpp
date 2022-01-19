@@ -34,22 +34,22 @@ namespace vk {
 			types::count_of_type<vk::layer_count>::less_or_equals<1>
 		>::for_types_of<Args...>
 		image_subresource_range(Args... args) {
-			aspect_mask = elements::of_type<vk::image_aspects&>::for_elements_of(args...);
+			aspect_mask = elements::of_type<vk::image_aspects>(args...);
 	
 			if constexpr(types::are_contain_type<vk::base_mip_level>::for_types_of<Args...>) {
-				base_mip_level = elements::of_type<vk::base_mip_level&>::for_elements_of(args...);
+				base_mip_level = elements::of_type<vk::base_mip_level>(args...);
 			}
 	
 			if constexpr(types::are_contain_type<vk::level_count>::for_types_of<Args...>) {
-				level_count = elements::of_type<vk::level_count&>::for_elements_of(args...);
+				level_count = elements::of_type<vk::level_count>(args...);
 			}
 	
 			if constexpr(types::are_contain_type<vk::base_array_layer>::for_types_of<Args...>) {
-				base_array_layer = elements::of_type<vk::base_array_layer&>::for_elements_of(args...);
+				base_array_layer = elements::of_type<vk::base_array_layer>(args...);
 			}
 	
 			if constexpr(types::are_contain_type<vk::layer_count>::for_types_of<Args...>) {
-				layer_count = elements::of_type<vk::layer_count&>::for_elements_of(args...);
+				layer_count = elements::of_type<vk::layer_count>(args...);
 			}
 		}
 	

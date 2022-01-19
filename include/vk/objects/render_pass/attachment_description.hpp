@@ -49,28 +49,28 @@ namespace vk {
 			types::count_of_type<vk::final_layout>::less_or_equals<1>
 		>::for_types_of<Args...>
 		attachment_description(Args... args) {
-			format = elements::of_type<vk::format&>::for_elements_of(args...);
+			format = elements::of_type<vk::format>(args...);
 	
 			if constexpr(types::are_contain_type<vk::sample_count>::for_types_of<Args...>)
-				samples = elements::of_type<vk::sample_count&>::for_elements_of(args...);
+				samples = elements::of_type<vk::sample_count>(args...);
 	
 			if constexpr(types::are_contain_type<vk::load_op>::for_types_of<Args...>)
-				load_op = elements::of_type<vk::load_op&>::for_elements_of(args...);
+				load_op = elements::of_type<vk::load_op>(args...);
 	
 			if constexpr(types::are_contain_type<vk::store_op>::for_types_of<Args...>)
-				store_op = elements::of_type<vk::store_op&>::for_elements_of(args...);
+				store_op = elements::of_type<vk::store_op>(args...);
 	
 			if constexpr(types::are_contain_type<vk::stencil_load_op>::for_types_of<Args...>)
-				stencil_load_op = elements::of_type<vk::stencil_load_op&>::for_elements_of(args...);
+				stencil_load_op = elements::of_type<vk::stencil_load_op>(args...);
 	
 			if constexpr(types::are_contain_type<vk::stencil_store_op>::for_types_of<Args...>)
-				stencil_store_op = elements::of_type<vk::stencil_store_op&>::for_elements_of(args...);
+				stencil_store_op = elements::of_type<vk::stencil_store_op>(args...);
 	
 			if constexpr(types::are_contain_type<vk::initial_layout>::for_types_of<Args...>)
-				initial_layout = elements::of_type<vk::initial_layout&>::for_elements_of(args...);
+				initial_layout = elements::of_type<vk::initial_layout>(args...);
 	
 			if constexpr(types::are_contain_type<vk::final_layout>::for_types_of<Args...>)
-				final_layout = elements::of_type<vk::final_layout&>::for_elements_of(args...);
+				final_layout = elements::of_type<vk::final_layout>(args...);
 		}
 	};
 

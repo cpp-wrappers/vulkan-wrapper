@@ -11,11 +11,11 @@ namespace vk {
 		types::count_of_ranges_of_value_type<vk::handle<vk::fence>>::equals<1>
 	>::for_types_of<Args...>
 	vk::result try_reset_fences(Args&&... args) {
-		auto& fences = elements::range_of_value_type<vk::handle<vk::fence>>::for_elements_of(args...);
+		auto& fences = elements::range_of_value_type<vk::handle<vk::fence>>(args...);
 
 		return {
 			(int) vkResetFences(
-				(VkDevice) vk::get_handle_value(elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...)),
+				(VkDevice) vk::get_handle_value(elements::vk::possibly_guarded_handle_of<vk::device>(args...)),
 				(uint32) fences.size(),
 				(VkFence*) fences.data()
 			)

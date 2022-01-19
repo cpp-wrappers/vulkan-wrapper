@@ -37,9 +37,9 @@ namespace vk {
 			types::count_of_type<vk::queue_priorities>::equals<1>
 		>::for_types_of<Args...>
 		queue_create_info(Args... args) {
-			queue_family_index = elements::of_type<vk::queue_family_index&>::for_elements_of(args...);
-			queue_count = elements::of_type<vk::queue_count&>::for_elements_of(args...);
-			queue_priorities = elements::of_type<vk::queue_priorities&>::for_elements_of(args...);
+			queue_family_index = elements::of_type<vk::queue_family_index>(args...);
+			queue_count = elements::of_type<vk::queue_count>(args...);
+			queue_priorities = elements::of_type<vk::queue_priorities>(args...);
 		}
 
 	}; // device_queue_create_info

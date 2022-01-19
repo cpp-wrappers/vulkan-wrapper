@@ -28,7 +28,7 @@ namespace vk {
 		vk::handle<vk::framebuffer> framebuffer;
 		vk::render_area render_area;
 		uint32 clear_value_count;
-		vk::clear_value* clear_values;
+		const vk::clear_value* clear_values;
 	};
 
 } // vk

@@ -17,28 +17,28 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::buffer_create_flags>::less_or_equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::buffer_size>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::buffer_usages>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::buffer_create_flags>::less_or_equals<1>,
+			types::count_of_type<vk::buffer_size>::equals<1>,
+			types::count_of_type<vk::buffer_usages>::equals<1>,
+			types::count_of_type<vk::sharing_mode>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::buffer>>
 		operator () (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::buffer_create_info ci {
-				.size = elements::of_type<vk::buffer_size>::ignore_const::ignore_reference::for_elements_of(args...),
-				.usage = elements::of_type<vk::buffer_usages>::ignore_const::ignore_reference::for_elements_of(args...),
-				.sharing_mode = elements::of_type<vk::sharing_mode>::ignore_const::ignore_reference::for_elements_of(args...)
+				.size = elements::of_type<vk::buffer_size>(args...),
+				.usage = elements::of_type<vk::buffer_usages>(args...),
+				.sharing_mode = elements::of_type<vk::sharing_mode>(args...)
 			};
 
-			if constexpr (types::are_contain_type<vk::buffer_create_flags>::ignore_const::ignore_reference::for_types_of<Args...>) {
-				ci.flags = elements::of_type<vk::buffer_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
+			if constexpr (types::are_contain_type<vk::buffer_create_flags>::for_types_of<decay<Args>...>) {
+				ci.flags = elements::of_type<vk::buffer_create_flags>(args...);
 			}
 
 			if constexpr (types::are_contain_range_of_value_type<vk::queue_family_index>::for_types_of<Args...>) {
-				auto& queue_fanily_indices = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
+				auto& queue_fanily_indices = elements::range_of_value_type<vk::queue_family_index>(args...);
 				ci.queue_family_index_count = queue_fanily_indices.size();
 				ci.queue_fanily_indices = queue_fanily_indices.data();
 			}

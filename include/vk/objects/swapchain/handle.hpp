@@ -41,27 +41,27 @@ namespace vk {
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,
 			types::count_of_type<vk::timeout>::less_or_equals<1>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::image_index>
 		try_acquire_next_image(Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 			
 			vk::timeout timeout{ UINT64_MAX };
 
-			if constexpr(types::are_contain_type<vk::timeout>::ignore_const::ignore_reference::for_types_of<Args...>) {
-				timeout = elements::of_type<vk::timeout>::ignore_const::ignore_reference::for_elements_of(args...);
+			if constexpr(types::are_contain_type<vk::timeout>::for_types_of<decay<Args>...>) {
+				timeout = elements::of_type<vk::timeout>(args...);
 			}
 
 			vk::handle<vk::semaphore> semaphore{ VK_NULL_HANDLE };
 
 			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::semaphore>::for_types_of<Args...>) {
-				semaphore = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::semaphore>::for_elements_of(args...));
+				semaphore = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::semaphore>(args...));
 			}
 
 			vk::handle<vk::fence> fence{ VK_NULL_HANDLE };
 
 			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types_of<Args...>) {
-				fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>::for_elements_of(args...));
+				fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
 			}
 
 			uint32 index;

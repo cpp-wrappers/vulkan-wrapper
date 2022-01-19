@@ -16,13 +16,13 @@ namespace vk {
 		types::count_of_ranges_of_value_type<vk::copy_descriptor_set>::less_or_equals<1>
 	>::for_types_of<Args...>
 	void update_descriptor_sets(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 		uint32 write_count{};
 		const vk::write_descriptor_set* writes;
 
 		if constexpr(types::are_contain_range_of_value_type<vk::write_descriptor_set>::for_types_of<Args...>) {
-			auto& writes0 = elements::range_of_value_type<vk::write_descriptor_set>::for_elements_of(args...);
+			auto& writes0 = elements::range_of_value_type<vk::write_descriptor_set>(args...);
 			write_count = (uint32) writes0.size();
 			writes = writes0.data();
 		}
@@ -31,7 +31,7 @@ namespace vk {
 		const vk::copy_descriptor_set* copies;
 
 		if constexpr(types::are_contain_range_of_value_type<vk::copy_descriptor_set>::for_types_of<Args...>) {
-			auto& copies0 = elements::range_of_value_type<vk::copy_descriptor_set>::for_elements_of(args...);
+			auto& copies0 = elements::range_of_value_type<vk::copy_descriptor_set>(args...);
 			copy_count = (uint32) copies0.size();
 			copies = copies0.data();
 		}

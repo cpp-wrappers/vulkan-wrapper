@@ -14,25 +14,25 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::fence>>::equals<1>,
-		types::count_of_type<vk::wait_all>::less_or_equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::timeout>::less_or_equals<1>::ignore_const::ignore_reference
-	>::for_types_of<Args...>
+		types::count_of_type<vk::wait_all>::less_or_equals<1>,
+		types::count_of_type<vk::timeout>::less_or_equals<1>
+	>::for_types_of<decay<Args>...>
 	vk::result try_wait_for_fences(Args&&... args) {
-		auto& fences = elements::range_of_value_type<vk::handle<vk::fence>>::for_elements_of(args...);
+		auto& fences = elements::range_of_value_type<vk::handle<vk::fence>>(args...);
 
 		bool wait_all = true;
 
-		if constexpr(types::are_contain_type<vk::wait_all>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			wait_all = (bool) elements::of_type<vk::wait_all>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::wait_all>::for_types_of<decay<Args>...>) {
+			wait_all = (bool) elements::of_type<vk::wait_all>(args...);
 		}
 
 		vk::timeout timeout{ UINT64_MAX };
 
-		if constexpr(types::are_contain_type<vk::timeout>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			timeout = elements::of_type<vk::timeout>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::timeout>::for_types_of<decay<Args>...>) {
+			timeout = elements::of_type<vk::timeout>(args...);
 		}
 
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 		return {
 			(int32) vkWaitForFences(

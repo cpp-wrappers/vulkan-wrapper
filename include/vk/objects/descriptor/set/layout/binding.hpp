@@ -31,10 +31,10 @@ namespace vk {
 			>::for_types_of<Args...>
 		)
 		descriptor_set_layout_binding(Args... args) {
-			descriptor_binding = elements::of_type<vk::descriptor_binding&>::for_elements_of(args...);
-			descriptor_type = elements::of_type<vk::descriptor_type&>::for_elements_of(args...);
-			descriptor_count = elements::of_type<vk::descriptor_count&>::for_elements_of(args...);
-			stage_flags = elements::of_type<vk::shader_stages&>::for_elements_of(args...);
+			descriptor_binding = elements::of_type<vk::descriptor_binding>(args...);
+			descriptor_type = elements::of_type<vk::descriptor_type>(args...);
+			descriptor_count = elements::of_type<vk::descriptor_count>(args...);
+			stage_flags = elements::of_type<vk::shader_stages>(args...);
 		}
 
 	};

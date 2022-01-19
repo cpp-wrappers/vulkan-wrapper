@@ -34,13 +34,13 @@ namespace vk {
 		flag_enum<vk::subpass_description_flag> flags;
 		vk::pipeline_bind_point pipeline_bind_point{ vk::pipeline_bind_point::graphics };
 		uint32 input_attachment_count = 0;
-		vk::input_attachment_reference* input_attachments = nullptr;
+		const vk::input_attachment_reference* input_attachments = nullptr;
 		uint32 color_attachment_count = 0;
-		vk::color_attachment_reference* color_attachments = nullptr;
-		vk::resolve_attachment_reference* resolve_attachments = nullptr;
-		vk::depth_stencil_attachment_reference* depth_stencil_attachments = nullptr;
+		const vk::color_attachment_reference* color_attachments = nullptr;
+		const vk::resolve_attachment_reference* resolve_attachments = nullptr;
+		const vk::depth_stencil_attachment_reference* depth_stencil_attachments = nullptr;
 		uint32 preserve_attachment_count = 0;
-		vk::preserve_attachment_reference* preserve_attachments = nullptr;
+		const vk::preserve_attachment_reference* preserve_attachments = nullptr;
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
@@ -53,29 +53,29 @@ namespace vk {
 		subpass_description(Args&... args) {
 	
 			if constexpr(types::count_of_ranges_of_value_type<vk::input_attachment_reference>::for_types_of<Args...> == 1) {
-				auto& input = elements::range_of_value_type<vk::input_attachment_reference>::for_elements_of(args...);
+				auto& input = elements::range_of_value_type<vk::input_attachment_reference>(args...);
 				input_attachment_count = (uint32) input.size();
 				input_attachments = input.data();
 			}
 
 			if constexpr(types::count_of_ranges_of_value_type<vk::color_attachment_reference>::for_types_of<Args...> == 1) {
-				auto& color = elements::range_of_value_type<vk::color_attachment_reference>::for_elements_of(args...);
+				auto& color = elements::range_of_value_type<vk::color_attachment_reference>(args...);
 				color_attachment_count = (uint32) color.size();
 				color_attachments = color.data();
 			}
 
 			if constexpr(types::count_of_ranges_of_value_type<vk::resolve_attachment_reference>::for_types_of<Args...> == 1) {
-				auto& resolve = elements::range_of_value_type<vk::resolve_attachment_reference>::for_elements_of(args...);
+				auto& resolve = elements::range_of_value_type<vk::resolve_attachment_reference>(args...);
 				resolve_attachments = resolve.data();
 			}
 
 			if constexpr(types::count_of_ranges_of_value_type<vk::depth_stencil_attachment_reference>::for_types_of<Args...> == 1) {
-				auto& depth_stencil = elements::range_of_value_type<vk::depth_stencil_attachment_reference>::for_elements_of(args...);
+				auto& depth_stencil = elements::range_of_value_type<vk::depth_stencil_attachment_reference>(args...);
 				depth_stencil_attachments = depth_stencil.data();
 			}
 
 			if constexpr(types::count_of_ranges_of_value_type<vk::preserve_attachment_reference>::for_types_of<Args...> == 1) {
-				auto& preserve = elements::range_of_value_type<vk::preserve_attachment_reference>::for_elements_of(args...);
+				auto& preserve = elements::range_of_value_type<vk::preserve_attachment_reference>(args...);
 				preserve_attachment_count = (uint32) preserve.size();
 				preserve_attachments = preserve.data();
 			}

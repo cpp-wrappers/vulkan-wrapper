@@ -17,18 +17,18 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_type<vk::src_stages>::decay,
-		types::are_contain_one_type<vk::dst_stages>::decay,
-		types::are_contain_one_type<vk::dependencies>::decay,
+		types::are_contain_one_type<vk::src_stages>,
+		types::are_contain_one_type<vk::dst_stages>,
+		types::are_contain_one_type<vk::dependencies>,
 		types::count_of_ranges_of_value_type<vk::image_memory_barrier>::less_or_equals<1>
-	>::for_types_of<Args...>
+	>::for_types_of<decay<Args>...>
 	void cmd_pipeline_barrier(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
-		vk::src_stages src_stages = elements::of_type<vk::src_stages>::ignore_const::ignore_reference::for_elements_of(args...);
-		vk::dst_stages dst_stages = elements::of_type<vk::dst_stages>::ignore_const::ignore_reference::for_elements_of(args...);
-		vk::dependencies dependencies = elements::of_type<vk::dependencies>::ignore_const::ignore_reference::for_elements_of(args...);
+		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		vk::src_stages src_stages = elements::of_type<vk::src_stages>(args...);
+		vk::dst_stages dst_stages = elements::of_type<vk::dst_stages>(args...);
+		vk::dependencies dependencies = elements::of_type<vk::dependencies>(args...);
 
-		auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>::for_elements_of<Args...>(args...);
+		auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>(args...);
 
 		vkCmdPipelineBarrier(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),

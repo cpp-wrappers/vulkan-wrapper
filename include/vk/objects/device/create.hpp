@@ -28,15 +28,15 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::device_create_info ci{};
 
-			auto& physical_device = elements::vk::possibly_guarded_handle_of<vk::physical_device>::for_elements_of(args...);
+			auto& physical_device = elements::vk::possibly_guarded_handle_of<vk::physical_device>(args...);
 
 			if constexpr(types::are_contain_range_of_value_type<vk::queue_create_info>::for_types_of<Args...>) {
-				const auto& queue_create_infos = elements::range_of_value_type<vk::queue_create_info>::for_elements_of(args...);
+				const auto& queue_create_infos = elements::range_of_value_type<vk::queue_create_info>(args...);
 				ci.queue_create_info_count = (uint32) queue_create_infos.size();
 				ci.queue_create_infos = queue_create_infos.data();
 			}
 			if constexpr(types::are_contain_range_of_value_type<vk::extension_name>::for_types_of<Args...>) {
-				const auto& extensions = elements::range_of_value_type<vk::extension_name>::for_elements_of(args...);
+				const auto& extensions = elements::range_of_value_type<vk::extension_name>(args...);
 				ci.enabled_extension_count = (uint32) extensions.size();
 				ci.enabled_extension_names = extensions.data();
 			}
@@ -57,22 +57,22 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_type<vk::queue_family_index>::decay,
+			types::are_contain_one_type<vk::queue_family_index>,
 			types::count_of_ranges_of_value_type<vk::queue_priority>::equals<1>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::device>>
 		operator () (Args&&... args) const {
-			auto& priorities = elements::range_of_value_type<vk::queue_priority>::for_elements_of(args...);
-			auto index = elements::of_type<vk::queue_family_index>::ignore_const::ignore_reference::for_elements_of(args...);
+			auto& priorities = elements::range_of_value_type<vk::queue_priority>(args...);
+			auto index = elements::of_type<vk::queue_family_index>(args...);
 
 			return elements::pass_satisfying_type_predicate<
 				type::negated_predicate<
 					type::disjuncted_predicates<
 						type::is_range_of_value_type<vk::queue_priority>,
-						type::is_same_as<vk::queue_family_index>::ignore_const::ignore_reference
+						type::modified_predicate<type::is_same_as<vk::queue_family_index>, type::decay>
 					>
 				>
-			>::to_function{
+			>::function{
 				[&, this]<typename... Others>(Others&&... others) {
 					return this->operator () (
 						array {
@@ -99,13 +99,13 @@ namespace vk {
 			vk::extension_name extension_names[extensions_count];
 			nuint extension_index = 0;
 
-			elements::for_each_of_type<vk::extension_name>::ignore_const::ignore_reference::function {
+			elements::for_each_of_type<vk::extension_name>::function {
 				[&](vk::extension_name name) { extension_names[extension_index++] = name; }
 			}.for_elements_of(args...);
 
-			vk::queue_family_index family_index = elements::of_type<const vk::queue_family_index&>::for_elements_of(args...);
-			auto physical_device = elements::vk::possibly_guarded_handle_of<vk::physical_device>::for_elements_of(args...);
-			vk::queue_priority priority = elements::of_type<const vk::queue_priority&>::for_elements_of(args...);
+			vk::queue_family_index family_index = elements::of_type<vk::queue_family_index>(args...);
+			auto physical_device = elements::vk::possibly_guarded_handle_of<vk::physical_device>(args...);
+			vk::queue_priority priority = elements::of_type<vk::queue_priority>(args...);
 
 			vk::queue_priorities priorities { &priority };
 

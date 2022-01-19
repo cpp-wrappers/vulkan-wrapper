@@ -14,28 +14,32 @@ exit 0
 
 #include "vk/objects/instance/guarded_handle.hpp"
 #include "vk/objects/instance/layer_properties.hpp"
+#include "vk/objects/instance/extension_properties.hpp"
 #include "../platform/platform.hpp"
 
 void entrypoint() {
-	span required_extensions = platform::get_required_instance_extensions();
+	//auto debug_report_extension_name = vk::extension_name{ "VK_EXT_debug_report" };
 
-	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
-	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
+	vk::guarded_handle<vk::instance> instance;
 
-	vk::extension_name extensions_raw[required_extensions.size() + 1]; // TODO
-	span extensions{ extensions_raw, required_extensions.size() + 1 };
-	
-	nuint i = 0;
-	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
-	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
-
-	auto instance = vk::create_guarded_instance(layers, extensions);
-
-	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
-		vk::debug_report::error, vk::debug_report::warning, vk::debug_report::information,
-		platform::debug_report
+	vk::view_instance_layers(
+		vk::desired{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } },
+		[&](auto layers) {
+			//vk::view_instance_extensions(
+			//	vk::desired{ debug_report_extension_name },
+				//[&](auto extensions) {
+					instance = vk::create_guarded_instance(layers, platform::get_required_instance_extensions());
+				//}
+			//);
+		}
 	);
+
+	//if(vk::is_instance_extension_supported(debug_report_extension_name)) {
+	//	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
+	//		vk::debug_report::error, vk::debug_report::warning, vk::debug_report::information,
+	//		platform::debug_report
+	//	);
+	//}
 
 	auto surface = platform::create_surface(instance);
 	auto physical_device = instance.get_first_physical_device();
@@ -481,27 +485,25 @@ void entrypoint() {
 
 			auto& command_buffer = rr.command_buffer;
 
-			command_buffer.begin(vk::command_buffer_usage::one_time_submit);
-
-			command_buffer.cmd_begin_render_pass(
-				render_pass, rr.framebuffer,
-				vk::render_area{ surface_capabilities.current_extent },
-				array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
-			);
-
-			command_buffer.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics);
-			command_buffer.cmd_bind_descriptor_sets(
-				vk::pipeline_bind_point::graphics,
-				pipeline_layout,
-				array{ vk::get_handle(set) }
-			);
-			command_buffer.cmd_set_viewport(surface_capabilities.current_extent);
-			command_buffer.cmd_set_scissor(surface_capabilities.current_extent);
-			command_buffer.cmd_bind_vertex_buffer(buffer);
-			command_buffer.cmd_draw(vk::vertex_count{ 4 });
-			command_buffer.cmd_end_render_pass();
-
-			command_buffer.end();
+			command_buffer
+				.begin(vk::command_buffer_usage::one_time_submit)
+				.cmd_begin_render_pass(
+					render_pass, rr.framebuffer,
+					vk::render_area{ surface_capabilities.current_extent },
+					array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
+				)
+				.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics)
+				.cmd_bind_descriptor_sets(
+					vk::pipeline_bind_point::graphics,
+					pipeline_layout,
+					array{ vk::get_handle(set) }
+				)
+				.cmd_set_viewport(surface_capabilities.current_extent)
+				.cmd_set_scissor(surface_capabilities.current_extent)
+				.cmd_bind_vertex_buffer(buffer)
+				.cmd_draw(vk::vertex_count{ 4 })
+				.cmd_end_render_pass()
+				.end();
 
 			queue.submit(
 				command_buffer,

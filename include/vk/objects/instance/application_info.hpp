@@ -37,16 +37,16 @@ namespace vk {
 			types::count_of_type<vk::api_version>::equals<1>
 		>::for_types_of<Args...>
 		application_info(Args... args)
-			: api_version{ elements::of_type<vk::api_version&>::for_elements_of(args...) }
+			: api_version{ elements::of_type<vk::api_version&>(args...) }
 		{
 			if constexpr(types::are_contain_type<vk::application_name>::for_types_of<Args...>)
-				app_name = elements::of_type<vk::application_name&>::for_elements_of(args...);
+				app_name = elements::of_type<vk::application_name&>(args...);
 			if constexpr(types::are_contain_type<vk::application_version>::for_types_of<Args...>)
-				app_version = elements::of_type<vk::application_version&>::for_elements_of(args...);
+				app_version = elements::of_type<vk::application_version&>(args...);
 			if constexpr(types::are_contain_type<vk::engine_name>::for_types_of<Args...>)
-				engine_name = elements::of_type<vk::engine_name&>::for_elements_of(args...);
+				engine_name = elements::of_type<vk::engine_name&>(args...);
 			if constexpr(types::are_contain_type<vk::engine_version>::for_types_of<Args...>)
-				engine_version = elements::of_type<vk::engine_version&>::for_elements_of(args...);
+				engine_version = elements::of_type<vk::engine_version&>(args...);
 		}
 	};
 

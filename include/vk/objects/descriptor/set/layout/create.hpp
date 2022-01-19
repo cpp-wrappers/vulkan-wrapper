@@ -23,13 +23,13 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::descriptor_set_layout_create_flags>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::descriptor_set_layout_create_flags>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::descriptor_set_layout_binding>::equals<1>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		expected<vk::handle<vk::descriptor_set_layout>>
 		operator () (Args&&... args) const {
-			auto flags = elements::of_type<vk::descriptor_set_layout_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
-			auto& bindings = elements::range_of_value_type<vk::descriptor_set_layout_binding>::for_elements_of(args...);
+			auto flags = elements::of_type<vk::descriptor_set_layout_create_flags>(args...);
+			auto& bindings = elements::range_of_value_type<vk::descriptor_set_layout_binding>(args...);
 
 			vk::descriptor_set_layout_create_info ci {
 				.flags = flags,
@@ -37,7 +37,7 @@ namespace vk {
 				.bindings = bindings.data()
 			};
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::handle<vk::descriptor_set_layout> descriptor_set_layout;
 

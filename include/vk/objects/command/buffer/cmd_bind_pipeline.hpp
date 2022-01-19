@@ -12,12 +12,12 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline>,
-		types::count_of_type<vk::pipeline_bind_point>::equals<1>::ignore_const::ignore_reference
-	>::for_types_of<Args...>
+		types::count_of_type<vk::pipeline_bind_point>::equals<1>
+	>::for_types_of<decay<Args>...>
 	void cmd_bind_pipeline(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
-		vk::pipeline_bind_point bind_point = elements::of_type<vk::pipeline_bind_point>::ignore_const::ignore_reference::for_elements_of(args...);
-		auto& pipeline = elements::vk::possibly_guarded_handle_of<vk::pipeline>::for_elements_of(args...);
+		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		vk::pipeline_bind_point bind_point = elements::of_type<vk::pipeline_bind_point>(args...);
+		auto& pipeline = elements::vk::possibly_guarded_handle_of<vk::pipeline>(args...);
 
 		vkCmdBindPipeline(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),

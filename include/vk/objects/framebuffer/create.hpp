@@ -20,9 +20,9 @@ namespace vk {
 		>::for_types_of<Args...>
 		vk::expected<vk::handle<vk::framebuffer>>
 		operator () (const Args&... args) const {
-			auto& attachments = elements::range_of_value_type<vk::handle<vk::image_view>>::for_elements_of(args...);
+			auto& attachments = elements::range_of_value_type<vk::handle<vk::image_view>>(args...);
 
-			auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>::for_elements_of(args...);
+			auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>(args...);
 
 			vk::framebuffer_create_info ci {
 				.render_pass = vk::get_handle(render_pass),
@@ -30,13 +30,13 @@ namespace vk {
 				.attachments = attachments.data()
 			};
 
-			vk::extent<3> extent = elements::of_type<const vk::extent<3>&>::for_elements_of(args...);
+			vk::extent<3> extent = elements::of_type<vk::extent<3>>(args...);
 
 			ci.width = extent.width();
 			ci.height = extent.height();
 			ci.layers = extent.depth();
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::handle<vk::framebuffer> framebuffer;
 
@@ -44,12 +44,12 @@ namespace vk {
 				(int32) vkCreateFramebuffer(
 					(VkDevice) vk::get_handle_value(device),
 					(VkFramebufferCreateInfo*) &ci,
-					nullptr,
+					(VkAllocationCallbacks*) nullptr,
 					(VkFramebuffer*) &framebuffer
 				)
 			};
 
-			if(!result.success()) return result;
+			if(result.error()) return result;
 
 			return framebuffer;
 		}

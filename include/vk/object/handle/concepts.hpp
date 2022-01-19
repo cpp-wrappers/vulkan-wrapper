@@ -12,13 +12,13 @@ namespace vk {
 
 	template<typename Type>
 	concept some_handle =
-		type::is_base<vk::handle_base<::vk::non_dispatchable>>::ignore_const::ignore_reference::for_type<Type> ||
-		type::is_base<vk::handle_base<::vk::dispatchable>>::ignore_const::ignore_reference::for_type<Type>;
+		type::is_base<vk::handle_base<::vk::non_dispatchable>>::for_type<decay<Type>> ||
+		type::is_base<vk::handle_base<::vk::dispatchable>>::for_type<decay<Type>>;
 
 	template<typename Type, typename ObjectType>
 	concept handle_of =
 		some_handle<Type> &&
-		type::is_same_as<vk::handle<ObjectType>>::ignore_const::ignore_reference::template for_type<Type>;
+		type::is_same_as<vk::handle<ObjectType>>::template for_type<decay<Type>>;
 
 	template<typename Type>
 	concept some_possibly_guarded_handle =

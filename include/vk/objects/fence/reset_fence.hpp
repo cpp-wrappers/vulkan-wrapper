@@ -11,8 +11,8 @@ namespace vk {
 	>::for_types_of<Args...>
 	vk::result try_reset_fence(Args&&... args) {
 		return vk::try_reset_fences(
-			array{ vk::handle<vk::fence>{ vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>::for_elements_of(args...)) }},
-			elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...)
+			array{ vk::handle<vk::fence>{ vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...)) }},
+			elements::vk::possibly_guarded_handle_of<vk::device>(args...)
 		);
 	}
 

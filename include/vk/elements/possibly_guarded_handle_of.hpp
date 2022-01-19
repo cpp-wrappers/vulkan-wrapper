@@ -6,7 +6,7 @@
 namespace elements::vk {
 
 	template<typename ObjectType>
-	struct possibly_guarded_handle_of
-		: elements::satisfying_predicate<type::vk::is_possibly_guarded_handle_of<ObjectType>> {};
+	inline constexpr auto possibly_guarded_handle_of
+		= elements::satisfying_predicate<type::vk::is_possibly_guarded_handle_of<ObjectType>>;
 
 } // vk

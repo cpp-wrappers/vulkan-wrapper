@@ -16,17 +16,17 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::fence_create_flags>::less_or_equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::fence_create_flags>::less_or_equals<1>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
 			vk::fence_create_info ci {};
 	
-			if constexpr(types::are_contain_type<vk::fence_create_flags>::ignore_const::ignore_reference::for_types_of<Args...>) {
-				ci.flags = elements::of_type<vk::fence_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
+			if constexpr(types::are_contain_type<vk::fence_create_flags>::for_types_of<decay<Args>...>) {
+				ci.flags = elements::of_type<vk::fence_create_flags>(args...);
 			}
 	
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 			VkFence fence;
 	
 			vk::result result {
@@ -46,15 +46,15 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::fence_create_flag>::greater_or_equals<0>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::fence_create_flag>::greater_or_equals<0>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::fence_create_flags create_flags;
 
-			elements::for_each_of_type<vk::fence_create_flag>::ignore_const::ignore_reference::function {
+			elements::for_each_of_type<vk::fence_create_flag>::function {
 				[&](vk::fence_create_flag flag){ create_flags.set(flag); }
 			}.for_elements_of(args...);
 

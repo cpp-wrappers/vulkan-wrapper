@@ -15,31 +15,31 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::vertex_count>::equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::instance_count>::less_or_equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::first_vertex>::less_or_equals<1>::ignore_const::ignore_reference,
-		types::count_of_type<vk::first_instance>::less_or_equals<1>::ignore_const::ignore_reference
-	>::for_types_of<Args...>
+		types::count_of_type<vk::vertex_count>::equals<1>,
+		types::count_of_type<vk::instance_count>::less_or_equals<1>,
+		types::count_of_type<vk::first_vertex>::less_or_equals<1>,
+		types::count_of_type<vk::first_instance>::less_or_equals<1>
+	>::for_types_of<decay<Args>...>
 	void cmd_draw(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
+		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
-		vk::vertex_count vertex_count = elements::of_type<vk::vertex_count>::ignore_const::ignore_reference::for_elements_of(args...);
+		vk::vertex_count vertex_count = elements::of_type<vk::vertex_count>(args...);
 		vk::instance_count instance_count{ 1 };
 
-		if constexpr(types::are_contain_type<vk::instance_count>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			instance_count = elements::of_type<vk::instance_count>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::instance_count>::for_types_of<decay<Args>...>) {
+			instance_count = elements::of_type<vk::instance_count>(args...);
 		}
 
 		vk::first_vertex first_vertex{ 0 };
 
-		if constexpr(types::are_contain_type<vk::first_vertex>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			first_vertex = elements::of_type<vk::first_vertex>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::first_vertex>::for_types_of<decay<Args>...>) {
+			first_vertex = elements::of_type<vk::first_vertex>(args...);
 		}
 
 		vk::first_instance first_instance{ 0 };
 
-		if constexpr(types::are_contain_type<vk::first_instance>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			first_instance = elements::of_type<vk::first_instance>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::first_instance>::for_types_of<decay<Args>...>) {
+			first_instance = elements::of_type<vk::first_instance>(args...);
 		}
 
 		vkCmdDraw(

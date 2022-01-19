@@ -15,41 +15,41 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::image_create_flags>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::image_type>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::format>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::extent<3>>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::mip_levels>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::array_layers>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::sample_count>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::image_tiling>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::image_usages>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::sharing_mode>::equals<1>::ignore_const::ignore_reference,
+			types::count_of_type<vk::image_create_flags>::equals<1>,
+			types::count_of_type<vk::image_type>::equals<1>,
+			types::count_of_type<vk::format>::equals<1>,
+			types::count_of_type<vk::extent<3>>::equals<1>,
+			types::count_of_type<vk::mip_levels>::equals<1>,
+			types::count_of_type<vk::array_layers>::equals<1>,
+			types::count_of_type<vk::sample_count>::equals<1>,
+			types::count_of_type<vk::image_tiling>::equals<1>,
+			types::count_of_type<vk::image_usages>::equals<1>,
+			types::count_of_type<vk::sharing_mode>::equals<1>,
 			types::count_of_ranges_of_value_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::initial_layout>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::initial_layout>::equals<1>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::image>>
 		operator () (Args&&... args) const {
 			vk::image_create_info ci{};
 
-			ci.flags = elements::of_type<vk::image_create_flags>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.image_type = elements::of_type<vk::image_type>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.format = elements::of_type<vk::format>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.extent = elements::of_type<vk::extent<3>>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.mip_levels = elements::of_type<vk::mip_levels>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.array_layers = elements::of_type<vk::array_layers>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.samples = elements::of_type<vk::sample_count>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.tiling = elements::of_type<vk::image_tiling>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.usages = elements::of_type<vk::image_usages>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.sharing_mode = elements::of_type<vk::sharing_mode>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.initial_layout = elements::of_type<vk::initial_layout>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.flags = elements::of_type<vk::image_create_flags>(args...);
+			ci.image_type = elements::of_type<vk::image_type>(args...);
+			ci.format = elements::of_type<vk::format>(args...);
+			ci.extent = elements::of_type<vk::extent<3>>(args...);
+			ci.mip_levels = elements::of_type<vk::mip_levels>(args...);
+			ci.array_layers = elements::of_type<vk::array_layers>(args...);
+			ci.samples = elements::of_type<vk::sample_count>(args...);
+			ci.tiling = elements::of_type<vk::image_tiling>(args...);
+			ci.usages = elements::of_type<vk::image_usages>(args...);
+			ci.sharing_mode = elements::of_type<vk::sharing_mode>(args...);
+			ci.initial_layout = elements::of_type<vk::initial_layout>(args...);
 
-			auto& queues = elements::range_of_value_type<vk::queue_family_index>::for_elements_of(args...);
+			auto& queues = elements::range_of_value_type<vk::queue_family_index>(args...);
 
 			ci.queue_family_index_count = (uint32) queues.size();
 			ci.queue_family_indices = queues.data();
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::handle<vk::image> image;
 

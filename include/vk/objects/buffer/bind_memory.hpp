@@ -16,16 +16,16 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
-		types::count_of_type<vk::memory_offset>::less_or_equals<1>::ignore_const::ignore_reference
-	>::for_types_of<Args...>
+		types::count_of_type<vk::memory_offset>::less_or_equals<1>
+	>::for_types_of<decay<Args>...>
 	vk::result try_bind_buffer_memory(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-		auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>::for_elements_of(args...);
-		auto& device_memory = elements::vk::possibly_guarded_handle_of<vk::device_memory>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+		auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
+		auto& device_memory = elements::vk::possibly_guarded_handle_of<vk::device_memory>(args...);
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr(types::are_contain_type<vk::memory_offset>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			offset = elements::of_type<vk::memory_offset>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::memory_offset>::for_types_of<decay<Args>...>) {
+			offset = elements::of_type<vk::memory_offset>(args...);
 		}
 
 		return {

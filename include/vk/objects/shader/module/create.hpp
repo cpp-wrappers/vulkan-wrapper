@@ -13,17 +13,17 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::code_size>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::code>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::code_size>::equals<1>,
+			types::count_of_type<vk::code>::equals<1>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::shader_module>>
 		operator () (Args&&... args) const {
 			vk::shader_module_create_info ci{};
 
-			ci.code_size = elements::of_type<vk::code_size>::ignore_const::ignore_reference::for_elements_of(args...);
-			ci.code = elements::of_type<vk::code>::ignore_const::ignore_reference::for_elements_of(args...);
+			ci.code_size = elements::of_type<vk::code_size>(args...);
+			ci.code = elements::of_type<vk::code>(args...);
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::handle<vk::shader_module> shader_module;
 

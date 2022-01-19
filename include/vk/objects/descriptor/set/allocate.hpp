@@ -16,11 +16,11 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set_layout>>::equals<1>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set>>::equals<1>
-	>::for_types_of<Args...>
+	>::for_types_of<decay<Args>...>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
-		auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>::for_elements_of(args...);
-		auto& sets = elements::range_of_value_type<vk::handle<vk::descriptor_set>>::for_elements_of(args...);
-		auto& layouts = elements::range_of_value_type<vk::handle<vk::descriptor_set_layout>>::for_elements_of(args...);
+		auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
+		auto& sets = elements::range_of_value_type<vk::handle<vk::descriptor_set>>(args...);
+		auto& layouts = elements::range_of_value_type<vk::handle<vk::descriptor_set_layout>>(args...);
 
 		vk::descriptor_set_allocate_info ai {
 			.descriptor_pool = vk::get_handle(pool),
@@ -28,7 +28,7 @@ namespace vk {
 			.descriptor_set_layouts = layouts.data()
 		};
 
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 		return {
 			(int32) vkAllocateDescriptorSets(
@@ -47,19 +47,19 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set_layout>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<descriptor_set>>
 		operator () (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-			auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>::for_elements_of(args...);
-			auto& layout = elements::vk::possibly_guarded_handle_of<vk::descriptor_set_layout>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
+			auto& layout = elements::vk::possibly_guarded_handle_of<vk::descriptor_set_layout>(args...);
 			
 			vk::handle<vk::descriptor_set> set;
 
 			vk::result result = vk::try_allocate_descriptor_sets(
 				device,
 				pool,
-				array{ vk::get_handle(layout) },
+				array<vk::handle<vk::descriptor_set_layout>, 1>{ vk::get_handle(layout) },
 				span{ &set, 1 }
 			);
 

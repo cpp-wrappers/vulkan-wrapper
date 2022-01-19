@@ -13,20 +13,20 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::first_binding>::less_or_equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::first_binding>::less_or_equals<1>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::buffer>>::equals<1>,
 		types::count_of_ranges_of_value_type<vk::memory_offset>::equals<1>
-	>::for_types_of<Args...>
+	>::for_types_of<decay<Args>...>
 	void cmd_bind_vertex_buffers(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>::for_elements_of(args...);
+		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		
 		vk::first_binding first_binding{ 0 };
-		if constexpr(types::are_contain_type<vk::first_binding>::ignore_const::ignore_reference::for_types_of<Args...>) {
-			first_binding = elements::of_type<vk::first_binding>::ignore_const::ignore_reference::for_elements_of(args...);
+		if constexpr(types::are_contain_type<vk::first_binding>::for_types_of<decay<Args>...>) {
+			first_binding = elements::of_type<vk::first_binding>(args...);
 		}
 
-		auto& buffers = elements::range_of_value_type<vk::handle<vk::buffer>>::for_elements_of(args...);
-		auto& offsets = elements::range_of_value_type<vk::memory_offset>::for_elements_of(args...);
+		auto& buffers = elements::range_of_value_type<vk::handle<vk::buffer>>(args...);
+		auto& offsets = elements::range_of_value_type<vk::memory_offset>(args...);
 
 		vkCmdBindVertexBuffers(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),

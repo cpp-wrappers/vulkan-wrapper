@@ -36,16 +36,16 @@ namespace vk {
 			types::count_of_type<vk::dst_access>::less_or_equals<1>
 		>::for_types_of<Args...>
 		subpass_dependency(Args... args) {
-			src_subpass = elements::of_type<vk::src_subpass&>::for_elements_of(args...);
-			dst_subpass = elements::of_type<vk::dst_subpass&>::for_elements_of(args...);
-			src_stages = elements::of_type<vk::src_stages&>::for_elements_of(args...);
-			dst_stages = elements::of_type<vk::dst_stages&>::for_elements_of(args...);
+			src_subpass = elements::of_type<vk::src_subpass>(args...);
+			dst_subpass = elements::of_type<vk::dst_subpass>(args...);
+			src_stages = elements::of_type<vk::src_stages>(args...);
+			dst_stages = elements::of_type<vk::dst_stages>(args...);
 
 			if constexpr(types::count_of_type<vk::src_access>::for_types_of<Args...> == 1)
-				src_access = elements::of_type<vk::src_access&>::for_elements_of(args...);
+				src_access = elements::of_type<vk::src_access>(args...);
 
 			if constexpr(types::count_of_type<vk::dst_access>::for_types_of<Args...> == 1)
-				dst_access = elements::of_type<vk::dst_access&>::for_elements_of(args...);
+				dst_access = elements::of_type<vk::dst_access>(args...);
 		}
 	};
 

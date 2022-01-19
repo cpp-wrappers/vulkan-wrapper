@@ -16,9 +16,9 @@ namespace vk {
 		types::count_of_ranges_of_value_type<vk::handle<vk::command_buffer>>::equals<1>
 	>::for_types_of<Args...>
 	void free_command_buffers(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-		auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>::for_elements_of(args...);
-		auto& buffers = elements::range_of_value_type<vk::handle<vk::command_buffer>>::for_elements_of(args...);
+		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+		auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
+		auto& buffers = elements::range_of_value_type<vk::handle<vk::command_buffer>>(args...);
 
 		vkFreeCommandBuffers(
 			(VkDevice) vk::get_handle_value(device),
@@ -35,12 +35,12 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
-			types::count_of_type<vk::handle<vk::command_buffer>>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::handle<vk::command_buffer>>::equals<1>
+		>::for_types_of<decay<Args>...>
 		void operator() (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
-			auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>::for_elements_of(args...);
-			auto buffer = elements::of_type<vk::handle<vk::command_buffer>>::ignore_const::ignore_reference::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
+			auto buffer = elements::of_type<vk::handle<vk::command_buffer>>(args...);
 
 			vk::free_command_buffers(device, pool, array{ buffer });
 		}

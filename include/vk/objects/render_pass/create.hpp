@@ -22,23 +22,23 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
 
-			auto& subpass_descriptions = elements::range_of_value_type<vk::subpass_description>::for_elements_of(args...);
+			auto& subpass_descriptions = elements::range_of_value_type<vk::subpass_description>(args...);
 			ci.subpass_count = (uint32) subpass_descriptions.size();
 			ci.subpasses = subpass_descriptions.data();
 
 			if constexpr(types::are_contain_range_of_value_type<vk::subpass_dependency>::for_types_of<Args...>) {
-				auto& subpass_dependencies = elements::range_of_value_type<vk::subpass_dependency>::for_elements_of(args...);
+				auto& subpass_dependencies = elements::range_of_value_type<vk::subpass_dependency>(args...);
 				ci.dependency_count = (uint32) subpass_dependencies.size();
 				ci.dependencies = subpass_dependencies.data();
 			}
 
 			if constexpr(types::are_contain_range_of_value_type<vk::attachment_description>::for_types_of<Args...>) {
-				auto& attachment_descriptions = elements::range_of_value_type<vk::attachment_description>::for_elements_of(args...);
+				auto& attachment_descriptions = elements::range_of_value_type<vk::attachment_description>(args...);
 				ci.attachment_count = (uint32) attachment_descriptions.size();
 				ci.attachments = attachment_descriptions.data();
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::handle<vk::render_pass> render_pass;
 

@@ -128,9 +128,9 @@ span<vk::extension_name> platform::get_required_instance_extensions() {
 	uint32 count;
 	glfwGetRequiredInstanceExtensions(&count);
 
-	uint32 ingnore;
+	uint32 ignore;
 	return {
-		(vk::extension_name*) glfwGetRequiredInstanceExtensions(&ingnore),
+		(vk::extension_name*) glfwGetRequiredInstanceExtensions(&ignore),
 		count
 	};
 }

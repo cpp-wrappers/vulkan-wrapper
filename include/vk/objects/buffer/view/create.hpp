@@ -18,17 +18,17 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-			types::are_contain_one_type<vk::format>::decay,
-			types::count_of_type<vk::memory_offset>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::memory_size>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::are_contain_one_type<vk::format>,
+			types::count_of_type<vk::memory_offset>::equals<1>,
+			types::count_of_type<vk::memory_size>::equals<1>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::buffer_view>>
 		operator () (Args&&... args) const {
-			auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>::for_elements_of(args...);
+			auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
 
-			auto format = elements::of_type<vk::format>::ignore_const::ignore_reference::for_elements_of(args...);
-			auto offset = elements::of_type<vk::memory_offset>::ignore_const::ignore_reference::for_elements_of(args...);
-			auto size = elements::of_type<vk::memory_size>::ignore_const::ignore_reference::for_elements_of(args...);
+			auto format = elements::of_type<vk::format>(args...);
+			auto offset = elements::of_type<vk::memory_offset>(args...);
+			auto size = elements::of_type<vk::memory_size>(args...);
 
 			vk::buffer_view_create_info ci {
 				.buffer = vk::get_handle(buffer)
@@ -37,7 +37,7 @@ namespace vk {
 				.size = size
 			};
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>::for_elements_of(args...);
+			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 
 			VkBufferView buffer_view;
 

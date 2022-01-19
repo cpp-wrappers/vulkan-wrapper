@@ -33,16 +33,16 @@ namespace vk {
 		)
 		component_mapping(Args... args) {
 			if constexpr(types::are_contain_type<vk::r>::for_types_of<Args...>)
-				r = elements::of_type<vk::r&>::for_elements_of(args...);
+				r = elements::of_type<vk::r>(args...);
 
 			if constexpr(types::are_contain_type<vk::g>::for_types_of<Args...>)
-				g = elements::of_type<vk::g&>::for_elements_of(args...);
+				g = elements::of_type<vk::g>(args...);
 
 			if constexpr(types::are_contain_type<vk::b>::for_types_of<Args...>)
-				b = elements::of_type<vk::b&>::for_elements_of(args...);
+				b = elements::of_type<vk::b>(args...);
 
 			if constexpr(types::are_contain_type<vk::a>::for_types_of<Args...>)
-				a = elements::of_type<vk::a&>::for_elements_of(args...);
+				a = elements::of_type<vk::a>(args...);
 		}
 
 	};

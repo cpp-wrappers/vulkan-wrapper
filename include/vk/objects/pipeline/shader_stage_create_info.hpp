@@ -33,25 +33,25 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::count_of_type<vk::shader_stages>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::entrypoint_name>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::shader_stages>::equals<1>,
+			types::count_of_type<vk::entrypoint_name>::equals<1>
+		>::for_types_of<decay<Args>...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::of_type<vk::shader_stages>::ignore_const::ignore_reference::for_elements_of(args...);
-			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>::for_elements_of(args...));
-			entrypoint_name = elements::of_type<vk::entrypoint_name>::ignore_const::ignore_reference::for_elements_of(args...);
+			stages = elements::of_type<vk::shader_stages>(args...);
+			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
+			entrypoint_name = elements::of_type<vk::entrypoint_name>(args...);
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::count_of_type<vk::shader_stage>::equals<1>::ignore_const::ignore_reference,
-			types::count_of_type<vk::entrypoint_name>::equals<1>::ignore_const::ignore_reference
-		>::for_types_of<Args...>
+			types::count_of_type<vk::shader_stage>::equals<1>,
+			types::count_of_type<vk::entrypoint_name>::equals<1>
+		>::for_types_of<decay<Args>...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::of_type<vk::shader_stage>::ignore_const::ignore_reference::for_elements_of(args...);
-			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>::for_elements_of(args...));
-			entrypoint_name = elements::of_type<vk::entrypoint_name>::ignore_const::ignore_reference::for_elements_of(args...);
+			stages = elements::of_type<vk::shader_stage>(args...);
+			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
+			entrypoint_name = elements::of_type<vk::entrypoint_name>(args...);
 		}
 	};
 

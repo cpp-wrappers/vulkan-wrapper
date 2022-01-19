@@ -13,11 +13,11 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_type<vk::present_info>::equals<1>::ignore_const::ignore_reference
-	>::for_types_of<Args...>
+		types::count_of_type<vk::present_info>::equals<1>
+	>::for_types_of<decay<Args>...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
-		auto present_info = elements::of_type<vk::present_info>::ignore_const::ignore_reference::for_elements_of(args...);
+		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto present_info = elements::of_type<vk::present_info>(args...);
 
 		return {
 			(int32) vkQueuePresentKHR(
@@ -36,10 +36,10 @@ namespace vk {
 		types::count_of_ranges_of_value_type<vk::result>::less_or_equals<1>
 	>::for_types_of<Args...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
-		auto& wait_semaphores = elements::range_of_value_type<vk::wait_semaphore>::for_elements_of(args...);
-		auto& swapchains = elements::range_of_value_type<vk::handle<vk::swapchain>>::for_elements_of(args...);
-		auto& image_indices = elements::range_of_value_type<vk::image_index>::for_elements_of(args...);
+		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& wait_semaphores = elements::range_of_value_type<vk::wait_semaphore>(args...);
+		auto& swapchains = elements::range_of_value_type<vk::handle<vk::swapchain>>(args...);
+		auto& image_indices = elements::range_of_value_type<vk::image_index>(args...);
 
 		vk::present_info present_info {
 			.wait_semaphore_count = (uint32) wait_semaphores.size(),
@@ -50,7 +50,7 @@ namespace vk {
 		};
 
 		if constexpr(types::are_contain_range_of_value_type<vk::result>::for_types_of<Args...>) {
-			present_info.results = elements::range_of_value_type<vk::result>::for_elements_of(args...);
+			present_info.results = elements::range_of_value_type<vk::result>(args...);
 		}
 	
 		return vk::try_queue_present(queue, present_info);
@@ -59,19 +59,19 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_type<vk::wait_semaphore>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::wait_semaphore>::equals<1>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
-		types::count_of_type<vk::image_index>::equals<1>::ignore_const::ignore_reference,
+		types::count_of_type<vk::image_index>::equals<1>,
 		types::count_of_type<vk::result&>::less_or_equals<1>
-	>::for_types_of<Args...>
+	>::for_types_of<decay<Args>...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>::for_elements_of(args...);
+		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
 
 		vk::handle<vk::semaphore> wait_semaphore =
-			(vk::handle<vk::semaphore>) elements::of_type<vk::wait_semaphore>::ignore_const::ignore_reference::for_elements_of(args...);
+			(vk::handle<vk::semaphore>) elements::of_type<vk::wait_semaphore>(args...);
 		
-		auto& swapchain = elements::vk::possibly_guarded_handle_of<vk::swapchain>::for_elements_of(args...);
-		vk::image_index image_index = elements::of_type<vk::image_index>::ignore_const::ignore_reference::for_elements_of(args...);
+		auto& swapchain = elements::vk::possibly_guarded_handle_of<vk::swapchain>(args...);
+		vk::image_index image_index = elements::of_type<vk::image_index>(args...);
 
 		vk::present_info present_info {
 			.wait_semaphore_count = 1,
@@ -82,7 +82,7 @@ namespace vk {
 		};
 
 		if constexpr(types::are_contain_type<vk::result&>::for_types_of<Args...>) {
-			present_info.results = & elements::of_type<vk::result&>::for_elements_of(args...);
+			present_info.results = & elements::of_type<vk::result&>(args...);
 		}
 	
 		return vk::try_queue_present(queue, present_info);
