@@ -210,16 +210,17 @@ void entrypoint() {
 
 	auto set = descriptor_pool.allocate_descriptor_set(set_layout);
 
-	vk::descriptor_image_info descriptor_image_info { sampler, image_view, vk::image_layout::shader_read_only_optimal };
-
 	device.update_descriptor_set(
 		vk::write_descriptor_set {
-			.dst_set = vk::get_handle(set),
-			.dst_binding{ 0 },
-			.dst_array_element{ 0 },
-			.count{ 1 },
-			.descriptor_type = vk::descriptor_type::combined_image_sampler,
-			.image_info = &descriptor_image_info
+			set,
+			vk::dst_binding{ 0 },
+			vk::dst_array_element{ 0 },
+			vk::descriptor_type::combined_image_sampler,
+			array {
+				vk::descriptor_image_info {
+					sampler, image_view, vk::image_layout::shader_read_only_optimal
+				}
+			}
 		}
 	);
 
@@ -257,34 +258,27 @@ void entrypoint() {
 		},
 		vk::pipeline_multisample_state_create_info{},
 		vk::pipeline_vertex_input_state_create_info {
-			.vertex_binding_description_count = 1,
-			.vertex_binding_descriptions = &vertex_binding_description,
-			.vertex_attribute_description_count = 2,
-			.vertex_attribute_descriptions = vertex_input_attribute_descriptions.data()
+			span{ &vertex_binding_description, 1 },
+			vertex_input_attribute_descriptions
 		},
 		vk::pipeline_rasterization_state_create_info {
-			.polygon_mode = vk::polygon_mode::fill,
-			.cull_mode = vk::cull_mode::back,
-			.front_face = vk::front_face::counter_clockwise
+			vk::polygon_mode::fill,
+			vk::cull_mode::back,
+			vk::front_face::counter_clockwise
 		},
 		vk::pipeline_color_blend_state_create_info {
-			.logic_op = vk::logic_op::copy,
-			.attachment_count = 1,
-			.attachments = &pcbas
+			span{ &pcbas, 1 }
 		},
 		vk::pipeline_viewport_state_create_info {
 			.viewport_count = 1,
 			.scissor_count = 1
 		},
-		vk::pipeline_dynamic_state_create_info {
-			.dynamic_state_count = dynamic_states.size(),
-			.dynamic_states = dynamic_states.data()
-		}
+		vk::pipeline_dynamic_state_create_info { dynamic_states }
 	);
 
 	auto command_pool = device.create_guarded<vk::command_pool>(
 		queue_family_index,
-		vk::command_pool_create_flags{
+		vk::command_pool_create_flags {
 			vk::command_pool_create_flag::reset_command_buffer,
 			vk::command_pool_create_flag::transient
 		}
@@ -324,7 +318,7 @@ void entrypoint() {
 		)
 		.cmd_copy_buffer_to_image(
 			staging_buffer, image, vk::image_layout::transfer_dst_optimal,
-			array{
+			array {
 				vk::buffer_image_copy {
 					.image_subresource {
 						.aspects{ vk::image_aspect::color },
@@ -421,7 +415,7 @@ void entrypoint() {
 			rr.fence.wait();
 			rr.fence.reset();
 
-			auto result = swapchain.try_acquire_next_image(rr.image_acquire);
+			auto result = swapchain.acquire_next_image(rr.image_acquire);
 			if(result.is_unexpected()) {
 				result.set_handled(true);
 				if(result.get_unexpected().suboptimal() || result.get_unexpected().out_of_date()) break;

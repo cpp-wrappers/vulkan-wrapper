@@ -17,8 +17,8 @@ namespace vk {
 
 		template<typename... Args>
 		vk::expected<vk::image_index>
-		try_acquire_next_image(Args&&... args) const {
-			return handle().try_acquire_next_image(device(), forward<Args>(args)...);
+		acquire_next_image(Args&&... args) const {
+			return handle().acquire_next_image(device(), forward<Args>(args)...);
 		}
 
 		template<range::of_value_type<vk::handle<vk::image>> Images>

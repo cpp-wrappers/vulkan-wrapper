@@ -43,7 +43,7 @@ namespace vk {
 			types::count_of_type<vk::timeout>::less_or_equals<1>
 		>::for_types_of<decay<Args>...>
 		vk::expected<vk::image_index>
-		try_acquire_next_image(Args&&... args) const {
+		acquire_next_image(Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 			
 			vk::timeout timeout{ UINT64_MAX };
