@@ -9,12 +9,13 @@
 #include <core/elements/for_each_satisfying_type_predicate.hpp>
 #include <core/elements/satisfying_predicate.hpp>
 #include <core/type/disjuncted_predicates.hpp>
+#include <core/elements/pass_satisfying_type_predicate.hpp>
+#include <core/array.hpp>
 
 #include "../../shared/layer_properties.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/count.hpp"
 #include "../../shared/layer_name.hpp"
-#include "../../shared/required_or_desired.hpp"
 
 namespace vk {
 
@@ -97,42 +98,5 @@ namespace vk {
 
 		return supported;
 	}
-
-	template<typename... Args>
-	auto view_instance_layers(Args&&... args) {
-		uint32 required_count = types::count_of_satisfying_predicate<type::vk::is_required>::for_types_of<decay<Args>...>;
-		vk::layer_name required_layers[required_count];
-		uint32 required_layer = 0;
-
-		elements::for_each_satisfying_type_predicate<type::modified_predicate<type::vk::is_required, type::decay>>::function{[&](auto req){
-			required_layers[required_layer++] = req.value;
-		}}.for_elements_of(args...);
-
-		uint32 desired_count = types::count_of_satisfying_predicate<type::vk::is_desired>::for_types_of<decay<Args>...>;
-		vk::layer_name desired_layers[desired_count];
-		uint32 desired_layer = 0;
-
-		elements::for_each_satisfying_type_predicate<type::modified_predicate<type::vk::is_desired, type::decay>>::function{[&](auto des){
-			desired_layers[desired_layer++] = des.value;
-		}}(args...);
-
-		vk::layer_name storage[required_count + desired_count];
-		uint32 index = 0;
-
-		for(auto req : required_layers) {
-			if(!vk::is_instance_layer_supported(req)) default_unexpected_handler();
-			storage[index++] = req;
-		}
-
-		for(auto des : desired_layers) {
-			if(vk::is_instance_layer_supported(des)) {
-				storage[index++] = des;
-			}
-		}
-
-		elements::satisfying_predicate<type::negated_predicate<
-			type::disjuncted_predicates<type::vk::is_desired, type::vk::is_required>
-		>>(args...)(span{ storage, index });
-	};
 
 } // vk

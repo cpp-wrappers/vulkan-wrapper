@@ -12,37 +12,12 @@ cp ${src_dir}/leaf.png ${src_dir}/build/leaf.png
 exit 0
 #endif
 
-#include "vk/objects/instance/guarded_handle.hpp"
-#include "vk/objects/instance/layer_properties.hpp"
-#include "vk/objects/instance/extension_properties.hpp"
 #include "../platform/platform.hpp"
 
 void entrypoint() {
-	//auto debug_report_extension_name = vk::extension_name{ "VK_EXT_debug_report" };
-
-	vk::guarded_handle<vk::instance> instance;
-
-	vk::view_instance_layers(
-		vk::desired{ vk::layer_name{ "VK_LAYER_KHRONOS_validation" } },
-		[&](auto layers) {
-			//vk::view_instance_extensions(
-			//	vk::desired{ debug_report_extension_name },
-				//[&](auto extensions) {
-					instance = vk::create_guarded_instance(layers, platform::get_required_instance_extensions());
-				//}
-			//);
-		}
-	);
-
-	//if(vk::is_instance_extension_supported(debug_report_extension_name)) {
-	//	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
-	//		vk::debug_report::error, vk::debug_report::warning, vk::debug_report::information,
-	//		platform::debug_report
-	//	);
-	//}
-
+	auto instance = platform::create_instance();
 	auto surface = platform::create_surface(instance);
-	auto physical_device = instance.get_first_physical_device();
+	vk::handle<vk::physical_device> physical_device = instance.get_first_physical_device();
 	auto queue_family_index = physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics);
 
 	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
@@ -223,7 +198,7 @@ void entrypoint() {
 	);
 
 	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
-		vk::descriptor_pool_create_flags{ },
+		vk::descriptor_pool_create_flags{},
 		vk::max_sets{ 1 },
 		array {
 			vk::descriptor_pool_size {

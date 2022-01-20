@@ -1,5 +1,8 @@
 #pragma once
 
+#include <core/elements/pass_not_satisfying_type_predicate.hpp>
+#include <core/types/are_contain_one_type.hpp>
+
 #include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../shared/subpass.hpp"
@@ -28,12 +31,12 @@ namespace vk {
 			types::count_of_type<vk::pipeline_input_assembly_state_create_info>::less_or_equals<1>,
 			types::count_of_type<vk::pipeline_tesselation_state_create_info>::less_or_equals<1>,
 			types::count_of_type<vk::pipeline_viewport_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_rasterization_state_create_info>::equals<1>,
+			types::are_contain_one_type<vk::pipeline_rasterization_state_create_info>,
 			types::count_of_type<vk::pipeline_multisample_state_create_info>::less_or_equals<1>,
 			types::count_of_type<vk::pipeline_depth_stencil_state_create_info>::less_or_equals<1>,
 			types::count_of_type<vk::pipeline_color_blend_state_create_info>::less_or_equals<1>,
 			types::count_of_type<vk::pipeline_dynamic_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::subpass>::equals<1>,
+			types::are_contain_one_type<vk::subpass>,
 			types::count_of_type<vk::base_pipeline_index>::less_or_equals<1>
 		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::pipeline>>
@@ -52,9 +55,9 @@ namespace vk {
 				.subpass = subpass
 			};
 
-			elements::for_each_of_type<vk::pipeline_create_flag>::function {
+			elements::for_each_of_type<vk::pipeline_create_flag>(args...)(
 				[&](auto f) { ci.flags.set(f); }
-			}.for_elements_of(args...);
+			);
 
 			auto& stages = elements::range_of_value_type<vk::pipeline_shader_stage_create_info>(args...);
 			ci.stages = stages.data();
@@ -110,18 +113,19 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::count_of_type<vk::primitive_topology>::equals<1>::for_types_of<remove_const<remove_reference<Args>>...>
+		requires types::are_contain_one_type<vk::primitive_topology>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::pipeline>>
 		operator () (Args&&... args) const {
 			vk::primitive_topology topology = elements::of_type<vk::primitive_topology>(args...);
 
-			return elements::pass_satisfying_type_predicate<type::negated_predicate<type::is_same_as<vk::primitive_topology>>>::function {
-				[&,this]<typename... Others>(const Others&... others) {
-					return this->operator () (
-						vk::pipeline_input_assembly_state_create_info{ .topology = topology },
-						others...
-					); }
-			}(args...);
+			return elements::pass_not_satisfying_type_predicate<type::is_same_as<vk::primitive_topology>>(
+				vk::pipeline_input_assembly_state_create_info{ .topology = topology },
+				forward<Args>(args)...
+			)(
+				[]<typename... Others>(Others&&... others) {
+					return vk::create_t<vk::pipeline>{}(forward<Others>(others)...);
+				}
+			);
 		}
 
 	};

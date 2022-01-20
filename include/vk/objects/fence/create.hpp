@@ -54,9 +54,9 @@ namespace vk {
 
 			vk::fence_create_flags create_flags;
 
-			elements::for_each_of_type<vk::fence_create_flag>::function {
+			elements::for_each_of_type<vk::fence_create_flag>(args...)(
 				[&](vk::fence_create_flag flag){ create_flags.set(flag); }
-			}.for_elements_of(args...);
+			);
 
 			return this-> operator() (device, create_flags);
 		}

@@ -20,7 +20,7 @@ namespace vk {
 		void* user_data
 	);
 
-	using debug_report_callback_type = uint32 (&)(
+	using debug_report_callback_type = uint32 (*)(
 		flag_enum<vk::debug_report_flag> flags,
 		vk::debug_report_object_type objectType,
 		uint64 object,

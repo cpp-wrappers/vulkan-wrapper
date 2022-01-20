@@ -20,6 +20,11 @@ namespace vk {
 		}
 
 		template<typename ObjectType, typename... Args>
+		vk::handle<ObjectType> create(Args&&... args) const {
+			return { handle().create<ObjectType>(forward<Args>(args)...) };
+		}
+
+		template<typename ObjectType, typename... Args>
 		vk::guarded_handle<ObjectType> create_guarded(Args&&... args) const {
 			return { handle().create<ObjectType>(forward<Args>(args)...), handle() };
 		}

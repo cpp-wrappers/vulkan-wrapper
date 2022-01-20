@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/types/are_contain_one_type.hpp>
+
 #include "../../../instance/handle.hpp"
 #include "../../../../object/create_or_allocate.hpp"
 #include "handle.hpp"
@@ -13,8 +15,8 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
-			types::count_of_type<vk::debug_report_flags>::equals<1>,
-			types::count_of_type<vk::debug_report_callback_type>::equals<1>
+			types::are_contain_one_type<vk::debug_report_flags>,
+			types::are_contain_one_type<vk::debug_report_callback_type>
 		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
@@ -54,17 +56,17 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::count_of_type<vk::debug_report_flag>::greater_or_equals<1>,
-			types::count_of_type<vk::debug_report_callback_type>::equals<1>
+			types::are_contain_one_type<vk::debug_report_callback_type>
 		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
 			vk::debug_report_flags flags{};
 
-			elements::for_each_of_type<vk::debug_report_flag>::function {
+			elements::for_each_of_type<vk::debug_report_flag>(args...)(
 				[&](auto flag) {
 					flags.set(flag);
 				}
-			}.for_elements_of(args...);
+			);
 
 			auto& instance = elements::vk::possibly_guarded_handle_of<vk::instance>(args...);
 			auto& callback = elements::of_type<vk::debug_report_callback_type>(args...);

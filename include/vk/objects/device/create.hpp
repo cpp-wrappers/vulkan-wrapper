@@ -58,7 +58,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::are_contain_one_type<vk::queue_family_index>,
-			types::count_of_ranges_of_value_type<vk::queue_priority>::equals<1>
+			types::are_contain_one_type<vk::queue_priority>
 		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::device>>
 		operator () (Args&&... args) const {
@@ -72,7 +72,7 @@ namespace vk {
 						type::modified_predicate<type::is_same_as<vk::queue_family_index>, type::decay>
 					>
 				>
-			>::function{
+			>(args...)(
 				[&, this]<typename... Others>(Others&&... others) {
 					return this->operator () (
 						array {
@@ -83,25 +83,25 @@ namespace vk {
 						forward<Others>(others)...
 					);
 				}
-			}.for_elements_of(forward<Args>(args)...);
+			);
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::physical_device>,
-			types::count_of_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::queue_priority>::equals<1>,
+			types::are_contain_one_type<vk::queue_family_index>,
+			types::are_contain_one_type<vk::queue_priority>,
 			types::count_of_type<vk::extension_name>::greater_or_equals<0>
-		>::for_types_of<Args...>
+		>::for_types_of<decay<Args>...>
 		vk::expected<vk::handle<vk::device>>
-		operator () (const Args&... args) const {
+		operator () (Args&&... args) const {
 			nuint extensions_count = types::count_of_type<vk::extension_name>::for_types_of<Args...>;
 			vk::extension_name extension_names[extensions_count];
 			nuint extension_index = 0;
 
-			elements::for_each_of_type<vk::extension_name>::function {
+			elements::for_each_of_type<vk::extension_name>(args...)(
 				[&](vk::extension_name name) { extension_names[extension_index++] = name; }
-			}.for_elements_of(args...);
+			);
 
 			vk::queue_family_index family_index = elements::of_type<vk::queue_family_index>(args...);
 			auto physical_device = elements::vk::possibly_guarded_handle_of<vk::physical_device>(args...);

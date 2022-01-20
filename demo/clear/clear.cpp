@@ -10,17 +10,9 @@ exit 0
 #include <string.h>
 
 void entrypoint() {
-	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
+	auto instance = platform::create_instance();
 
-	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
-
-	auto instance = vk::create_guarded_instance(
-		layers,
-		platform::get_required_instance_extensions()
-	);
-
-	auto physical_device = instance.get_first_physical_device();
+	vk::handle<vk::physical_device> physical_device = instance.get_first_physical_device();
 
 	vk::queue_family_index queue_family_index {
 		physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics)
@@ -38,7 +30,7 @@ void entrypoint() {
 
 	if(!physical_device.get_surface_support(surface, queue_family_index)) {
 		platform::error("surface is not supported").new_line();
-		throw;
+		return;
 	}
 
 	vk::surface_format surface_format = physical_device.get_first_surface_format(surface);
@@ -133,7 +125,7 @@ void entrypoint() {
 			result.set_handled(true);
 			if(result.get_unexpected().suboptimal()) break;
 			platform::error("can't acquire swapchain image").new_line();
-			throw;
+			return;
 		}
 
 		vk::image_index image_index = result;

@@ -11,48 +11,12 @@ glslangValidator -e main -o ${src_dir}/build/triangle.frag.spv -V ${src_dir}/tri
 exit 0
 #endif
 
-#include "vk/objects/instance/guarded_handle.hpp"
-#include "vk/objects/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 
-inline vk::guarded_handle<vk::shader_module> read_shader_module(const vk::guarded_handle<vk::device>& device, const char* path) {
-	auto size = platform::file_size(path);
-	char src[size];
-	platform::read_file(path, src, size);
-	return device.create_guarded<vk::shader_module>(vk::code_size{ (uint32) size }, vk::code{ (uint32*) src } );
-}
-
-uint32 debug_report(
-	flag_enum<vk::debug_report_flag>, vk::debug_report_object_type, uint64, nuint,
-	int32, c_string, c_string message, void*
-) {
-	platform::info("[vk] ", message).new_line();
-	return 0;
-}
-
 void entrypoint() {
-	span required_extensions = platform::get_required_instance_extensions();
-
-	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
-	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
-
-	vk::extension_name extensions_raw[required_extensions.size() + 1]; // TODO
-	span extensions{ extensions_raw, required_extensions.size() + 1 };
-	
-	nuint i = 0;
-	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
-	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
-
-	auto instance = vk::create_guarded_instance(layers, extensions);
-
-	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
-		vk::debug_report_flags{ vk::debug_report_flag::error, vk::debug_report_flag::warning, vk::debug_report_flag::information },
-		debug_report 
-	);
-
+	auto instance = platform::create_instance();
 	auto surface = platform::create_surface(instance);
-	auto physical_device = instance.get_first_physical_device();
+	vk::handle<vk::physical_device> physical_device = instance.get_first_physical_device();
 	auto queue_family_index = physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics);
 
 	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
@@ -94,8 +58,8 @@ void entrypoint() {
 		}
 	);
 
-	auto vertex_shader = read_shader_module(device, "triangle.vert.spv");
-	auto fragment_shader = read_shader_module(device, "triangle.frag.spv");
+	auto vertex_shader = platform::read_shader_module(device, "triangle.vert.spv");
+	auto fragment_shader = platform::read_shader_module(device, "triangle.frag.spv");
 
 	vk::pipeline_color_blend_attachment_state pcbas {
 		.src_color_blend_factor = vk::blend_factor::one,

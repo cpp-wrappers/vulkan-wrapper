@@ -19,12 +19,14 @@ namespace vk {
 
 		return elements::pass_satisfying_type_predicate<
 			type::negated_predicate<type::vk::is_possibly_guarded_handle_of<vk::fence>>
-		>::function{[&]<typename... Others>(Others&&... others) {
-			return vk::try_wait_for_fences(
-				array{ vk::handle<vk::fence>{ vk::get_handle(fence) } },
-				forward<Others>(others)...
-			);
-		}}.for_elements_of(forward<Args>(args)...);
+		>(args...)(
+			[&]<typename... Others>(Others&&... others) {
+				return vk::try_wait_for_fences(
+					array{ vk::handle<vk::fence>{ vk::get_handle(fence) } },
+					forward<Others>(others)...
+				);
+			}
+		);
 	}
 
 	template<typename... Args>

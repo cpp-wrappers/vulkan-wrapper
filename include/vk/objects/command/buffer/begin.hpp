@@ -76,9 +76,9 @@ namespace vk {
 	vk::result try_begin_command_buffer(Args&&... args) {
 		vk::command_buffer_usages usages;
 
-		elements::for_each_of_type<vk::command_buffer_usage>::function {
+		elements::for_each_of_type<vk::command_buffer_usage>(args...)(
 			[&](vk::command_buffer_usage usage){ usages.set(usage); }
-		}.for_elements_of(args...);
+		);
 
 		return vk::try_begin_command_buffer(
 			elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...),

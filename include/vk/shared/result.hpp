@@ -74,11 +74,12 @@ namespace vk {
 		requires(type::is_same_as<int32>::for_type<remove_reference<Type>>)
 		result(Type val) : wrapper::of_integer<int32, struct vk_result>{ val } {}
 
-		bool error() const { return (int32) *this < 0;}
-
 		bool suboptimal() const { return (int32) *this == VK_SUBOPTIMAL_KHR; }
 		bool incomplete() const { return (int32) *this == VK_INCOMPLETE; }
 		bool success() const { return (int32) *this == VK_SUCCESS; }
+
+		//errors
+		bool error() const { return (int32) *this < 0;}
 		bool out_of_date() const { return (int32) *this == VK_ERROR_OUT_OF_DATE_KHR; }
 	};
 

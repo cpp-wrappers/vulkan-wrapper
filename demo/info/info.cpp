@@ -3,8 +3,6 @@
 exit 0
 #endif
 
-#include "vk/objects/instance/guarded_handle.hpp"
-#include "vk/objects/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 #include <string.h>
 
@@ -50,12 +48,7 @@ void object_block(auto name, auto f) {
 }
 
 void entrypoint() {
-	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
-
-	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
-
-	auto instance = vk::create_guarded_instance(layers);
+	auto instance = platform::create_instance();
 
 	array_block("physical devices", [&]() {
 		instance.for_each_physical_device([](vk::handle<vk::physical_device> device) {

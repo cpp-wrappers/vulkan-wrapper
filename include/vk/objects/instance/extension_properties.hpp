@@ -14,7 +14,6 @@
 #include "../../shared/result.hpp"
 #include "../../shared/count.hpp"
 #include "../../shared/extension_name.hpp"
-#include "../../shared/required_or_desired.hpp"
 
 namespace vk {
 
@@ -98,42 +97,5 @@ namespace vk {
 
 		return supported;
 	}
-
-	template<typename... Args>
-	auto view_instance_extensions(Args&&... args) {
-		uint32 required_count = types::count_of_satisfying_predicate<type::vk::is_required>::for_types_of<decay<Args>...>;
-		vk::extension_name required_extensions[required_count];
-		uint32 required_extension = 0;
-
-		elements::for_each_satisfying_type_predicate<type::vk::is_required>::function{[&](auto req){
-			required_extensions[required_extension++] = req.value;
-		}}.for_elements_of(args...);
-
-		uint32 desired_count = types::count_of_satisfying_predicate<type::vk::is_desired>::for_types_of<decay<Args>...>;
-		vk::extension_name desired_extensions[desired_count];
-		uint32 desired_extension = 0;
-
-		elements::for_each_satisfying_type_predicate<type::vk::is_desired>::function{[&](auto req){
-			desired_extensions[desired_extension++] = req.value;
-		}}.for_elements_of(args...);
-
-		vk::extension_name storage[required_count + desired_count];
-		uint32 index = 0;
-
-		for(auto req : required_extensions) {
-			if(!vk::is_instance_extension_supported(req)) default_unexpected_handler();
-			storage[index++] = req;
-		}
-
-		for(auto des : desired_extensions) {
-			if(vk::is_instance_extension_supported(des)) {
-				storage[index++] = des;
-			}
-		}
-
-		elements::satisfying_predicate<type::negated_predicate<
-			type::disjuncted_predicates<type::vk::is_desired, type::vk::is_required>
-		>>(args...)(span{ storage, index });
-	};
 
 } // vk

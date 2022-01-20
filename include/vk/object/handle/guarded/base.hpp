@@ -21,8 +21,10 @@ namespace vk {
 		{}
 
 		guarded_handle_base(guarded_handle_base&& other)
-			: m_handle{ exchange(other.m_handle.value, 0) }
-		{}
+			: m_handle{ other.m_handle.value }
+		{
+			other.handle().reset_value();
+		}
 
 		void destroy() const requires vk::is_creatable<ObjectType> {
 			vk::destroy<ObjectType>(handle());
@@ -46,7 +48,7 @@ namespace vk {
 
 		guarded_handle_base& operator = (guarded_handle_base&& other) {
 			reset(other.handle());
-			other.handle().value = 0;
+			other.handle().reset_value();
 			return *this;
 		}
 

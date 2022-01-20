@@ -11,33 +11,12 @@ glslangValidator -e main -o ${src_dir}/build/attribs.frag.spv -V ${src_dir}/attr
 exit 0
 #endif
 
-#include "vk/objects/instance/guarded_handle.hpp"
-#include "vk/objects/instance/layer_properties.hpp"
 #include "../platform/platform.hpp"
 
 void entrypoint() {
-	span required_extensions = platform::get_required_instance_extensions();
-
-	vk::layer_name validation_layer_name{ "VK_LAYER_KHRONOS_validation" };
-	bool validation_layer_is_supported = vk::is_instance_layer_supported(validation_layer_name);
-	span<vk::layer_name> layers{ validation_layer_is_supported ? &validation_layer_name : nullptr, validation_layer_is_supported ? 1u : 0u };
-
-	vk::extension_name extensions_raw[required_extensions.size() + 1]; // TODO
-	span extensions{ extensions_raw, required_extensions.size() + 1 };
-	
-	nuint i = 0;
-	for(; i < required_extensions.size(); ++i) extensions[i] = required_extensions[i];
-	extensions[i] = vk::extension_name{ "VK_EXT_debug_report" };
-
-	auto instance = vk::create_guarded_instance(layers, extensions);
-
-	auto debug_report_callback = instance.create_guarded<vk::debug_report_callback>(
-		vk::debug_report::error, vk::debug_report::warning, vk::debug_report::information,
-		platform::debug_report
-	);
-
+	auto instance = platform::create_instance();
 	auto surface = platform::create_surface(instance);
-	auto physical_device = instance.get_first_physical_device();
+	vk::handle<vk::physical_device> physical_device = instance.get_first_physical_device();
 	auto queue_family_index = physical_device.get_first_queue_family_index_with_capabilities(vk::queue_flag::graphics);
 
 	platform::info("graphics family index: ", (uint32)queue_family_index).new_line();
