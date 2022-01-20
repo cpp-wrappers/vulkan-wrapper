@@ -186,25 +186,13 @@ void entrypoint() {
 		vk::mipmap_mode::nearest,
 		vk::address_mode_u{ vk::address_mode::clamp_to_edge },
 		vk::address_mode_v{ vk::address_mode::clamp_to_edge },
-		vk::address_mode_w{ vk::address_mode::clamp_to_edge },
-		vk::mip_lod_bias{ 0.0 },
-		vk::anisotropy_enable{ false },
-		vk::compare_enable{ false },
-		vk::compare_op::always,
-		vk::min_lod{ 0.0F },
-		vk::max_lod{ 0.0F },
-		vk::border_color::float_transparent_black,
-		vk::unnormalized_coordinates{ false }
+		vk::address_mode_w{ vk::address_mode::clamp_to_edge }
 	);
 
 	auto descriptor_pool = device.create_guarded<vk::descriptor_pool>(
-		vk::descriptor_pool_create_flags{},
 		vk::max_sets{ 1 },
 		array {
-			vk::descriptor_pool_size {
-				.type = vk::descriptor_type::combined_image_sampler,
-				.descriptor_count{ 1 }
-			}
+			vk::descriptor_pool_size { vk::descriptor_type::combined_image_sampler, 1 }
 		}
 	);
 
@@ -222,22 +210,16 @@ void entrypoint() {
 
 	auto set = descriptor_pool.allocate_descriptor_set(set_layout);
 
-	vk::descriptor_image_info descriptor_image_info {
-		.sampler{ vk::get_handle(sampler) },
-		.image_view{ vk::get_handle(image_view) },
-		.image_layout = vk::image_layout::shader_read_only_optimal
-	};
+	vk::descriptor_image_info descriptor_image_info { sampler, image_view, vk::image_layout::shader_read_only_optimal };
 
-	device.update_descriptor_sets(
-		array{
-			vk::write_descriptor_set {
-				.dst_set = vk::get_handle(set),
-				.dst_binding{ 0 },
-				.dst_array_element{ 0 },
-				.count{ 1 },
-				.descriptor_type = vk::descriptor_type::combined_image_sampler,
-				.image_info = &descriptor_image_info
-			}
+	device.update_descriptor_set(
+		vk::write_descriptor_set {
+			.dst_set = vk::get_handle(set),
+			.dst_binding{ 0 },
+			.dst_array_element{ 0 },
+			.count{ 1 },
+			.descriptor_type = vk::descriptor_type::combined_image_sampler,
+			.image_info = &descriptor_image_info
 		}
 	);
 
@@ -258,6 +240,7 @@ void entrypoint() {
 	};
 
 	auto pipeline = device.create_guarded<vk::pipeline>(
+		vk::subpass{ 0 },
 		pipeline_layout, render_pass,
 		vk::primitive_topology::triangle_strip,
 		array {
@@ -296,8 +279,7 @@ void entrypoint() {
 		vk::pipeline_dynamic_state_create_info {
 			.dynamic_state_count = dynamic_states.size(),
 			.dynamic_states = dynamic_states.data()
-		},
-		vk::subpass{ 0 }
+		}
 	);
 
 	auto command_pool = device.create_guarded<vk::command_pool>(
@@ -377,10 +359,7 @@ void entrypoint() {
 	vk::guarded_handle<vk::swapchain> swapchain{};
 	auto queue = device.get_queue(queue_family_index, vk::queue_index{ 0 });
 
-	queue.submit(vk::submit_info {
-		.command_buffer_count = 1,
-		.command_buffers = &vk::get_handle(rendering_resources[0].command_buffer)
-	});
+	queue.submit(rendering_resources[0].command_buffer);
 
 	device.wait_idle();
 
@@ -468,11 +447,7 @@ void entrypoint() {
 					array{ vk::clear_value { vk::clear_color_value{ 0.0, 0.0, 0.0, 0.0 } } }
 				)
 				.cmd_bind_pipeline(pipeline, vk::pipeline_bind_point::graphics)
-				.cmd_bind_descriptor_sets(
-					vk::pipeline_bind_point::graphics,
-					pipeline_layout,
-					array{ vk::get_handle(set) }
-				)
+				.cmd_bind_descriptor_set(vk::pipeline_bind_point::graphics, pipeline_layout, set)
 				.cmd_set_viewport(surface_capabilities.current_extent)
 				.cmd_set_scissor(surface_capabilities.current_extent)
 				.cmd_bind_vertex_buffer(buffer)
@@ -493,8 +468,8 @@ void entrypoint() {
 				image_index
 			);
 
-			if(!present_result.success()) {
-				if(present_result.suboptimal() || present_result.out_of_date()) break;
+			if(present_result.suboptimal() || present_result.out_of_date()) break;
+			if(present_result.error()) {
 				platform::error("present").new_line();
 				return;
 			}

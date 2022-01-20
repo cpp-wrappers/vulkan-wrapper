@@ -106,6 +106,10 @@ namespace vk {
 
 		template<typename... Args>
 		void update_descriptor_sets(Args&&... args) const;
+
+		template<typename... Args>
+		void update_descriptor_set(Args&&... args) const;
+		
 	}; // device
 
 } // vk
@@ -149,4 +153,9 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 template<typename... Args>
 void vk::handle<vk::device>::update_descriptor_sets(Args&&... args) const {
 	vk::update_descriptor_sets(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+void vk::handle<vk::device>::update_descriptor_set(Args&&... args) const {
+	vk::update_descriptor_set(*this, forward<Args>(args)...);
 }

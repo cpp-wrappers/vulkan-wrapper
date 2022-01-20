@@ -59,6 +59,11 @@ namespace vk {
 			handle().update_descriptor_sets(forward<Args>(args)...);
 		}
 
+		template<typename... Args>
+		void update_descriptor_set(Args&&... args) const {
+			handle().update_descriptor_set(forward<Args>(args)...);
+		}
+
 	}; //device_guard
 
 } // vk

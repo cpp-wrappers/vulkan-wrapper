@@ -65,10 +65,10 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::are_contain_one_type<vk::wait_semaphore>,
-		types::are_contain_one_type<vk::pipeline_stages>,
+		types::are_may_contain_one_type<vk::wait_semaphore>,
+		types::are_may_contain_one_type<vk::pipeline_stages>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_type<vk::signal_semaphore>,
+		types::are_may_contain_one_type<vk::signal_semaphore>,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types_of<decay<Args>...>
 	vk::result try_queue_submit(Args&&... args) {
@@ -80,22 +80,28 @@ namespace vk {
 
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
 		vk::handle<vk::command_buffer> command_buffer = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...));
-		vk::handle<vk::semaphore> wait_semaphore = (vk::handle<vk::semaphore>)elements::of_type<vk::wait_semaphore>(args...);
-		vk::handle<vk::semaphore> signal_semaphore = (vk::handle<vk::semaphore>)elements::of_type<vk::signal_semaphore>(args...);
 
-		vk::pipeline_stages wait_dst_stage_mask = elements::of_type<vk::pipeline_stages>(args...);
+		vk::submit_info si {
+			.command_buffer_count = 1,
+			.command_buffers = &command_buffer,
+		};
+
+		if constexpr(types::are_contain_type<vk::wait_semaphore>::for_types_of<decay<Args>...>) {
+			si.wait_semaphore_count = 1,
+			si.wait_semaphores = (vk::handle<vk::semaphore>*) &elements::of_type<vk::wait_semaphore>(args...);
+		}
+
+		if constexpr(types::are_contain_type<vk::signal_semaphore>::for_types_of<decay<Args>...>) {
+			si.signal_semaphore_count = 1,
+			si.signal_semaphores = (vk::handle<vk::semaphore>*) &elements::of_type<vk::signal_semaphore>(args...);
+		}
+
+		if constexpr(types::are_contain_type<vk::pipeline_stages>::for_types_of<decay<Args>...>) {
+			si.wait_dst_stage_mask = &elements::of_type<vk::pipeline_stages>(args...);
+		}
 
 		return vk::try_queue_submit(
-			queue, fence,
-			vk::submit_info {
-				.wait_semaphore_count = 1,
-				.wait_semaphores = &wait_semaphore,
-				.wait_dst_stage_mask = &wait_dst_stage_mask,
-				.command_buffer_count = 1,
-				.command_buffers = &command_buffer,
-				.signal_semaphore_count = 1,
-				.signal_semaphores = &signal_semaphore
-			}
+			queue, fence, si
 		);
 	}
 

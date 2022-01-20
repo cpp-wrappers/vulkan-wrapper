@@ -36,15 +36,15 @@ namespace vk {
 		vk::address_mode_u address_mode_u;
 		vk::address_mode_v address_mode_v;
 		vk::address_mode_w address_mode_w;
-		vk::mip_lod_bias mip_lod_bias;
-		vk::anisotropy_enable anisotropy_enable;
-		vk::max_anisotropy max_anisotropy;
-		vk::compare_enable compare_enable;
-		vk::compare_op compare_op;
-		vk::min_lod min_lod;
-		vk::max_lod max_lod;
-		vk::border_color border_color;
-		vk::unnormalized_coordinates unnormalized_coordinates;
+		vk::mip_lod_bias mip_lod_bias{ 0.0F };
+		vk::anisotropy_enable anisotropy_enable{ false };
+		vk::max_anisotropy max_anisotropy{ 0.0F };
+		vk::compare_enable compare_enable{ false };
+		vk::compare_op compare_op{ vk::compare_op::always };
+		vk::min_lod min_lod{ 0.0 };
+		vk::max_lod max_lod{ 0.0 };
+		vk::border_color border_color{ vk::border_color::float_transparent_black };
+		vk::unnormalized_coordinates unnormalized_coordinates{ false };
 	};
 
 } // vk

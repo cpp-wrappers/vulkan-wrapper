@@ -33,6 +33,7 @@ namespace vk {
 		template<typename... Args> auto& cmd_bind_vertex_buffers(Args&&...) const;
 		template<typename... Args> auto& cmd_bind_vertex_buffer(Args&&...) const;
 		template<typename... Args> auto& cmd_bind_descriptor_sets(Args&&...) const;
+		template<typename... Args> auto& cmd_bind_descriptor_set(Args&&...) const;
 	};
 
 } // vk
@@ -151,5 +152,13 @@ auto& vk::handle<vk::command_buffer>::cmd_bind_vertex_buffer(Args&&... args) con
 template<typename... Args>
 auto& vk::handle<vk::command_buffer>::cmd_bind_descriptor_sets(Args &&... args) const {
 	vk::cmd_bind_descriptor_sets(*this, forward<Args>(args)...);
+	return *this;
+}
+
+#include "cmd_bind_descriptor_set.hpp"
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_bind_descriptor_set(Args &&... args) const {
+	vk::cmd_bind_descriptor_set(*this, forward<Args>(args)...);
 	return *this;
 }

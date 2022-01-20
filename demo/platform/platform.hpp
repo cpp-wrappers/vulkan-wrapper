@@ -100,7 +100,13 @@ namespace platform {
 		vk::extension_name debug_report_extension_name = { "VK_EXT_debug_report" };
 		extensions[i] = debug_report_extension_name;
 
-		vk::handle<vk::instance> instance = vk::create<vk::instance>(layers, extensions);
+		auto result = vk::create<vk::instance>(layers, extensions);
+		if(result.is_unexpected()) {
+			platform::error("couldn't create instance").new_line();
+			default_unexpected_handler();
+		}
+
+		auto instance = result.get_expected();
 
 		if(vk::is_instance_extension_supported(debug_report_extension_name)) {
 			instance.create<vk::debug_report_callback>(
