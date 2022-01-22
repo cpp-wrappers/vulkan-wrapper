@@ -6,10 +6,9 @@
 #include "../physical_device/handle.hpp"
 #include "../../object/create_or_allocate.hpp"
 
+#include <core/range/of_value_type.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
 #include <core/meta/type/negated_predicate.hpp>
-#include <core/meta/type/remove_const.hpp>
-#include <core/meta/types/are_contain_range_of_value_type.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 
 namespace vk {

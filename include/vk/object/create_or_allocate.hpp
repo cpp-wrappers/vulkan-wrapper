@@ -1,12 +1,5 @@
 #pragma once
 
-#include <core/meta/type/negated_predicate.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_range_of_value_type.hpp>
-#include <core/meta/types/count_of_ranges_of_value_type.hpp>
-#include <core/meta/elements/one_of.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
-
 namespace vk {
 	
 	template<typename ObjectType>

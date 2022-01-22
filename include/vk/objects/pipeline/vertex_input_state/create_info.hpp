@@ -4,8 +4,7 @@
 #include "vertex_input_attribute_description.hpp"
 #include "../../../shared/headers.hpp"
 
-#include <core/meta/types/are_contain_range_of_value_type.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
+#include <core/range/of_value_type.hpp>
 
 namespace vk {
 

@@ -5,16 +5,12 @@
 #include "../../shared/count.hpp"
 #include "../../shared/result.hpp"
 
-#include <core/integer.hpp>
 #include <core/forward.hpp>
 #include <core/span.hpp>
 #include <core/move.hpp>
 #include <core/array.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type.hpp>
-#include <core/meta/types/count_of_ranges_of_value_type.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
-#include <core/meta/elements/one_of.hpp>
 
 namespace vk {
 

@@ -3,6 +3,8 @@
 #include "base.hpp"
 
 #include <core/meta/type/is_base.hpp>
+#include <core/meta/type/decay.hpp>
+#include <core/meta/type/is_same_as.hpp>
 
 namespace vk {
 

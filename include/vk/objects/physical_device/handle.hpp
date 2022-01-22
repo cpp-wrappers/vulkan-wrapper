@@ -21,7 +21,6 @@
 #include <core/span.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/meta/elements/one_of.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
 
 
 namespace vk {

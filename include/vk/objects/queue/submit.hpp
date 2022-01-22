@@ -9,8 +9,7 @@
 #include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 
-#include <core/meta/types/count_of_ranges_of_value_type.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
+#include <core/range/of_value_type.hpp>
 
 namespace vk {
 

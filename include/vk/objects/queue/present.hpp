@@ -5,8 +5,8 @@
 #include "present_info.hpp"
 #include "../swapchain/image_index.hpp"
 
+#include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_range_of_value_type.hpp>
 
 namespace vk {
 

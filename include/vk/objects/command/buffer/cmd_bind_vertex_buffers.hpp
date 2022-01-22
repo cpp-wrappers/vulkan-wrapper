@@ -11,7 +11,6 @@
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_range_of_value_type.hpp>
 
 namespace vk {
 

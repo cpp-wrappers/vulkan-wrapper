@@ -5,9 +5,8 @@
 #include "../device/handle.hpp"
 #include "../../object/create_or_allocate.hpp"
 
-#include <core/meta/elements/one_of.hpp>
+#include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/count_of_ranges_of_value_type.hpp>
 
 namespace vk {
 

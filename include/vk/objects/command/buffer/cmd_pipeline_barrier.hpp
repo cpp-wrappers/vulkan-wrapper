@@ -7,10 +7,9 @@
 #include "../../../elements/possibly_guarded_handle_of.hpp"
 #include "../../../shared/dependency.hpp"
 
+#include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/count_of_ranges_of_value_type.hpp>
-#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 
