@@ -8,7 +8,7 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>
-	>::for_types_of<Args...>
+	>::for_types<Args...>
 	vk::result try_reset_fence(Args&&... args) {
 		return vk::try_reset_fences(
 			array{ vk::handle<vk::fence>{ vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...)) }},

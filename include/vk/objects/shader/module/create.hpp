@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../../object/create_or_allocate.hpp"
-#include "../../device/handle.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../../device/handle.hpp"
+#include "../../../object/create_or_allocate.hpp"
 
 namespace vk {
 
@@ -13,15 +13,15 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::code_size>::equals<1>,
-			types::count_of_type<vk::code>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::code_size>,
+			types::are_contain_one_decayed_same_as<vk::code>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::shader_module>>
 		operator () (Args&&... args) const {
 			vk::shader_module_create_info ci{};
 
-			ci.code_size = elements::of_type<vk::code_size>(args...);
-			ci.code = elements::of_type<vk::code>(args...);
+			ci.code_size = elements::decayed_same_as<vk::code_size>(args...);
+			ci.code = elements::decayed_same_as<vk::code>(args...);
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 

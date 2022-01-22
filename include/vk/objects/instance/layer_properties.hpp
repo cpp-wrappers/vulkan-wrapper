@@ -1,21 +1,21 @@
 #pragma once
 
-#include <core/elements/one_of.hpp>
-#include <core/range/of_value_type.hpp>
-#include <core/span.hpp>
-#include <core/range/contains.hpp>
-#include <core/range/transform.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/elements/for_each_satisfying_type_predicate.hpp>
-#include <core/elements/satisfying_predicate.hpp>
-#include <core/type/disjuncted_predicates.hpp>
-#include <core/elements/pass_satisfying_type_predicate.hpp>
-#include <core/array.hpp>
-
 #include "../../shared/layer_properties.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/count.hpp"
 #include "../../shared/layer_name.hpp"
+
+#include <core/span.hpp>
+#include <core/array.hpp>
+#include <core/range/of_value_type.hpp>
+#include <core/range/contains.hpp>
+#include <core/range/transform.hpp>
+#include <core/meta/type/disjuncted_predicates.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
+#include <core/meta/elements/satisfying_predicate.hpp>
+#include <core/meta/elements/one_of.hpp>
+#include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 
 namespace vk {
 

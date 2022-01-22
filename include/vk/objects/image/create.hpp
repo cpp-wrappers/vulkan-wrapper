@@ -1,11 +1,11 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
-#include "../../object/create_or_allocate.hpp"
-#include "../device/handle.hpp"
-#include "create_info.hpp"
 #include "handle.hpp"
+#include "create_info.hpp"
+#include "../device/handle.hpp"
+#include "../../object/create_or_allocate.hpp"
+
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 namespace vk {
 
@@ -15,34 +15,34 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::image_create_flags>::equals<1>,
-			types::count_of_type<vk::image_type>::equals<1>,
-			types::count_of_type<vk::format>::equals<1>,
-			types::count_of_type<vk::extent<3>>::equals<1>,
-			types::count_of_type<vk::mip_levels>::equals<1>,
-			types::count_of_type<vk::array_layers>::equals<1>,
-			types::count_of_type<vk::sample_count>::equals<1>,
-			types::count_of_type<vk::image_tiling>::equals<1>,
-			types::count_of_type<vk::image_usages>::equals<1>,
-			types::count_of_type<vk::sharing_mode>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::initial_layout>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::image_create_flags>,
+			types::are_contain_one_decayed_same_as<vk::image_type>,
+			types::are_contain_one_decayed_same_as<vk::format>,
+			types::are_contain_one_decayed_same_as<vk::extent<3>>,
+			types::are_contain_one_decayed_same_as<vk::mip_levels>,
+			types::are_contain_one_decayed_same_as<vk::array_layers>,
+			types::are_contain_one_decayed_same_as<vk::sample_count>,
+			types::are_contain_one_decayed_same_as<vk::image_tiling>,
+			types::are_contain_one_decayed_same_as<vk::image_usages>,
+			types::are_contain_one_decayed_same_as<vk::sharing_mode>,
+			types::are_contain_one_range_of_value_type<vk::queue_family_index>,
+			types::are_contain_one_decayed_same_as<vk::initial_layout>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::image>>
 		operator () (Args&&... args) const {
 			vk::image_create_info ci{};
 
-			ci.flags = elements::of_type<vk::image_create_flags>(args...);
-			ci.image_type = elements::of_type<vk::image_type>(args...);
-			ci.format = elements::of_type<vk::format>(args...);
-			ci.extent = elements::of_type<vk::extent<3>>(args...);
-			ci.mip_levels = elements::of_type<vk::mip_levels>(args...);
-			ci.array_layers = elements::of_type<vk::array_layers>(args...);
-			ci.samples = elements::of_type<vk::sample_count>(args...);
-			ci.tiling = elements::of_type<vk::image_tiling>(args...);
-			ci.usages = elements::of_type<vk::image_usages>(args...);
-			ci.sharing_mode = elements::of_type<vk::sharing_mode>(args...);
-			ci.initial_layout = elements::of_type<vk::initial_layout>(args...);
+			ci.flags = elements::decayed_same_as<vk::image_create_flags>(args...);
+			ci.image_type = elements::decayed_same_as<vk::image_type>(args...);
+			ci.format = elements::decayed_same_as<vk::format>(args...);
+			ci.extent = elements::decayed_same_as<vk::extent<3>>(args...);
+			ci.mip_levels = elements::decayed_same_as<vk::mip_levels>(args...);
+			ci.array_layers = elements::decayed_same_as<vk::array_layers>(args...);
+			ci.samples = elements::decayed_same_as<vk::sample_count>(args...);
+			ci.tiling = elements::decayed_same_as<vk::image_tiling>(args...);
+			ci.usages = elements::decayed_same_as<vk::image_usages>(args...);
+			ci.sharing_mode = elements::decayed_same_as<vk::sharing_mode>(args...);
+			ci.initial_layout = elements::decayed_same_as<vk::initial_layout>(args...);
 
 			auto& queues = elements::range_of_value_type<vk::queue_family_index>(args...);
 

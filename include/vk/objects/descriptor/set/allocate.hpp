@@ -16,7 +16,7 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set_layout>>::equals<1>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set>>::equals<1>
-	>::for_types_of<decay<Args>...>
+	>::for_types<Args...>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
 		auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
 		auto& sets = elements::range_of_value_type<vk::handle<vk::descriptor_set>>(args...);
@@ -47,7 +47,7 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set_layout>
-		>::for_types_of<decay<Args>...>
+		>::for_types<Args...>
 		vk::expected<vk::handle<descriptor_set>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

@@ -1,11 +1,10 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_may_contain_one_type.hpp>
-
+#include "handle.hpp"
 #include "../../pipeline/layout/handle.hpp"
 #include "../../descriptor/set/handle.hpp"
-#include "handle.hpp"
+
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -15,28 +14,29 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_type<vk::pipeline_bind_point>,
+		types::are_contain_one_decayed_same_as<vk::pipeline_bind_point>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
-		types::are_may_contain_one_type<vk::first_set>,
-		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set>>::equals<1>,
-		types::count_of_ranges_of_value_type<vk::dynamic_offset>::less_or_equals<1>
-	>::for_types_of<decay<Args>...>
+		types::are_may_contain_one_decayed_same_as<vk::first_set>,
+		types::are_contain_one_range_of_value_type<vk::handle<vk::descriptor_set>>,
+		types::are_may_contain_one_range_of_value_type<vk::dynamic_offset>
+	>::for_types<Args...>
 	void cmd_bind_descriptor_sets(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		vk::pipeline_bind_point bind_point = elements::of_type<vk::pipeline_bind_point>(args...);
+		vk::pipeline_bind_point bind_point = elements::decayed_same_as<vk::pipeline_bind_point>(args...);
 		auto& pipeline_layout = elements::vk::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
 
 		vk::first_set first{};
 		
-		if constexpr(types::are_contain_type<vk::first_set>::for_types_of<decay<Args>...>)
-			first = elements::of_type<vk::first_set>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::first_set>::for_types<Args...>) {
+			first = elements::decayed_same_as<vk::first_set>(args...);
+		}
 
 		auto& sets = elements::range_of_value_type<vk::handle<vk::descriptor_set>>(args...);
 
 		uint32 dynamic_offset_count{};
 		const vk::dynamic_offset* dynamic_offsets{};
 
-		if constexpr(types::are_contain_range_of_value_type<vk::dynamic_offset>::for_types_of<Args...>) {
+		if constexpr(types::are_contain_range_of_value_type<vk::dynamic_offset>::for_types<Args...>) {
 			auto& offsets = elements::range_of_value_type<vk::dynamic_offset>(args...);
 			dynamic_offset_count = (uint32) offsets.size();
 			dynamic_offsets = offsets.data();

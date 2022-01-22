@@ -1,13 +1,11 @@
 #pragma once
 
-#include <core/types/are_may_contain_one_range_of_value_type.hpp>
-#include <core/types/are_may_contain_one_type.hpp>
-#include <core/types/are_contain_range_of_value_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-
-#include "../../../shared/headers.hpp"
 #include "vertex_input_binding_description.hpp"
 #include "vertex_input_attribute_description.hpp"
+#include "../../../shared/headers.hpp"
+
+#include <core/meta/types/are_contain_range_of_value_type.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 
@@ -24,15 +22,15 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::are_may_contain_one_range_of_value_type<vk::vertex_input_binding_description>,
 			types::are_may_contain_one_range_of_value_type<vk::vertex_input_attribute_description>
-		>::for_types_of<decay<Args>...>
+		>::for_types<Args...>
 		pipeline_vertex_input_state_create_info(Args&&... args) {
-			if constexpr(types::are_contain_range_of_value_type<vk::vertex_input_binding_description>::for_types_of<Args...>) {
+			if constexpr(types::are_contain_range_of_value_type<vk::vertex_input_binding_description>::for_types<Args...>) {
 				auto& binding_descriptions = elements::range_of_value_type<vk::vertex_input_binding_description>(args...);
 				vertex_binding_description_count = (uint32) binding_descriptions.size();
 				vertex_binding_descriptions = binding_descriptions.data();
 			}
 
-			if constexpr(types::are_contain_range_of_value_type<vk::vertex_input_attribute_description>::for_types_of<Args...>) {
+			if constexpr(types::are_contain_range_of_value_type<vk::vertex_input_attribute_description>::for_types<Args...>) {
 				auto& attribute_descriptions = elements::range_of_value_type<vk::vertex_input_attribute_description>(args...);
 				vertex_attribute_description_count = (uint32) attribute_descriptions.size();
 				vertex_attribute_descriptions = attribute_descriptions.data();

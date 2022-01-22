@@ -270,8 +270,8 @@ void entrypoint() {
 			span{ &pcbas, 1 }
 		},
 		vk::pipeline_viewport_state_create_info {
-			.viewport_count = 1,
-			.scissor_count = 1
+			vk::viewport_count{ 1 },
+			vk::scissor_count{ 1 }
 		},
 		vk::pipeline_dynamic_state_create_info { dynamic_states }
 	);
@@ -303,7 +303,6 @@ void entrypoint() {
 		.cmd_pipeline_barrier(
 			vk::src_stages{ vk::pipeline_stage::top_of_pipe },
 			vk::dst_stages{ vk::pipeline_stage::transfer },
-			vk::dependencies{},
 			array {
 				vk::image_memory_barrier {
 					.dst_access{ vk::access::transfer_write },
@@ -333,7 +332,6 @@ void entrypoint() {
 		.cmd_pipeline_barrier(
 			vk::src_stages{ vk::pipeline_stage::transfer },
 			vk::dst_stages{ vk::pipeline_stage::fragment_shader },
-			vk::dependencies{},
 			array {
 				vk::image_memory_barrier {
 					.src_access{ vk::access::transfer_write },
@@ -462,7 +460,9 @@ void entrypoint() {
 				image_index
 			);
 
-			if(present_result.suboptimal() || present_result.out_of_date()) break;
+			if(present_result.suboptimal() || present_result.out_of_date()) {
+				break;
+			}
 			if(present_result.error()) {
 				platform::error("present").new_line();
 				return;

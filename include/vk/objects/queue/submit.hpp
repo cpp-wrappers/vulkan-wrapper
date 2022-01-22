@@ -1,19 +1,16 @@
 #pragma once
 
-#include <core/types/count_of_ranges_of_value_type.hpp>
-#include <core/types/are_contain_one_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-
-#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
-#include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
-#include "../fence/handle.hpp"
-#include "../command/buffer/handle.hpp"
+#include "handle.hpp"
 #include "wait_semaphore.hpp"
 #include "signal_semaphore.hpp"
 #include "submit_info.hpp"
-#include "handle.hpp"
+#include "../fence/handle.hpp"
+#include "../command/buffer/handle.hpp"
+#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
+
+#include <core/meta/types/count_of_ranges_of_value_type.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 
@@ -22,11 +19,11 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::count_of_ranges_of_value_type<vk::submit_info>::equals<1>,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-	>::for_types_of<Args...>
+	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types_of<Args...>) {
+		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
 			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
@@ -46,18 +43,18 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::are_contain_one_type<vk::submit_info>,
+		types::are_contain_one_decayed_same_as<vk::submit_info>,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-	>::for_types_of<decay<Args>...>
+	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types_of<Args...>) {
+		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
 			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
-		auto& submit_info = elements::of_type<vk::submit_info>(args...);
+		auto& submit_info = elements::decayed_same_as<vk::submit_info>(args...);
 
 		return vk::try_queue_submit(queue, array<vk::submit_info, 1>{ submit_info }, fence);
 	}
@@ -65,16 +62,16 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::are_may_contain_one_type<vk::wait_semaphore>,
-		types::are_may_contain_one_type<vk::pipeline_stages>,
+		types::are_may_contain_one_decayed_same_as<vk::wait_semaphore>,
+		types::are_may_contain_one_decayed_same_as<vk::pipeline_stages>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_may_contain_one_type<vk::signal_semaphore>,
+		types::are_may_contain_one_decayed_same_as<vk::signal_semaphore>,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
-	>::for_types_of<decay<Args>...>
+	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
 		vk::handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types_of<Args...>) {
+		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
 			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
@@ -86,18 +83,18 @@ namespace vk {
 			.command_buffers = &command_buffer,
 		};
 
-		if constexpr(types::are_contain_type<vk::wait_semaphore>::for_types_of<decay<Args>...>) {
+		if constexpr(types::are_contain_decayed_same_as<vk::wait_semaphore>::for_types<Args...>) {
 			si.wait_semaphore_count = 1,
-			si.wait_semaphores = (vk::handle<vk::semaphore>*) &elements::of_type<vk::wait_semaphore>(args...);
+			si.wait_semaphores = (vk::handle<vk::semaphore>*) &elements::decayed_same_as<vk::wait_semaphore>(args...);
 		}
 
-		if constexpr(types::are_contain_type<vk::signal_semaphore>::for_types_of<decay<Args>...>) {
+		if constexpr(types::are_contain_decayed_same_as<vk::signal_semaphore>::for_types<Args...>) {
 			si.signal_semaphore_count = 1,
-			si.signal_semaphores = (vk::handle<vk::semaphore>*) &elements::of_type<vk::signal_semaphore>(args...);
+			si.signal_semaphores = (vk::handle<vk::semaphore>*) &elements::decayed_same_as<vk::signal_semaphore>(args...);
 		}
 
-		if constexpr(types::are_contain_type<vk::pipeline_stages>::for_types_of<decay<Args>...>) {
-			si.wait_dst_stage_mask = &elements::of_type<vk::pipeline_stages>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::pipeline_stages>::for_types<Args...>) {
+			si.wait_dst_stage_mask = &elements::decayed_same_as<vk::pipeline_stages>(args...);
 		}
 
 		return vk::try_queue_submit(

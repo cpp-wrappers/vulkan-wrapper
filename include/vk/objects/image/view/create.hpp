@@ -1,14 +1,14 @@
 #pragma once
 
+#include "handle.hpp"
+#include "create_info.hpp"
+#include "../component_mapping.hpp"
+#include "../subresource_range.hpp"
 #include "../../../object/create_or_allocate.hpp"
 #include "../../../object/handle/get_value.hpp"
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../elements/possibly_guarded_handle_of.hpp"
 #include "../../../shared/result.hpp"
-#include "../component_mapping.hpp"
-#include "../subresource_range.hpp"
-#include "handle.hpp"
-#include "create_info.hpp"
 
 namespace vk {
 
@@ -22,11 +22,11 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
-			types::count_of_type<vk::format>::equals<1>,
-			types::count_of_type<vk::image_view_type>::equals<1>,
-			types::count_of_type<vk::component_mapping>::equals<1>,
-			types::count_of_type<vk::image_subresource_range>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::format>,
+			types::are_contain_one_decayed_same_as<vk::image_view_type>,
+			types::are_contain_one_decayed_same_as<vk::component_mapping>,
+			types::are_contain_one_decayed_same_as<vk::image_subresource_range>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::image_view>>
 		operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
@@ -34,10 +34,10 @@ namespace vk {
 
 			vk::image_view_create_info ci {
 				.image = vk::get_handle(image),
-				.view_type = elements::of_type<vk::image_view_type>(args...),
-				.format = elements::of_type<vk::format>(args...),
-				.components = elements::of_type<vk::component_mapping>(args...),
-				.subresource_range = elements::of_type<vk::image_subresource_range>(args...)
+				.view_type = elements::decayed_same_as<vk::image_view_type>(args...),
+				.format = elements::decayed_same_as<vk::format>(args...),
+				.components = elements::decayed_same_as<vk::component_mapping>(args...),
+				.subresource_range = elements::decayed_same_as<vk::image_subresource_range>(args...)
 			};
 
 			vk::handle<vk::image_view> image_view;

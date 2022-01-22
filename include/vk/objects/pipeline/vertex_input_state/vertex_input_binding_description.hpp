@@ -1,12 +1,11 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/wrapper/of_integer.hpp>
-
 #include "../../../shared/binding.hpp"
+
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -23,16 +22,16 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::binding>::equals<1>,
-			types::count_of_type<vk::stride>::equals<1>,
-			types::count_of_type<vk::vertex_input_rate>::less_or_equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::binding>,
+			types::are_contain_one_decayed_same_as<vk::stride>,
+			types::are_may_contain_one_decayed_same_as<vk::vertex_input_rate>
+		>::for_types<Args...>
 		vertex_input_binding_description(Args&&... args) {
-			binding = elements::of_type<vk::binding>(args...);
-			stride = elements::of_type<vk::stride>(args...);
+			binding = elements::decayed_same_as<vk::binding>(args...);
+			stride = elements::decayed_same_as<vk::stride>(args...);
 	
-			if constexpr(types::are_contain_type<vk::vertex_input_rate>::for_types_of<decay<Args>...>) {
-				vertex_input_rate = elements::of_type<vk::vertex_input_rate>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::vertex_input_rate>::for_types<Args...>) {
+				vertex_input_rate = elements::decayed_same_as<vk::vertex_input_rate>(args...);
 			}
 		}
 	};

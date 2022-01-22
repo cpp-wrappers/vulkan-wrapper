@@ -1,16 +1,16 @@
 #pragma once
 
-#include <core/elements/pass_not_satisfying_type_predicate.hpp>
-#include <core/types/are_contain_one_type.hpp>
-
+#include "handle.hpp"
+#include "create_info.hpp"
+#include "layout/handle.hpp"
+#include "../device/handle.hpp"
+#include "../../object/create_or_allocate.hpp"
 #include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../shared/subpass.hpp"
-#include "../../object/create_or_allocate.hpp"
-#include "../device/handle.hpp"
-#include "layout/handle.hpp"
-#include "handle.hpp"
-#include "create_info.hpp"
+
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
 namespace vk {
 
@@ -25,28 +25,28 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::pipeline>,
-			types::count_of_ranges_of_value_type<vk::pipeline_shader_stage_create_info>::equals<1>,
-			types::count_of_type<vk::pipeline_create_flag>::greater_or_equals<0>,
-			types::count_of_type<vk::pipeline_vertex_input_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_input_assembly_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_tesselation_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_viewport_state_create_info>::less_or_equals<1>,
-			types::are_contain_one_type<vk::pipeline_rasterization_state_create_info>,
-			types::count_of_type<vk::pipeline_multisample_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_depth_stencil_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_color_blend_state_create_info>::less_or_equals<1>,
-			types::count_of_type<vk::pipeline_dynamic_state_create_info>::less_or_equals<1>,
-			types::are_contain_one_type<vk::subpass>,
-			types::count_of_type<vk::base_pipeline_index>::less_or_equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_range_of_value_type<vk::pipeline_shader_stage_create_info>,
+			types::are_may_contain_decayed_same_as<vk::pipeline_create_flag>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_vertex_input_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_input_assembly_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_tesselation_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_viewport_state_create_info>,
+			types::are_contain_one_decayed_same_as<vk::pipeline_rasterization_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_multisample_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_depth_stencil_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_color_blend_state_create_info>,
+			types::are_may_contain_one_decayed_same_as<vk::pipeline_dynamic_state_create_info>,
+			types::are_contain_one_decayed_same_as<vk::subpass>,
+			types::are_may_contain_one_decayed_same_as<vk::base_pipeline_index>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::pipeline>>
 		operator () (Args&&... args) const {
-			vk::pipeline_rasterization_state_create_info prsci = elements::of_type<vk::pipeline_rasterization_state_create_info>(args...);
+			vk::pipeline_rasterization_state_create_info prsci = elements::decayed_same_as<vk::pipeline_rasterization_state_create_info>(args...);
 
 			auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>(args...);
 			auto& layout = elements::vk::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
 
-			vk::subpass subpass = elements::of_type<vk::subpass>(args...);
+			vk::subpass subpass = elements::decayed_same_as<vk::subpass>(args...);
 
 			vk::graphics_pipeline_create_info ci {
 				.rasterization_state = &prsci,
@@ -55,7 +55,7 @@ namespace vk {
 				.subpass = subpass
 			};
 
-			elements::for_each_of_type<vk::pipeline_create_flag>(args...)(
+			elements::for_each_decayed_same_as<vk::pipeline_create_flag>(args...)(
 				[&](auto f) { ci.flags.set(f); }
 			);
 
@@ -63,34 +63,34 @@ namespace vk {
 			ci.stages = stages.data();
 			ci.stage_count = (uint32)stages.size();
 
-			if constexpr(types::are_contain_type<vk::pipeline_vertex_input_state_create_info>::for_types_of<decay<Args>...>)
-				ci.vertex_input_state = & elements::of_type<vk::pipeline_vertex_input_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_vertex_input_state_create_info>::for_types<Args...>)
+				ci.vertex_input_state = & elements::decayed_same_as<vk::pipeline_vertex_input_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_input_assembly_state_create_info>::for_types_of<decay<Args>...>)
-				ci.input_assembly_state = & elements::of_type<vk::pipeline_input_assembly_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_input_assembly_state_create_info>::for_types<Args...>)
+				ci.input_assembly_state = & elements::decayed_same_as<vk::pipeline_input_assembly_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_tesselation_state_create_info>::for_types_of<decay<Args>...>)
-				ci.tesselation_state = & elements::of_type<vk::pipeline_tesselation_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_tesselation_state_create_info>::for_types<Args...>)
+				ci.tesselation_state = & elements::decayed_same_as<vk::pipeline_tesselation_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_viewport_state_create_info>::for_types_of<decay<Args>...>)
-				ci.viewport_state = & elements::of_type<vk::pipeline_viewport_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_viewport_state_create_info>::for_types<Args...>)
+				ci.viewport_state = & elements::decayed_same_as<vk::pipeline_viewport_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_multisample_state_create_info>::for_types_of<decay<Args>...>)
-				ci.multisample_state = & elements::of_type<vk::pipeline_multisample_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_multisample_state_create_info>::for_types<Args...>)
+				ci.multisample_state = & elements::decayed_same_as<vk::pipeline_multisample_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_depth_stencil_state_create_info>::for_types_of<decay<Args>...>)
-				ci.depth_stencil_state = & elements::of_type<vk::pipeline_depth_stencil_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_depth_stencil_state_create_info>::for_types<Args...>)
+				ci.depth_stencil_state = & elements::decayed_same_as<vk::pipeline_depth_stencil_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_color_blend_state_create_info>::for_types_of<decay<Args>...>)
-				ci.color_blend_state = & elements::of_type<vk::pipeline_color_blend_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_color_blend_state_create_info>::for_types<Args...>)
+				ci.color_blend_state = & elements::decayed_same_as<vk::pipeline_color_blend_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::pipeline_dynamic_state_create_info>::for_types_of<decay<Args>...>)
-				ci.dynamic_state = & elements::of_type<vk::pipeline_dynamic_state_create_info>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::pipeline_dynamic_state_create_info>::for_types<Args...>)
+				ci.dynamic_state = & elements::decayed_same_as<vk::pipeline_dynamic_state_create_info>(args...);
 
-			if constexpr(types::are_contain_type<vk::base_pipeline_index>::for_types_of<decay<Args>...>)
-				ci.base_pipeline_index = elements::of_type<vk::base_pipeline_index>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::base_pipeline_index>::for_types<Args...>)
+				ci.base_pipeline_index = elements::decayed_same_as<vk::base_pipeline_index>(args...);
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline>::for_types_of<Args...>)
+			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline>::for_types<Args...>)
 				ci.base_pipeline = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::pipeline>(args...));
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
@@ -113,10 +113,10 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_contain_one_type<vk::primitive_topology>::for_types_of<decay<Args>...>
+		requires types::are_contain_one_decayed_same_as<vk::primitive_topology>::for_types<Args...>
 		vk::expected<vk::handle<vk::pipeline>>
 		operator () (Args&&... args) const {
-			vk::primitive_topology topology = elements::of_type<vk::primitive_topology>(args...);
+			vk::primitive_topology topology = elements::decayed_same_as<vk::primitive_topology>(args...);
 
 			return elements::pass_not_satisfying_type_predicate<type::is_same_as<vk::primitive_topology>>(
 				vk::pipeline_input_assembly_state_create_info{ .topology = topology },

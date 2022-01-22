@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../shared/extent.hpp"
-#include "../../object/create_or_allocate.hpp"
-#include "../device/handle.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../device/handle.hpp"
+#include "../../object/create_or_allocate.hpp"
+#include "../../shared/extent.hpp"
 
 namespace vk {
 
@@ -15,9 +15,9 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::count_of_ranges_of_value_type<vk::handle<vk::image_view>>::equals<1>,
-			types::count_of_type<vk::extent<3>>::equals<1>
-		>::for_types_of<Args...>
+			types::are_contain_one_range_of_value_type<vk::handle<vk::image_view>>,
+			types::are_contain_one_decayed_same_as<vk::extent<3>>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::framebuffer>>
 		operator () (const Args&... args) const {
 			auto& attachments = elements::range_of_value_type<vk::handle<vk::image_view>>(args...);
@@ -30,7 +30,7 @@ namespace vk {
 				.attachments = attachments.data()
 			};
 
-			vk::extent<3> extent = elements::of_type<vk::extent<3>>(args...);
+			vk::extent<3> extent = elements::decayed_same_as<vk::extent<3>>(args...);
 
 			ci.width = extent.width();
 			ci.height = extent.height();

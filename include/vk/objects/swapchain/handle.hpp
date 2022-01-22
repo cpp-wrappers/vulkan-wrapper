@@ -1,16 +1,8 @@
 #pragma once
 
-#include <core/forward.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/one_of.hpp>
-#include <core/exchange.hpp>
-#include <core/range/of_value_type.hpp>
-#include <core/span.hpp>
-
+#include "image_index.hpp"
+#include "../semaphore/handle.hpp"
+#include "../fence/handle.hpp"
 #include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../elements/possibly_guarded_handle_of.hpp"
@@ -19,9 +11,16 @@
 #include "../../shared/headers.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/count.hpp"
-#include "../semaphore/handle.hpp"
-#include "../fence/handle.hpp"
-#include "image_index.hpp"
+
+#include <core/span.hpp>
+#include <core/forward.hpp>
+#include <core/exchange.hpp>
+#include <core/range/of_value_type.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/for_each_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
+#include <core/meta/elements/one_of.hpp>
 
 namespace vk {
 
@@ -40,27 +39,27 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,
-			types::count_of_type<vk::timeout>::less_or_equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_may_contain_one_decayed_same_as<vk::timeout>
+		>::for_types<Args...>
 		vk::expected<vk::image_index>
 		acquire_next_image(Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 			
 			vk::timeout timeout{ UINT64_MAX };
 
-			if constexpr(types::are_contain_type<vk::timeout>::for_types_of<decay<Args>...>) {
-				timeout = elements::of_type<vk::timeout>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::timeout>::for_types<Args...>) {
+				timeout = elements::decayed_same_as<vk::timeout>(args...);
 			}
 
 			vk::handle<vk::semaphore> semaphore{ VK_NULL_HANDLE };
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::semaphore>::for_types_of<Args...>) {
+			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::semaphore>::for_types<Args...>) {
 				semaphore = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::semaphore>(args...));
 			}
 
 			vk::handle<vk::fence> fence{ VK_NULL_HANDLE };
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types_of<Args...>) {
+			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
 				fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
 			}
 

@@ -1,17 +1,15 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_may_contain_one_type.hpp>
-#include <core/types/are_contain_one_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/type/decay.hpp>
-
 #include "../../shared/headers.hpp"
 #include "../../shared/polygon_mode.hpp"
 #include "../../shared/cull_mode.hpp"
 #include "../../shared/front_face.hpp"
+
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/type/decay.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -41,36 +39,36 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_type<vk::enable_depth_clamp>,
-			types::are_may_contain_one_type<vk::enable_rasterizer_discard>,
-			types::are_contain_one_type<vk::polygon_mode>,
-			types::are_contain_one_type<vk::cull_mode>,
-			types::are_contain_one_type<vk::front_face>,
-			types::are_may_contain_one_type<vk::enable_depth_bias>,
-			types::are_may_contain_one_type<vk::depth_bias_constant_factor>,
-			types::are_may_contain_one_type<vk::depth_bias_clamp>,
-			types::are_may_contain_one_type<vk::depth_bias_slope_factor>,
-			types::are_may_contain_one_type<vk::line_width>
-		>::for_types_of<decay<Args>...>
+			types::are_may_contain_decayed_same_as<vk::enable_depth_clamp>,
+			types::are_may_contain_decayed_same_as<vk::enable_rasterizer_discard>,
+			types::are_contain_one_decayed_same_as<vk::polygon_mode>,
+			types::are_contain_one_decayed_same_as<vk::cull_mode>,
+			types::are_contain_one_decayed_same_as<vk::front_face>,
+			types::are_may_contain_one_decayed_same_as<vk::enable_depth_bias>,
+			types::are_may_contain_one_decayed_same_as<vk::depth_bias_constant_factor>,
+			types::are_may_contain_one_decayed_same_as<vk::depth_bias_clamp>,
+			types::are_may_contain_one_decayed_same_as<vk::depth_bias_slope_factor>,
+			types::are_may_contain_one_decayed_same_as<vk::line_width>
+		>::for_types<Args...>
 		pipeline_rasterization_state_create_info(Args&&... args) {
-			polygon_mode = elements::of_type<vk::polygon_mode>(args...);
-			cull_mode = elements::of_type<vk::cull_mode>(args...);
-			front_face = elements::of_type<vk::front_face>(args...);
+			polygon_mode = elements::decayed_same_as<vk::polygon_mode>(args...);
+			cull_mode = elements::decayed_same_as<vk::cull_mode>(args...);
+			front_face = elements::decayed_same_as<vk::front_face>(args...);
 
-			if constexpr(types::are_contain_type<vk::enable_depth_clamp>::for_types_of<decay<Args>...>)
-				enable_depth_clamp = elements::of_type<vk::enable_depth_clamp>(args...);
-			if constexpr(types::are_contain_type<vk::enable_rasterizer_discard>::for_types_of<decay<Args>...>)
-				enable_rasterizer_discard = elements::of_type<vk::enable_rasterizer_discard>(args...);
-			if constexpr(types::are_contain_type<vk::enable_depth_bias>::for_types_of<decay<Args>...>)
-				enable_depth_bias = elements::of_type<vk::enable_depth_bias>(args...);
-			if constexpr(types::are_contain_type<vk::depth_bias_constant_factor>::for_types_of<decay<Args>...>)
-				depth_bias_constant_factor = elements::of_type<vk::depth_bias_constant_factor>(args...);
-			if constexpr(types::are_contain_type<vk::depth_bias_clamp>::for_types_of<decay<Args>...>)
-				depth_bias_clamp = elements::of_type<vk::depth_bias_clamp>(args...);
-			if constexpr(types::are_contain_type<vk::depth_bias_slope_factor>::for_types_of<decay<Args>...>)
-				depth_bias_slope_factor = elements::of_type<vk::depth_bias_slope_factor>(args...);
-			if constexpr(types::are_contain_type<vk::line_width>::for_types_of<decay<Args>...>)
-				line_width = elements::of_type<vk::line_width>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::enable_depth_clamp>::for_types<Args...>)
+				enable_depth_clamp = elements::decayed_same_as<vk::enable_depth_clamp>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::enable_rasterizer_discard>::for_types<Args...>)
+				enable_rasterizer_discard = elements::decayed_same_as<vk::enable_rasterizer_discard>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::enable_depth_bias>::for_types<Args...>)
+				enable_depth_bias = elements::decayed_same_as<vk::enable_depth_bias>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::depth_bias_constant_factor>::for_types<Args...>)
+				depth_bias_constant_factor = elements::decayed_same_as<vk::depth_bias_constant_factor>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::depth_bias_clamp>::for_types<Args...>)
+				depth_bias_clamp = elements::decayed_same_as<vk::depth_bias_clamp>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::depth_bias_slope_factor>::for_types<Args...>)
+				depth_bias_slope_factor = elements::decayed_same_as<vk::depth_bias_slope_factor>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::line_width>::for_types<Args...>)
+				line_width = elements::decayed_same_as<vk::line_width>(args...);
 		}
 	};
 

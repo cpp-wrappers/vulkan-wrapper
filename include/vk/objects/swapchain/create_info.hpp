@@ -1,23 +1,23 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-#include <core/wrapper/of_integer.hpp>
-#include <core/wrapper/of_pointer_to.hpp>
-
-#include "../../shared/headers.hpp"
-#include "../../shared/sharing_mode.hpp"
-#include "../../shared/queue_family_index.hpp"
-#include "../../shared/extent.hpp"
-#include "../../shared/format.hpp"
+#include "handle.hpp"
 #include "../surface/present_mode.hpp"
 #include "../image/color_space.hpp"
 #include "../image/usage.hpp"
 #include "../surface/transform.hpp"
 #include "../surface/composite_alpha.hpp"
 #include "../surface/min_image_count.hpp"
-#include "handle.hpp"
 #include "../surface/handle.hpp"
+
+#include "../../shared/headers.hpp"
+#include "../../shared/sharing_mode.hpp"
+#include "../../shared/queue_family_index.hpp"
+#include "../../shared/extent.hpp"
+#include "../../shared/format.hpp"
+
+#include <core/flag_enum.hpp>
+#include <core/wrapper/of_integer.hpp>
+#include <core/wrapper/of_pointer_to.hpp>
 
 namespace vk {
 

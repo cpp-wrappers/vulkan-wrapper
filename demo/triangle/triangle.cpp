@@ -197,7 +197,7 @@ void entrypoint() {
 		while (!platform::should_close()) {
 			platform::begin();
 
-			auto result = swapchain.try_acquire_next_image(swapchain_image_semaphore);
+			auto result = swapchain.acquire_next_image(swapchain_image_semaphore);
 			if(result.is_unexpected()) {
 				result.set_handled(true);
 				if(result.get_unexpected().suboptimal() || result.get_unexpected().out_of_date()) break;

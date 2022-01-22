@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/wrapper/of_integer.hpp>
-
 #include "handle.hpp"
+
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 namespace vk {
 
@@ -15,31 +15,31 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::vertex_count>::equals<1>,
-		types::count_of_type<vk::instance_count>::less_or_equals<1>,
-		types::count_of_type<vk::first_vertex>::less_or_equals<1>,
-		types::count_of_type<vk::first_instance>::less_or_equals<1>
-	>::for_types_of<decay<Args>...>
+		types::are_contain_one_decayed_same_as<vk::vertex_count>,
+		types::are_may_contain_one_decayed_same_as<vk::instance_count>,
+		types::are_may_contain_one_decayed_same_as<vk::first_vertex>,
+		types::are_may_contain_one_decayed_same_as<vk::first_instance>
+	>::for_types<Args...>
 	void cmd_draw(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
-		vk::vertex_count vertex_count = elements::of_type<vk::vertex_count>(args...);
+		vk::vertex_count vertex_count = elements::decayed_same_as<vk::vertex_count>(args...);
 		vk::instance_count instance_count{ 1 };
 
-		if constexpr(types::are_contain_type<vk::instance_count>::for_types_of<decay<Args>...>) {
-			instance_count = elements::of_type<vk::instance_count>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::instance_count>::for_types<Args...>) {
+			instance_count = elements::decayed_same_as<vk::instance_count>(args...);
 		}
 
 		vk::first_vertex first_vertex{ 0 };
 
-		if constexpr(types::are_contain_type<vk::first_vertex>::for_types_of<decay<Args>...>) {
-			first_vertex = elements::of_type<vk::first_vertex>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::first_vertex>::for_types<Args...>) {
+			first_vertex = elements::decayed_same_as<vk::first_vertex>(args...);
 		}
 
 		vk::first_instance first_instance{ 0 };
 
-		if constexpr(types::are_contain_type<vk::first_instance>::for_types_of<decay<Args>...>) {
-			first_instance = elements::of_type<vk::first_instance>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::first_instance>::for_types<Args...>) {
+			first_instance = elements::decayed_same_as<vk::first_instance>(args...);
 		}
 
 		vkCmdDraw(

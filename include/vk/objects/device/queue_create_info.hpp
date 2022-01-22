@@ -1,15 +1,15 @@
 #pragma once
 
+#include "../../shared/headers.hpp"
+#include "../../shared/queue_family_index.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
 #include <core/wrapper/of_integer.hpp>
-
-#include "../../shared/headers.hpp"
-#include "../../shared/queue_family_index.hpp"
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 	struct queue_count : wrapper::of_integer<uint32> {};
@@ -32,14 +32,14 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::queue_family_index>::equals<1>,
-			types::count_of_type<vk::queue_count>::equals<1>,
-			types::count_of_type<vk::queue_priorities>::equals<1>
-		>::for_types_of<Args...>
+			types::are_contain_one_decayed_same_as<vk::queue_family_index>,
+			types::are_contain_one_decayed_same_as<vk::queue_count>,
+			types::are_contain_one_decayed_same_as<vk::queue_priorities>
+		>::for_types<Args...>
 		queue_create_info(Args... args) {
-			queue_family_index = elements::of_type<vk::queue_family_index>(args...);
-			queue_count = elements::of_type<vk::queue_count>(args...);
-			queue_priorities = elements::of_type<vk::queue_priorities>(args...);
+			queue_family_index = elements::decayed_same_as<vk::queue_family_index>(args...);
+			queue_count = elements::decayed_same_as<vk::queue_count>(args...);
+			queue_priorities = elements::decayed_same_as<vk::queue_priorities>(args...);
 		}
 
 	}; // device_queue_create_info

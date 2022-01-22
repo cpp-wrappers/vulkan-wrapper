@@ -1,16 +1,16 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-
-#include "../../../../shared/headers.hpp"
-#include "../../../shader/stage.hpp"
 #include "../../count.hpp"
 #include "../../type.hpp"
 #include "../../binding.hpp"
+#include "../../../shader/stage.hpp"
+#include "../../../../shared/headers.hpp"
+
+#include <core/flag_enum.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
+#include <core/meta/elements/for_each_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -24,17 +24,17 @@ namespace vk {
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::descriptor_binding>::equals<1>,
-				types::count_of_type<vk::descriptor_type>::equals<1>,
-				types::count_of_type<vk::descriptor_count>::equals<1>,
-				types::count_of_type<vk::shader_stages>::equals<1>
-			>::for_types_of<Args...>
+				types::are_contain_one_decayed_same_as<vk::descriptor_binding>,
+				types::are_contain_one_decayed_same_as<vk::descriptor_type>,
+				types::are_contain_one_decayed_same_as<vk::descriptor_count>,
+				types::are_contain_one_decayed_same_as<vk::shader_stages>
+			>::for_types<Args...>
 		)
 		descriptor_set_layout_binding(Args... args) {
-			descriptor_binding = elements::of_type<vk::descriptor_binding>(args...);
-			descriptor_type = elements::of_type<vk::descriptor_type>(args...);
-			descriptor_count = elements::of_type<vk::descriptor_count>(args...);
-			stage_flags = elements::of_type<vk::shader_stages>(args...);
+			descriptor_binding = elements::decayed_same_as<vk::descriptor_binding>(args...);
+			descriptor_type = elements::decayed_same_as<vk::descriptor_type>(args...);
+			descriptor_count = elements::decayed_same_as<vk::descriptor_count>(args...);
+			stage_flags = elements::decayed_same_as<vk::shader_stages>(args...);
 		}
 
 	};

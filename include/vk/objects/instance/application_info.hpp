@@ -1,16 +1,13 @@
 #pragma once
 
-#include <core/c_string.hpp>
-#include <core/integer.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/types/are_contain_only_types.hpp>
-#include <core/elements/at_index.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
 #include "api_version.hpp"
 #include "../../shared/headers.hpp"
+
+#include <core/c_string.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/elements/at_index.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -30,23 +27,23 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::application_name>::less_or_equals<1>,
-			types::count_of_type<vk::application_version>::less_or_equals<1>,
-			types::count_of_type<vk::engine_name>::less_or_equals<1>,
-			types::count_of_type<vk::engine_version>::less_or_equals<1>,
-			types::count_of_type<vk::api_version>::equals<1>
-		>::for_types_of<Args...>
+			types::are_may_contain_one_decayed_same_as<vk::application_name>,
+			types::are_may_contain_one_decayed_same_as<vk::application_version>,
+			types::are_may_contain_one_decayed_same_as<vk::engine_name>,
+			types::are_may_contain_one_decayed_same_as<vk::engine_version>,
+			types::are_contain_one_decayed_same_as<vk::api_version>
+		>::for_types<Args...>
 		application_info(Args... args)
-			: api_version{ elements::of_type<vk::api_version&>(args...) }
+			: api_version{ elements::decayed_same_as<vk::api_version&>(args...) }
 		{
-			if constexpr(types::are_contain_type<vk::application_name>::for_types_of<Args...>)
-				app_name = elements::of_type<vk::application_name&>(args...);
-			if constexpr(types::are_contain_type<vk::application_version>::for_types_of<Args...>)
-				app_version = elements::of_type<vk::application_version&>(args...);
-			if constexpr(types::are_contain_type<vk::engine_name>::for_types_of<Args...>)
-				engine_name = elements::of_type<vk::engine_name&>(args...);
-			if constexpr(types::are_contain_type<vk::engine_version>::for_types_of<Args...>)
-				engine_version = elements::of_type<vk::engine_version&>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::application_name>::for_types<Args...>)
+				app_name = elements::decayed_same_as<vk::application_name&>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::application_version>::for_types<Args...>)
+				app_version = elements::decayed_same_as<vk::application_version&>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::engine_name>::for_types<Args...>)
+				engine_name = elements::decayed_same_as<vk::engine_name&>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::engine_version>::for_types<Args...>)
+				engine_version = elements::decayed_same_as<vk::engine_version&>(args...);
 		}
 	};
 

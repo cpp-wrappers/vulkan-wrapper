@@ -1,15 +1,15 @@
 #pragma once
 
+#include "aspect.hpp"
+
 #include <core/flag_enum.hpp>
 #include <core/integer.hpp>
 #include <core/wrapper/of_integer.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-
-#include "aspect.hpp"
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/count_of_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
+#include <core/meta/elements/for_each_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -27,29 +27,29 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::image_aspects>::equals<1>,
-			types::count_of_type<vk::base_mip_level>::less_or_equals<1>,
-			types::count_of_type<vk::level_count>::less_or_equals<1>,
-			types::count_of_type<vk::base_array_layer>::less_or_equals<1>,
-			types::count_of_type<vk::layer_count>::less_or_equals<1>
-		>::for_types_of<Args...>
+			types::are_contain_one_decayed_same_as<vk::image_aspects>,
+			types::are_may_contain_one_decayed_same_as<vk::base_mip_level>,
+			types::are_may_contain_one_decayed_same_as<vk::level_count>,
+			types::are_may_contain_one_decayed_same_as<vk::base_array_layer>,
+			types::are_may_contain_one_decayed_same_as<vk::layer_count>
+		>::for_types<Args...>
 		image_subresource_range(Args... args) {
-			aspect_mask = elements::of_type<vk::image_aspects>(args...);
+			aspect_mask = elements::decayed_same_as<vk::image_aspects>(args...);
 	
-			if constexpr(types::are_contain_type<vk::base_mip_level>::for_types_of<Args...>) {
-				base_mip_level = elements::of_type<vk::base_mip_level>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::base_mip_level>::for_types<Args...>) {
+				base_mip_level = elements::decayed_same_as<vk::base_mip_level>(args...);
 			}
 	
-			if constexpr(types::are_contain_type<vk::level_count>::for_types_of<Args...>) {
-				level_count = elements::of_type<vk::level_count>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::level_count>::for_types<Args...>) {
+				level_count = elements::decayed_same_as<vk::level_count>(args...);
 			}
 	
-			if constexpr(types::are_contain_type<vk::base_array_layer>::for_types_of<Args...>) {
-				base_array_layer = elements::of_type<vk::base_array_layer>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::base_array_layer>::for_types<Args...>) {
+				base_array_layer = elements::decayed_same_as<vk::base_array_layer>(args...);
 			}
 	
-			if constexpr(types::are_contain_type<vk::layer_count>::for_types_of<Args...>) {
-				layer_count = elements::of_type<vk::layer_count>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::layer_count>::for_types<Args...>) {
+				layer_count = elements::decayed_same_as<vk::layer_count>(args...);
 			}
 		}
 	

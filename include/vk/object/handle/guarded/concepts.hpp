@@ -1,7 +1,8 @@
 #pragma once
 
-#include <core/type/is_base.hpp>
 #include "base.hpp"
+
+#include <core/meta/type/is_base.hpp>
 
 namespace vk {
 

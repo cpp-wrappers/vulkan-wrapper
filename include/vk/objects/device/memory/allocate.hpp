@@ -1,11 +1,13 @@
 #pragma once
 
+#include "handle.hpp"
+#include "allocate_info.hpp"
+#include "../handle.hpp"
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../elements/possibly_guarded_handle_of.hpp"
 #include "../../../object/create_or_allocate.hpp"
-#include "../handle.hpp"
-#include "allocate_info.hpp"
-#include "handle.hpp"
+
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -15,14 +17,14 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::device_size>::equals<1>,
-			types::count_of_type<vk::memory_type_index>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::device_size>,
+			types::are_contain_one_decayed_same_as<vk::memory_type_index>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::device_memory>>
 		operator () (Args&&... args) const {
 			vk::memory_allocate_info ai {
-				.size = elements::of_type<vk::device_size>(args...),
-				.memory_type_index = elements::of_type<vk::memory_type_index>(args...),
+				.size = elements::decayed_same_as<vk::device_size>(args...),
+				.memory_type_index = elements::decayed_same_as<vk::memory_type_index>(args...),
 			};
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

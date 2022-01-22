@@ -1,14 +1,11 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/types/are_contain_range_of_value_type.hpp>
-#include <core/type/negated_predicate.hpp>
-#include <core/types/count_of_ranges_of_value_type.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/for_each_of_type.hpp>
-#include <core/elements/one_of.hpp>
+#include <core/meta/type/negated_predicate.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_range_of_value_type.hpp>
+#include <core/meta/types/count_of_ranges_of_value_type.hpp>
+#include <core/meta/elements/one_of.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 	

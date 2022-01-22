@@ -1,13 +1,13 @@
 #pragma once
 
-#include <core/types/are_contain_one_type.hpp>
-
+#include "handle.hpp"
+#include "create_info.hpp"
+#include "../../device/handle.hpp"
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../object/create_or_allocate.hpp"
 #include "../../../shared/result.hpp"
-#include "../../device/handle.hpp"
-#include "create_info.hpp"
-#include "handle.hpp"
+
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -18,17 +18,17 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-			types::are_contain_one_type<vk::format>,
-			types::count_of_type<vk::memory_offset>::equals<1>,
-			types::count_of_type<vk::memory_size>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::format>,
+			types::are_contain_one_decayed_same_as<vk::memory_offset>,
+			types::are_contain_one_decayed_same_as<vk::memory_size>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::buffer_view>>
 		operator () (Args&&... args) const {
 			auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
 
-			auto format = elements::of_type<vk::format>(args...);
-			auto offset = elements::of_type<vk::memory_offset>(args...);
-			auto size = elements::of_type<vk::memory_size>(args...);
+			auto format = elements::decayed_same_as<vk::format>(args...);
+			auto offset = elements::decayed_same_as<vk::memory_offset>(args...);
+			auto size = elements::decayed_same_as<vk::memory_size>(args...);
 
 			vk::buffer_view_create_info ci {
 				.buffer = vk::get_handle(buffer)

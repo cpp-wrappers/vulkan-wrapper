@@ -1,16 +1,19 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-#include <core/c_string.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
+#include "../shader/module/handle.hpp"
+#include "../shader/stage.hpp"
 #include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../elements/possibly_guarded_handle_of.hpp"
 #include "../../shared/headers.hpp"
 #include "../../object/handle/get_value.hpp"
-#include "../shader/stage.hpp"
-#include "../shader/module/handle.hpp"
+
+#include <core/integer.hpp>
+#include <core/flag_enum.hpp>
+#include <core/c_string.hpp>
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -33,25 +36,25 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::count_of_type<vk::shader_stages>::equals<1>,
-			types::count_of_type<vk::entrypoint_name>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::shader_stages>,
+			types::are_contain_one_decayed_same_as<vk::entrypoint_name>
+		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::of_type<vk::shader_stages>(args...);
+			stages = elements::decayed_same_as<vk::shader_stages>(args...);
 			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
-			entrypoint_name = elements::of_type<vk::entrypoint_name>(args...);
+			entrypoint_name = elements::decayed_same_as<vk::entrypoint_name>(args...);
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::count_of_type<vk::shader_stage>::equals<1>,
-			types::count_of_type<vk::entrypoint_name>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::shader_stage>,
+			types::are_contain_one_decayed_same_as<vk::entrypoint_name>
+		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::of_type<vk::shader_stage>(args...);
+			stages = elements::decayed_same_as<vk::shader_stage>(args...);
 			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
-			entrypoint_name = elements::of_type<vk::entrypoint_name>(args...);
+			entrypoint_name = elements::decayed_same_as<vk::entrypoint_name>(args...);
 		}
 	};
 

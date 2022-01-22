@@ -1,13 +1,13 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
-#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
-#include "../../elements/possibly_guarded_handle_of.hpp"
+#include "handle.hpp"
+#include "../device/handle.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/memory_offset.hpp"
-#include "../device/handle.hpp"
-#include "handle.hpp"
+#include "../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../elements/possibly_guarded_handle_of.hpp"
+
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 namespace vk {
 
@@ -16,16 +16,16 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
-		types::count_of_type<vk::memory_offset>::less_or_equals<1>
-	>::for_types_of<decay<Args>...>
+		types::are_may_contain_one_decayed_same_as<vk::memory_offset>
+	>::for_types<Args...>
 	vk::result try_bind_buffer_memory(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 		auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
 		auto& device_memory = elements::vk::possibly_guarded_handle_of<vk::device_memory>(args...);
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr(types::are_contain_type<vk::memory_offset>::for_types_of<decay<Args>...>) {
-			offset = elements::of_type<vk::memory_offset>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::memory_offset>::for_types<Args...>) {
+			offset = elements::decayed_same_as<vk::memory_offset>(args...);
 		}
 
 		return {

@@ -1,21 +1,20 @@
 #pragma once
 
-#include <core/forward.hpp>
-#include <core/elements/one_of.hpp>
-#include <core/types/count_of_ranges_of_value_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/range/of_value_type.hpp>
-#include <core/exchange.hpp>
-
+#include "../../object/handle/base.hpp"
+#include "../../object/handle/get_value.hpp"
+#include "../../object/create_or_allocate.hpp"
 #include "../../shared/headers.hpp"
 #include "../../shared/queue_family_index.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/memory_requirements.hpp"
 #include "../../shared/timeout.hpp"
-#include "../../object/handle/base.hpp"
-#include "../../object/handle/get_value.hpp"
-#include "../../object/create_or_allocate.hpp"
+
+#include <core/forward.hpp>
+#include <core/exchange.hpp>
+#include <core/range/of_value_type.hpp>
+#include <core/meta/elements/one_of.hpp>
+#include <core/meta/types/count_of_ranges_of_value_type.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 

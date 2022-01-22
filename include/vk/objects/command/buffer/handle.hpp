@@ -80,8 +80,7 @@ auto& vk::handle<vk::command_buffer>::cmd_copy_buffer_to_image(Args&&... args) c
 
 template<typename... Args>
 auto& vk::handle<vk::command_buffer>::cmd_clear_color_image(Args&&... args) const {
-	vk::cmd_clear_color_image(*this, forward<Args>(args)...);
-	return *this;
+	vk::cmd_clear_color_image(*this, forward<Args>(args)...); return *this;
 }
 
 #include "cmd_begin_render_pass.hpp"

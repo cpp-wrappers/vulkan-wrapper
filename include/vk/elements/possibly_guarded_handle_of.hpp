@@ -1,7 +1,8 @@
 #pragma once
 
-#include <core/elements/satisfying_predicate.hpp>
 #include "../type/is_possibly_guarded_handle_of.hpp"
+
+#include <core/meta/elements/satisfying_predicate.hpp>
 
 namespace elements::vk {
 

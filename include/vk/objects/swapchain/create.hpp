@@ -1,13 +1,14 @@
 #pragma once
 
-#include <core/elements/pass_not_satisfying_type_predicate.hpp>
-#include <core/types/are_contain_one_type.hpp>
-
-#include "../../object/create_or_allocate.hpp"
-#include "../surface/handle.hpp"
-#include "../surface/format.hpp"
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../surface/handle.hpp"
+#include "../surface/format.hpp"
+#include "../../object/create_or_allocate.hpp"
+
+#include <core/meta/type/is_decayed_same_as.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
 namespace vk {
 
@@ -19,54 +20,54 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::surface>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
-			types::count_of_type<vk::swapchain_create_flag>::greater_or_equals<0>,
-			types::count_of_type<vk::min_image_count>::equals<1>,
-			types::count_of_type<vk::format>::equals<1>,
-			types::count_of_type<vk::color_space>::equals<1>,
-			types::count_of_type<vk::extent<2>>::equals<1>,
-			types::count_of_type<vk::image_usages>::equals<1>,
-			types::count_of_type<vk::sharing_mode>::equals<1>,
-			types::count_of_ranges_of_value_type<vk::queue_family_index>::less_or_equals<1>,
-			types::count_of_type<vk::surface_transform>::greater_or_equals<0>,
-			types::count_of_type<vk::composite_alpha>::greater_or_equals<0>,
-			types::count_of_type<vk::present_mode>::equals<1>,
-			types::count_of_type<vk::clipped>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_may_contain_decayed_same_as<vk::swapchain_create_flag>,
+			types::are_contain_one_decayed_same_as<vk::min_image_count>,
+			types::are_contain_one_decayed_same_as<vk::format>,
+			types::are_contain_one_decayed_same_as<vk::color_space>,
+			types::are_contain_one_decayed_same_as<vk::extent<2>>,
+			types::are_contain_one_decayed_same_as<vk::image_usages>,
+			types::are_contain_one_decayed_same_as<vk::sharing_mode>,
+			types::are_may_contain_one_range_of_value_type<vk::queue_family_index>,
+			types::are_may_contain_decayed_same_as<vk::surface_transform>,
+			types::are_may_contain_decayed_same_as<vk::composite_alpha>,
+			types::are_contain_one_decayed_same_as<vk::present_mode>,
+			types::are_contain_one_decayed_same_as<vk::clipped>
+		>::for_types<Args...>
 		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			auto& surface = elements::vk::possibly_guarded_handle_of<vk::surface>(args...);
 
 			vk::swapchain_create_info ci {
 				.surface = vk::get_handle(surface),
-				.min_image_count = elements::of_type<vk::min_image_count>(args...),
-				.format = elements::of_type<vk::format>(args...),
-				.color_space = elements::of_type<vk::color_space>(args...),
-				.extent = elements::of_type<vk::extent<2>>(args...),
-				.usage = elements::of_type<vk::image_usages>(args...),
-				.sharing_mode = elements::of_type<vk::sharing_mode>(args...),
-				.present_mode = elements::of_type<vk::present_mode>(args...),
-				.clipped = elements::of_type<vk::clipped>(args...)
+				.min_image_count = elements::decayed_same_as<vk::min_image_count>(args...),
+				.format = elements::decayed_same_as<vk::format>(args...),
+				.color_space = elements::decayed_same_as<vk::color_space>(args...),
+				.extent = elements::decayed_same_as<vk::extent<2>>(args...),
+				.usage = elements::decayed_same_as<vk::image_usages>(args...),
+				.sharing_mode = elements::decayed_same_as<vk::sharing_mode>(args...),
+				.present_mode = elements::decayed_same_as<vk::present_mode>(args...),
+				.clipped = elements::decayed_same_as<vk::clipped>(args...)
 			};
 
-			elements::for_each_of_type<vk::swapchain_create_flag>(args...)(
+			elements::for_each_decayed_same_as<vk::swapchain_create_flag>(args...)(
 				[&](auto f) { ci.flags.set(f); }
 			);
 
-			elements::for_each_of_type<vk::surface_transform>(args...)(
+			elements::for_each_decayed_same_as<vk::surface_transform>(args...)(
 				[&](auto f) { ci.pre_transform.set(f); }
 			);
 
-			elements::for_each_of_type<vk::composite_alpha>(args...)(
+			elements::for_each_decayed_same_as<vk::composite_alpha>(args...)(
 				[&](auto f) { ci.composite_alpha.set(f); }
 			);
 
-			if constexpr(types::are_contain_range_of_value_type<vk::queue_family_index>::for_types_of<Args...>) {
+			if constexpr(types::are_contain_range_of_value_type<vk::queue_family_index>::for_types<Args...>) {
 				auto& family_indices = elements::range_of_value_type<vk::queue_family_index>(args...);
 				ci.queue_family_index_count = vk::queue_family_index_count{ (uint32) family_indices.size() };
 				ci.queue_family_indices = vk::queue_family_indices{ family_indices.data() };
 			}
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>::for_types_of<Args...>) {
+			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>::for_types<Args...>) {
 				ci.old_swapchain = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::swapchain>(args...));
 			}
 
@@ -88,12 +89,12 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_contain_one_type<vk::surface_format>::for_types_of<decay<Args>...>
+		requires types::are_contain_one_decayed_same_as<vk::surface_format>::for_types<Args...>
 		vk::expected<vk::handle<vk::swapchain>>
 		operator () (Args&&... args) const {
-			vk::surface_format surface_format = elements::of_type<vk::surface_format>(args...);
+			vk::surface_format surface_format = elements::decayed_same_as<vk::surface_format>(args...);
 
-			return elements::pass_not_satisfying_type_predicate<type::is_same_as<vk::surface_format>>(
+			return elements::pass_not_satisfying_type_predicate<type::is_decayed_same_as<vk::surface_format>>(
 				surface_format.format,
 				surface_format.color_space,
 				forward<Args>(args)...

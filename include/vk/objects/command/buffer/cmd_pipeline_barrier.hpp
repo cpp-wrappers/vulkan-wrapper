@@ -1,32 +1,36 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_contain_one_type.hpp>
-#include <core/types/count_of_ranges_of_value_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-
-#include "../../../shared/dependency.hpp"
-#include "../../../elements/possibly_guarded_handle_of.hpp"
-#include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
-#include "../../pipeline/stage.hpp"
-#include "image_memory_barrier.hpp"
 #include "handle.hpp"
+#include "image_memory_barrier.hpp"
+#include "../../pipeline/stage.hpp"
+#include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../../elements/possibly_guarded_handle_of.hpp"
+#include "../../../shared/dependency.hpp"
+
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/count_of_ranges_of_value_type.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_type<vk::src_stages>,
-		types::are_contain_one_type<vk::dst_stages>,
-		types::are_contain_one_type<vk::dependencies>,
+		types::are_contain_one_decayed_same_as<vk::src_stages>,
+		types::are_contain_one_decayed_same_as<vk::dst_stages>,
+		types::are_may_contain_one_decayed_same_as<vk::dependencies>,
 		types::count_of_ranges_of_value_type<vk::image_memory_barrier>::less_or_equals<1>
-	>::for_types_of<decay<Args>...>
+	>::for_types<Args...>
 	void cmd_pipeline_barrier(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		vk::src_stages src_stages = elements::of_type<vk::src_stages>(args...);
-		vk::dst_stages dst_stages = elements::of_type<vk::dst_stages>(args...);
-		vk::dependencies dependencies = elements::of_type<vk::dependencies>(args...);
+		vk::src_stages src_stages = elements::decayed_same_as<vk::src_stages>(args...);
+		vk::dst_stages dst_stages = elements::decayed_same_as<vk::dst_stages>(args...);
+		vk::dependencies dependencies{};
+		
+		if constexpr(types::are_contain_decayed_same_as<vk::dependencies>::for_types<Args...>) {
+			dependencies = elements::decayed_same_as<vk::dependencies>(args...);
+		}
 
 		auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>(args...);
 

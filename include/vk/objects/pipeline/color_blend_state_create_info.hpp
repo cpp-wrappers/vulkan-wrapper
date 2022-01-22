@@ -1,19 +1,16 @@
 #pragma once
 
-#include <core/types/are_may_contain_one_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_may_contain_one_range_of_value_type.hpp>
-#include <core/types/are_contain_range_of_value_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/type/decay.hpp>
-#include <core/wrapper/of.hpp>
-#include <core/array.hpp>
-
+#include "color_blend_attachment_state.hpp"
 #include "../../shared/headers.hpp"
 #include "../../shared/logic_op.hpp"
-#include "color_blend_attachment_state.hpp"
+
+#include <core/wrapper/of.hpp>
+#include <core/array.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_range_of_value_type.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
 
@@ -32,22 +29,22 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_type<vk::enable_logic_op>,
-			types::are_may_contain_one_type<vk::logic_op>,
+			types::are_may_contain_one_decayed_same_as<vk::enable_logic_op>,
+			types::are_may_contain_one_decayed_same_as<vk::logic_op>,
 			types::are_may_contain_one_range_of_value_type<vk::pipeline_color_blend_attachment_state>,
-			types::are_may_contain_one_type<vk::blend_constants>
-		>::for_types_of<decay<Args>...>
+			types::are_may_contain_one_decayed_same_as<vk::blend_constants>
+		>::for_types<Args...>
 		pipeline_color_blend_state_create_info(Args&&... args) {
-			if constexpr(types::are_contain_type<vk::enable_logic_op>::for_types_of<decay<Args>...>) {
-				enable_logic_op = elements::of_type<vk::enable_logic_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::enable_logic_op>::for_types<Args...>) {
+				enable_logic_op = elements::decayed_same_as<vk::enable_logic_op>(args...);
 			}
-			if constexpr(types::are_contain_type<vk::logic_op>::for_types_of<decay<Args>...>) {
-				logic_op = elements::of_type<vk::logic_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::logic_op>::for_types<Args...>) {
+				logic_op = elements::decayed_same_as<vk::logic_op>(args...);
 			}
-			if constexpr(types::are_contain_type<vk::blend_constants>::for_types_of<decay<Args>...>) {
-				blend_constants = elements::of_type<vk::blend_constants>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::blend_constants>::for_types<Args...>) {
+				blend_constants = elements::decayed_same_as<vk::blend_constants>(args...);
 			}
-			if constexpr(types::are_contain_range_of_value_type<vk::pipeline_color_blend_attachment_state>::for_types_of<Args...>) {
+			if constexpr(types::are_contain_range_of_value_type<vk::pipeline_color_blend_attachment_state>::for_types<Args...>) {
 				auto& attachments0 = elements::range_of_value_type<vk::pipeline_color_blend_attachment_state>(args...);
 				attachment_count = (uint32) attachments0.size();
 				attachments = attachments0.data();

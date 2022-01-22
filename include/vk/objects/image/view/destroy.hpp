@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../object/destroy_or_free.hpp"
-#include "../../device/handle.hpp"
 #include "handle.hpp"
+#include "../../device/handle.hpp"
+#include "../../../object/destroy_or_free.hpp"
 
 namespace vk {
 
@@ -12,11 +12,11 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_type<vk::handle<vk::image_view>>::equals<1>
-		>::for_types_of<decay<Args>...>
+			types::are_contain_one_decayed_same_as<vk::handle<vk::image_view>>
+		>::for_types<Args...>
 		void operator () (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-			auto image_view = elements::of_type<vk::handle<vk::image_view>>(args...);
+			auto image_view = elements::decayed_same_as<vk::handle<vk::image_view>>(args...);
 
 			vkDestroyImageView(
 				(VkDevice) vk::get_handle_value(device),

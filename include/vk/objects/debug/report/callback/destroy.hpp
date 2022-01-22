@@ -12,7 +12,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 		
-		>::for_types_of<Args...>
+		>::for_types<Args...>
 		void operator () (vk::handle<vk::instance> instance, vk::handle<vk::debug_report_callback> debug_report_callback) const {
 			auto fn = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(
 				(VkInstance) instance.value,

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
-#include <core/integer.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/wrapper/of_integer.hpp>
-
+#include "../pipeline/stage.hpp"
 #include "../../shared/access.hpp"
 #include "../../shared/dependency.hpp"
-#include "../pipeline/stage.hpp"
+
+#include <core/flag_enum.hpp>
+#include <core/integer.hpp>
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -28,24 +28,26 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::src_subpass>::equals<1>,
-			types::count_of_type<vk::dst_subpass>::equals<1>,
-			types::count_of_type<vk::src_stages>::equals<1>,
-			types::count_of_type<vk::dst_stages>::equals<1>,
-			types::count_of_type<vk::src_access>::less_or_equals<1>,
-			types::count_of_type<vk::dst_access>::less_or_equals<1>
-		>::for_types_of<Args...>
+			types::are_contain_one_decayed_same_as<vk::src_subpass>,
+			types::are_contain_one_decayed_same_as<vk::dst_subpass>,
+			types::are_contain_one_decayed_same_as<vk::src_stages>,
+			types::are_contain_one_decayed_same_as<vk::dst_stages>,
+			types::are_may_contain_one_decayed_same_as<vk::src_access>,
+			types::are_may_contain_one_decayed_same_as<vk::dst_access>
+		>::for_types<Args...>
 		subpass_dependency(Args... args) {
-			src_subpass = elements::of_type<vk::src_subpass>(args...);
-			dst_subpass = elements::of_type<vk::dst_subpass>(args...);
-			src_stages = elements::of_type<vk::src_stages>(args...);
-			dst_stages = elements::of_type<vk::dst_stages>(args...);
+			src_subpass = elements::decayed_same_as<vk::src_subpass>(args...);
+			dst_subpass = elements::decayed_same_as<vk::dst_subpass>(args...);
+			src_stages = elements::decayed_same_as<vk::src_stages>(args...);
+			dst_stages = elements::decayed_same_as<vk::dst_stages>(args...);
 
-			if constexpr(types::count_of_type<vk::src_access>::for_types_of<Args...> == 1)
-				src_access = elements::of_type<vk::src_access>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::src_access>::for_types<Args...>) {
+				src_access = elements::decayed_same_as<vk::src_access>(args...);
+			}
 
-			if constexpr(types::count_of_type<vk::dst_access>::for_types_of<Args...> == 1)
-				dst_access = elements::of_type<vk::dst_access>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::dst_access>::for_types<Args...>) {
+				dst_access = elements::decayed_same_as<vk::dst_access>(args...);
+			}
 		}
 	};
 

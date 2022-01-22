@@ -9,7 +9,7 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::count_of_ranges_of_value_type<vk::handle<vk::fence>>::equals<1>
-	>::for_types_of<Args...>
+	>::for_types<Args...>
 	vk::result try_reset_fences(Args&&... args) {
 		auto& fences = elements::range_of_value_type<vk::handle<vk::fence>>(args...);
 

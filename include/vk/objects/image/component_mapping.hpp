@@ -1,13 +1,11 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/count_of_type.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/wrapper/of_integer.hpp>
-
 #include "component_swizzle.hpp"
+#include <core/wrapper/of_integer.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -25,24 +23,24 @@ namespace vk {
 		template<typename... Args>
 		requires(
 			types::are_exclusively_satsify_predicates<
-				types::count_of_type<vk::r>::less_or_equals<1>,
-				types::count_of_type<vk::g>::less_or_equals<1>,
-				types::count_of_type<vk::b>::less_or_equals<1>,
-				types::count_of_type<vk::a>::less_or_equals<1>
-			>::for_types_of<Args...>
+				types::are_may_contain_one_decayed_same_as<vk::r>,
+				types::are_may_contain_one_decayed_same_as<vk::g>,
+				types::are_may_contain_one_decayed_same_as<vk::b>,
+				types::are_may_contain_one_decayed_same_as<vk::a>
+			>::for_types<Args...>
 		)
 		component_mapping(Args... args) {
-			if constexpr(types::are_contain_type<vk::r>::for_types_of<Args...>)
-				r = elements::of_type<vk::r>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::r>::for_types<Args...>)
+				r = elements::decayed_same_as<vk::r>(args...);
 
-			if constexpr(types::are_contain_type<vk::g>::for_types_of<Args...>)
-				g = elements::of_type<vk::g>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::g>::for_types<Args...>)
+				g = elements::decayed_same_as<vk::g>(args...);
 
-			if constexpr(types::are_contain_type<vk::b>::for_types_of<Args...>)
-				b = elements::of_type<vk::b>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::b>::for_types<Args...>)
+				b = elements::decayed_same_as<vk::b>(args...);
 
-			if constexpr(types::are_contain_type<vk::a>::for_types_of<Args...>)
-				a = elements::of_type<vk::a>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::a>::for_types<Args...>)
+				a = elements::decayed_same_as<vk::a>(args...);
 		}
 
 	};

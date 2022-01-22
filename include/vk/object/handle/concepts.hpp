@@ -1,12 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/type/is_base.hpp>
-#include <core/type/is_same_as.hpp>
-
 #include "declaration.hpp"
 #include "base.hpp"
 #include "guarded/concepts.hpp"
+
+#include <core/integer.hpp>
+#include <core/meta/type/is_base.hpp>
+#include <core/meta/type/is_same_as.hpp>
 
 namespace vk {
 

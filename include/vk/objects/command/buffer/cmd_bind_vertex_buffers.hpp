@@ -1,28 +1,27 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
+#include "handle.hpp"
+#include "../../buffer/handle.hpp"
 #include "../../../shared/first_binding.hpp"
 #include "../../../shared/memory_offset.hpp"
-#include "../../buffer/handle.hpp"
-#include "handle.hpp"
+
+#include <core/wrapper/of_integer.hpp>
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::count_of_type<vk::first_binding>::less_or_equals<1>,
-		types::count_of_ranges_of_value_type<vk::handle<vk::buffer>>::equals<1>,
-		types::count_of_ranges_of_value_type<vk::memory_offset>::equals<1>
-	>::for_types_of<decay<Args>...>
+		types::are_may_contain_one_decayed_same_as<vk::first_binding>,
+		types::are_contain_one_range_of_value_type<vk::handle<vk::buffer>>,
+		types::are_contain_one_range_of_value_type<vk::memory_offset>
+	>::for_types<Args...>
 	void cmd_bind_vertex_buffers(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		
 		vk::first_binding first_binding{ 0 };
-		if constexpr(types::are_contain_type<vk::first_binding>::for_types_of<decay<Args>...>) {
-			first_binding = elements::of_type<vk::first_binding>(args...);
+		if constexpr(types::are_contain_decayed_same_as<vk::first_binding>::for_types<Args...>) {
+			first_binding = elements::decayed_same_as<vk::first_binding>(args...);
 		}
 
 		auto& buffers = elements::range_of_value_type<vk::handle<vk::buffer>>(args...);

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-
-#include "../handle.hpp"
 #include "handle.hpp"
+#include "../handle.hpp"
+
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 namespace vk {
 
@@ -11,7 +11,7 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device_memory>
-	>::for_types_of<Args...>
+	>::for_types<Args...>
 	void unmap_device_memory(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 		auto& device_memory = elements::vk::possibly_guarded_handle_of<vk::device_memory>(args...);

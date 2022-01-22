@@ -1,18 +1,17 @@
 #pragma once 
 
-#include <core/flag_enum.hpp>
-#include <core/types/are_exclusively_satsify_predicates.hpp>
-#include <core/types/are_contain_type.hpp>
-#include <core/wrapper/of.hpp>
-#include <core/elements/of_type.hpp>
-#include <core/types/count_of_type.hpp>
-
+#include "attachment_load_op.hpp"
+#include "attachment_store_op.hpp"
+#include "../image/layout.hpp"
 #include "../../shared/headers.hpp"
 #include "../../shared/sample_count.hpp"
 #include "../../shared/format.hpp"
-#include "../image/layout.hpp"
-#include "attachment_load_op.hpp"
-#include "attachment_store_op.hpp"
+
+#include <core/flag_enum.hpp>
+#include <core/wrapper/of.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -39,38 +38,38 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::count_of_type<vk::format>::equals<1>,
-			types::count_of_type<vk::sample_count>::less_or_equals<1>,
-			types::count_of_type<vk::load_op>::less_or_equals<1>,
-			types::count_of_type<vk::store_op>::less_or_equals<1>,
-			types::count_of_type<vk::stencil_load_op>::less_or_equals<1>,
-			types::count_of_type<vk::stencil_store_op>::less_or_equals<1>,
-			types::count_of_type<vk::initial_layout>::less_or_equals<1>,
-			types::count_of_type<vk::final_layout>::less_or_equals<1>
-		>::for_types_of<Args...>
+			types::are_contain_one_decayed_same_as<vk::format>,
+			types::are_may_contain_one_decayed_same_as<vk::sample_count>,
+			types::are_may_contain_one_decayed_same_as<vk::load_op>,
+			types::are_may_contain_one_decayed_same_as<vk::store_op>,
+			types::are_may_contain_one_decayed_same_as<vk::stencil_load_op>,
+			types::are_may_contain_one_decayed_same_as<vk::stencil_store_op>,
+			types::are_may_contain_one_decayed_same_as<vk::initial_layout>,
+			types::are_may_contain_one_decayed_same_as<vk::final_layout>
+		>::for_types<Args...>
 		attachment_description(Args... args) {
-			format = elements::of_type<vk::format>(args...);
+			format = elements::decayed_same_as<vk::format>(args...);
 	
-			if constexpr(types::are_contain_type<vk::sample_count>::for_types_of<Args...>)
-				samples = elements::of_type<vk::sample_count>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::sample_count>::for_types<Args...>)
+				samples = elements::decayed_same_as<vk::sample_count>(args...);
 	
-			if constexpr(types::are_contain_type<vk::load_op>::for_types_of<Args...>)
-				load_op = elements::of_type<vk::load_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::load_op>::for_types<Args...>)
+				load_op = elements::decayed_same_as<vk::load_op>(args...);
 	
-			if constexpr(types::are_contain_type<vk::store_op>::for_types_of<Args...>)
-				store_op = elements::of_type<vk::store_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::store_op>::for_types<Args...>)
+				store_op = elements::decayed_same_as<vk::store_op>(args...);
 	
-			if constexpr(types::are_contain_type<vk::stencil_load_op>::for_types_of<Args...>)
-				stencil_load_op = elements::of_type<vk::stencil_load_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::stencil_load_op>::for_types<Args...>)
+				stencil_load_op = elements::decayed_same_as<vk::stencil_load_op>(args...);
 	
-			if constexpr(types::are_contain_type<vk::stencil_store_op>::for_types_of<Args...>)
-				stencil_store_op = elements::of_type<vk::stencil_store_op>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::stencil_store_op>::for_types<Args...>)
+				stencil_store_op = elements::decayed_same_as<vk::stencil_store_op>(args...);
 	
-			if constexpr(types::are_contain_type<vk::initial_layout>::for_types_of<Args...>)
-				initial_layout = elements::of_type<vk::initial_layout>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::initial_layout>::for_types<Args...>)
+				initial_layout = elements::decayed_same_as<vk::initial_layout>(args...);
 	
-			if constexpr(types::are_contain_type<vk::final_layout>::for_types_of<Args...>)
-				final_layout = elements::of_type<vk::final_layout>(args...);
+			if constexpr(types::are_contain_decayed_same_as<vk::final_layout>::for_types<Args...>)
+				final_layout = elements::decayed_same_as<vk::final_layout>(args...);
 		}
 	};
 

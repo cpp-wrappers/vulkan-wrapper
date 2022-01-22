@@ -1,28 +1,28 @@
 #pragma once
 
-#include <core/elements/of_type.hpp>
-#include <core/elements/one_of.hpp>
-#include <core/elements/range_of_value_type.hpp>
-#include <core/forward.hpp>
-#include <core/range/of_value_type.hpp>
-#include <core/span.hpp>
-
+#include "properties.hpp"
+#include "memory_properties.hpp"
+#include "queue_family_properties.hpp"
+#include "../surface/capabilities.hpp"
+#include "../surface/present_mode.hpp"
+#include "../surface/format.hpp"
+#include "../surface/handle.hpp"
+#include "../../object/handle/base.hpp"
+#include "../../object/handle/guarded/declaration.hpp"
+#include "../../object/handle/get_value.hpp"
 #include "../../shared/result.hpp"
 #include "../../shared/queue_family_index.hpp"
 #include "../../shared/count.hpp"
 #include "../../shared/extension_name.hpp"
 #include "../../shared/extension_properties.hpp"
 #include "../../shared/memory_type_index.hpp"
-#include "../../object/handle/base.hpp"
-#include "../../object/handle/guarded/declaration.hpp"
-#include "../../object/handle/get_value.hpp"
-#include "../surface/capabilities.hpp"
-#include "../surface/present_mode.hpp"
-#include "../surface/format.hpp"
-#include "../surface/handle.hpp"
-#include "properties.hpp"
-#include "memory_properties.hpp"
-#include "queue_family_properties.hpp"
+
+#include <core/forward.hpp>
+#include <core/span.hpp>
+#include <core/range/of_value_type.hpp>
+#include <core/meta/elements/one_of.hpp>
+#include <core/meta/elements/range_of_value_type.hpp>
+
 
 namespace vk {
 
@@ -108,7 +108,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires(types::are_same::for_types_of<Args..., vk::queue_flag>)
+		requires(types::are_same::for_types<Args..., vk::queue_flag>)
 		vk::queue_family_index get_first_queue_family_index_with_capabilities(Args... args) const {
 			uint32 count = (uint32)queue_family_properties_count();
 			vk::queue_family_properties props[count];

@@ -6,7 +6,7 @@ exit 0
 #include "../platform/platform.hpp"
 #include <string.h>
 
-static nuint tabs = 0u;
+static nuint tabs = 0;
 
 void print(auto... vs) {
 	for(nuint i = 0; i < tabs; ++i) platform::info('\t');
