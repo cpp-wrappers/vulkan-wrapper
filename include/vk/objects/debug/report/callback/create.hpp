@@ -5,7 +5,7 @@
 #include "../../../instance/handle.hpp"
 #include "../../../../object/create_or_allocate.hpp"
 
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 

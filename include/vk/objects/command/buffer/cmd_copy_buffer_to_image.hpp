@@ -4,10 +4,11 @@
 #include "buffer_image_copy.hpp"
 #include "../../buffer/handle.hpp"
 #include "../../image/handle.hpp"
+#include "../../image/layout.hpp"
 
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 #include <core/meta/types/count_of_ranges_of_value_type.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
 #include <core/meta/elements/range_of_value_type.hpp>
 
 namespace vk {
@@ -38,3 +39,8 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_copy_buffer_to_image(Args&&... args) const {
+	vk::cmd_copy_buffer_to_image(*this, forward<Args>(args)...); return *this;
+}

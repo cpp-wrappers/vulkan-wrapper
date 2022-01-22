@@ -4,10 +4,18 @@
 #include "../../buffer/handle.hpp"
 #include "../../../shared/first_binding.hpp"
 #include "../../../shared/memory_offset.hpp"
+#include "../../../shared/headers.hpp"
+#include "../../../object/handle/get_value.hpp"
+#include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
+#include "../../../elements/possibly_guarded_handle_of.hpp"
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/meta/decayed_same_as.hpp>
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_contain_range_of_value_type.hpp>
 
 namespace vk {
+
+	struct command_buffer;
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
@@ -37,3 +45,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args> 
+auto& vk::handle<vk::command_buffer>::cmd_bind_vertex_buffers(Args&&... args) const {
+	vk::cmd_bind_vertex_buffers(*this, forward<Args>(args)...);
+	return *this;
+}

@@ -28,3 +28,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_bind_descriptor_set(Args &&... args) const {
+	vk::cmd_bind_descriptor_set(*this, forward<Args>(args)...);
+	return *this;
+}

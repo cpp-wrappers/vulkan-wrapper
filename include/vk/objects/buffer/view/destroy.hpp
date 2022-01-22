@@ -1,8 +1,8 @@
 #pragma once
 
+#include "handle.hpp"
 #include "../../../object/destroy_or_free.hpp"
 #include "../../../object/device_child_destroy_base.hpp"
-#include "handle.hpp"
 
 namespace vk {
 

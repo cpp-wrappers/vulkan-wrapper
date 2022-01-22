@@ -72,3 +72,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_set_scissor(Args&&... args) const {
+	vk::cmd_set_scissor(*this, forward<Args>(args)...);
+	return *this;
+}

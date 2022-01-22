@@ -3,6 +3,8 @@
 #include "cmd_bind_vertex_buffers.hpp"
 #include "../../../shared/first_binding.hpp"
 
+#include <core/array.hpp>
+
 namespace vk {
 
 	template<typename... Args>
@@ -37,3 +39,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args> 
+auto& vk::handle<vk::command_buffer>::cmd_bind_vertex_buffer(Args&&... args) const {
+	vk::cmd_bind_vertex_buffer(*this, forward<Args>(args)...);
+	return *this;
+}

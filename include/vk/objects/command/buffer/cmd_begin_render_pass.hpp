@@ -3,8 +3,8 @@
 #include "handle.hpp"
 #include "render_pass_begin_info.hpp"
 
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/count_of_decayed_same_as.hpp>
 
 namespace vk {
 	
@@ -52,3 +52,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_begin_render_pass(Args&&... args) const {
+	vk::cmd_begin_render_pass(*this, forward<Args>(args)...);
+	return *this;
+}

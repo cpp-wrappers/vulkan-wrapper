@@ -52,3 +52,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_draw(Args&&... args) const {
+	vk::cmd_draw(*this, forward<Args>(args)...);
+	return *this;
+}

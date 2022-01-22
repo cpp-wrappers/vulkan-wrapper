@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../object/handle/concepts.hpp"
 #include "handle.hpp"
+#include "../../../object/handle/concepts.hpp"
 
 namespace vk {
 
@@ -12,3 +12,8 @@ namespace vk {
 	}
 
 } // vk
+
+inline auto& vk::handle<vk::command_buffer>::cmd_end_render_pass() const {
+	vk::cmd_end_render_pass(*this);
+	return *this;
+}

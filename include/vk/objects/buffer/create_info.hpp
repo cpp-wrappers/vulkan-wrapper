@@ -1,12 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-
 #include "../../shared/headers.hpp"
 #include "../../shared/sharing_mode.hpp"
 #include "../../shared/queue_family_index.hpp"
 #include "../../shared/device_size.hpp"
+
+#include <core/integer.hpp>
+#include <core/flag_enum.hpp>
 
 namespace vk {
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../object/handle/guarded/base.hpp"
 #include "handle.hpp"
 #include "destroy.hpp"
+#include "../../object/handle/guarded/base.hpp"
 
 namespace vk {
 

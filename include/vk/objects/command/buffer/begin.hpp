@@ -1,15 +1,14 @@
 #pragma once
 
+#include "handle.hpp"
 #include "begin_info.hpp"
 #include "../../../elements/possibly_guarded_handle_of.hpp"
 #include "../../../types/are_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../../object/handle/get_value.hpp"
 #include "../../../shared/result.hpp"
 
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
-#include <core/meta/elements/decayed_same_as.hpp>
-#include <core/meta/elements/for_each_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -95,3 +94,15 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+vk::result vk::handle<vk::command_buffer>::try_begin(Args&&... args) const {
+	return vk::try_begin_command_buffer(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+requires(sizeof...(Args) > 0)
+auto& vk::handle<vk::command_buffer>::begin(Args&&... args) const {
+	vk::begin_command_buffer(*this, forward<Args>(args)...);
+	return *this;
+}

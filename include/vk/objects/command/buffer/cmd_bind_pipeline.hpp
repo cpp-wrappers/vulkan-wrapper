@@ -27,3 +27,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_bind_pipeline(Args&&... args) const {
+	vk::cmd_bind_pipeline(*this, forward<Args>(args)...);
+	return *this;
+}

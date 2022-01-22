@@ -9,7 +9,7 @@
 #include "../../types/are_may_contain_one_possibly_guarded_handle_of.hpp"
 #include "../../shared/subpass.hpp"
 
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
 namespace vk {

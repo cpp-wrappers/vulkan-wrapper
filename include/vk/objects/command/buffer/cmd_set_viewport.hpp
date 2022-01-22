@@ -4,8 +4,8 @@
 #include "../../../shared/extent.hpp"
 #include "../../../shared/viewport.hpp"
 
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
 
 namespace vk {
 
@@ -81,3 +81,9 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_set_viewport(Args&&... args) const {
+	vk::cmd_set_viewport(*this, forward<Args>(args)...);
+	return *this;
+}

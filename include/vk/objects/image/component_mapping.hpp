@@ -2,10 +2,8 @@
 
 #include "component_swizzle.hpp"
 #include <core/wrapper/of_integer.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
-#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 

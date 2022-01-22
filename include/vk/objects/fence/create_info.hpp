@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../../shared/headers.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
-
-#include "../../shared/headers.hpp"
 
 namespace vk {
 

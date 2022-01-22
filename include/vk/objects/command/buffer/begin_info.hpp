@@ -1,10 +1,10 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-#include "../../../shared/headers.hpp"
 #include "usage.hpp"
 #include "inheritance_info.hpp"
+#include "../../../shared/headers.hpp"
+
+#include <core/flag_enum.hpp>
 
 namespace vk {
 

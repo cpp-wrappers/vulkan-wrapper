@@ -17,3 +17,11 @@ namespace vk {
 	}
 
 } // vk
+
+inline vk::result vk::handle<vk::command_buffer>::try_end() const {
+	return vk::try_end_command_buffer(*this);
+}
+
+inline void vk::handle<vk::command_buffer>::end() const {
+	vk::end_command_buffer(*this);
+}

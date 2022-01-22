@@ -6,8 +6,7 @@
 #include "../surface/format.hpp"
 #include "../../object/create_or_allocate.hpp"
 
-#include <core/meta/type/is_decayed_same_as.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
 namespace vk {

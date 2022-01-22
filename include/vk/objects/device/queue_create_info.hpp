@@ -3,13 +3,11 @@
 #include "../../shared/headers.hpp"
 #include "../../shared/queue_family_index.hpp"
 
-#include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
 #include <core/wrapper/of_integer.hpp>
+#include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
-#include <core/meta/elements/decayed_same_as.hpp>
 
 namespace vk {
 	struct queue_count : wrapper::of_integer<uint32> {};

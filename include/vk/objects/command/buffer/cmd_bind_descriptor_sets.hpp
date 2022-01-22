@@ -1,15 +1,23 @@
 #pragma once
 
-#include "handle.hpp"
-#include "../../pipeline/layout/handle.hpp"
 #include "../../descriptor/set/handle.hpp"
 
-#include <core/meta/types/are_contain_decayed_same_as.hpp>
+#include <core/wrapper/of_integer.hpp>
 
 namespace vk {
 
 	struct first_set : wrapper::of_integer<uint32, struct first_set_t> {};
 	struct dynamic_offset : wrapper::of_integer<uint32> {};
+
+}
+
+#include "handle.hpp"
+#include "../../pipeline/bind_point.hpp"
+#include "../../pipeline/layout/handle.hpp"
+
+#include <core/meta/decayed_same_as.hpp>
+
+namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
@@ -55,3 +63,11 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+auto& vk::handle<vk::command_buffer>::cmd_bind_descriptor_sets(Args &&... args) const {
+	vk::cmd_bind_descriptor_sets(*this, forward<Args>(args)...);
+	return *this;
+}
+
+#include "cmd_bind_descriptor_set.hpp"
