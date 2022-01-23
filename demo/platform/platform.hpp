@@ -5,12 +5,12 @@
 #include <core/c_string.hpp>
 #include <core/span.hpp>
 
-#include "vk/objects/instance/handle.hpp"
-#include "vk/objects/instance/guarded_handle.hpp"
-#include "vk/objects/instance/layer_properties.hpp"
-#include "vk/objects/instance/extension_properties.hpp"
-#include "vk/objects/surface/guarded_handle.hpp"
-#include "vk/objects/debug/report/callback/create.hpp"
+#include "vk/instance/handle.hpp"
+#include "vk/instance/guarded_handle.hpp"
+#include "vk/instance/layer_properties.hpp"
+#include "vk/instance/extension_properties.hpp"
+#include "vk/surface/guarded_handle.hpp"
+#include "vk/debug/report/callback/create.hpp"
 
 void entrypoint();
 
