@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/integer.hpp>
-
 #include "../../headers.hpp"
 #include "../../access.hpp"
 #include "../../queue_family_index.hpp"
@@ -13,8 +11,6 @@ namespace vk {
 
 	struct old_layout : flag_enum<vk::image_layout> {};
 	struct new_layout : flag_enum<vk::image_layout> {};
-	struct src_queue_family_index : queue_family_index {};
-	struct dst_queue_family_index : queue_family_index {};
 
 	struct image_memory_barrier {
 		uint32 type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;

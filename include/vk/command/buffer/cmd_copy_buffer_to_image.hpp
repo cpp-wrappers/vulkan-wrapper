@@ -18,7 +18,7 @@ namespace vk {
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
 		types::are_contain_one_decayed_same_as<vk::image_layout>,
-		types::count_of_ranges_of_value_type<vk::buffer_image_copy>::equals<1>
+		types::are_contain_one_range_of_value_type<vk::buffer_image_copy>
 	>::for_types<Args...>
 	void cmd_copy_buffer_to_image(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);

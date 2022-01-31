@@ -22,6 +22,7 @@ namespace vk {
 		inline void end() const;
 
 		template<typename... Args> auto& cmd_pipeline_barrier(Args&&...) const;
+		template<typename... Args> auto& cmd_copy_buffer(Args&&...) const;
 		template<typename... Args> auto& cmd_copy_buffer_to_image(Args&&...) const;
 		template<typename... Args> auto& cmd_clear_color_image(Args&&...) const;
 		template<typename... Args> auto& cmd_begin_render_pass(Args&&...) const;
@@ -41,6 +42,7 @@ namespace vk {
 #include "begin.hpp"
 #include "end.hpp"
 #include "cmd_pipeline_barrier.hpp"
+#include "cmd_copy_buffer.hpp"
 #include "cmd_copy_buffer_to_image.hpp"
 #include "cmd_clear_color_image.hpp"
 #include "cmd_begin_render_pass.hpp"

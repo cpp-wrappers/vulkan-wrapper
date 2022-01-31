@@ -16,12 +16,12 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::are_contain_one_decayed_same_as<vk::descriptor_type>,
-			types::count_of_satisfying_predicate<type::modified_predicate<is_integer, type::decay>>::equals<1>
+			types::are_contain_one_decayed_same_as<vk::descriptor_count>
 		>::for_types<Args...>
 		descriptor_pool_size(Args&&... args)
 		:
 			type{ elements::decayed_same_as<vk::descriptor_type>(args...) },
-			descriptor_count{ (uint32) elements::satisfying_predicate<type::modified_predicate<is_integer, type::decay>>(args...) }
+			descriptor_count{ elements::decayed_same_as<vk::descriptor_count>(args...) }
 		{}
 	};
 

@@ -11,8 +11,8 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::count_of_ranges_of_value_type<vk::write_descriptor_set>::less_or_equals<1>,
-		types::count_of_ranges_of_value_type<vk::copy_descriptor_set>::less_or_equals<1>
+		types::are_may_contain_range_of_value_type<vk::write_descriptor_set>,
+		types::are_may_contain_range_of_value_type<vk::copy_descriptor_set>
 	>::for_types<Args...>
 	void update_descriptor_sets(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

@@ -45,6 +45,7 @@ namespace vk {
 		}
 
 		template<typename... Args> auto& cmd_pipeline_barrier(Args&&... args) const { handle().cmd_pipeline_barrier(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_copy_buffer(Args&&... args) const { handle().cmd_copy_buffer(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_copy_buffer_to_image(Args&&... args) const { handle().cmd_copy_buffer_to_image(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_begin_render_pass(Args&&... args) const { handle().cmd_begin_render_pass(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_bind_pipeline(Args&&... args) const { handle().cmd_bind_pipeline(forward<Args>(args)...); return *this; }

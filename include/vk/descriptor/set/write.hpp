@@ -29,22 +29,20 @@ namespace vk {
 		const vk::handle<vk::buffer_view>* texel_buffer_view{};
 
 		template<typename... Args>
-		requires (
-			types::are_exclusively_satsify_predicates<
-				types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set>,
-				types::are_contain_one_decayed_same_as<vk::dst_binding>,
-				types::are_contain_one_decayed_same_as<vk::dst_array_element>,
-				types::are_contain_one_decayed_same_as<vk::descriptor_type>,
-				types::are_may_contain_one_range_of_value_type<vk::descriptor_image_info>,
-				types::are_may_contain_one_range_of_value_type<vk::descriptor_buffer_info>,
-				types::are_may_contain_one_range_of_value_type<vk::handle<vk::buffer_view>>
-			>::for_types<Args...> &&
-			(
-				types::count_of_ranges_of_value_type<vk::descriptor_image_info>::for_types<Args...> + 
-				types::count_of_ranges_of_value_type<vk::descriptor_buffer_info>::for_types<Args...> +
-				types::count_of_ranges_of_value_type<vk::handle<vk::buffer_view>>::for_types<Args...>
-				== 1 
-			)
+		requires types::are_exclusively_satsify_predicates<
+			types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set>,
+			types::are_contain_one_decayed_same_as<vk::dst_binding>,
+			types::are_contain_one_decayed_same_as<vk::dst_array_element>,
+			types::are_contain_one_decayed_same_as<vk::descriptor_type>,
+			types::are_may_contain_one_range_of_value_type<vk::descriptor_image_info>,
+			types::are_may_contain_one_range_of_value_type<vk::descriptor_buffer_info>,
+			types::are_may_contain_one_range_of_value_type<vk::handle<vk::buffer_view>>
+		>::for_types<Args...> &&
+		(
+			types::count_of_ranges_of_value_type<vk::descriptor_image_info>::for_types<Args...> + 
+			types::count_of_ranges_of_value_type<vk::descriptor_buffer_info>::for_types<Args...> +
+			types::count_of_ranges_of_value_type<vk::handle<vk::buffer_view>>::for_types<Args...>
+			== 1 
 		)
 		write_descriptor_set(Args&&... args) {
 			dst_set = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::descriptor_set>(args...));
@@ -61,13 +59,13 @@ namespace vk {
 			if constexpr(types::are_contain_range_of_value_type<vk::descriptor_buffer_info>::for_types<Args...>) {
 				auto& r = elements::range_of_value_type<vk::descriptor_buffer_info>(args...);
 				count = vk::count{ (uint32) r.size() };
-				image_info = r.data();
+				buffer_info = r.data();
 			}
 
 			if constexpr(types::are_contain_range_of_value_type<vk::handle<vk::buffer_view>>::for_types<Args...>) {
 				auto& r = elements::range_of_value_type<vk::handle<vk::buffer_view>>(args...);
 				count = vk::count{ (uint32) r.size() };
-				image_info = r.data();
+				texel_buffer_view = r.data();
 			}
 		}
 	};

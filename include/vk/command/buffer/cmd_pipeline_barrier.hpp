@@ -2,6 +2,7 @@
 
 #include "handle.hpp"
 #include "image_memory_barrier.hpp"
+#include "buffer_memory_barrier.hpp"
 #include "../../pipeline/stage.hpp"
 #include "../../dependency.hpp"
 
@@ -17,7 +18,8 @@ namespace vk {
 		types::are_contain_one_decayed_same_as<vk::src_stages>,
 		types::are_contain_one_decayed_same_as<vk::dst_stages>,
 		types::are_may_contain_one_decayed_same_as<vk::dependencies>,
-		types::count_of_ranges_of_value_type<vk::image_memory_barrier>::less_or_equals<1>
+		types::are_may_contain_one_range_of_value_type<vk::buffer_memory_barrier>,
+		types::are_may_contain_one_range_of_value_type<vk::image_memory_barrier>
 	>::for_types<Args...>
 	void cmd_pipeline_barrier(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
@@ -29,7 +31,23 @@ namespace vk {
 			dependencies = elements::decayed_same_as<vk::dependencies>(args...);
 		}
 
-		auto& image_barriers = elements::range_of_value_type<vk::image_memory_barrier>(args...);
+		uint32 buffer_barrier_count{};
+		const vk::buffer_memory_barrier* buffer_barriers{};
+
+		if constexpr(types::are_contain_range_of_value_type<vk::buffer_memory_barrier>::for_types<Args...>) {
+			auto& buffer_barriers0 = elements::range_of_value_type<vk::buffer_memory_barrier>(args...);
+			buffer_barrier_count = (uint32) buffer_barriers0.size();
+			buffer_barriers = buffer_barriers0.data();
+		}
+
+		uint32 image_barrier_count{};
+		const vk::image_memory_barrier* image_barriers{};
+
+		if constexpr(types::are_contain_range_of_value_type<vk::image_memory_barrier>::for_types<Args...>) {
+			auto& image_barriers0 = elements::range_of_value_type<vk::image_memory_barrier>(args...);
+			image_barrier_count = (uint32) image_barriers0.size();
+			image_barriers = image_barriers0.data();
+		}
 
 		vkCmdPipelineBarrier(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),
@@ -37,11 +55,11 @@ namespace vk {
 			(VkPipelineStageFlags) dst_stages.value,
 			(VkDependencyFlags) dependencies.value,
 			0,
-			nullptr,
-			0,
-			nullptr,
-			(uint32) image_barriers.size(),
-			(VkImageMemoryBarrier*) image_barriers.data()
+			(VkMemoryBarrier*) nullptr,
+			buffer_barrier_count,
+			(VkBufferMemoryBarrier*) buffer_barriers,
+			image_barrier_count,
+			(VkImageMemoryBarrier*) image_barriers
 		);
 	}
 

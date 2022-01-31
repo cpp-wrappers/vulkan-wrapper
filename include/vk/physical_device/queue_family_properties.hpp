@@ -7,11 +7,11 @@
 
 namespace vk {
 
-	enum class queue_flag : uint32_t {
+	enum class queue_flag {
 		graphics = VK_QUEUE_GRAPHICS_BIT,
 		compute = VK_QUEUE_COMPUTE_BIT,
 		transfer = VK_QUEUE_TRANSFER_BIT,
-		sparse_binding = VK_QUEUE_SPARSE_BINDING_BIT,
+		sparse_binding = VK_QUEUE_SPARSE_BINDING_BIT
 	};
 
 	struct queue_family_properties {
