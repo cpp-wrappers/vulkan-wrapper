@@ -1,11 +1,5 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-
-#include "../render_pass/handle.hpp"
-#include "../headers.hpp"
-#include "../subpass.hpp"
 #include "shader_stage_create_info.hpp"
 #include "vertex_input_state/create_info.hpp"
 #include "input_assembly_state_create_info.hpp"
@@ -16,8 +10,15 @@
 #include "depth_stencil_state_create_info.hpp"
 #include "color_blend_state_create_info.hpp"
 #include "dynamic_state_create_info.hpp"
-#include "layout/handle.hpp"
 #include "handle.hpp"
+#include "layout/handle.hpp"
+
+#include <core/integer.hpp>
+#include <core/flag_enum.hpp>
+
+#include "vk/render_pass/handle.hpp"
+#include "vk/headers.hpp"
+#include "vk/subpass.hpp"
 
 namespace vk {
 

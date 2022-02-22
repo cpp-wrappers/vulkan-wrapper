@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../pipeline/stage.hpp"
-#include "../access.hpp"
-#include "../dependency.hpp"
-
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/pipeline/stage.hpp"
+#include "vk/access.hpp"
+#include "vk/dependency.hpp"
 
 namespace vk {
 

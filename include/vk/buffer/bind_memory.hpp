@@ -1,11 +1,13 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../device/handle.hpp"
-#include "../result.hpp"
-#include "../memory_offset.hpp"
 
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/result.hpp"
+#include "vk/memory_offset.hpp"
+#include "vk/default_unexpected_handler.hpp"
 
 namespace vk {
 
@@ -39,7 +41,7 @@ namespace vk {
 	template<typename... Args>
 	void bind_buffer_memory(Args&&... args) {
 		vk::result result = vk::try_bind_buffer_memory(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

@@ -1,14 +1,6 @@
 #pragma once
 
 #include "image_index.hpp"
-#include "../semaphore/handle.hpp"
-#include "../fence/handle.hpp"
-#include "../timeout.hpp"
-#include "../headers.hpp"
-#include "../result.hpp"
-#include "../count.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
-#include "../handle/get_value.hpp"
 
 #include <core/span.hpp>
 #include <core/forward.hpp>
@@ -17,6 +9,15 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 #include <core/meta/elements/one_of.hpp>
+
+#include "vk/semaphore/handle.hpp"
+#include "vk/fence/handle.hpp"
+#include "vk/timeout.hpp"
+#include "vk/headers.hpp"
+#include "vk/result.hpp"
+#include "vk/count.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/handle/get_value.hpp"
 
 namespace vk {
 

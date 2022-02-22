@@ -3,12 +3,13 @@
 #include "handle.hpp"
 #include "image_memory_barrier.hpp"
 #include "buffer_memory_barrier.hpp"
-#include "../../pipeline/stage.hpp"
-#include "../../dependency.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/pipeline/stage.hpp"
+#include "vk/dependency.hpp"
 
 namespace vk {
 

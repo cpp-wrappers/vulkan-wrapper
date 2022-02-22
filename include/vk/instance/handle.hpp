@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../physical_device/handle.hpp"
-#include "../handle/base.hpp"
-#include "../count.hpp"
-#include "../result.hpp"
-
 #include <core/forward.hpp>
 #include <core/span.hpp>
 #include <core/move.hpp>
 #include <core/array.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type.hpp>
+
+#include "vk/physical_device/handle.hpp"
+#include "vk/handle/base.hpp"
+#include "vk/count.hpp"
+#include "vk/result.hpp"
 
 namespace vk {
 
@@ -64,7 +64,6 @@ namespace vk {
 			vk::handle<vk::physical_device> physical_device;
 			auto result = enumerate_physical_devices(span{ &physical_device, 1 });
 			if(result.is_unexpected()) {
-				result.set_handled();
 				return result.get_unexpected();
 			}
 			return physical_device;

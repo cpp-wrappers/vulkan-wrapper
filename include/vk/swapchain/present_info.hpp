@@ -1,10 +1,11 @@
 #pragma once
 
+#include "image_index.hpp"
+
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../result.hpp"
-#include "image_index.hpp"
+#include "vk/headers.hpp"
+#include "vk/result.hpp"
 
 namespace vk {
 

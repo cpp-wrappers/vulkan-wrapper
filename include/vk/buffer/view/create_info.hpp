@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../handle.hpp"
-#include "../../format.hpp"
-#include "../../memory_offset.hpp"
-#include "../../memory_size.hpp"
+#include "vk/buffer/handle.hpp"
+#include "vk/format.hpp"
+#include "vk/memory_offset.hpp"
+#include "vk/memory_size.hpp"
 
 namespace vk {
 

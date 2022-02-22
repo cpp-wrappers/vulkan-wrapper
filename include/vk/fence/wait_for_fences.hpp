@@ -1,10 +1,11 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../device/handle.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/device/handle.hpp"
 
 namespace vk {
 
@@ -46,7 +47,7 @@ namespace vk {
 	template<typename... Args>
 	void wait_for_fences(Args&&... args) {
 		vk::result result = vk::try_wait_for_fences(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

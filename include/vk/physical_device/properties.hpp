@@ -2,8 +2,9 @@
 
 #include "limits.hpp"
 #include "sparse_properties.hpp"
-#include "../headers.hpp"
-#include "../instance/api_version.hpp"
+
+#include "vk/headers.hpp"
+#include "vk/instance/api_version.hpp"
 
 namespace vk {
 

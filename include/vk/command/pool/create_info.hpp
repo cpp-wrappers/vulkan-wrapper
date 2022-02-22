@@ -3,8 +3,8 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-#include "../../queue_family_index.hpp"
+#include "vk/headers.hpp"
+#include "vk/queue_family_index.hpp"
 
 namespace vk {
 

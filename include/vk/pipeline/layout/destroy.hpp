@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../destroy_or_free.hpp"
-#include "../../device/handle.hpp"
+#include "vk/destroy_or_free.hpp"
+#include "vk/device/handle.hpp"
 
 namespace vk {
 

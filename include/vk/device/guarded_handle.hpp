@@ -2,7 +2,9 @@
 
 #include "handle.hpp"
 #include "destroy.hpp"
-#include "../handle/guarded/base.hpp"
+
+#include "vk/handle/guarded/base.hpp"
+#include "vk/default_unexpected_handler.hpp"
 
 namespace vk {
 
@@ -51,7 +53,7 @@ namespace vk {
 
 		void wait_idle() const {
 			auto result = try_wait_idle();
-			if(result.error()) default_unexpected_handler(result);
+			if(result.error()) vk::default_unexpected_handler(result);
 		}
 
 		template<typename... Args>

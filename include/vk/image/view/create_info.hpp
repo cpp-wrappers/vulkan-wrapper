@@ -3,11 +3,11 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-#include "../../format.hpp"
-#include "../component_mapping.hpp"
-#include "../subresource_range.hpp"
-#include "../handle.hpp"
+#include "vk/headers.hpp"
+#include "vk/format.hpp"
+#include "vk/image/component_mapping.hpp"
+#include "vk/image/subresource_range.hpp"
+#include "vk/image/handle.hpp"
 
 namespace vk {
 

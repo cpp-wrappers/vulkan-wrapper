@@ -3,10 +3,13 @@
 #include "handle.hpp"
 #include "wait_semaphore.hpp"
 #include "present_info.hpp"
-#include "../swapchain/image_index.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/decayed_same_as.hpp>
+
+#include "vk/swapchain/image_index.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 
@@ -91,7 +94,7 @@ namespace vk {
 	template<typename... Args>
 	void queue_present(Args&&... args) {
 		vk::result result = vk::try_queue_present(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
+
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

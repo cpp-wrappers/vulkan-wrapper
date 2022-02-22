@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../handle/guarded/device_child_base.hpp"
-#include "../device/handle.hpp"
 #include "handle.hpp"
 #include "destroy.hpp"
+
+#include "vk/handle/guarded/device_child_base.hpp"
+#include "vk/device/handle.hpp"
 
 namespace vk {
 

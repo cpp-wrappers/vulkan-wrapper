@@ -2,7 +2,7 @@
 
 #include <core/wrapper/of.hpp>
 
-#include "../semaphore/handle.hpp"
+#include "vk/semaphore/handle.hpp"
 
 namespace vk {
 

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../pipeline/handle.hpp"
-#include "../../pipeline/bind_point.hpp"
 
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/pipeline/handle.hpp"
+#include "vk/pipeline/bind_point.hpp"
 
 namespace vk {
 

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "cmd_bind_vertex_buffers.hpp"
-#include "../../first_binding.hpp"
 
 #include <core/array.hpp>
+
+#include "vk/first_binding.hpp"
 
 namespace vk {
 

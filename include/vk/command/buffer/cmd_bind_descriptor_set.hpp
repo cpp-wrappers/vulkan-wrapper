@@ -1,9 +1,10 @@
 #pragma once
 
 #include "cmd_bind_descriptor_sets.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
 
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
+
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

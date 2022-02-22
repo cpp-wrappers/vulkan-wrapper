@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../image/view/handle.hpp"
-#include "../image/layout.hpp"
-#include "../sampler/handle.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
-
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/image/view/handle.hpp"
+#include "vk/image/layout.hpp"
+#include "vk/sampler/handle.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

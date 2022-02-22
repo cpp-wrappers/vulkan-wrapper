@@ -2,6 +2,8 @@
 
 #include "reset_fences.hpp"
 
+#include "vk/default_unexpected_handler.hpp"
+
 namespace vk {
 
 	template<typename... Args>
@@ -19,7 +21,7 @@ namespace vk {
 	template<typename... Args>
 	void reset_fence(Args&&... args) {
 		auto result = vk::try_reset_fence(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

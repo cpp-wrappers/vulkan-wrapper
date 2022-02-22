@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../headers.hpp"
-#include "../../access.hpp"
-#include "../../queue_family_index.hpp"
-#include "../../image/layout.hpp"
-#include "../../image/handle.hpp"
-#include "../../image/subresource_range.hpp"
+#include "vk/headers.hpp"
+#include "vk/access.hpp"
+#include "vk/queue_family_index.hpp"
+#include "vk/image/layout.hpp"
+#include "vk/image/handle.hpp"
+#include "vk/image/subresource_range.hpp"
 
 namespace vk {
 

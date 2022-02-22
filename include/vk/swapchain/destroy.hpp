@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../destroy_or_free.hpp"
-#include "../device_child_destroy_base.hpp"
-#include "../device/handle.hpp"
 #include "handle.hpp"
+
+#include "vk/destroy_or_free.hpp"
+#include "vk/device_child_destroy_base.hpp"
+#include "vk/device/handle.hpp"
 
 namespace vk {
 

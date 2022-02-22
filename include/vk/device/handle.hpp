@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../handle/base.hpp"
-#include "../handle/get_value.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
-#include "../create_or_allocate.hpp"
-#include "../headers.hpp"
-#include "../queue_family_index.hpp"
-#include "../result.hpp"
-#include "../memory_requirements.hpp"
-#include "../timeout.hpp"
-
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/meta/elements/one_of.hpp>
+
+#include "vk/handle/base.hpp"
+#include "vk/handle/get_value.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/create_or_allocate.hpp"
+#include "vk/headers.hpp"
+#include "vk/queue_family_index.hpp"
+#include "vk/result.hpp"
+#include "vk/memory_requirements.hpp"
+#include "vk/timeout.hpp"
 
 namespace vk {
 
@@ -112,25 +112,25 @@ namespace vk {
 
 } // vk
 
-#include "../command/pool/create.hpp"
-#include "../shader/module/create.hpp"
-#include "../framebuffer/create.hpp"
-#include "../image/create.hpp"
-#include "../image/view/create.hpp"
-#include "../pipeline/layout/create.hpp"
-#include "../pipeline/create.hpp"
-#include "../render_pass/create.hpp"
-#include "../semaphore/create.hpp"
-#include "../swapchain/create.hpp"
-#include "../buffer/create.hpp"
-#include "../buffer/view/create.hpp"
-#include "../fence/create.hpp"
-#include "../sampler/create.hpp"
-#include "../descriptor/set/layout/create.hpp"
-#include "../descriptor/pool/create.hpp"
 #include "memory/allocate.hpp"
+#include "vk/command/pool/create.hpp"
+#include "vk/shader/module/create.hpp"
+#include "vk/framebuffer/create.hpp"
+#include "vk/image/create.hpp"
+#include "vk/image/view/create.hpp"
+#include "vk/pipeline/layout/create.hpp"
+#include "vk/pipeline/create.hpp"
+#include "vk/render_pass/create.hpp"
+#include "vk/semaphore/create.hpp"
+#include "vk/swapchain/create.hpp"
+#include "vk/buffer/create.hpp"
+#include "vk/buffer/view/create.hpp"
+#include "vk/fence/create.hpp"
+#include "vk/sampler/create.hpp"
+#include "vk/descriptor/set/layout/create.hpp"
+#include "vk/descriptor/pool/create.hpp"
 
-#include "../queue/handle.hpp"
+#include "vk/queue/handle.hpp"
 
 inline vk::handle<vk::queue>
 vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
@@ -146,7 +146,7 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 	return { queue };
 }
 
-#include "../descriptor/set/update.hpp"
+#include "vk/descriptor/set/update.hpp"
 
 template<typename... Args>
 void vk::handle<vk::device>::update_descriptor_sets(Args&&... args) const {

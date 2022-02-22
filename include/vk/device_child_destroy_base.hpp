@@ -1,11 +1,11 @@
 #pragma once
 
+#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/decayed_same_as.hpp>
+
 #include "headers.hpp"
 #include "handle/possibly_guarded_handle_of.hpp"
 #include "handle/get_value.hpp"
-
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
-#include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 

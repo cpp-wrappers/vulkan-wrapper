@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../create_or_allocate.hpp"
-#include "../../device/handle.hpp"
 #include "allocate_info.hpp"
 #include "handle.hpp"
+
+#include "vk/create_or_allocate.hpp"
+#include "vk/device/handle.hpp"
 
 namespace vk {
 

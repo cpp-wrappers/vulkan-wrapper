@@ -1,7 +1,9 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../handle/get_value.hpp"
+
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/handle/get_value.hpp"
 
 namespace vk {
 
@@ -13,7 +15,7 @@ namespace vk {
 
 	void end_command_buffer(vk::possibly_guarded_handle_of<vk::command_buffer> auto& command_buffer) {
 		vk::result result = vk::try_end_command_buffer(command_buffer);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

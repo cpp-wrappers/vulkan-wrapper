@@ -4,6 +4,6 @@
 
 namespace vk {
 
-	struct count : wrapper::of_integer<uint32, struct vk_count> {};
+	struct count : wrapper::of_integer<uint32, struct count_t> {};
 
 }

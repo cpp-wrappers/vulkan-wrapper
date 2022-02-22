@@ -1,8 +1,6 @@
 #pragma once
 
 #include "attachment_reference.hpp"
-#include "../pipeline/bind_point.hpp"
-#include "../headers.hpp"
 
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
@@ -10,6 +8,9 @@
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/pipeline/bind_point.hpp"
 
 namespace vk {
 

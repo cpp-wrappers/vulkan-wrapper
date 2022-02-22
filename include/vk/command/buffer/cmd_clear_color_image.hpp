@@ -2,13 +2,14 @@
 
 #include "handle.hpp"
 #include "clear.hpp"
-#include "../../image/handle.hpp"
-#include "../../image/layout.hpp"
-#include "../../image/subresource_range.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/image/handle.hpp"
+#include "vk/image/layout.hpp"
+#include "vk/image/subresource_range.hpp"
 
 namespace vk {
 

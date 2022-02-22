@@ -1,11 +1,12 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../extent.hpp"
-#include "../../viewport.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/extent.hpp"
+#include "vk/viewport.hpp"
 
 namespace vk {
 

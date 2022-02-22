@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../handle/guarded/device_child_base.hpp"
-#include "../set/handle.hpp"
 #include "destroy.hpp"
+
+#include "vk/handle/guarded/device_child_base.hpp"
+#include "vk/descriptor/set/handle.hpp"
 
 namespace vk {
 
@@ -18,7 +19,7 @@ namespace vk {
 
 } // vk
 
-#include "../set/allocate.hpp"
+#include "vk/descriptor/set/allocate.hpp"
 
 template<typename... Args>
 vk::handle<vk::descriptor_set> vk::guarded_handle<vk::descriptor_pool>::allocate_descriptor_set(Args&&... args) {

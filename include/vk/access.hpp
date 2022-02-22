@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/flag_enum.hpp>
+
 #include "headers.hpp"
 
 namespace vk {

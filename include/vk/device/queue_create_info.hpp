@@ -1,15 +1,16 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../queue_family_index.hpp"
-
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
+#include "vk/headers.hpp"
+#include "vk/queue_family_index.hpp"
+
 namespace vk {
+
 	struct queue_count : wrapper::of_integer<uint32> {};
 	struct queue_priority : wrapper::of<float> {};
 	struct queue_priorities : wrapper::of_pointer_to<const queue_priority> {};
@@ -18,15 +19,13 @@ namespace vk {
 		рrotected
 	};
 
-	class queue_create_info {
+	struct queue_create_info {
 		const uint32 type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		const void* const next = nullptr;
 		flag_enum<queue_create_flag> flags;
 		vk::queue_family_index queue_family_index;
 		vk::queue_count queue_count;
 		vk::queue_priorities queue_priorities;
-
-	public:
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<

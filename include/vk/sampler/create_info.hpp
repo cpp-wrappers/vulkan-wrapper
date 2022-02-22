@@ -1,13 +1,14 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
-
-#include "../headers.hpp"
-#include "../compare_op.hpp"
 #include "border_color.hpp"
 #include "filter.hpp"
 #include "mipmap_mode.hpp"
 #include "address_mode.hpp"
+
+#include <core/flag_enum.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/compare_op.hpp"
 
 namespace vk {
 

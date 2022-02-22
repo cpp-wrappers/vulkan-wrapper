@@ -1,7 +1,8 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../device/handle.hpp"
+
+#include "vk/device/handle.hpp"
 
 namespace vk {
 
@@ -25,7 +26,7 @@ namespace vk {
 	template<typename... Args>
 	void reset_fences(Args&&... args) {
 		auto result = vk::try_reset_fences(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

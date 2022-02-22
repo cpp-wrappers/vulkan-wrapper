@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../memory_type.hpp"
-#include "../memory_heap.hpp"
+#include "vk/headers.hpp"
+#include "vk/memory_type.hpp"
+#include "vk/memory_heap.hpp"
 
 namespace vk {
 

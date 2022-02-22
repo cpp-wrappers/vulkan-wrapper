@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../handle/guarded/device_child_base.hpp"
 #include "destroy.hpp"
 #include "handle.hpp"
 #include "wait_for_fence.hpp"
 #include "reset_fence.hpp"
+
+#include "vk/handle/guarded/device_child_base.hpp"
 
 namespace vk {
 

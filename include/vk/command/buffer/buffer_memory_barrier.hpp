@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../../buffer/handle.hpp"
-#include "../../queue_family_index.hpp"
-#include "../../access.hpp"
-#include "../../memory_offset.hpp"
-#include "../../memory_size.hpp"
-#include "../../handle/get.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
-
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/buffer/handle.hpp"
+#include "vk/queue_family_index.hpp"
+#include "vk/access.hpp"
+#include "vk/memory_offset.hpp"
+#include "vk/memory_size.hpp"
+#include "vk/handle/get.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

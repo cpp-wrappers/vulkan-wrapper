@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../location.hpp"
-#include "../../binding.hpp"
-#include "../../offset.hpp"
-#include "../../format.hpp"
+#include "vk/location.hpp"
+#include "vk/binding.hpp"
+#include "vk/offset.hpp"
+#include "vk/format.hpp"
 
 namespace vk {
 

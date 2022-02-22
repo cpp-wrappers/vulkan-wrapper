@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../extent.hpp"
-
 #include <core/flag_enum.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/extent.hpp"
 
 namespace vk {
 

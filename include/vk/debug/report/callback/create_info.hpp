@@ -3,9 +3,10 @@
 #include <core/flag_enum.hpp>
 #include <core/c_string.hpp>
 
-#include "../flag.hpp"
-#include "../object_type.hpp"
-#include "../../../headers.hpp"
+#include "vk/headers.hpp"
+
+#include "vk/debug/report/flag.hpp"
+#include "vk/debug/report/object_type.hpp"
 
 namespace vk {
 

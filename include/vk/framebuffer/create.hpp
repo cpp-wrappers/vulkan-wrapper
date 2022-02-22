@@ -2,9 +2,10 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
-#include "../device/handle.hpp"
-#include "../create_or_allocate.hpp"
-#include "../extent.hpp"
+
+#include "vk/device/handle.hpp"
+#include "vk/create_or_allocate.hpp"
+#include "vk/extent.hpp"
 
 namespace vk {
 

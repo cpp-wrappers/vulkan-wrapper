@@ -1,10 +1,11 @@
 #pragma once
 
+#include "binding.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../../headers.hpp"
-#include "binding.hpp"
+#include "vk/headers.hpp"
 
 namespace vk {
 

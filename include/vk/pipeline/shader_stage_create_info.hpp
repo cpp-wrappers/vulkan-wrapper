@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../handle/get_value.hpp"
-#include "../shader/stage.hpp"
-#include "../shader/module/handle.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
-
 #include <core/flag_enum.hpp>
 #include <core/c_string.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/handle/get_value.hpp"
+#include "vk/shader/stage.hpp"
+#include "vk/shader/module/handle.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

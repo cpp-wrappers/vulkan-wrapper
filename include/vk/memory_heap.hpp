@@ -2,8 +2,8 @@
 
 #include <core/flag_enum.hpp>
 
-#include "device_size.hpp"
 #include "headers.hpp"
+#include "device_size.hpp"
 
 namespace vk {
 

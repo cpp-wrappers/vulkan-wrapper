@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../handle/declaration.hpp"
-#include "../pipeline/stage.hpp"
+#include "vk/headers.hpp"
+#include "vk/handle/declaration.hpp"
+#include "vk/pipeline/stage.hpp"
 
 namespace vk {
 

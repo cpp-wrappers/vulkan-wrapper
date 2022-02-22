@@ -2,12 +2,14 @@
 
 #include "handle.hpp"
 #include "begin_info.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
-#include "../../handle/get_value.hpp"
-#include "../../result.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/handle/get_value.hpp"
+#include "vk/result.hpp"
+#include "vk/default_unexpected_handler.hpp"
 
 namespace vk {
 
@@ -89,7 +91,7 @@ namespace vk {
 	template<typename... Args>
 	void begin_command_buffer(Args&&... args) {
 		vk::result result = vk::try_begin_command_buffer(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

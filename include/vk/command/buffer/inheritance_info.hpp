@@ -1,14 +1,15 @@
 #pragma once
 
+#include "query_control.hpp"
+#include "query_pipeline_statistic.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-#include "../../subpass.hpp"
-#include "../../render_pass/handle.hpp"
-#include "../../framebuffer/handle.hpp"
-#include "query_control.hpp"
-#include "query_pipeline_statistic.hpp"
+#include "vk/headers.hpp"
+#include "vk/subpass.hpp"
+#include "vk/render_pass/handle.hpp"
+#include "vk/framebuffer/handle.hpp"
 
 namespace vk {
 

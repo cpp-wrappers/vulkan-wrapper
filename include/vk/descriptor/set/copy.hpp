@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../../headers.hpp"
-#include "../binding.hpp"
-#include "../array_element.hpp"
-#include "../count.hpp"
 #include "handle.hpp"
+
+#include "vk/headers.hpp"
+#include "vk/descriptor/binding.hpp"
+#include "vk/descriptor/array_element.hpp"
+#include "vk/descriptor/count.hpp"
 
 namespace vk {
 

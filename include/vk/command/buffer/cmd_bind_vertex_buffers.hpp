@@ -1,14 +1,15 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../buffer/handle.hpp"
-#include "../../first_binding.hpp"
-#include "../../memory_offset.hpp"
-#include "../../headers.hpp"
-#include "../../handle/get_value.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/buffer/handle.hpp"
+#include "vk/first_binding.hpp"
+#include "vk/memory_offset.hpp"
+#include "vk/headers.hpp"
+#include "vk/handle/get_value.hpp"
 
 namespace vk {
 

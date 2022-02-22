@@ -2,8 +2,8 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../shader/stage.hpp"
+#include "vk/headers.hpp"
+#include "vk/shader/stage.hpp"
 
 namespace vk {
 

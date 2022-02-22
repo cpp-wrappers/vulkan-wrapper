@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/wrapper/of.hpp>
+
 #include "headers.hpp"
 
 namespace vk {
@@ -24,4 +26,10 @@ namespace vk {
 		src1_alpha = VK_BLEND_FACTOR_SRC1_ALPHA,
 		one_minus_src1_alpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA,
 	};
+
+	struct src_color_blend_factor : wrapper::of<vk::blend_factor, struct src_color_blend_factor_t>{};
+	struct dst_color_blend_factor : wrapper::of<vk::blend_factor, struct dst_color_blend_factor_t>{};
+
+	struct src_alpha_blend_factor : wrapper::of<vk::blend_factor, struct src_alpha_blend_factor_t>{};
+	struct dst_alpha_blend_factor : wrapper::of<vk::blend_factor, struct dst_alpha_blend_factor_t>{};
 }

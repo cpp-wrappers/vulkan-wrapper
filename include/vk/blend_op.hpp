@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/wrapper/of.hpp>
+
 #include "headers.hpp"
 
 namespace vk {
@@ -57,4 +59,8 @@ namespace vk {
 		green_ext = VK_BLEND_OP_GREEN_EXT,
 		blue_ext = VK_BLEND_OP_BLUE_EXT,
 	};
-}
+
+	struct color_blend_op : wrapper::of<vk::blend_op, struct color_blend_op>{};
+	struct alpha_blend_op : wrapper::of<vk::blend_op, struct alpha_blend_op>{};
+
+} // vk

@@ -3,26 +3,27 @@
 #include "properties.hpp"
 #include "memory_properties.hpp"
 #include "queue_family_properties.hpp"
-#include "../surface/capabilities.hpp"
-#include "../surface/present_mode.hpp"
-#include "../surface/format.hpp"
-#include "../surface/handle.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
-#include "../handle/base.hpp"
-#include "../handle/guarded/declaration.hpp"
-#include "../handle/get_value.hpp"
-#include "../result.hpp"
-#include "../queue_family_index.hpp"
-#include "../count.hpp"
-#include "../extension_name.hpp"
-#include "../extension_properties.hpp"
-#include "../memory_type_index.hpp"
 
 #include <core/forward.hpp>
 #include <core/span.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/meta/elements/one_of.hpp>
 
+#include "vk/surface/capabilities.hpp"
+#include "vk/surface/present_mode.hpp"
+#include "vk/surface/format.hpp"
+#include "vk/surface/handle.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/handle/base.hpp"
+#include "vk/handle/guarded/declaration.hpp"
+#include "vk/handle/get_value.hpp"
+#include "vk/result.hpp"
+#include "vk/queue_family_index.hpp"
+#include "vk/count.hpp"
+#include "vk/extension_name.hpp"
+#include "vk/extension_properties.hpp"
+#include "vk/memory_type_index.hpp"
+#include "vk/default_unexpected_handler.hpp"
 
 namespace vk {
 
@@ -73,7 +74,7 @@ namespace vk {
 				}
 			}
 
-			default_unexpected_handler();
+			vk::default_unexpected_handler();
 		}
 
 		vk::count get_queue_family_properties(range::of_value_type<vk::queue_family_properties> auto&& range) const {

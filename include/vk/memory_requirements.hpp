@@ -1,7 +1,7 @@
 #pragma once
 
-#include "device_size.hpp"
 #include "headers.hpp"
+#include "device_size.hpp"
 #include "memory_type_index.hpp"
 #include "memory_size.hpp"
 

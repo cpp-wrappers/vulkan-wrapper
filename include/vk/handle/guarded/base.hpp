@@ -1,9 +1,10 @@
 #pragma once
 
 #include "declaration.hpp"
-#include "../../create_or_allocate.hpp"
-#include "../../destroy_or_free.hpp"
-#include "../../handle/base.hpp"
+
+#include "vk/create_or_allocate.hpp"
+#include "vk/destroy_or_free.hpp"
+#include "vk/handle/base.hpp"
 
 namespace vk {
 

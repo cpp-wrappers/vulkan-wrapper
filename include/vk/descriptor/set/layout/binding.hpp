@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../../count.hpp"
-#include "../../type.hpp"
-#include "../../binding.hpp"
-#include "../../../shader/stage.hpp"
-#include "../../../headers.hpp"
-
 #include <core/flag_enum.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/shader/stage.hpp"
+#include "vk/descriptor/count.hpp"
+#include "vk/descriptor/type.hpp"
+#include "vk/descriptor/binding.hpp"
 
 namespace vk {
 

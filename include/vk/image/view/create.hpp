@@ -2,12 +2,13 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
-#include "../component_mapping.hpp"
-#include "../subresource_range.hpp"
-#include "../../create_or_allocate.hpp"
-#include "../../handle/get_value.hpp"
-#include "../../result.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
+
+#include "vk/create_or_allocate.hpp"
+#include "vk/handle/get_value.hpp"
+#include "vk/result.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/image/component_mapping.hpp"
+#include "vk/image/subresource_range.hpp"
 
 namespace vk {
 

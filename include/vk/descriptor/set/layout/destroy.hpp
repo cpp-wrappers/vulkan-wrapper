@@ -1,11 +1,12 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../../device/handle.hpp"
-#include "../../../destroy_or_free.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/destroy_or_free.hpp"
 
 namespace vk {
 

@@ -1,10 +1,5 @@
 #pragma once
 
-#include "../layer_properties.hpp"
-#include "../result.hpp"
-#include "../count.hpp"
-#include "../layer_name.hpp"
-
 #include <core/span.hpp>
 #include <core/array.hpp>
 #include <core/range/of_value_type.hpp>
@@ -16,6 +11,11 @@
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
+
+#include "vk/layer_properties.hpp"
+#include "vk/result.hpp"
+#include "vk/count.hpp"
+#include "vk/layer_name.hpp"
 
 namespace vk {
 

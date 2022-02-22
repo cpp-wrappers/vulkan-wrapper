@@ -3,13 +3,14 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 #include "layout/handle.hpp"
-#include "../device/handle.hpp"
-#include "../subpass.hpp"
-#include "../create_or_allocate.hpp"
-#include "../handle/possibly_guarded_handle_of.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/subpass.hpp"
+#include "vk/create_or_allocate.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 

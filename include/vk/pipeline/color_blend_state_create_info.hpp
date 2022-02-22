@@ -1,14 +1,15 @@
 #pragma once
 
 #include "color_blend_attachment_state.hpp"
-#include "../headers.hpp"
-#include "../logic_op.hpp"
 
 #include <core/wrapper/of.hpp>
 #include <core/array.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/logic_op.hpp"
 
 namespace vk {
 

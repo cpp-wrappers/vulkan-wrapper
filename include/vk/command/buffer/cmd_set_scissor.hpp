@@ -1,9 +1,10 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../rect2d.hpp"
 
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/rect2d.hpp"
 
 namespace vk {
 

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "clear.hpp"
+
 #include <core/integer.hpp>
 
-#include "../../headers.hpp"
-#include "../../rect2d.hpp"
-#include "../../render_pass/handle.hpp"
-#include "../../framebuffer/handle.hpp"
-#include "clear.hpp"
+#include "vk/headers.hpp"
+#include "vk/rect2d.hpp"
+#include "vk/render_pass/handle.hpp"
+#include "vk/framebuffer/handle.hpp"
 
 namespace vk {
 

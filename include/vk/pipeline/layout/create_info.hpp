@@ -2,9 +2,9 @@
 
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-#include "../../descriptor/set/layout/handle.hpp"
-#include "../push_constant_range.hpp"
+#include "vk/headers.hpp"
+#include "vk/descriptor/set/layout/handle.hpp"
+#include "vk/pipeline/push_constant_range.hpp"
 
 namespace vk {
 

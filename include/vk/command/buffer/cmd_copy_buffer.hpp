@@ -1,14 +1,15 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../../memory_size.hpp"
-#include "../../memory_offset.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
-#include "../../buffer/handle.hpp"
 
 #include <core/wrapper/of.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/memory_size.hpp"
+#include "vk/memory_offset.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include "vk/buffer/handle.hpp"
 
 namespace vk {
 

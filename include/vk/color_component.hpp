@@ -1,5 +1,7 @@
 #pragma once
 
+#include <core/flag_enum.hpp>
+
 #include "headers.hpp"
 
 namespace vk {
@@ -9,4 +11,7 @@ namespace vk {
 		b = VK_COLOR_COMPONENT_B_BIT,
 		a = VK_COLOR_COMPONENT_A_BIT
 	};
-}
+
+	using color_components = flag_enum<vk::color_component>;
+
+} // vk

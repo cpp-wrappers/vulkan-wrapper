@@ -5,8 +5,8 @@
 #include <core/wrapper/of_pointer_to.hpp>
 #include <core/wrapper/of_integer.hpp>
 
-#include "../headers.hpp"
-#include "../render_pass/handle.hpp"
+#include "vk/headers.hpp"
+#include "vk/render_pass/handle.hpp"
 
 namespace vk {
 

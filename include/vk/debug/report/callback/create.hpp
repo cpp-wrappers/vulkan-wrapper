@@ -2,10 +2,12 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
-#include "../../../instance/handle.hpp"
-#include "../../../create_or_allocate.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
+
+#include "vk/instance/handle.hpp"
+#include "vk/create_or_allocate.hpp"
+#include "vk/default_unexpected_handler.hpp"
 
 namespace vk {
 
@@ -36,7 +38,7 @@ namespace vk {
 				"vkCreateDebugReportCallbackEXT"
 			);
 
-			if(fn == nullptr) default_unexpected_handler();
+			if(fn == nullptr) vk::default_unexpected_handler();
 
 			vk::result result {
 				(int32) fn(

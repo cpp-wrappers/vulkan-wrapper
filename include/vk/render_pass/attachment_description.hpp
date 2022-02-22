@@ -2,15 +2,17 @@
 
 #include "attachment_load_op.hpp"
 #include "attachment_store_op.hpp"
-#include "../image/layout.hpp"
-#include "../headers.hpp"
-#include "../sample_count.hpp"
-#include "../format.hpp"
 
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/image/layout.hpp"
+#include "vk/headers.hpp"
+#include "vk/sample_count.hpp"
+#include "vk/format.hpp"
+
 
 namespace vk {
 

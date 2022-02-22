@@ -1,18 +1,19 @@
 #pragma once
 
 #include "handle.hpp"
-#include "../binding.hpp"
-#include "../type.hpp"
-#include "../image_info.hpp"
-#include "../buffer_info.hpp"
-#include "../array_element.hpp"
-#include "../../buffer/view/handle.hpp"
-#include "../../handle/get.hpp"
-#include "../../headers.hpp"
-#include "../../count.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
+
+#include "vk/buffer/view/handle.hpp"
+#include "vk/handle/get.hpp"
+#include "vk/headers.hpp"
+#include "vk/count.hpp"
+#include "vk/descriptor/binding.hpp"
+#include "vk/descriptor/type.hpp"
+#include "vk/descriptor/image_info.hpp"
+#include "vk/descriptor/buffer_info.hpp"
+#include "vk/descriptor/array_element.hpp"
 
 namespace vk {
 

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "size.hpp"
+
 #include <core/wrapper/of_integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-#include "size.hpp"
+#include "vk/headers.hpp"
 
 namespace vk {
 

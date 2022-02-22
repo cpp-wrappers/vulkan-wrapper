@@ -1,12 +1,13 @@
 #pragma once
 
 #include "mapped_range.hpp"
-#include "../handle.hpp"
-#include "../../headers.hpp"
-#include "../../result.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/headers.hpp"
+#include "vk/result.hpp"
 
 namespace vk {
 
@@ -31,7 +32,7 @@ namespace vk {
 	template<typename... Args>
 	void flush_mapped_device_memory_ranges(Args&&... args) {
 		vk::result result = vk::try_flush_mapped_device_memory_ranges(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

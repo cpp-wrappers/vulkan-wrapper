@@ -1,11 +1,12 @@
 #pragma once
 
 #include "queue_create_info.hpp"
-#include "../physical_device/features.hpp"
-#include "../headers.hpp"
-#include "../extension_name.hpp"
 
 #include <core/c_string.hpp>
+
+#include "vk/physical_device/features.hpp"
+#include "vk/headers.hpp"
+#include "vk/extension_name.hpp"
 
 namespace vk {
 

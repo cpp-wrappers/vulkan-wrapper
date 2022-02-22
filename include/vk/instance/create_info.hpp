@@ -1,9 +1,10 @@
 #pragma once
 
 #include "application_info.hpp"
-#include "../extension_name.hpp"
-#include "../headers.hpp"
-#include "../layer_name.hpp"
+
+#include "vk/extension_name.hpp"
+#include "vk/headers.hpp"
+#include "vk/layer_name.hpp"
 
 namespace vk {
 	

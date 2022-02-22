@@ -1,10 +1,5 @@
 #pragma once
 
-#include "../extension_properties.hpp"
-#include "../result.hpp"
-#include "../count.hpp"
-#include "../extension_name.hpp"
-
 #include <core/span.hpp>
 #include <core/range/of_value_type.hpp>
 #include <core/range/contains.hpp>
@@ -14,6 +9,11 @@
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>
+
+#include "vk/extension_properties.hpp"
+#include "vk/result.hpp"
+#include "vk/count.hpp"
+#include "vk/extension_name.hpp"
 
 namespace vk {
 

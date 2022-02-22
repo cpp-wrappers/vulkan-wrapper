@@ -1,17 +1,18 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
-
-#include "../headers.hpp"
-#include "../extent.hpp"
-#include "../sample_count.hpp"
-#include "../sharing_mode.hpp"
-#include "../queue_family_index.hpp"
-#include "../format.hpp"
 #include "tiling.hpp"
 #include "usage.hpp"
 #include "layout.hpp"
+
+#include <core/integer.hpp>
+#include <core/flag_enum.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/extent.hpp"
+#include "vk/sample_count.hpp"
+#include "vk/sharing_mode.hpp"
+#include "vk/queue_family_index.hpp"
+#include "vk/format.hpp"
 
 namespace vk {
 

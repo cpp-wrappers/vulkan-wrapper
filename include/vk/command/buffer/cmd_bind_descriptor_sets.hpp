@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../descriptor/set/handle.hpp"
-
 #include <core/wrapper/of_integer.hpp>
+
+#include "vk/descriptor/set/handle.hpp"
 
 namespace vk {
 
@@ -12,10 +12,11 @@ namespace vk {
 }
 
 #include "handle.hpp"
-#include "../../pipeline/bind_point.hpp"
-#include "../../pipeline/layout/handle.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
+
+#include "vk/pipeline/bind_point.hpp"
+#include "vk/pipeline/layout/handle.hpp"
 
 namespace vk {
 

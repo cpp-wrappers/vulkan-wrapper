@@ -1,10 +1,11 @@
 #pragma once
 
-#include <core/exchange.hpp>
-
-#include "../handle/guarded/instance_child_base.hpp"
 #include "handle.hpp"
 #include "destroy.hpp"
+
+#include <core/exchange.hpp>
+
+#include "vk/handle/guarded/instance_child_base.hpp"
 
 namespace vk {
 	struct instance;

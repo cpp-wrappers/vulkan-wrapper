@@ -3,8 +3,8 @@
 #include <core/integer.hpp>
 #include <core/range/of_value_type.hpp>
 
-#include "../headers.hpp"
-#include "../dynamic_state.hpp"
+#include "vk/headers.hpp"
+#include "vk/dynamic_state.hpp"
 
 namespace vk {
 	struct pipeline_dynamic_state_create_info {

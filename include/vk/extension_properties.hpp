@@ -1,7 +1,8 @@
 #pragma once
 
-#include "headers.hpp"
 #include <core/integer.hpp>
+
+#include "headers.hpp"
 
 namespace vk {
 

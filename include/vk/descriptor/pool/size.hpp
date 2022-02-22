@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../type.hpp"
-#include "../count.hpp"
-
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 #include <core/meta/elements/satisfying_predicate.hpp>
+
+#include "vk/descriptor/type.hpp"
+#include "vk/descriptor/count.hpp"
 
 namespace vk {
 

@@ -2,8 +2,8 @@
 
 namespace vk {
 
-enum class sharing_mode {
-	exclusive, concurrent
-};
+	enum class sharing_mode {
+		exclusive, concurrent
+	};
 
 } // vk

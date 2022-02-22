@@ -2,13 +2,14 @@
 
 #include "handle.hpp"
 #include "buffer_image_copy.hpp"
-#include "../../buffer/handle.hpp"
-#include "../../image/handle.hpp"
-#include "../../image/layout.hpp"
 
 #include <core/range/of_value_type.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/buffer/handle.hpp"
+#include "vk/image/handle.hpp"
+#include "vk/image/layout.hpp"
 
 namespace vk {
 

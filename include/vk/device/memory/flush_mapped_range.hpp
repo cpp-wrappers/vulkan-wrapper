@@ -2,6 +2,8 @@
 
 #include "flush_mapped_ranges.hpp"
 
+#include "vk/default_unexpected_handler.hpp"
+
 namespace vk {
 
 	template<typename... Args>
@@ -36,7 +38,7 @@ namespace vk {
 	template<typename... Args>
 	void flush_mapped_device_memory_range(Args&&... args) {
 		vk::result result = vk::try_flush_mapped_device_memory_range(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler(result);
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 } // vk

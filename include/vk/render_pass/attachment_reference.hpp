@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../image/layout.hpp"
 #include <core/integer.hpp>
+
+#include "vk/image/layout.hpp"
 
 namespace vk {
 

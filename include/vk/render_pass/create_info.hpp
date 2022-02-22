@@ -1,11 +1,12 @@
 #pragma once
 
-#include <core/integer.hpp>
-
-#include "../headers.hpp"
 #include "attachment_description.hpp"
 #include "subpass_description.hpp"
 #include "subpass_dependency.hpp"
+
+#include <core/integer.hpp>
+
+#include "vk/headers.hpp"
 
 namespace vk {
 

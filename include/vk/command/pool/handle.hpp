@@ -2,9 +2,9 @@
 
 #include <core/range/of_value_type.hpp>
 
-#include "../../handle/base.hpp"
-#include "../../result.hpp"
-#include "../buffer/level.hpp"
+#include "vk/handle/base.hpp"
+#include "vk/result.hpp"
+#include "vk/command/buffer/level.hpp"
 
 namespace vk {
 

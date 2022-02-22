@@ -2,10 +2,11 @@
 
 #include "handle.hpp"
 #include "allocate_info.hpp"
-#include "../../device/handle.hpp"
-#include "../../create_or_allocate.hpp"
 
 #include <core/span.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/create_or_allocate.hpp"
 
 namespace vk {
 
@@ -39,7 +40,7 @@ namespace vk {
 	template<typename... Args>
 	void allocate_command_buffers(Args&&... args) {
 		vk::result result = vk::try_allocate_command_buffers(forward<Args>(args)...);
-		if(result.error()) default_unexpected_handler();
+		if(result.error()) vk::default_unexpected_handler(result);
 	}
 
 	template<>

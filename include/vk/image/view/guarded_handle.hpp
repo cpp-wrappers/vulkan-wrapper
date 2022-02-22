@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../handle/guarded/device_child_base.hpp"
 #include "handle.hpp"
 #include "destroy.hpp"
+
+#include "vk/handle/guarded/device_child_base.hpp"
 
 namespace vk {
 

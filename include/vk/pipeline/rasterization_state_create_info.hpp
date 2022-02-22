@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../headers.hpp"
-#include "../polygon_mode.hpp"
-#include "../cull_mode.hpp"
-#include "../front_face.hpp"
-
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+
+#include "vk/headers.hpp"
+#include "vk/polygon_mode.hpp"
+#include "vk/cull_mode.hpp"
+#include "vk/front_face.hpp"
 
 namespace vk {
 

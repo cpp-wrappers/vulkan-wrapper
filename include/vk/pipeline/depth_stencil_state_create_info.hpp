@@ -2,9 +2,9 @@
 
 #include <core/integer.hpp>
 
-#include "../headers.hpp"
-#include "../compare_op.hpp"
-#include "../stencil_op_state.hpp"
+#include "vk/headers.hpp"
+#include "vk/compare_op.hpp"
+#include "vk/stencil_op_state.hpp"
 
 namespace vk {
 
@@ -22,6 +22,7 @@ namespace vk {
 		float min_depth_bounds;
 		float max_depth_bounds;
 	};
-}
+
+} // vk
 
 static_assert(sizeof(vk::pipeline_depth_stencil_state_create_info) == sizeof(VkPipelineDepthStencilStateCreateInfo));
