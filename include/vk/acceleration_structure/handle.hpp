@@ -7,7 +7,7 @@ namespace vk {
 	struct acceleration_structure;
 
 	template<>
-	struct vk::handle<vk::acceleration_structure> : vk::handle_base<vk::dispatchable> {
+	struct vk::handle<vk::acceleration_structure> : vk::handle_base<vk::non_dispatchable> {
 	};
 
 }

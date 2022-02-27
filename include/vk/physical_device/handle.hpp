@@ -226,11 +226,20 @@ namespace vk {
 		}
 
 		vk::expected<vk::surface_format>
-		get_first_surface_format(vk::possibly_guarded_handle_of<vk::surface> auto& surface) const {
+		try_get_first_surface_format(vk::possibly_guarded_handle_of<vk::surface> auto& surface) const {
 			vk::surface_format surface_format;
 			vk::expected<vk::count> result = get_surface_formats(surface, span{ &surface_format, 1 });
 			if(result.is_unexpected()) return result.get_unexpected();
 			return surface_format;
+		}
+
+		vk::surface_format
+		get_first_surface_format(vk::possibly_guarded_handle_of<vk::surface> auto& surface) const {
+			auto result = try_get_first_surface_format(surface);
+			if(result.is_unexpected()) {
+				vk::default_unexpected_handler(result.get_unexpected());
+			}
+			return result.get_expected();
 		}
 
 		vk::expected<vk::count>
