@@ -10,4 +10,4 @@ namespace vk {
 	struct vk::handle<vk::acceleration_structure> : vk::handle_base<vk::non_dispatchable> {
 	};
 
-}
+} // vk

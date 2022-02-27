@@ -34,6 +34,7 @@ namespace vk {
 	struct fence;
 	struct image;
 	struct deferred_operation;
+	struct acceleration_structure;
 
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
@@ -131,6 +132,7 @@ namespace vk {
 #include "vk/descriptor/set/layout/create.hpp"
 #include "vk/descriptor/pool/create.hpp"
 #include "vk/deferred_operation/create.hpp"
+#include "vk/acceleration_structure/create.hpp"
 
 #include "vk/queue/handle.hpp"
 
