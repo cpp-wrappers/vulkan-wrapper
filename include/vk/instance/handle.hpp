@@ -89,7 +89,11 @@ namespace vk {
 
 		template<typename ObjectType, typename... Args>
 		vk::handle<ObjectType> create(Args&&... args) const {
-			return (vk::handle<ObjectType>) vk::create<ObjectType>(*this, forward<Args>(args)...);
+			auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
+			if(result.is_unexpected()) {
+				vk::default_unexpected_handler(result.get_unexpected());
+			}
+			return result.get_expected();
 		}
 	}; // instance
 

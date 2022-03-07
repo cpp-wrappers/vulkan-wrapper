@@ -89,7 +89,7 @@ namespace vk {
 		vk::view_instance_extension_properties([&](span<vk::extension_properties> props) {
 			supported =
 				range::contains(name)(
-					range::transform(props)([](vk::extension_properties& extension_props) {
+					range::transform(props)([](auto& extension_props) {
 						return vk::extension_name{ extension_props.name };
 					})
 				);

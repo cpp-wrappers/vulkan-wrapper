@@ -90,7 +90,7 @@ namespace vk {
 		vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
 			supported =
 				range::contains(name)(
-					range::transform(props)([](vk::layer_properties& layer_props) {
+					range::transform(props)([](auto& layer_props) {
 						return vk::layer_name{ layer_props.name };
 					})
 				);

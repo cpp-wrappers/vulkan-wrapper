@@ -40,14 +40,8 @@ namespace vk {
 		template<typename... Args>
 		vk::guarded_handle<vk::device> create_guarded_device(Args&&... args) const;
 
-		vk::physical_device_properties get_properties() const {
-			vk::physical_device_properties props;
-			vkGetPhysicalDeviceProperties(
-				(VkPhysicalDevice) vk::get_handle_value(*this),
-				(VkPhysicalDeviceProperties*) &props
-			);
-			return props;
-		}
+		template<typename... Args>
+		vk::physical_device_properties get_properties(Args&&... args) const;
 
 		vk::physical_device_memory_properties get_memory_properties() const {
 			vk::physical_device_memory_properties props;
@@ -349,6 +343,8 @@ namespace vk {
 	};
 
 } // vk
+
+#include "get_properties.hpp"
 
 #include "../device/create.hpp"
 
