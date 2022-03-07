@@ -60,13 +60,22 @@ namespace vk {
 		}
 
 		vk::expected<vk::handle<vk::physical_device>>
-		get_first_physical_device() const {
+		try_get_first_physical_device() const {
 			vk::handle<vk::physical_device> physical_device;
 			auto result = enumerate_physical_devices(span{ &physical_device, 1 });
 			if(result.is_unexpected()) {
 				return result.get_unexpected();
 			}
 			return physical_device;
+		}
+
+		vk::handle<vk::physical_device>
+		get_first_physical_device() const {
+			auto result = try_get_first_physical_device();
+			if(result.is_unexpected()) {
+				vk::default_unexpected_handler(result.get_unexpected());
+			}
+			return result.get_expected();
 		}
 
 		vk::expected<vk::count>

@@ -18,12 +18,12 @@ namespace vk {
 
 	struct application_info {
 		const uint32 m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		const void* const next;
-		vk::application_name app_name;
-		vk::application_version app_version;
-		vk::engine_name engine_name;
-		vk::engine_version engine_version;
-		vk::api_version api_version;
+		const void* const next{};
+		vk::application_name app_name{};
+		vk::application_version app_version{};
+		vk::engine_name engine_name{};
+		vk::engine_version engine_version{};
+		vk::api_version api_version{};
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
@@ -34,16 +34,16 @@ namespace vk {
 			types::are_contain_one_decayed_same_as<vk::api_version>
 		>::for_types<Args...>
 		application_info(Args... args)
-			: api_version{ elements::decayed_same_as<vk::api_version&>(args...) }
+			: api_version{ elements::decayed_same_as<vk::api_version>(args...) }
 		{
 			if constexpr(types::are_contain_decayed_same_as<vk::application_name>::for_types<Args...>)
-				app_name = elements::decayed_same_as<vk::application_name&>(args...);
+				app_name = elements::decayed_same_as<vk::application_name>(args...);
 			if constexpr(types::are_contain_decayed_same_as<vk::application_version>::for_types<Args...>)
-				app_version = elements::decayed_same_as<vk::application_version&>(args...);
+				app_version = elements::decayed_same_as<vk::application_version>(args...);
 			if constexpr(types::are_contain_decayed_same_as<vk::engine_name>::for_types<Args...>)
-				engine_name = elements::decayed_same_as<vk::engine_name&>(args...);
+				engine_name = elements::decayed_same_as<vk::engine_name>(args...);
 			if constexpr(types::are_contain_decayed_same_as<vk::engine_version>::for_types<Args...>)
-				engine_version = elements::decayed_same_as<vk::engine_version&>(args...);
+				engine_version = elements::decayed_same_as<vk::engine_version>(args...);
 		}
 	};
 
