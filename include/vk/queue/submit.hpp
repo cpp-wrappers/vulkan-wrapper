@@ -15,7 +15,7 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_ranges_of<vk::submit_info>::equals<1>,
+		types::are_contain_one_range_of<vk::submit_info>,
 		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {

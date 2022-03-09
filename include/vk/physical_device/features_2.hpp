@@ -7,7 +7,7 @@ namespace vk {
 
 	struct physical_device_features_2 {
 		const uint32 __type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-		void* next;
+		const void* next;
 		vk::physical_device_features features;
 	};
 

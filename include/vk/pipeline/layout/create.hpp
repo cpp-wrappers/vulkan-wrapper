@@ -14,8 +14,8 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_ranges_of<vk::handle<vk::descriptor_set_layout>>::less_or_equals<1>,
-			types::count_of_ranges_of<vk::push_constant_range>::less_or_equals<1>
+			types::are_may_contain_one_range_of<vk::handle<vk::descriptor_set_layout>>,
+			types::are_may_contain_one_range_of<vk::push_constant_range>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::pipeline_layout>>
 		operator () (Args&&... args) const {

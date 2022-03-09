@@ -35,7 +35,7 @@ namespace vk {
 
 		auto physical_device = elements::decayed<vk::handle<vk::physical_device>>(args...);
 
-		void** next = &props.next;
+		const void** next = &props.next;
 
 		elements::for_each_satisfying_type_predicate<vk::is_extension_properties_reference>(args...)(
 			[&](auto& extension_properties) {

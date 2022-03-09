@@ -2,13 +2,15 @@
 
 #include "handle.hpp"
 #include "allocate_info.hpp"
-#include "../handle.hpp"
-#include "../../create_or_allocate.hpp"
-#include "../../handle/possibly_guarded_handle_of.hpp"
+#include "allocate_flags_info.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 #include <core/meta/types/are_contain_satisfying_predicate.hpp>
+
+#include "vk/device/handle.hpp"
+#include "vk/create_or_allocate.hpp"
+#include "vk/handle/possibly_guarded_handle_of.hpp"
 
 namespace vk {
 
@@ -19,7 +21,8 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_decayed<vk::memory_size>,
-			types::are_contain_one_decayed<vk::memory_type_index>
+			types::are_contain_one_decayed<vk::memory_type_index>,
+			types::are_may_contain_decayed<vk::memory_allocate_flags_info>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::device_memory>>
 		operator () (Args&&... args) const {
@@ -27,6 +30,10 @@ namespace vk {
 				.size = elements::decayed<vk::memory_size>(args...),
 				.memory_type_index = elements::decayed<vk::memory_type_index>(args...),
 			};
+
+			if constexpr (types::are_contain_decayed<vk::memory_allocate_flags_info>::for_types<Args...>) {
+				ai.next = &elements::decayed<vk::memory_allocate_flags_info>(args...);
+			}
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 

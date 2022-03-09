@@ -33,10 +33,10 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::count_of_ranges_of<vk::wait_semaphore>::equals<1>,
-		types::count_of_ranges_of<vk::handle<vk::swapchain>>::equals<1>,
-		types::count_of_ranges_of<vk::image_index>::equals<1>,
-		types::count_of_ranges_of<vk::result>::less_or_equals<1>
+		types::are_contain_one_range_of<vk::wait_semaphore>,
+		types::are_contain_one_range_of<vk::handle<vk::swapchain>>,
+		types::are_contain_one_range_of<vk::image_index>,
+		types::are_may_contain_one_range_of<vk::result>
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);

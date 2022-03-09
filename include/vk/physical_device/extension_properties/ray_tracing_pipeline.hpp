@@ -7,7 +7,7 @@ namespace vk {
 
 	struct physical_device_ray_tracing_pipeline_properties : vk::extension_properties_marker {
 		const uint32 __type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
-		void* next;
+		const void* next;
 		uint32 shader_group_handle_size;
 		uint32 max_ray_recursion_depth;
 		uint32 max_shader_group_stride;

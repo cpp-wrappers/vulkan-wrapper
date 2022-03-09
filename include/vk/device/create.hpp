@@ -57,7 +57,7 @@ namespace vk {
 					features_2.features = elements::decayed_satisfying_predicate<vk::is_physical_device_features>(args...);
 				}
 
-				void** next = &features_2.next;
+				const void** next = &features_2.next;
 
 				elements::for_each_decayed_satisfying_predicate<vk::is_physical_device_features>(args...)([&](auto& features){
 					*next = &features;

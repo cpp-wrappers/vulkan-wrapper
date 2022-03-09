@@ -15,9 +15,9 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::count_of_ranges_of<vk::subpass_description>::equals<1>,
-			types::count_of_ranges_of<vk::subpass_dependency>::less_or_equals<1>,
-			types::count_of_ranges_of<vk::attachment_description>::less_or_equals<1>
+			types::are_contain_one_range_of<vk::subpass_description>,
+			types::are_may_contain_one_range_of<vk::subpass_dependency>,
+			types::are_may_contain_one_range_of<vk::attachment_description>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::render_pass>>
 		operator () (Args&&... args) const {

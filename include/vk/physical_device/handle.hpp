@@ -340,11 +340,15 @@ namespace vk {
 			return { (bool)supports };
 		}
 
+		template<typename... Args>
+		void get_features(Args&&... args) const;
+
 	};
 
 } // vk
 
 #include "get_properties.hpp"
+#include "get_features.hpp"
 
 #include "vk/device/create.hpp"
 

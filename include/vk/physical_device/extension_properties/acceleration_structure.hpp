@@ -7,7 +7,7 @@ namespace vk {
 
 	struct physical_device_acceleration_structure_properties : vk::extension_properties_marker {
 		const uint32 __type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR;
-		void* next;
+		const void* next;
 		uint64 max_geometry_count;
 		uint64 max_instance_count;
 		uint64 max_primitive_count;

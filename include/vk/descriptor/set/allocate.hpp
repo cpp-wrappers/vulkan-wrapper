@@ -15,8 +15,8 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
-		types::count_of_ranges_of<vk::handle<vk::descriptor_set_layout>>::equals<1>,
-		types::count_of_ranges_of<vk::handle<vk::descriptor_set>>::equals<1>
+		types::are_contain_one_range_of<vk::handle<vk::descriptor_set_layout>>,
+		types::are_contain_one_range_of<vk::handle<vk::descriptor_set>>
 	>::for_types<Args...>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
 		auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>(args...);

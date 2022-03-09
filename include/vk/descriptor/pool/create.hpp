@@ -20,7 +20,7 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::descriptor_pool_create_flags>,
 			types::are_contain_one_decayed<vk::max_sets>,
-			types::count_of_ranges_of<vk::descriptor_pool_size>::equals<1>
+			types::are_contain_one_range_of<vk::descriptor_pool_size>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::descriptor_pool>>
 		operator () (Args&&... args) const {
