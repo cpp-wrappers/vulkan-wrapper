@@ -12,8 +12,8 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-		types::are_may_contain_one_decayed_same_as<vk::first_binding>,
-		types::are_may_contain_one_decayed_same_as<vk::memory_offset>
+		types::are_may_contain_one_decayed<vk::first_binding>,
+		types::are_may_contain_one_decayed<vk::memory_offset>
 	>::for_types<Args...>
 	void cmd_bind_vertex_buffer(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
@@ -21,14 +21,14 @@ namespace vk {
 
 		vk::first_binding binding{ 0 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::first_binding>::for_types<Args...>) {
-			binding = elements::decayed_same_as<vk::first_binding>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_binding>::for_types<Args...>) {
+			binding = elements::decayed<vk::first_binding>(args...);
 		} 
 
 		vk::memory_offset offset{ 0 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::memory_offset>::for_types<Args...>) {
-			offset = elements::decayed_same_as<vk::memory_offset>(args...);
+		if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
+			offset = elements::decayed<vk::memory_offset>(args...);
 		}
 		
 		vk::cmd_bind_vertex_buffers(

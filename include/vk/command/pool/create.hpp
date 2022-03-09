@@ -14,17 +14,17 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_one_decayed_same_as<vk::command_pool_create_flags>,
-			types::are_contain_decayed_same_as<vk::queue_family_index>
+			types::are_may_contain_one_decayed<vk::command_pool_create_flags>,
+			types::are_contain_decayed<vk::queue_family_index>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::command_pool>>
 		operator () (Args&&... args) const {
 			vk::command_pool_create_info ci{};
 
-			ci.queue_family_index = elements::decayed_same_as<vk::queue_family_index>(args...);
+			ci.queue_family_index = elements::decayed<vk::queue_family_index>(args...);
 
-			if constexpr(types::are_contain_decayed_same_as<vk::command_pool_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed_same_as<vk::command_pool_create_flags>(args...);
+			if constexpr(types::are_contain_decayed<vk::command_pool_create_flags>::for_types<Args...>) {
+				ci.flags = elements::decayed<vk::command_pool_create_flags>(args...);
 			}
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

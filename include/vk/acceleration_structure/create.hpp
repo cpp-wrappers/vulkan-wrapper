@@ -18,12 +18,12 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_decayed_same_as<vk::acceleration_structure_create_flags>,
+			types::are_may_contain_decayed<vk::acceleration_structure_create_flags>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-			types::are_may_contain_one_decayed_same_as<vk::memory_offset>,
-			types::are_contain_one_decayed_same_as<vk::memory_size>,
-			types::are_contain_one_decayed_same_as<vk::acceleration_structure_type>,
-			types::are_may_contain_one_decayed_same_as<vk::device_address>
+			types::are_may_contain_one_decayed<vk::memory_offset>,
+			types::are_contain_one_decayed<vk::memory_size>,
+			types::are_contain_one_decayed<vk::acceleration_structure_type>,
+			types::are_may_contain_one_decayed<vk::device_address>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::acceleration_structure>>
 		operator () (Args&&... args) const {
@@ -31,20 +31,20 @@ namespace vk {
 
 			vk::acceleration_structure_create_info ci {
 				.buffer = vk::get_handle(buffer),
-				.size = elements::decayed_same_as<vk::memory_size>(args...),
-				.type = elements::decayed_same_as<vk::acceleration_structure_type>(args...)
+				.size = elements::decayed<vk::memory_size>(args...),
+				.type = elements::decayed<vk::acceleration_structure_type>(args...)
 			};
 
-			if constexpr(types::are_contain_decayed_same_as<vk::acceleration_structure_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed_same_as<vk::acceleration_structure_create_flags>(args...);
+			if constexpr(types::are_contain_decayed<vk::acceleration_structure_create_flags>::for_types<Args...>) {
+				ci.flags = elements::decayed<vk::acceleration_structure_create_flags>(args...);
 			}
 
-			if constexpr(types::are_contain_decayed_same_as<vk::memory_offset>::for_types<Args...>) {
-				ci.offset = elements::decayed_same_as<vk::memory_offset>(args...);
+			if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
+				ci.offset = elements::decayed<vk::memory_offset>(args...);
 			}
 
-			if constexpr(types::are_contain_decayed_same_as<vk::device_address>::for_types<Args...>) {
-				ci.device_address = elements::decayed_same_as<vk::device_address>(args...);
+			if constexpr(types::are_contain_decayed<vk::device_address>::for_types<Args...>) {
+				ci.device_address = elements::decayed<vk::device_address>(args...);
 			}
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

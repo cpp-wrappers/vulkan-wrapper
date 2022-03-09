@@ -2,7 +2,7 @@
 
 #include "handle.hpp"
 
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/device/handle.hpp"
@@ -14,12 +14,12 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
-		types::count_of_ranges_of_value_type<vk::handle<vk::command_buffer>>::equals<1>
+		types::count_of_ranges_of<vk::handle<vk::command_buffer>>::equals<1>
 	>::for_types<Args...>
 	void free_command_buffers(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 		auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
-		auto& buffers = elements::range_of_value_type<vk::handle<vk::command_buffer>>(args...);
+		auto& buffers = elements::range_of<vk::handle<vk::command_buffer>>(args...);
 
 		vkFreeCommandBuffers(
 			(VkDevice) vk::get_handle_value(device),
@@ -36,12 +36,12 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
-			types::are_contain_one_decayed_same_as<vk::handle<vk::command_buffer>>
+			types::are_contain_one_decayed<vk::handle<vk::command_buffer>>
 		>::for_types<Args...>
 		void operator() (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 			auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
-			auto buffer = elements::decayed_same_as<vk::handle<vk::command_buffer>>(args...);
+			auto buffer = elements::decayed<vk::handle<vk::command_buffer>>(args...);
 
 			vk::free_command_buffers(device, pool, array{ buffer });
 		}

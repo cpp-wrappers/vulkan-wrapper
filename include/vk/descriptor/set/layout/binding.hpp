@@ -21,18 +21,18 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed_same_as<vk::descriptor_binding>,
-			types::are_contain_one_decayed_same_as<vk::descriptor_type>,
-			types::are_may_contain_one_decayed_same_as<vk::descriptor_count>,
-			types::are_contain_one_decayed_same_as<vk::shader_stages>
+			types::are_contain_one_decayed<vk::descriptor_binding>,
+			types::are_contain_one_decayed<vk::descriptor_type>,
+			types::are_may_contain_one_decayed<vk::descriptor_count>,
+			types::are_contain_one_decayed<vk::shader_stages>
 		>::for_types<Args...>
 		descriptor_set_layout_binding(Args&&... args) {
-			descriptor_binding = elements::decayed_same_as<vk::descriptor_binding>(args...);
-			descriptor_type = elements::decayed_same_as<vk::descriptor_type>(args...);
-			stage_flags = elements::decayed_same_as<vk::shader_stages>(args...);
+			descriptor_binding = elements::decayed<vk::descriptor_binding>(args...);
+			descriptor_type = elements::decayed<vk::descriptor_type>(args...);
+			stage_flags = elements::decayed<vk::shader_stages>(args...);
 			
-			if constexpr(types::are_contain_decayed_same_as<vk::descriptor_count>::for_types<Args...>) {
-				descriptor_count = elements::decayed_same_as<vk::descriptor_count>(args...);
+			if constexpr(types::are_contain_decayed<vk::descriptor_count>::for_types<Args...>) {
+				descriptor_count = elements::decayed<vk::descriptor_count>(args...);
 			}
 		}
 

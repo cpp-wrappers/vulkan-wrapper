@@ -10,8 +10,8 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>,
-		types::are_may_contain_one_decayed_same_as<vk::wait_all>,
-		types::are_may_contain_one_decayed_same_as<vk::timeout>
+		types::are_may_contain_one_decayed<vk::wait_all>,
+		types::are_may_contain_one_decayed<vk::timeout>
 	>::for_types<Args...>
 	vk::result try_wait_for_fence(Args&&... args) {
 		auto& fence = elements::vk::possibly_guarded_handle_of<vk::fence>(args...);

@@ -15,18 +15,18 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_may_contain_one_decayed_same_as<vk::first_viewport_index>,
-		types::are_contain_one_range_of_value_type<vk::viewport>
+		types::are_may_contain_one_decayed<vk::first_viewport_index>,
+		types::are_contain_one_range_of<vk::viewport>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed_same_as<vk::first_viewport_index>::for_types<Args...>) {
-			first = elements::decayed_same_as<vk::first_viewport_index>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
+			first = elements::decayed<vk::first_viewport_index>(args...);
 		}
 
-		auto& viewports = elements::range_of_value_type<vk::viewport>(args...);
+		auto& viewports = elements::range_of<vk::viewport>(args...);
 
 		vkCmdSetViewport(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),
@@ -39,18 +39,18 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_may_contain_one_decayed_same_as<vk::first_viewport_index>,
-		types::are_contain_decayed_same_as<vk::viewport>
+		types::are_may_contain_one_decayed<vk::first_viewport_index>,
+		types::are_contain_decayed<vk::viewport>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed_same_as<vk::first_viewport_index>::for_types<Args...>) {
-			first = elements::decayed_same_as<vk::first_viewport_index>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
+			first = elements::decayed<vk::first_viewport_index>(args...);
 		}
 
-		vk::viewport viewport = elements::decayed_same_as<vk::viewport>(args...);
+		vk::viewport viewport = elements::decayed<vk::viewport>(args...);
 
 		vk::cmd_set_viewport(command_buffer, first, array{ viewport });
 	}
@@ -58,18 +58,18 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_may_contain_one_decayed_same_as<vk::first_viewport_index>,
-		types::are_contain_one_decayed_same_as<vk::extent<2>>
+		types::are_may_contain_one_decayed<vk::first_viewport_index>,
+		types::are_contain_one_decayed<vk::extent<2>>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed_same_as<vk::first_viewport_index>::for_types<Args...>) {
-			first = elements::decayed_same_as<vk::first_viewport_index>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
+			first = elements::decayed<vk::first_viewport_index>(args...);
 		}
 
-		vk::extent<2> extent = elements::decayed_same_as<vk::extent<2>>(args...);
+		vk::extent<2> extent = elements::decayed<vk::extent<2>>(args...);
 
 		vk::cmd_set_viewport(
 			command_buffer,

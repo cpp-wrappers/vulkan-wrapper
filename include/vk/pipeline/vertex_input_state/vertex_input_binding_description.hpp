@@ -21,16 +21,16 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed_same_as<vk::binding>,
-			types::are_contain_one_decayed_same_as<vk::stride>,
-			types::are_may_contain_one_decayed_same_as<vk::vertex_input_rate>
+			types::are_contain_one_decayed<vk::binding>,
+			types::are_contain_one_decayed<vk::stride>,
+			types::are_may_contain_one_decayed<vk::vertex_input_rate>
 		>::for_types<Args...>
 		vertex_input_binding_description(Args&&... args) {
-			binding = elements::decayed_same_as<vk::binding>(args...);
-			stride = elements::decayed_same_as<vk::stride>(args...);
+			binding = elements::decayed<vk::binding>(args...);
+			stride = elements::decayed<vk::stride>(args...);
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::vertex_input_rate>::for_types<Args...>) {
-				vertex_input_rate = elements::decayed_same_as<vk::vertex_input_rate>(args...);
+			if constexpr(types::are_contain_decayed<vk::vertex_input_rate>::for_types<Args...>) {
+				vertex_input_rate = elements::decayed<vk::vertex_input_rate>(args...);
 			}
 		}
 	};

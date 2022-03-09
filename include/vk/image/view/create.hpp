@@ -22,10 +22,10 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>,
-			types::are_contain_one_decayed_same_as<vk::format>,
-			types::are_contain_one_decayed_same_as<vk::image_view_type>,
-			types::are_contain_one_decayed_same_as<vk::component_mapping>,
-			types::are_contain_one_decayed_same_as<vk::image_subresource_range>
+			types::are_contain_one_decayed<vk::format>,
+			types::are_contain_one_decayed<vk::image_view_type>,
+			types::are_contain_one_decayed<vk::component_mapping>,
+			types::are_contain_one_decayed<vk::image_subresource_range>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::image_view>>
 		operator () (Args&&... args) const {
@@ -34,10 +34,10 @@ namespace vk {
 
 			vk::image_view_create_info ci {
 				.image = vk::get_handle(image),
-				.view_type = elements::decayed_same_as<vk::image_view_type>(args...),
-				.format = elements::decayed_same_as<vk::format>(args...),
-				.components = elements::decayed_same_as<vk::component_mapping>(args...),
-				.subresource_range = elements::decayed_same_as<vk::image_subresource_range>(args...)
+				.view_type = elements::decayed<vk::image_view_type>(args...),
+				.format = elements::decayed<vk::format>(args...),
+				.components = elements::decayed<vk::component_mapping>(args...),
+				.subresource_range = elements::decayed<vk::image_subresource_range>(args...)
 			};
 
 			vk::handle<vk::image_view> image_view;

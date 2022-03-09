@@ -17,14 +17,14 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_one_decayed_same_as<vk::fence_create_flags>
+			types::are_may_contain_one_decayed<vk::fence_create_flags>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
 			vk::fence_create_info ci {};
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::fence_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed_same_as<vk::fence_create_flags>(args...);
+			if constexpr(types::are_contain_decayed<vk::fence_create_flags>::for_types<Args...>) {
+				ci.flags = elements::decayed<vk::fence_create_flags>(args...);
 			}
 	
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
@@ -47,7 +47,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_decayed_same_as<vk::fence_create_flag>
+			types::are_may_contain_decayed<vk::fence_create_flag>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::fence>>
 		operator () (Args&&... args) const {
@@ -55,7 +55,7 @@ namespace vk {
 
 			vk::fence_create_flags create_flags;
 
-			elements::for_each_decayed_same_as<vk::fence_create_flag>(args...)(
+			elements::for_each_decayed<vk::fence_create_flag>(args...)(
 				[&](vk::fence_create_flag flag){ create_flags.set(flag); }
 			);
 

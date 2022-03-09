@@ -23,7 +23,7 @@ namespace vk {
 			return { device(), handle(), vk::allocate<ObjectType>(device(), handle(), forward<Args>(args)...) };
 		}
 
-		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
+		template<range::of<vk::handle<vk::command_buffer>> CommandBuffers>
 		void free_command_buffers(CommandBuffers&& command_buffers) {
 			handle().free_command_buffers(device(), forward<CommandBuffers>(command_buffers));
 		}

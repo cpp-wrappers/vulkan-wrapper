@@ -2,7 +2,7 @@
 
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/elements/one_of.hpp>
 
 #include "vk/handle/base.hpp"

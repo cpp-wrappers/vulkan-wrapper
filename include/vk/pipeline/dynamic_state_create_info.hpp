@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/integer.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/dynamic_state.hpp"
@@ -14,7 +14,7 @@ namespace vk {
 		uint32 dynamic_state_count;
 		const dynamic_state* dynamic_states;
 
-		pipeline_dynamic_state_create_info(const range::of_value_type<vk::dynamic_state> auto& dynamic_states)
+		pipeline_dynamic_state_create_info(const range::of<vk::dynamic_state> auto& dynamic_states)
 		:
 			dynamic_state_count { (uint32) dynamic_states.size() },
 			dynamic_states { dynamic_states.data() }

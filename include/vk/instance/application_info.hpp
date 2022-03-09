@@ -27,23 +27,23 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_decayed_same_as<vk::application_name>,
-			types::are_may_contain_one_decayed_same_as<vk::application_version>,
-			types::are_may_contain_one_decayed_same_as<vk::engine_name>,
-			types::are_may_contain_one_decayed_same_as<vk::engine_version>,
-			types::are_contain_one_decayed_same_as<vk::api_version>
+			types::are_may_contain_one_decayed<vk::application_name>,
+			types::are_may_contain_one_decayed<vk::application_version>,
+			types::are_may_contain_one_decayed<vk::engine_name>,
+			types::are_may_contain_one_decayed<vk::engine_version>,
+			types::are_contain_one_decayed<vk::api_version>
 		>::for_types<Args...>
 		application_info(Args... args)
-			: api_version{ elements::decayed_same_as<vk::api_version>(args...) }
+			: api_version{ elements::decayed<vk::api_version>(args...) }
 		{
-			if constexpr(types::are_contain_decayed_same_as<vk::application_name>::for_types<Args...>)
-				app_name = elements::decayed_same_as<vk::application_name>(args...);
-			if constexpr(types::are_contain_decayed_same_as<vk::application_version>::for_types<Args...>)
-				app_version = elements::decayed_same_as<vk::application_version>(args...);
-			if constexpr(types::are_contain_decayed_same_as<vk::engine_name>::for_types<Args...>)
-				engine_name = elements::decayed_same_as<vk::engine_name>(args...);
-			if constexpr(types::are_contain_decayed_same_as<vk::engine_version>::for_types<Args...>)
-				engine_version = elements::decayed_same_as<vk::engine_version>(args...);
+			if constexpr(types::are_contain_decayed<vk::application_name>::for_types<Args...>)
+				app_name = elements::decayed<vk::application_name>(args...);
+			if constexpr(types::are_contain_decayed<vk::application_version>::for_types<Args...>)
+				app_version = elements::decayed<vk::application_version>(args...);
+			if constexpr(types::are_contain_decayed<vk::engine_name>::for_types<Args...>)
+				engine_name = elements::decayed<vk::engine_name>(args...);
+			if constexpr(types::are_contain_decayed<vk::engine_version>::for_types<Args...>)
+				engine_version = elements::decayed<vk::engine_version>(args...);
 		}
 	};
 

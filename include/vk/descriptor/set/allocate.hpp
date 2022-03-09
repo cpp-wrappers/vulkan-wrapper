@@ -15,13 +15,13 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
-		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set_layout>>::equals<1>,
-		types::count_of_ranges_of_value_type<vk::handle<vk::descriptor_set>>::equals<1>
+		types::count_of_ranges_of<vk::handle<vk::descriptor_set_layout>>::equals<1>,
+		types::count_of_ranges_of<vk::handle<vk::descriptor_set>>::equals<1>
 	>::for_types<Args...>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
 		auto& pool = elements::vk::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
-		auto& sets = elements::range_of_value_type<vk::handle<vk::descriptor_set>>(args...);
-		auto& layouts = elements::range_of_value_type<vk::handle<vk::descriptor_set_layout>>(args...);
+		auto& sets = elements::range_of<vk::handle<vk::descriptor_set>>(args...);
+		auto& layouts = elements::range_of<vk::handle<vk::descriptor_set_layout>>(args...);
 
 		vk::descriptor_set_allocate_info ai {
 			.descriptor_pool = vk::get_handle(pool),

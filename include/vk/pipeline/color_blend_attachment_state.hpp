@@ -27,25 +27,25 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed_same_as<vk::enable_blend>,
-			types::are_contain_one_decayed_same_as<vk::src_color_blend_factor>,
-			types::are_contain_one_decayed_same_as<vk::dst_color_blend_factor>,
-			types::are_contain_one_decayed_same_as<vk::color_blend_op>,
-			types::are_contain_one_decayed_same_as<vk::src_alpha_blend_factor>,
-			types::are_contain_one_decayed_same_as<vk::dst_alpha_blend_factor>,
-			types::are_contain_one_decayed_same_as<vk::alpha_blend_op>,
-			types::are_contain_one_decayed_same_as<vk::color_components>
+			types::are_contain_one_decayed<vk::enable_blend>,
+			types::are_contain_one_decayed<vk::src_color_blend_factor>,
+			types::are_contain_one_decayed<vk::dst_color_blend_factor>,
+			types::are_contain_one_decayed<vk::color_blend_op>,
+			types::are_contain_one_decayed<vk::src_alpha_blend_factor>,
+			types::are_contain_one_decayed<vk::dst_alpha_blend_factor>,
+			types::are_contain_one_decayed<vk::alpha_blend_op>,
+			types::are_contain_one_decayed<vk::color_components>
 		>::for_types<Args...>
 		pipeline_color_blend_attachment_state(Args&&... args)
 		:
-			enable_blend{ elements::decayed_same_as<vk::enable_blend>(args...) },
-			src_color_blend_factor{ elements::decayed_same_as<vk::src_color_blend_factor>(args...) },
-			dst_color_blend_factor{ elements::decayed_same_as<vk::dst_color_blend_factor>(args...) },
-			color_blend_op{ elements::decayed_same_as<vk::color_blend_op>(args...) },
-			src_alpha_blend_factor{ elements::decayed_same_as<vk::src_alpha_blend_factor>(args...) },
-			dst_alpha_blend_factor{ elements::decayed_same_as<vk::dst_alpha_blend_factor>(args...) },
-			alpha_blend_op{ elements::decayed_same_as<vk::alpha_blend_op>(args...) },
-			color_write_mask{ elements::decayed_same_as<vk::color_components>(args...) }
+			enable_blend{ elements::decayed<vk::enable_blend>(args...) },
+			src_color_blend_factor{ elements::decayed<vk::src_color_blend_factor>(args...) },
+			dst_color_blend_factor{ elements::decayed<vk::dst_color_blend_factor>(args...) },
+			color_blend_op{ elements::decayed<vk::color_blend_op>(args...) },
+			src_alpha_blend_factor{ elements::decayed<vk::src_alpha_blend_factor>(args...) },
+			dst_alpha_blend_factor{ elements::decayed<vk::dst_alpha_blend_factor>(args...) },
+			alpha_blend_op{ elements::decayed<vk::alpha_blend_op>(args...) },
+			color_write_mask{ elements::decayed<vk::color_components>(args...) }
 		{}
 
 	};

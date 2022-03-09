@@ -2,6 +2,7 @@
 
 #include "handle.hpp"
 #include "destroy.hpp"
+#include "bind_memory.hpp"
 #include "get_device_address.hpp"
 
 #include "vk/handle/guarded/device_child_base.hpp"
@@ -14,25 +15,18 @@ namespace vk {
 
 		using base_type::base_type;
 
-		template<typename... Args> vk::result try_bind_memory(Args&&...) const;
-		template<typename... Args> void bind_memory(Args&&...) const;
+		template<typename... Args> vk::result try_bind_memory(Args&&... args) const {
+			return vk::try_bind_buffer_memory(device(), handle(), forward<Args>(args)...);
+		}
+
+		template<typename... Args> void bind_memory(Args&&... args) const {
+			vk::bind_buffer_memory(device(), handle(), forward<Args>(args)...);
+		}
 
 		vk::device_address get_device_address() const {
-			return vk::get_device_address(this->device(), this->handle());
+			return vk::get_device_address(device(), handle());
 		}
 
 	};
 
 } // vk
-
-#include "bind_memory.hpp"
-
-template<typename... Args>
-vk::result vk::guarded_handle<vk::buffer>::try_bind_memory(Args&&... args) const {
-	return vk::try_bind_buffer_memory(device(), handle(), forward<Args>(args)...);
-}
-
-template<typename... Args>
-void vk::guarded_handle<vk::buffer>::bind_memory(Args&&... args) const {
-	vk::bind_buffer_memory(device(), handle(), forward<Args>(args)...);
-}

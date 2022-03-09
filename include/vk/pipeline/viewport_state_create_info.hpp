@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 #include "vk/headers.hpp"
@@ -26,35 +26,35 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_decayed_same_as<vk::viewport_count>,
-			types::are_may_contain_decayed_same_as<vk::scissor_count>,
-			types::are_may_contain_one_range_of_value_type<vk::viewport>,
-			types::are_may_contain_one_range_of_value_type<vk::scissor>
+			types::are_may_contain_decayed<vk::viewport_count>,
+			types::are_may_contain_decayed<vk::scissor_count>,
+			types::are_may_contain_one_range_of<vk::viewport>,
+			types::are_may_contain_one_range_of<vk::scissor>
 		>::for_types<Args...> &&
 		(
 			(
-				!types::are_contain_range_of_value_type<vk::viewport>::for_types<Args...>
-				|| !types::are_contain_decayed_same_as<vk::viewport_count>::for_types<Args...>
+				!types::are_contain_range_of<vk::viewport>::for_types<Args...>
+				|| !types::are_contain_decayed<vk::viewport_count>::for_types<Args...>
 			) && (
-				!types::are_contain_range_of_value_type<vk::scissor>::for_types<Args...>
-				|| !types::are_contain_decayed_same_as<vk::scissor_count>::for_types<Args...>
+				!types::are_contain_range_of<vk::scissor>::for_types<Args...>
+				|| !types::are_contain_decayed<vk::scissor_count>::for_types<Args...>
 			)
 		)
 		pipeline_viewport_state_create_info(Args&&... args) {
-			if constexpr(types::are_contain_decayed_same_as<vk::viewport_count>::for_types<Args...>) {
-				viewport_count = elements::decayed_same_as<vk::viewport_count>(args...);
+			if constexpr(types::are_contain_decayed<vk::viewport_count>::for_types<Args...>) {
+				viewport_count = elements::decayed<vk::viewport_count>(args...);
 			}
-			if constexpr(types::are_contain_decayed_same_as<vk::scissor_count>::for_types<Args...>) {
-				scissor_count = elements::decayed_same_as<vk::scissor_count>(args...);
+			if constexpr(types::are_contain_decayed<vk::scissor_count>::for_types<Args...>) {
+				scissor_count = elements::decayed<vk::scissor_count>(args...);
 			}
 
-			if constexpr(types::are_contain_range_of_value_type<vk::viewport>::for_types<Args...>) {
-				auto& viewports0 = elements::range_of_value_type<vk::viewport>(args...);
+			if constexpr(types::are_contain_range_of<vk::viewport>::for_types<Args...>) {
+				auto& viewports0 = elements::range_of<vk::viewport>(args...);
 				viewport_count = vk::viewport_count{ (uint32) viewports0.size() };
 				viewports = viewports0.data();
 			}
-			if constexpr(types::are_contain_range_of_value_type<vk::scissor>::for_types<Args...>) {
-				auto& scissors0 = elements::range_of_value_type<vk::scissor>(args...);
+			if constexpr(types::are_contain_range_of<vk::scissor>::for_types<Args...>) {
+				auto& scissors0 = elements::range_of<vk::scissor>(args...);
 				scissor_count = vk::scissor_count{ (uint32) scissors0.size() };
 				scissors = scissors0.data();
 			}

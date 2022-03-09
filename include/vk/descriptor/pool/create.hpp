@@ -18,15 +18,15 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_one_decayed_same_as<vk::descriptor_pool_create_flags>,
-			types::are_contain_one_decayed_same_as<vk::max_sets>,
-			types::count_of_ranges_of_value_type<vk::descriptor_pool_size>::equals<1>
+			types::are_may_contain_one_decayed<vk::descriptor_pool_create_flags>,
+			types::are_contain_one_decayed<vk::max_sets>,
+			types::count_of_ranges_of<vk::descriptor_pool_size>::equals<1>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::descriptor_pool>>
 		operator () (Args&&... args) const {
-			auto max_sets = elements::decayed_same_as<vk::max_sets>(args...);
+			auto max_sets = elements::decayed<vk::max_sets>(args...);
 
-			auto& sizes = elements::range_of_value_type<vk::descriptor_pool_size>(args...);
+			auto& sizes = elements::range_of<vk::descriptor_pool_size>(args...);
 
 			vk::descriptor_pool_create_info ci {
 				.max_sets = max_sets,
@@ -34,8 +34,8 @@ namespace vk {
 				.pool_sizes = sizes.data()
 			};
 
-			if constexpr(types::are_contain_decayed_same_as<vk::descriptor_pool_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed_same_as<vk::descriptor_pool_create_flags>(args...);
+			if constexpr(types::are_contain_decayed<vk::descriptor_pool_create_flags>::for_types<Args...>) {
+				ci.flags = elements::decayed<vk::descriptor_pool_create_flags>(args...);
 			}
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

@@ -9,4 +9,4 @@ namespace vk {
 
 	using memory_type_indices = flag_enum<vk::memory_type_index>;
 
-}
+} // vk

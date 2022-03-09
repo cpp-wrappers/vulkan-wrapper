@@ -6,7 +6,7 @@
 
 #include <core/forward.hpp>
 #include <core/span.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/elements/one_of.hpp>
 
 #include "vk/surface/capabilities.hpp"
@@ -52,7 +52,7 @@ namespace vk {
 			return props;
 		}
 
-		vk::memory_type_index get_index_of_first_memory_type(
+		vk::memory_type_index find_first_memory_type_index(
 			vk::memory_properties required_properties,
 			vk::memory_type_indices required_indices
 		) const {
@@ -71,7 +71,7 @@ namespace vk {
 			vk::default_unexpected_handler();
 		}
 
-		vk::count get_queue_family_properties(range::of_value_type<vk::queue_family_properties> auto&& range) const {
+		vk::count get_queue_family_properties(range::of<vk::queue_family_properties> auto&& range) const {
 			uint32 count = (uint32) range.size();
 
 			vkGetPhysicalDeviceQueueFamilyProperties(
@@ -104,7 +104,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires(types::are_same::for_types<Args..., vk::queue_flag>)
-		vk::queue_family_index get_first_queue_family_index_with_capabilities(Args... args) const {
+		vk::queue_family_index find_first_queue_family_index_with_capabilities(Args... args) const {
 			uint32 count = (uint32)queue_family_properties_count();
 			vk::queue_family_properties props[count];
 			get_queue_family_properties(span{ props, count });
@@ -127,7 +127,7 @@ namespace vk {
 		}
 
 		vk::expected<vk::count>
-		enumerate_extension_properties(range::of_value_type<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
+		enumerate_extension_properties(range::of<vk::extension_properties> auto&& props, vk::extension_name extension_name) const {
 			uint32 count = (uint32) props.size();
 			const char* name = extension_name.begin();
 
@@ -201,7 +201,7 @@ namespace vk {
 		vk::expected<vk::count>
 		get_surface_formats(
 			vk::possibly_guarded_handle_of<vk::surface> auto& surface,
-			range::of_value_type<vk::surface_format> auto&& formats
+			range::of<vk::surface_format> auto&& formats
 		) const {
 			uint32 count = (uint32) formats.size();
  
@@ -267,7 +267,7 @@ namespace vk {
 		vk::expected<vk::count>
 		get_surface_present_modes(
 			vk::handle<vk::surface> surface,
-			range::of_value_type<vk::present_mode> auto&& present_modes
+			range::of<vk::present_mode> auto&& present_modes
 		) const {
 			uint32 count = (uint32) present_modes.size();
 
@@ -346,14 +346,14 @@ namespace vk {
 
 #include "get_properties.hpp"
 
-#include "../device/create.hpp"
+#include "vk/device/create.hpp"
 
 template<typename... Args>
 vk::handle<vk::device> vk::handle<vk::physical_device>::create_device(Args&&... args) const {
 	return vk::create<vk::device>(*this, forward<Args>(args)...);
 }
 
-#include "../device/guarded_handle.hpp"
+#include "vk/device/guarded_handle.hpp"
 
 template<typename... Args>
 vk::guarded_handle<vk::device> vk::handle<vk::physical_device>::create_guarded_device(Args&&... args) const {

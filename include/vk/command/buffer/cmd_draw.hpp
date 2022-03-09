@@ -15,31 +15,31 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_decayed_same_as<vk::vertex_count>,
-		types::are_may_contain_one_decayed_same_as<vk::instance_count>,
-		types::are_may_contain_one_decayed_same_as<vk::first_vertex>,
-		types::are_may_contain_one_decayed_same_as<vk::first_instance>
+		types::are_contain_one_decayed<vk::vertex_count>,
+		types::are_may_contain_one_decayed<vk::instance_count>,
+		types::are_may_contain_one_decayed<vk::first_vertex>,
+		types::are_may_contain_one_decayed<vk::first_instance>
 	>::for_types<Args...>
 	void cmd_draw(Args&&... args) {
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
-		vk::vertex_count vertex_count = elements::decayed_same_as<vk::vertex_count>(args...);
+		vk::vertex_count vertex_count = elements::decayed<vk::vertex_count>(args...);
 		vk::instance_count instance_count{ 1 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::instance_count>::for_types<Args...>) {
-			instance_count = elements::decayed_same_as<vk::instance_count>(args...);
+		if constexpr(types::are_contain_decayed<vk::instance_count>::for_types<Args...>) {
+			instance_count = elements::decayed<vk::instance_count>(args...);
 		}
 
 		vk::first_vertex first_vertex{ 0 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::first_vertex>::for_types<Args...>) {
-			first_vertex = elements::decayed_same_as<vk::first_vertex>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_vertex>::for_types<Args...>) {
+			first_vertex = elements::decayed<vk::first_vertex>(args...);
 		}
 
 		vk::first_instance first_instance{ 0 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::first_instance>::for_types<Args...>) {
-			first_instance = elements::decayed_same_as<vk::first_instance>(args...);
+		if constexpr(types::are_contain_decayed<vk::first_instance>::for_types<Args...>) {
+			first_instance = elements::decayed<vk::first_instance>(args...);
 		}
 
 		vkCmdDraw(

@@ -33,25 +33,25 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::are_contain_one_decayed_same_as<vk::shader_stages>,
-			types::are_contain_one_decayed_same_as<vk::entrypoint_name>
+			types::are_contain_one_decayed<vk::shader_stages>,
+			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::decayed_same_as<vk::shader_stages>(args...);
+			stages = elements::decayed<vk::shader_stages>(args...);
 			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
-			entrypoint_name = elements::decayed_same_as<vk::entrypoint_name>(args...);
+			entrypoint_name = elements::decayed<vk::entrypoint_name>(args...);
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
-			types::are_contain_one_decayed_same_as<vk::shader_stage>,
-			types::are_contain_one_decayed_same_as<vk::entrypoint_name>
+			types::are_contain_one_decayed<vk::shader_stage>,
+			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::decayed_same_as<vk::shader_stage>(args...);
+			stages = elements::decayed<vk::shader_stage>(args...);
 			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
-			entrypoint_name = elements::decayed_same_as<vk::entrypoint_name>(args...);
+			entrypoint_name = elements::decayed<vk::entrypoint_name>(args...);
 		}
 	};
 

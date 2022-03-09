@@ -11,11 +11,11 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_decayed_same_as<vk::pipeline_bind_point>,
+		types::are_contain_one_decayed<vk::pipeline_bind_point>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
-		types::are_may_contain_one_decayed_same_as<vk::first_set>,
+		types::are_may_contain_one_decayed<vk::first_set>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set>,
-		types::are_may_contain_one_range_of_value_type<vk::dynamic_offset>
+		types::are_may_contain_one_range_of<vk::dynamic_offset>
 	>::for_types<Args...>
 	void cmd_bind_descriptor_set(Args&&... args) {
 		auto& set = elements::vk::possibly_guarded_handle_of<vk::descriptor_set>(args...);

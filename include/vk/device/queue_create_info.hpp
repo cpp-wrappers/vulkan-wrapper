@@ -29,14 +29,14 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed_same_as<vk::queue_family_index>,
-			types::are_contain_one_decayed_same_as<vk::queue_count>,
-			types::are_contain_one_decayed_same_as<vk::queue_priorities>
+			types::are_contain_one_decayed<vk::queue_family_index>,
+			types::are_contain_one_decayed<vk::queue_count>,
+			types::are_contain_one_decayed<vk::queue_priorities>
 		>::for_types<Args...>
 		queue_create_info(Args... args) {
-			queue_family_index = elements::decayed_same_as<vk::queue_family_index>(args...);
-			queue_count = elements::decayed_same_as<vk::queue_count>(args...);
-			queue_priorities = elements::decayed_same_as<vk::queue_priorities>(args...);
+			queue_family_index = elements::decayed<vk::queue_family_index>(args...);
+			queue_count = elements::decayed<vk::queue_count>(args...);
+			queue_priorities = elements::decayed<vk::queue_priorities>(args...);
 		}
 
 	}; // device_queue_create_info

@@ -5,7 +5,7 @@
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
@@ -41,38 +41,38 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_range_of_value_type<vk::input_attachment_reference>,
-			types::are_may_contain_one_range_of_value_type<vk::color_attachment_reference>,
-			types::are_may_contain_one_range_of_value_type<vk::resolve_attachment_reference>,
-			types::are_may_contain_one_range_of_value_type<vk::depth_stencil_attachment_reference>,
-			types::are_may_contain_one_range_of_value_type<vk::preserve_attachment_reference>
+			types::are_may_contain_one_range_of<vk::input_attachment_reference>,
+			types::are_may_contain_one_range_of<vk::color_attachment_reference>,
+			types::are_may_contain_one_range_of<vk::resolve_attachment_reference>,
+			types::are_may_contain_one_range_of<vk::depth_stencil_attachment_reference>,
+			types::are_may_contain_one_range_of<vk::preserve_attachment_reference>
 		>::for_types<Args...>
 		subpass_description(Args&... args) {
 	
-			if constexpr(types::count_of_ranges_of_value_type<vk::input_attachment_reference>::for_types<Args...> == 1) {
-				auto& input = elements::range_of_value_type<vk::input_attachment_reference>(args...);
+			if constexpr(types::count_of_ranges_of<vk::input_attachment_reference>::for_types<Args...> == 1) {
+				auto& input = elements::range_of<vk::input_attachment_reference>(args...);
 				input_attachment_count = (uint32) input.size();
 				input_attachments = input.data();
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::color_attachment_reference>::for_types<Args...> == 1) {
-				auto& color = elements::range_of_value_type<vk::color_attachment_reference>(args...);
+			if constexpr(types::count_of_ranges_of<vk::color_attachment_reference>::for_types<Args...> == 1) {
+				auto& color = elements::range_of<vk::color_attachment_reference>(args...);
 				color_attachment_count = (uint32) color.size();
 				color_attachments = color.data();
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::resolve_attachment_reference>::for_types<Args...> == 1) {
-				auto& resolve = elements::range_of_value_type<vk::resolve_attachment_reference>(args...);
+			if constexpr(types::count_of_ranges_of<vk::resolve_attachment_reference>::for_types<Args...> == 1) {
+				auto& resolve = elements::range_of<vk::resolve_attachment_reference>(args...);
 				resolve_attachments = resolve.data();
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::depth_stencil_attachment_reference>::for_types<Args...> == 1) {
-				auto& depth_stencil = elements::range_of_value_type<vk::depth_stencil_attachment_reference>(args...);
+			if constexpr(types::count_of_ranges_of<vk::depth_stencil_attachment_reference>::for_types<Args...> == 1) {
+				auto& depth_stencil = elements::range_of<vk::depth_stencil_attachment_reference>(args...);
 				depth_stencil_attachments = depth_stencil.data();
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::preserve_attachment_reference>::for_types<Args...> == 1) {
-				auto& preserve = elements::range_of_value_type<vk::preserve_attachment_reference>(args...);
+			if constexpr(types::count_of_ranges_of<vk::preserve_attachment_reference>::for_types<Args...> == 1) {
+				auto& preserve = elements::range_of<vk::preserve_attachment_reference>(args...);
 				preserve_attachment_count = (uint32) preserve.size();
 				preserve_attachments = preserve.data();
 			}

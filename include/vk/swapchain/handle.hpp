@@ -5,7 +5,7 @@
 #include <core/span.hpp>
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 #include <core/meta/elements/one_of.hpp>
@@ -36,7 +36,7 @@ namespace vk {
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
 			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,
-			types::are_may_contain_one_decayed_same_as<vk::timeout>
+			types::are_may_contain_one_decayed<vk::timeout>
 		>::for_types<Args...>
 		vk::expected<vk::image_index>
 		acquire_next_image(Args&&... args) const {
@@ -44,8 +44,8 @@ namespace vk {
 			
 			vk::timeout timeout{ UINT64_MAX };
 
-			if constexpr(types::are_contain_decayed_same_as<vk::timeout>::for_types<Args...>) {
-				timeout = elements::decayed_same_as<vk::timeout>(args...);
+			if constexpr(types::are_contain_decayed<vk::timeout>::for_types<Args...>) {
+				timeout = elements::decayed<vk::timeout>(args...);
 			}
 
 			vk::handle<vk::semaphore> semaphore{ VK_NULL_HANDLE };
@@ -81,7 +81,7 @@ namespace vk {
 		vk::expected<vk::count>
 		get_images(
 			vk::possibly_guarded_handle_of<vk::device> auto& device,
-			range::of_value_type<vk::handle<vk::image>> auto&& images
+			range::of<vk::handle<vk::image>> auto&& images
 		) const {
 			uint32 count = images.size();
 

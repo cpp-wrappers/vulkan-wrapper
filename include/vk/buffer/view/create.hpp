@@ -18,17 +18,17 @@ namespace vk {
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-			types::are_contain_one_decayed_same_as<vk::format>,
-			types::are_contain_one_decayed_same_as<vk::memory_offset>,
-			types::are_contain_one_decayed_same_as<vk::memory_size>
+			types::are_contain_one_decayed<vk::format>,
+			types::are_contain_one_decayed<vk::memory_offset>,
+			types::are_contain_one_decayed<vk::memory_size>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::buffer_view>>
 		operator () (Args&&... args) const {
 			auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
 
-			auto format = elements::decayed_same_as<vk::format>(args...);
-			auto offset = elements::decayed_same_as<vk::memory_offset>(args...);
-			auto size = elements::decayed_same_as<vk::memory_size>(args...);
+			auto format = elements::decayed<vk::format>(args...);
+			auto offset = elements::decayed<vk::memory_offset>(args...);
+			auto size = elements::decayed<vk::memory_size>(args...);
 
 			vk::buffer_view_create_info ci {
 				.buffer = vk::get_handle(buffer)

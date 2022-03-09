@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/span.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/range/contains.hpp>
 #include <core/range/transform.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
@@ -18,7 +18,7 @@
 namespace vk {
 
 	vk::expected<vk::count>
-	enumerate_instance_extension_properties(range::of_value_type<vk::extension_properties> auto&& extension_properties) {
+	enumerate_instance_extension_properties(range::of<vk::extension_properties> auto&& extension_properties) {
 		uint32 count = extension_properties.size();
 
 		vk::result result {

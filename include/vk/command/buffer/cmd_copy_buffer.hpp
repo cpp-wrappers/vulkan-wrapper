@@ -3,7 +3,7 @@
 #include "handle.hpp"
 
 #include <core/wrapper/of.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
 
 #include "vk/memory_size.hpp"
@@ -28,16 +28,16 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_decayed_same_as<vk::src_buffer>,
-		types::are_contain_one_decayed_same_as<vk::dst_buffer>,
-		types::are_contain_one_range_of_value_type<vk::buffer_copy>
+		types::are_contain_one_decayed<vk::src_buffer>,
+		types::are_contain_one_decayed<vk::dst_buffer>,
+		types::are_contain_one_range_of<vk::buffer_copy>
 	>::for_types<Args...>
 	void cmd_copy_buffer(Args&&... args) {
 
 		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		vk::src_buffer src = elements::decayed_same_as<vk::src_buffer>(args...);
-		vk::dst_buffer dst = elements::decayed_same_as<vk::dst_buffer>(args...);
-		auto& regions = elements::range_of_value_type<vk::buffer_copy>(args...);
+		vk::src_buffer src = elements::decayed<vk::src_buffer>(args...);
+		vk::dst_buffer dst = elements::decayed<vk::dst_buffer>(args...);
+		auto& regions = elements::range_of<vk::buffer_copy>(args...);
 
 		vkCmdCopyBuffer(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),

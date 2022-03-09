@@ -24,29 +24,29 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed_same_as<vk::image_aspects>,
-			types::are_may_contain_one_decayed_same_as<vk::base_mip_level>,
-			types::are_may_contain_one_decayed_same_as<vk::level_count>,
-			types::are_may_contain_one_decayed_same_as<vk::base_array_layer>,
-			types::are_may_contain_one_decayed_same_as<vk::layer_count>
+			types::are_contain_one_decayed<vk::image_aspects>,
+			types::are_may_contain_one_decayed<vk::base_mip_level>,
+			types::are_may_contain_one_decayed<vk::level_count>,
+			types::are_may_contain_one_decayed<vk::base_array_layer>,
+			types::are_may_contain_one_decayed<vk::layer_count>
 		>::for_types<Args...>
 		image_subresource_range(Args... args) {
-			aspect_mask = elements::decayed_same_as<vk::image_aspects>(args...);
+			aspect_mask = elements::decayed<vk::image_aspects>(args...);
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::base_mip_level>::for_types<Args...>) {
-				base_mip_level = elements::decayed_same_as<vk::base_mip_level>(args...);
+			if constexpr(types::are_contain_decayed<vk::base_mip_level>::for_types<Args...>) {
+				base_mip_level = elements::decayed<vk::base_mip_level>(args...);
 			}
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::level_count>::for_types<Args...>) {
-				level_count = elements::decayed_same_as<vk::level_count>(args...);
+			if constexpr(types::are_contain_decayed<vk::level_count>::for_types<Args...>) {
+				level_count = elements::decayed<vk::level_count>(args...);
 			}
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::base_array_layer>::for_types<Args...>) {
-				base_array_layer = elements::decayed_same_as<vk::base_array_layer>(args...);
+			if constexpr(types::are_contain_decayed<vk::base_array_layer>::for_types<Args...>) {
+				base_array_layer = elements::decayed<vk::base_array_layer>(args...);
 			}
 	
-			if constexpr(types::are_contain_decayed_same_as<vk::layer_count>::for_types<Args...>) {
-				layer_count = elements::decayed_same_as<vk::layer_count>(args...);
+			if constexpr(types::are_contain_decayed<vk::layer_count>::for_types<Args...>) {
+				layer_count = elements::decayed<vk::layer_count>(args...);
 			}
 		}
 	

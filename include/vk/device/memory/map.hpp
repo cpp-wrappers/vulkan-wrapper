@@ -16,22 +16,22 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
-		types::are_may_contain_one_decayed_same_as<vk::memory_offset>,
-		types::are_contain_one_decayed_same_as<vk::memory_size>,
-		types::are_contain_one_decayed_same_as<void**>
+		types::are_may_contain_one_decayed<vk::memory_offset>,
+		types::are_contain_one_decayed<vk::memory_size>,
+		types::are_contain_one_decayed<void**>
 	>::for_types<Args...>
 	vk::result try_map_device_memory(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
 		auto& device_memory = elements::vk::possibly_guarded_handle_of<vk::device_memory>(args...);
 		vk::memory_offset offset{ 0 };
 
-		if constexpr(types::are_contain_decayed_same_as<vk::memory_offset>::for_types<Args...>) {
-			offset = elements::decayed_same_as<vk::memory_offset>(args...);
+		if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
+			offset = elements::decayed<vk::memory_offset>(args...);
 		}
 
-		vk::memory_size size = elements::decayed_same_as<vk::memory_size>(args...);
+		vk::memory_size size = elements::decayed<vk::memory_size>(args...);
 
-		void** data = data = elements::decayed_same_as<void**>(args...);
+		void** data = data = elements::decayed<void**>(args...);
 
 		return {
 			(int32) vkMapMemory(

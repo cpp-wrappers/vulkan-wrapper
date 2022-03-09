@@ -18,14 +18,14 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_decayed_same_as<vk::memory_size>,
-			types::are_contain_one_decayed_same_as<vk::memory_type_index>
+			types::are_contain_one_decayed<vk::memory_size>,
+			types::are_contain_one_decayed<vk::memory_type_index>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::device_memory>>
 		operator () (Args&&... args) const {
 			vk::memory_allocate_info ai {
-				.size = elements::decayed_same_as<vk::memory_size>(args...),
-				.memory_type_index = elements::decayed_same_as<vk::memory_type_index>(args...),
+				.size = elements::decayed<vk::memory_size>(args...),
+				.memory_type_index = elements::decayed<vk::memory_type_index>(args...),
 			};
 
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);

@@ -10,8 +10,8 @@ namespace vk {
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
-		types::are_may_contain_one_decayed_same_as<vk::memory_offset>,
-		types::are_contain_one_decayed_same_as<vk::memory_size>
+		types::are_may_contain_one_decayed<vk::memory_offset>,
+		types::are_contain_one_decayed<vk::memory_size>
 	>::for_types<Args...>
 	vk::result try_flush_mapped_device_memory_range(Args&&... args) {
 		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
@@ -19,11 +19,11 @@ namespace vk {
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr(types::are_contain_decayed_same_as<vk::memory_offset>::for_types<Args...>) {
-			offset = elements::decayed_same_as<vk::memory_offset>(args...);
+		if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
+			offset = elements::decayed<vk::memory_offset>(args...);
 		}
 
-		vk::memory_size size = elements::decayed_same_as<vk::memory_size>(args...);
+		vk::memory_size size = elements::decayed<vk::memory_size>(args...);
 
 		return vk::try_flush_mapped_device_memory_ranges(
 			device,

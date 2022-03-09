@@ -5,7 +5,7 @@
 #include <core/move.hpp>
 #include <core/array.hpp>
 #include <core/exchange.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 
 #include "vk/physical_device/handle.hpp"
 #include "vk/handle/base.hpp"
@@ -21,7 +21,7 @@ namespace vk {
 	struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
 		vk::expected<vk::count>
-		enumerate_physical_devices(range::of_value_type<vk::handle<vk::physical_device>> auto&& devices) const {
+		enumerate_physical_devices(range::of<vk::handle<vk::physical_device>> auto&& devices) const {
 			uint32 count = (uint32) devices.size();
 
 			vk::result result {

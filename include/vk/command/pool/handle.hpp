@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 
 #include "vk/handle/base.hpp"
 #include "vk/result.hpp"
@@ -19,7 +19,7 @@ namespace vk {
 		template<typename... Args>
 		void allocate_command_buffers(Args&&...);
 
-		template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
+		template<range::of<vk::handle<vk::command_buffer>> CommandBuffers>
 		void free_command_buffers(
 			vk::handle<vk::device> device,
 			CommandBuffers&& command_buffers
@@ -27,16 +27,16 @@ namespace vk {
 	}; // command_pool
 } // vk
 
-#include "../buffer/allocate.hpp"
-#include "../buffer/free.hpp"
-#include "../../device/handle.hpp"
+#include "vk/command/buffer/allocate.hpp"
+#include "vk/command/buffer/free.hpp"
+#include "vk/device/handle.hpp"
 
 template<typename... Args>
 void vk::handle<vk::command_pool>::allocate_command_buffers(Args&&... args) {
 	vk::allocate_command_buffers(forward<Args>(args)...);
 }
 
-template<range::of_value_type<vk::handle<vk::command_buffer>> CommandBuffers>
+template<range::of<vk::handle<vk::command_buffer>> CommandBuffers>
 void vk::handle<vk::command_pool>::free_command_buffers(
 	vk::handle<vk::device> device,
 	CommandBuffers&& command_buffers

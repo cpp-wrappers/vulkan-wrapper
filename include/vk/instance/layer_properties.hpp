@@ -2,7 +2,7 @@
 
 #include <core/span.hpp>
 #include <core/array.hpp>
-#include <core/range/of_value_type.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 #include <core/range/contains.hpp>
 #include <core/range/transform.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
@@ -20,7 +20,7 @@
 namespace vk {
 
 	vk::expected<vk::count>
-	enumerate_instance_layer_properties(range::of_value_type<vk::layer_properties> auto&& layer_properties) {
+	enumerate_instance_layer_properties(range::of<vk::layer_properties> auto&& layer_properties) {
 		uint32 count = layer_properties.size();
 
 		vk::result result {

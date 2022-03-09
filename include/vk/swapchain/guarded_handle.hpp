@@ -22,7 +22,7 @@ namespace vk {
 			return handle().acquire_next_image(device(), forward<Args>(args)...);
 		}
 
-		template<range::of_value_type<vk::handle<vk::image>> Images>
+		template<range::of<vk::handle<vk::image>> Images>
 		vk::count get_images(Images&& images) const {
 			return handle().get_images(device(), forward<Images>(images));
 		}
