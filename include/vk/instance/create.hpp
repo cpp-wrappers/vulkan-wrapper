@@ -15,8 +15,8 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::are_may_contain_one_decayed_same_as<vk::application_info>,
-			types::count_of_ranges_of_value_type<vk::layer_name>::less_or_equals<1>,
-			types::count_of_ranges_of_value_type<vk::extension_name>::less_or_equals<1>
+			types::are_may_contain_one_range_of_value_type<vk::layer_name>,
+			types::are_may_contain_one_range_of_value_type<vk::extension_name>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::instance>>
 		operator () (Args&&... args) const {
@@ -29,13 +29,13 @@ namespace vk {
 					>(args...);
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::extension_name>::equals<1>::for_types<Args...>) {
+			if constexpr(types::are_contain_one_range_of_value_type<vk::extension_name>::for_types<Args...>) {
 				auto& range = elements::range_of_value_type<vk::extension_name>(args...);
 				ici.enabled_extension_count = (uint32) range.size();
 				ici.enabled_extension_names = range.data();
 			}
 
-			if constexpr(types::count_of_ranges_of_value_type<vk::layer_name>::equals<1>::for_types<Args...>) {
+			if constexpr(types::are_contain_one_range_of_value_type<vk::layer_name>::for_types<Args...>) {
 				auto& range = elements::range_of_value_type<vk::layer_name>(args...);
 				ici.enabled_layer_count = (uint32) range.size();
 				ici.enabled_layer_names = range.data();

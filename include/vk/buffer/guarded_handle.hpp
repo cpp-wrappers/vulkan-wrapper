@@ -2,6 +2,7 @@
 
 #include "handle.hpp"
 #include "destroy.hpp"
+#include "get_device_address.hpp"
 
 #include "vk/handle/guarded/device_child_base.hpp"
 
@@ -15,6 +16,11 @@ namespace vk {
 
 		template<typename... Args> vk::result try_bind_memory(Args&&...) const;
 		template<typename... Args> void bind_memory(Args&&...) const;
+
+		vk::device_address get_device_address() const {
+			return vk::get_device_address(this->device(), this->handle());
+		}
+
 	};
 
 } // vk

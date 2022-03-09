@@ -2,7 +2,7 @@
 
 #include "result.hpp"
 
-extern "C" void abort() noexcept(true);
+extern "C" void abort();
 
 namespace vk {
 
