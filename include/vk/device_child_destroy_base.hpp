@@ -17,7 +17,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
 			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			typename types::are_contain_one_decayed<vk::handle<ObjectType>>
+			types::are_contain_one_decayed<vk::handle<ObjectType>>
 		>::template for_types<Args...>
 		void operator() (Args&&... args) const {
 			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
@@ -25,10 +25,11 @@ namespace vk {
 
 			Function(
 				(VkDevice) vk::get_handle_value(device),
-				(VkFence) vk::get_handle_value(fence),
+				(HandleType) vk::get_handle_value(fence),
 				(VkAllocationCallbacks*) nullptr
 			);
 		}
+
 	};
 
 }

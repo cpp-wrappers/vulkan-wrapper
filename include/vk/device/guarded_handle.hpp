@@ -86,4 +86,5 @@ namespace vk {
 #include "../sampler/guarded_handle.hpp"
 #include "../descriptor/set/layout/guarded_handle.hpp"
 #include "../descriptor/pool/guarded_handle.hpp"
+#include "../acceleration_structure/guarded_handle.hpp"
 #include "memory/guarded_handle.hpp"

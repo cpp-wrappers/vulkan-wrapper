@@ -51,8 +51,14 @@ namespace vk {
 
 			vk::handle<vk::acceleration_structure> acceleration_structure;
 
+			auto f =
+				(PFN_vkCreateAccelerationStructureKHR) vkGetDeviceProcAddr(
+					(VkDevice) vk::get_handle_value(device),
+					"vkCreateAccelerationStructureKHR"
+				);
+
 			vk::result result {
-				(int) vkCreateAccelerationStructureKHR(
+				(int) f(
 					(VkDevice) vk::get_handle_value(device),
 					(const VkAccelerationStructureCreateInfoKHR*) &ci,
 					(const VkAllocationCallbacks*) nullptr,
