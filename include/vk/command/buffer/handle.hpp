@@ -15,11 +15,10 @@ namespace vk {
 	struct vk::handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 
 		template<typename... Args> vk::result try_begin(Args&&...) const;
-
-		template<typename... Args> requires(sizeof...(Args) > 0) auto& begin(Args&&...) const;
+		template<typename... Args>      auto&     begin(Args&&...) const;
 
 		inline vk::result try_end() const;
-		inline void end() const;
+		inline       void     end() const;
 
 		template<typename... Args> auto& cmd_pipeline_barrier(Args&&...) const;
 		template<typename... Args> auto& cmd_copy_buffer(Args&&...) const;
@@ -35,6 +34,7 @@ namespace vk {
 		template<typename... Args> auto& cmd_bind_vertex_buffer(Args&&...) const;
 		template<typename... Args> auto& cmd_bind_descriptor_sets(Args&&...) const;
 		template<typename... Args> auto& cmd_bind_descriptor_set(Args&&...) const;
+		template<typename... Args> auto& cmd_build_acceleration_structure(Args&&...) const;
 	};
 
 } // vk
@@ -54,3 +54,4 @@ namespace vk {
 #include "cmd_bind_vertex_buffers.hpp"
 #include "cmd_bind_vertex_buffer.hpp"
 #include "cmd_bind_descriptor_sets.hpp"
+#include "cmd_build_acceleration_structure.hpp"

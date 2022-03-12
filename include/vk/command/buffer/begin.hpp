@@ -73,10 +73,10 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
 		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_decayed<vk::command_buffer_usage>
+		types::are_may_contain_decayed<vk::command_buffer_usage>
 	>::for_types<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
-		vk::command_buffer_usages usages;
+		vk::command_buffer_usages usages{};
 
 		elements::for_each_decayed<vk::command_buffer_usage>(args...)(
 			[&](vk::command_buffer_usage usage){ usages.set(usage); }
@@ -102,7 +102,6 @@ vk::result vk::handle<vk::command_buffer>::try_begin(Args&&... args) const {
 }
 
 template<typename... Args>
-requires(sizeof...(Args) > 0)
 auto& vk::handle<vk::command_buffer>::begin(Args&&... args) const {
 	vk::begin_command_buffer(*this, forward<Args>(args)...);
 	return *this;

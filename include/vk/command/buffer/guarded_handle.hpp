@@ -37,12 +37,8 @@ namespace vk {
 			return m_command_pool;
 		}
 
-		template<typename... Args>
-		requires(sizeof...(Args) > 0) // TODO
-		auto& begin(Args&&... args) const {
-			handle().begin(forward<Args>(args)...);
-			return *this;
-		}
+		template<typename... Args> auto& begin(Args&&... args) const { handle().begin(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& end(Args&&... args) const { handle().end(forward<Args>(args)...); return *this; }
 
 		template<typename... Args> auto& cmd_pipeline_barrier(Args&&... args) const { handle().cmd_pipeline_barrier(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_copy_buffer(Args&&... args) const { handle().cmd_copy_buffer(forward<Args>(args)...); return *this; }
@@ -57,7 +53,7 @@ namespace vk {
 		template<typename... Args> auto& cmd_bind_descriptor_set(Args&&... args) const { handle().cmd_bind_descriptor_set(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_draw(Args&&... args) const { handle().cmd_draw(forward<Args>(args)...); return *this; }
 		template<typename... Args> auto& cmd_end_render_pass(Args&&... args) const { handle().cmd_end_render_pass(forward<Args>(args)...); return *this; }
-		template<typename... Args> auto& end(Args&&... args) const { handle().end(forward<Args>(args)...); return *this; }
+		template<typename... Args> auto& cmd_build_acceleration_structure(Args&&... args) const { handle().cmd_build_acceleration_structure(forward<Args>(args)...); return *this; }
 	};
 
 } // vk

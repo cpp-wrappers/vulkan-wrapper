@@ -24,7 +24,9 @@ namespace vk {
 			vk::handle<vk::device> device,
 			CommandBuffers&& command_buffers
 		);
+
 	}; // command_pool
+
 } // vk
 
 #include "vk/command/buffer/allocate.hpp"
