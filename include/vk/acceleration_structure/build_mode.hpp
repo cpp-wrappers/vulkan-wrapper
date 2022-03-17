@@ -7,4 +7,8 @@ namespace vk {
 		update = 1
 	};
 
-}
+	namespace as {
+		using build_mode = vk::acceleration_structure_build_mode;
+	}
+
+} // vk

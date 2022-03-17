@@ -13,6 +13,10 @@ namespace vk {
 		vk::device_size stride;
 	};
 
+	namespace as {
+		using geometry_aabbs_data = vk::acceleration_structure_geometry_aabbs_data;
+	}
+
 } // vk
 
 static_assert(sizeof(vk::acceleration_structure_geometry_aabbs_data) == sizeof(VkAccelerationStructureGeometryAabbsDataKHR));

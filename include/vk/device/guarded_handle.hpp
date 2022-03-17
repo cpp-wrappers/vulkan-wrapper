@@ -33,16 +33,6 @@ namespace vk {
 			return { handle().allocate<ObjectType>(forward<Args>(args)...), handle() };
 		}
 
-		vk::memory_requirements
-		get_buffer_memory_requirements(vk::possibly_guarded_handle_of<vk::buffer> auto& buffer) const {
-			return handle().get_buffer_memory_requirements(buffer);
-		}
-
-		vk::memory_requirements
-		get_image_memory_requirements(vk::possibly_guarded_handle_of<vk::image> auto& buffer) const {
-			return handle().get_image_memory_requirements(buffer);
-		}
-
 		vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 			return handle().get_queue(queue_family_index, queue_index);
 		}

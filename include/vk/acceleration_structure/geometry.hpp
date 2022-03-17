@@ -9,12 +9,16 @@
 namespace vk {
 
 	struct acceleration_structure_geometry {
-		const uint32 __type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
 		const void* next = nullptr;
 		vk::geometry_type type;
 		vk::acceleration_structure_geometry_data geometry;
 		vk::geometry_flags flags;
 	};
+
+	namespace as {
+		using geometry = vk::acceleration_structure_geometry;
+	}
 
 } // vk
 

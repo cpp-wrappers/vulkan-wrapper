@@ -8,4 +8,8 @@ namespace vk {
 		host_or_device = 2
 	};
 
+	namespace as {
+		using build_type = acceleration_structure_build_type;
+	}
+
 } // vk

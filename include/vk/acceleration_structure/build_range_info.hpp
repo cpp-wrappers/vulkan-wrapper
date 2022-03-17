@@ -11,6 +11,10 @@ namespace vk {
 		uint32 transform_offset;
 	};
 
+	namespace as {
+		using build_range_info = vk::acceleration_structure_build_range_info;
+	}
+
 } // vk
 
 static_assert(sizeof(vk::acceleration_structure_build_range_info) == sizeof(VkAccelerationStructureBuildRangeInfoKHR));

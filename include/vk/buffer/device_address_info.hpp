@@ -6,8 +6,8 @@
 namespace vk {
 
 	struct buffer_device_address_info {
-		const uint32 __type = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
-		const void* const __next;
+		uint32 structure_type = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+		const void* next;
 		vk::handle<vk::buffer> buffer;
 	};
 

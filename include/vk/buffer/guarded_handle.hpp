@@ -4,6 +4,7 @@
 #include "destroy.hpp"
 #include "bind_memory.hpp"
 #include "get_device_address.hpp"
+#include "get_memory_requirements.hpp"
 
 #include "vk/handle/guarded/device_child_base.hpp"
 
@@ -25,6 +26,10 @@ namespace vk {
 
 		vk::device_address get_device_address() const {
 			return vk::get_device_address(device(), handle());
+		}
+
+		vk::memory_requirements get_memory_requirements() const {
+			return vk::get_memory_requirements(device(), handle());
 		}
 
 	};

@@ -29,6 +29,12 @@ namespace vk {
 		vk::device_address device_address;
 	};
 
+	namespace as {
+		using create_flag = vk::acceleration_structure_create_flag;
+		using create_flags = vk::acceleration_structure_create_flags;
+		using create_info = vk::acceleration_structure_create_info;
+	}
+
 } // vk
 
 static_assert(sizeof(vk::acceleration_structure_create_info) == sizeof(VkAccelerationStructureCreateInfoKHR));

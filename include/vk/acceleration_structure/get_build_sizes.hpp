@@ -19,7 +19,7 @@ namespace vk {
 	) {
 		vk::acceleration_structure_build_sizes_info build_sizes_info{};
 
-		PFN_vkGetAccelerationStructureBuildSizesKHR f {
+		auto f {
 			(PFN_vkGetAccelerationStructureBuildSizesKHR) vkGetDeviceProcAddr(
 				(VkDevice) vk::get_handle_value(device),
 				"vkGetAccelerationStructureBuildSizesKHR"
@@ -35,6 +35,12 @@ namespace vk {
 		);
 
 		return build_sizes_info;
+	}
+
+	template<typename... Args>
+	vk::acceleration_structure_build_sizes_info
+	get_build_sizes(Args&&... args) {
+		return vk::get_acceleration_structure_build_sizes(forward<Args>(args)...);
 	}
 
 } // vk

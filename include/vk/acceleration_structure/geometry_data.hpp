@@ -12,6 +12,10 @@ namespace vk {
 		vk::acceleration_structure_instances_data instances;
 	};
 
+	namespace as {
+		using geometry_data = vk::acceleration_structure_geometry_data;
+	}
+
 } // vk
 
 static_assert(sizeof(vk::acceleration_structure_geometry_data) == sizeof(VkAccelerationStructureGeometryDataKHR));

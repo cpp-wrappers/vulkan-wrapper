@@ -8,4 +8,4 @@ namespace vk {
 		instances = 2
 	};
 
-}
+} // vk

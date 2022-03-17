@@ -20,7 +20,7 @@ namespace vk {
 			types::are_may_contain_one_decayed<vk::buffer_create_flags>,
 			types::are_contain_one_decayed<vk::buffer_size>,
 			types::are_contain_one_decayed<vk::buffer_usages>,
-			types::are_contain_one_decayed<vk::sharing_mode>,
+			types::are_may_contain_one_decayed<vk::sharing_mode>,
 			types::are_may_contain_one_range_of<vk::queue_family_index>
 		>::for_types<Args...>
 		vk::expected<vk::handle<vk::buffer>>
@@ -29,9 +29,12 @@ namespace vk {
 
 			vk::buffer_create_info ci {
 				.size = elements::decayed<vk::buffer_size>(args...),
-				.usage = elements::decayed<vk::buffer_usages>(args...),
-				.sharing_mode = elements::decayed<vk::sharing_mode>(args...)
+				.usage = elements::decayed<vk::buffer_usages>(args...)
 			};
+
+			if constexpr (types::are_contain_decayed<vk::sharing_mode>::for_types<Args...>) {
+				ci.sharing_mode = elements::decayed<vk::sharing_mode>(args...);
+			}
 
 			if constexpr (types::are_contain_decayed<vk::buffer_create_flags>::for_types<Args...>) {
 				ci.flags = elements::decayed<vk::buffer_create_flags>(args...);

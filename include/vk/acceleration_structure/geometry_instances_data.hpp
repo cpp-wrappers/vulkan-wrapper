@@ -6,11 +6,15 @@
 namespace vk {
 
 	struct acceleration_structure_instances_data {
-		const uint32 __type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR;
-		const void* const __next;
+		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR;
+		const void* next;
 		uint32 array_of_pointers;
 		vk::device_or_host_address data;
 	};
+
+	namespace as {
+		using instances_data = vk::acceleration_structure_instances_data;
+	}
 
 } // vk
 

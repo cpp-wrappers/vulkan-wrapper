@@ -1,5 +1,6 @@
 #pragma once
 
+#include "get_memory_requirements.hpp"
 #include "destroy.hpp"
 
 #include "vk/handle/guarded/device_child_base.hpp"
@@ -14,6 +15,10 @@ namespace vk {
 
 		template<typename... Args> vk::result try_bind_memory(Args&&...) const;
 		template<typename... Args> void bind_memory(Args&&...) const;
+
+		vk::memory_requirements get_memory_requirements() const {
+			return vk::get_image_memory_requirements(device(), handle());
+		}
 	};
 
 } // vk

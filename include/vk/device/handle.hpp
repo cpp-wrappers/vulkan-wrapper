@@ -56,28 +56,6 @@ namespace vk {
 			return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
 		}
 
-		vk::memory_requirements
-		get_buffer_memory_requirements(vk::possibly_guarded_handle_of<vk::buffer> auto& buffer) const {
-			vk::memory_requirements memory_requirements;
-			vkGetBufferMemoryRequirements(
-				(VkDevice) vk::get_handle_value(*this),
-				(VkBuffer) vk::get_handle_value(buffer),
-				(VkMemoryRequirements*) &memory_requirements
-			);
-			return memory_requirements;
-		}
-
-		vk::memory_requirements
-		get_image_memory_requirements(vk::possibly_guarded_handle_of<vk::image> auto& image) const {
-			vk::memory_requirements memory_requirements;
-			vkGetImageMemoryRequirements(
-				(VkDevice) vk::get_handle_value(*this),
-				(VkImage) vk::get_handle_value(image),
-				(VkMemoryRequirements*) &memory_requirements
-			);
-			return memory_requirements;
-		}
-
 		vk::result try_map_memory(
 			vk::possibly_guarded_handle_of<vk::device_memory> auto& memory,
 			vk::device_size offset,

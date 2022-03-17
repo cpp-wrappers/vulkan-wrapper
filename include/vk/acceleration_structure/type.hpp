@@ -10,4 +10,8 @@ namespace vk {
 		generic = VK_ACCELERATION_STRUCTURE_TYPE_GENERIC_KHR
 	};
 
-}
+	namespace as {
+		using type = vk::acceleration_structure_type;
+	}
+
+} // vk
