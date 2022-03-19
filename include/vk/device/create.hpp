@@ -10,7 +10,6 @@
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 #include <core/meta/type/conjuncted_predicates.hpp>
 
-#include "vk/handle/handle_of.hpp"
 #include "vk/physical_device/handle.hpp"
 #include "vk/physical_device/features_2.hpp"
 #include "vk/create_or_allocate.hpp"
@@ -22,17 +21,17 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_decayed<vk::handle<vk::physical_device>>,
+			types::are_contain_decayed<handle<vk::physical_device>>,
 			types::are_may_contain_range_of<vk::queue_create_info>,
 			types::are_may_contain_range_of<vk::extension_name>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
 			types::are_may_contain_decayed_satisfying_predicate<vk::is_physical_device_features>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::device>>
+		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
 			vk::device_create_info ci{};
 
-			auto& physical_device = elements::decayed<vk::handle<vk::physical_device>>(args...);
+			auto& physical_device = elements::decayed<handle<vk::physical_device>>(args...);
 
 			if constexpr(types::are_contain_range_of<vk::queue_create_info>::for_types<Args...>) {
 				const auto& queue_create_infos = elements::range_of<vk::queue_create_info>(args...);
@@ -70,7 +69,7 @@ namespace vk {
 				ci.enabled_features = elements::decayed<vk::physical_device_features>(args...);
 			}
 
-			vk::handle<vk::device> device;
+			handle<vk::device> device;
 
 			vk::result result {
 				(int32) vkCreateDevice(
@@ -88,14 +87,14 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::are_contain_one_decayed<vk::handle<vk::physical_device>>,
+			types::are_contain_one_decayed<handle<vk::physical_device>>,
 			types::are_contain_one_decayed<vk::queue_family_index>,
 			types::are_contain_one_decayed<vk::queue_priority>,
 			types::are_may_contain_decayed<vk::extension_name>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
 			types::are_may_contain_decayed_satisfying_predicate<vk::is_physical_device_features>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::device>>
+		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
 			nuint extensions_count = types::count_of_decayed<vk::extension_name>::for_types<Args...>;
 			vk::extension_name extension_names[extensions_count];

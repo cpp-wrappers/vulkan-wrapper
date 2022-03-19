@@ -15,7 +15,7 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::src_stages>,
 		types::are_contain_one_decayed<vk::dst_stages>,
 		types::are_may_contain_one_decayed<vk::dependencies>,
@@ -23,7 +23,7 @@ namespace vk {
 		types::are_may_contain_one_range_of<vk::image_memory_barrier>
 	>::for_types<Args...>
 	void cmd_pipeline_barrier(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::src_stages src_stages = elements::decayed<vk::src_stages>(args...);
 		vk::dst_stages dst_stages = elements::decayed<vk::dst_stages>(args...);
 		vk::dependencies dependencies{};
@@ -67,6 +67,6 @@ namespace vk {
 } // vk
 
 template<typename... Args>
-auto& vk::handle<vk::command_buffer>::cmd_pipeline_barrier(Args&&... args) const {
+auto& handle<vk::command_buffer>::cmd_pipeline_barrier(Args&&... args) const {
 	vk::cmd_pipeline_barrier(*this, forward<Args>(args)...); return *this;
 }

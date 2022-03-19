@@ -6,8 +6,7 @@ namespace vk {
 
 	struct pipeline_layout;
 
-	template<>
-	struct vk::handle<vk::pipeline_layout> : vk::handle_base<vk::non_dispatchable> {
-	};
-
 } // vk
+
+template<>
+struct handle<vk::pipeline_layout> : vk::handle_base<vk::non_dispatchable> {};

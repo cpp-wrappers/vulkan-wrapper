@@ -17,9 +17,9 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::surface>,
-			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
+			types::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
 			types::are_may_contain_decayed<vk::swapchain_create_flag>,
 			types::are_contain_one_decayed<vk::min_image_count>,
 			types::are_contain_one_decayed<vk::format>,
@@ -33,9 +33,9 @@ namespace vk {
 			types::are_contain_one_decayed<vk::present_mode>,
 			types::are_contain_one_decayed<vk::clipped>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::swapchain>>
+		vk::expected<handle<vk::swapchain>>
 		operator () (Args&&... args) const {
-			auto& surface = elements::vk::possibly_guarded_handle_of<vk::surface>(args...);
+			auto& surface = elements::possibly_guarded_handle_of<vk::surface>(args...);
 
 			vk::swapchain_create_info ci {
 				.surface = vk::get_handle(surface),
@@ -67,12 +67,12 @@ namespace vk {
 				ci.queue_family_indices = vk::queue_family_indices{ family_indices.data() };
 			}
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>::for_types<Args...>) {
-				ci.old_swapchain = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::swapchain>(args...));
+			if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::swapchain>::for_types<Args...>) {
+				ci.old_swapchain = vk::get_handle(elements::possibly_guarded_handle_of<vk::swapchain>(args...));
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-			vk::handle<vk::swapchain> swapchain;
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			handle<vk::swapchain> swapchain;
 
 			vk::result result {
 				(int32) vkCreateSwapchainKHR(
@@ -90,7 +90,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_contain_one_decayed<vk::surface_format>::for_types<Args...>
-		vk::expected<vk::handle<vk::swapchain>>
+		vk::expected<handle<vk::swapchain>>
 		operator () (Args&&... args) const {
 			vk::surface_format surface_format = elements::decayed<vk::surface_format>(args...);
 

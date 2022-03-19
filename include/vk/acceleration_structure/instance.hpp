@@ -17,7 +17,7 @@ namespace vk {
 		uint32 flags : 8;
 		union {
 			vk::device_address address;
-			vk::handle<vk::acceleration_structure> handle;
+			handle<vk::acceleration_structure> handle;
 		} acceleration_structure_reference;
 	};
 

@@ -22,17 +22,17 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::pipeline_bind_point>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
 		types::are_may_contain_one_decayed<vk::first_set>,
-		types::are_contain_one_range_of<vk::handle<vk::descriptor_set>>,
+		types::are_contain_one_range_of<handle<vk::descriptor_set>>,
 		types::are_may_contain_one_range_of<vk::dynamic_offset>
 	>::for_types<Args...>
 	void cmd_bind_descriptor_sets(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::pipeline_bind_point bind_point = elements::decayed<vk::pipeline_bind_point>(args...);
-		auto& pipeline_layout = elements::vk::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
+		auto& pipeline_layout = elements::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
 
 		vk::first_set first{};
 		
@@ -40,7 +40,7 @@ namespace vk {
 			first = elements::decayed<vk::first_set>(args...);
 		}
 
-		auto& sets = elements::range_of<vk::handle<vk::descriptor_set>>(args...);
+		auto& sets = elements::range_of<handle<vk::descriptor_set>>(args...);
 
 		uint32 dynamic_offset_count{};
 		const vk::dynamic_offset* dynamic_offsets{};
@@ -66,7 +66,7 @@ namespace vk {
 } // vk
 
 template<typename... Args>
-auto& vk::handle<vk::command_buffer>::cmd_bind_descriptor_sets(Args &&... args) const {
+auto& handle<vk::command_buffer>::cmd_bind_descriptor_sets(Args &&... args) const {
 	vk::cmd_bind_descriptor_sets(*this, forward<Args>(args)...);
 	return *this;
 }

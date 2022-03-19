@@ -12,14 +12,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
-		types::are_contain_one_range_of<vk::handle<vk::command_buffer>>
+		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
+		types::are_contain_one_range_of<handle<vk::command_buffer>>
 	>::for_types<Args...>
 	void free_command_buffers(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-		auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
-		auto& buffers = elements::range_of<vk::handle<vk::command_buffer>>(args...);
+		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+		auto& pool = elements::possibly_guarded_handle_of<vk::command_pool>(args...);
+		auto& buffers = elements::range_of<handle<vk::command_buffer>>(args...);
 
 		vkFreeCommandBuffers(
 			(VkDevice) vk::get_handle_value(device),
@@ -34,14 +34,14 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
-			types::are_contain_one_decayed<vk::handle<vk::command_buffer>>
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
+			types::are_contain_one_decayed<handle<vk::command_buffer>>
 		>::for_types<Args...>
 		void operator() (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-			auto& pool = elements::vk::possibly_guarded_handle_of<vk::command_pool>(args...);
-			auto buffer = elements::decayed<vk::handle<vk::command_buffer>>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& pool = elements::possibly_guarded_handle_of<vk::command_pool>(args...);
+			auto buffer = elements::decayed<handle<vk::command_buffer>>(args...);
 
 			vk::free_command_buffers(device, pool, array{ buffer });
 		}

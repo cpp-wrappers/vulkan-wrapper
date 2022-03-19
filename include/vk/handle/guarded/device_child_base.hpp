@@ -10,15 +10,15 @@ namespace vk {
 	struct device;
 
 	template<typename ObjectType>
-	struct guarded_device_child_handle_base : vk::guarded_handle_base<ObjectType> {
+	struct guarded_device_child_handle_base : guarded_handle_base<ObjectType> {
 	private:
-		vk::handle<vk::device> m_device;
+		handle<vk::device> m_device;
 	public:
-		using base_type = vk::guarded_handle_base<ObjectType>;
+		using base_type = guarded_handle_base<ObjectType>;
 
 		guarded_device_child_handle_base() = default;
 
-		guarded_device_child_handle_base(vk::handle<ObjectType> handle, vk::handle<vk::device> device)
+		guarded_device_child_handle_base(handle<ObjectType> handle, ::handle<vk::device> device)
 			: base_type{ handle }, m_device { device }
 		{}
 
@@ -33,10 +33,10 @@ namespace vk {
 			vk::free<ObjectType>(device(), ((base_type*)this)->handle());
 		}
 
-		const vk::handle<vk::device>& device() const &  { return m_device; }
-		      vk::handle<vk::device>& device()       &  { return m_device; }
-		      vk::handle<vk::device>  device() const && { return m_device; }
-		      vk::handle<vk::device>  device()       && { return m_device; }
+		const handle<vk::device>& device() const &  { return m_device; }
+		      handle<vk::device>& device()       &  { return m_device; }
+		      handle<vk::device>  device() const && { return m_device; }
+		      handle<vk::device>  device()       && { return m_device; }
 	};
 
 } // vk

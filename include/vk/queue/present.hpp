@@ -9,17 +9,17 @@
 #include <core/meta/decayed_same_as.hpp>
 
 #include "vk/swapchain/image_index.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::present_info>
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
 		auto present_info = elements::decayed<vk::present_info>(args...);
 
 		return {
@@ -32,16 +32,16 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_range_of<vk::wait_semaphore>,
-		types::are_contain_one_range_of<vk::handle<vk::swapchain>>,
+		types::are_contain_one_range_of<handle<vk::swapchain>>,
 		types::are_contain_one_range_of<vk::image_index>,
 		types::are_may_contain_one_range_of<vk::result>
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
 		auto& wait_semaphores = elements::range_of<vk::wait_semaphore>(args...);
-		auto& swapchains = elements::range_of<vk::handle<vk::swapchain>>(args...);
+		auto& swapchains = elements::range_of<handle<vk::swapchain>>(args...);
 		auto& image_indices = elements::range_of<vk::image_index>(args...);
 
 		vk::present_info present_info {
@@ -61,19 +61,19 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::wait_semaphore>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
 		types::are_contain_one_decayed<vk::image_index>,
 		types::are_may_contain_one_decayed<vk::result&> // TODO
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
 
-		vk::handle<vk::semaphore> wait_semaphore =
-			(vk::handle<vk::semaphore>) elements::decayed<vk::wait_semaphore>(args...);
+		handle<vk::semaphore> wait_semaphore =
+			(handle<vk::semaphore>) elements::decayed<vk::wait_semaphore>(args...);
 		
-		auto& swapchain = elements::vk::possibly_guarded_handle_of<vk::swapchain>(args...);
+		auto& swapchain = elements::possibly_guarded_handle_of<vk::swapchain>(args...);
 		vk::image_index image_index = elements::decayed<vk::image_index>(args...);
 
 		vk::present_info present_info {

@@ -13,7 +13,7 @@ namespace vk {
 		const void* const next;
 		uint32 flags;
 		uint32 descriptor_set_layout_count;
-		const vk::handle<vk::descriptor_set_layout>* descriptor_set_layouts;
+		const handle<vk::descriptor_set_layout>* descriptor_set_layouts;
 		uint32 push_constant_range_count;
 		const vk::push_constant_range* push_constant_ranges;
 	};

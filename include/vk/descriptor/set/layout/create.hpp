@@ -17,11 +17,11 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::descriptor_set_layout_create_flags>,
 			types::are_contain_one_range_of<vk::descriptor_set_layout_binding>
 		>::for_types<Args...>
-		expected<vk::handle<vk::descriptor_set_layout>>
+		expected<handle<vk::descriptor_set_layout>>
 		operator () (Args&&... args) const {
 			auto& bindings = elements::range_of<vk::descriptor_set_layout_binding>(args...);
 
@@ -34,9 +34,9 @@ namespace vk {
 				ci.flags = elements::decayed<vk::descriptor_set_layout_create_flags>(args...);
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::descriptor_set_layout> descriptor_set_layout;
+			handle<vk::descriptor_set_layout> descriptor_set_layout;
 
 			vk::result result {
 				(int32) vkCreateDescriptorSetLayout(

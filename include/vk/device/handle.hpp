@@ -4,10 +4,10 @@
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/elements/one_of.hpp>
+#include <core/handle/possibly_guarded_of.hpp>
 
 #include "vk/handle/base.hpp"
 #include "vk/handle/get_value.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
 #include "vk/create_or_allocate.hpp"
 #include "vk/headers.hpp"
 #include "vk/queue_family_index.hpp"
@@ -39,25 +39,27 @@ namespace vk {
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
 
-	template<>
-	struct vk::handle<vk::device> : vk::handle_base<vk::dispatchable> {
+}
 
-		inline vk::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const;
+	template<>
+	struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
+
+		inline handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const;
 
 		template<typename ObjectType, typename... Args>
-		vk::expected<vk::handle<ObjectType>>
+		vk::expected<handle<ObjectType>>
 		create(Args&&... args) const {
 			return vk::create<ObjectType>(*this, forward<Args>(args)...);
 		}
 
 		template<typename ObjectType, typename... Args>
-		vk::expected<vk::handle<ObjectType>>
+		vk::expected<handle<ObjectType>>
 		allocate(Args&&... args) const {
 			return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
 		}
 
 		vk::result try_map_memory(
-			vk::possibly_guarded_handle_of<vk::device_memory> auto& memory,
+			possibly_guarded_handle_of<vk::device_memory> auto& memory,
 			vk::device_size offset,
 			vk::device_size size,
 			void** data
@@ -90,8 +92,6 @@ namespace vk {
 		
 	}; // device
 
-} // vk
-
 #include "memory/allocate.hpp"
 #include "vk/command/pool/create.hpp"
 #include "vk/shader/module/create.hpp"
@@ -114,8 +114,8 @@ namespace vk {
 
 #include "vk/queue/handle.hpp"
 
-inline vk::handle<vk::queue>
-vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
+inline handle<vk::queue>
+handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
 	VkQueue queue;
 
 	vkGetDeviceQueue(
@@ -131,11 +131,11 @@ vk::handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk:
 #include "vk/descriptor/set/update.hpp"
 
 template<typename... Args>
-void vk::handle<vk::device>::update_descriptor_sets(Args&&... args) const {
+void handle<vk::device>::update_descriptor_sets(Args&&... args) const {
 	vk::update_descriptor_sets(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
-void vk::handle<vk::device>::update_descriptor_set(Args&&... args) const {
+void handle<vk::device>::update_descriptor_set(Args&&... args) const {
 	vk::update_descriptor_set(*this, forward<Args>(args)...);
 }

@@ -6,8 +6,7 @@ namespace vk {
 
 	struct deferred_operation;
 
-	template<>
-	struct vk::handle<vk::deferred_operation> : vk::handle_base<vk::non_dispatchable> {
-	};
+} // vk
 
-}
+template<>
+struct handle<vk::deferred_operation> : vk::handle_base<vk::non_dispatchable> {};

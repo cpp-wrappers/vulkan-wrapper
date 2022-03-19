@@ -11,12 +11,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_may_contain_range_of<vk::write_descriptor_set>,
 		types::are_may_contain_range_of<vk::copy_descriptor_set>
 	>::for_types<Args...>
 	void update_descriptor_sets(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
 		uint32 write_count{};
 		const vk::write_descriptor_set* writes;
@@ -47,12 +47,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_contain_decayed<vk::write_descriptor_set>
 	>::for_types<Args...>
 	void update_descriptor_set(Args&&... args) {
 		return vk::update_descriptor_sets(
-			elements::vk::possibly_guarded_handle_of<vk::device>(args...),
+			elements::possibly_guarded_handle_of<vk::device>(args...),
 			array{
 				elements::decayed<vk::write_descriptor_set>(args...)
 			}
@@ -61,12 +61,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_contain_decayed<vk::copy_descriptor_set>
 	>::for_types<Args...>
 	void update_descriptor_set(Args&&... args) {
 		return vk::update_descriptor_sets(
-			elements::vk::possibly_guarded_handle_of<vk::device>(args...),
+			elements::possibly_guarded_handle_of<vk::device>(args...),
 			array{
 				elements::decayed<vk::copy_descriptor_set>(args...)
 			}

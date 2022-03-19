@@ -15,7 +15,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_decayed<vk::image_create_flags>,
 			types::are_contain_one_decayed<vk::image_type>,
 			types::are_contain_one_decayed<vk::format>,
@@ -29,7 +29,7 @@ namespace vk {
 			types::are_contain_one_range_of<vk::queue_family_index>,
 			types::are_contain_one_decayed<vk::initial_layout>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::image>>
+		vk::expected<handle<vk::image>>
 		operator () (Args&&... args) const {
 			vk::image_create_info ci{};
 
@@ -50,9 +50,9 @@ namespace vk {
 			ci.queue_family_index_count = (uint32) queues.size();
 			ci.queue_family_indices = queues.data();
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::image> image;
+			handle<vk::image> image;
 
 			vk::result result {
 				(int32) vkCreateImage(

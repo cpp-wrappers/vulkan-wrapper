@@ -18,9 +18,9 @@ namespace vk {
 	struct command_buffer_inheritance_info {
 		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
 		const void* next;
-		vk::handle<vk::render_pass> render_pass;
+		handle<vk::render_pass> render_pass;
 		vk::subpass subpass;
-		vk::handle<vk::framebuffer> framebuffer;
+		handle<vk::framebuffer> framebuffer;
 		vk::occlusion_query_enable occlusion_query_enable;
 		vk::query_control_flags query_flags;
 		vk::query_pipeline_statistic_flags pipeline_statistics_flags;

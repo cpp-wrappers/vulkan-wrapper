@@ -12,12 +12,12 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
-			types::are_contain_one_decayed<vk::handle<vk::surface>>
+			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::are_contain_one_decayed<handle<vk::surface>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& instance = elements::vk::possibly_guarded_handle_of<vk::instance>(args...);
-			auto surface = elements::decayed<vk::handle<vk::surface>>(args...);
+			auto& instance = elements::possibly_guarded_handle_of<vk::instance>(args...);
+			auto surface = elements::decayed<handle<vk::surface>>(args...);
 
 			vkDestroySurfaceKHR(
 				(VkInstance) vk::get_handle_value(instance),

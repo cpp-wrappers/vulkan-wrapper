@@ -10,14 +10,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 		types::are_may_contain_one_decayed<vk::first_binding>,
 		types::are_may_contain_one_decayed<vk::memory_offset>
 	>::for_types<Args...>
 	void cmd_bind_vertex_buffer(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		vk::handle<vk::buffer> buffer = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::buffer>(args...));
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		handle<vk::buffer> buffer = vk::get_handle(elements::possibly_guarded_handle_of<vk::buffer>(args...));
 
 		vk::first_binding binding{ 0 };
 
@@ -42,7 +42,7 @@ namespace vk {
 } // vk
 
 template<typename... Args> 
-auto& vk::handle<vk::command_buffer>::cmd_bind_vertex_buffer(Args&&... args) const {
+auto& handle<vk::command_buffer>::cmd_bind_vertex_buffer(Args&&... args) const {
 	vk::cmd_bind_vertex_buffer(*this, forward<Args>(args)...);
 	return *this;
 }

@@ -10,7 +10,7 @@ namespace vk {
 	template<>
 	inline constexpr bool is_allocatable<vk::device_memory> = true;
 
-	template<>
-	struct vk::handle<vk::device_memory> : vk::handle_base<vk::non_dispatchable> {};
-
 } // vk
+
+template<>
+struct handle<vk::device_memory> : vk::handle_base<vk::non_dispatchable> {};

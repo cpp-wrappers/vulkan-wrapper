@@ -14,12 +14,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
 		types::are_contain_one_range_of<vk::viewport>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
 		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
@@ -38,12 +38,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
 		types::are_contain_decayed<vk::viewport>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
 		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
@@ -57,12 +57,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
 		types::are_contain_one_decayed<vk::extent<2>>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 		vk::first_viewport_index first{ 0 };
 		
 		if constexpr(types::are_contain_decayed<vk::first_viewport_index>::for_types<Args...>) {
@@ -84,7 +84,7 @@ namespace vk {
 } // vk
 
 template<typename... Args>
-auto& vk::handle<vk::command_buffer>::cmd_set_viewport(Args&&... args) const {
+auto& handle<vk::command_buffer>::cmd_set_viewport(Args&&... args) const {
 	vk::cmd_set_viewport(*this, forward<Args>(args)...);
 	return *this;
 }

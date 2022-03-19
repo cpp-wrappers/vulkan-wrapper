@@ -1,6 +1,6 @@
 #pragma once
 
-#include "declaration.hpp"
+#include <core/handle/guarded_declaration.hpp>
 
 #include "vk/create_or_allocate.hpp"
 #include "vk/destroy_or_free.hpp"
@@ -10,14 +10,14 @@ namespace vk {
 
 	template<typename ObjectType>
 	class guarded_handle_base {
-		vk::handle<ObjectType> m_handle{};
+		handle<ObjectType> m_handle{};
 
 	public:
 		using object_type = ObjectType;
 
 		guarded_handle_base() = default;
 
-		guarded_handle_base(vk::handle<ObjectType> handle)
+		guarded_handle_base(handle<ObjectType> handle)
 			: m_handle{ handle }
 		{}
 
@@ -31,13 +31,13 @@ namespace vk {
 			vk::destroy<ObjectType>(handle());
 		}
 
-		void reset(vk::handle<ObjectType> v = {}) {
+		void reset(handle<ObjectType> v = {}) {
 			if(handle().value) {
 				if constexpr(vk::is_creatable<ObjectType>) {
-					((vk::guarded_handle<ObjectType>*)this)->destroy();
+					((guarded_handle<ObjectType>*)this)->destroy();
 				}
 				else {
-					((vk::guarded_handle<ObjectType>*)this)->free();
+					((guarded_handle<ObjectType>*)this)->free();
 				}
 			}
 			handle() = v;
@@ -53,12 +53,12 @@ namespace vk {
 			return *this;
 		}
 
-		const vk::handle<ObjectType>& handle() const &  { return m_handle; }
-		      vk::handle<ObjectType>& handle()       &  { return m_handle; }
-		      vk::handle<ObjectType>  handle() const && { return m_handle; }
-		      vk::handle<ObjectType>  handle()       && { return m_handle; }
+		const ::handle<ObjectType>& handle() const &  { return m_handle; }
+		      ::handle<ObjectType>& handle()       &  { return m_handle; }
+		      ::handle<ObjectType>  handle() const && { return m_handle; }
+		      ::handle<ObjectType>  handle()       && { return m_handle; }
 
-		operator vk::handle<ObjectType> () const {
+		operator ::handle<ObjectType> () const {
 			return handle();
 		}
 	};

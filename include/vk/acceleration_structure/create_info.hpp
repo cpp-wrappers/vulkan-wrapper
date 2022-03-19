@@ -22,7 +22,7 @@ namespace vk {
 		const uint32 __type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
 		const void* const __next;
 		vk::acceleration_structure_create_flags flags;
-		vk::handle<vk::buffer> buffer;
+		handle<vk::buffer> buffer;
 		vk::memory_offset offset;
 		vk::memory_size size;
 		vk::acceleration_structure_type type;

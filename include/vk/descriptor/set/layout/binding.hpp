@@ -17,7 +17,7 @@ namespace vk {
 		vk::descriptor_type descriptor_type;
 		vk::descriptor_count descriptor_count{ 1 };
 		vk::shader_stages stage_flags;
-		const void* immutable_samplers{ nullptr };
+		const void* immutable_samplers = nullptr;
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<

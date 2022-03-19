@@ -14,18 +14,18 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_range_of<vk::submit_info>,
-		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
-		vk::handle<vk::fence> fence{};
+		handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
-			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
+		if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
+			fence = vk::get_handle(elements::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
 		auto& submit_infos = elements::range_of<vk::submit_info>(args...);
 
 		return vk::result {
@@ -40,18 +40,18 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::submit_info>,
-		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
-		vk::handle<vk::fence> fence{};
+		handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
-			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
+		if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
+			fence = vk::get_handle(elements::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
 		auto& submit_info = elements::decayed<vk::submit_info>(args...);
 
 		return vk::try_queue_submit(queue, array<vk::submit_info, 1>{ submit_info }, fence);
@@ -59,22 +59,22 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::queue>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_may_contain_one_decayed<vk::wait_semaphore>,
 		types::are_may_contain_one_decayed<vk::pipeline_stages>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::signal_semaphore>,
-		types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
+		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
-		vk::handle<vk::fence> fence{};
+		handle<vk::fence> fence{};
 
-		if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
-			fence = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::fence>(args...));
+		if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::fence>::for_types<Args...>) {
+			fence = vk::get_handle(elements::possibly_guarded_handle_of<vk::fence>(args...));
 		}
 
-		auto& queue = elements::vk::possibly_guarded_handle_of<vk::queue>(args...);
-		vk::handle<vk::command_buffer> command_buffer = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...));
+		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
+		handle<vk::command_buffer> command_buffer = vk::get_handle(elements::possibly_guarded_handle_of<vk::command_buffer>(args...));
 
 		vk::submit_info si {
 			.command_buffer_count = 1,
@@ -83,12 +83,12 @@ namespace vk {
 
 		if constexpr(types::are_contain_decayed<vk::wait_semaphore>::for_types<Args...>) {
 			si.wait_semaphore_count = 1,
-			si.wait_semaphores = (vk::handle<vk::semaphore>*) &elements::decayed<vk::wait_semaphore>(args...);
+			si.wait_semaphores = (handle<vk::semaphore>*) &elements::decayed<vk::wait_semaphore>(args...);
 		}
 
 		if constexpr(types::are_contain_decayed<vk::signal_semaphore>::for_types<Args...>) {
 			si.signal_semaphore_count = 1,
-			si.signal_semaphores = (vk::handle<vk::semaphore>*) &elements::decayed<vk::signal_semaphore>(args...);
+			si.signal_semaphores = (handle<vk::semaphore>*) &elements::decayed<vk::signal_semaphore>(args...);
 		}
 
 		if constexpr(types::are_contain_decayed<vk::pipeline_stages>::for_types<Args...>) {

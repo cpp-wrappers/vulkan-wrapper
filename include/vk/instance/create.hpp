@@ -18,7 +18,7 @@ namespace vk {
 			types::are_may_contain_one_range_of<vk::layer_name>,
 			types::are_may_contain_one_range_of<vk::extension_name>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::instance>>
+		vk::expected<handle<vk::instance>>
 		operator () (Args&&... args) const {
 			instance_create_info ici{};
 
@@ -41,7 +41,7 @@ namespace vk {
 				ici.enabled_layer_names = range.data();
 			}
 
-			vk::handle<vk::instance> instance;
+			handle<vk::instance> instance;
 
 			vk::result result {
 				(int32) vkCreateInstance(

@@ -11,7 +11,7 @@ namespace vk {
 		const uint32 type = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
 		const void* const next;
 		const uint32 flags;
-		vk::handle<vk::buffer> buffer;
+		handle<vk::buffer> buffer;
 		vk::format format;
 		vk::memory_offset offset;
 		vk::memory_size size;

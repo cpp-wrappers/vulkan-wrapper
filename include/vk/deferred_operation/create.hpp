@@ -7,16 +7,16 @@
 #include "vk/create_or_allocate.hpp"
 #include "vk/result.hpp"
 #include "vk/device/handle.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
 	template<>
 	struct vk::create_t<vk::deferred_operation> {
 
-		vk::expected<vk::handle<deferred_operation>>
-		operator () (const vk::possibly_guarded_handle_of<vk::device> auto& device) const {
-			vk::handle<vk::deferred_operation> deferred_operation;
+		vk::expected<handle<deferred_operation>>
+		operator () (const possibly_guarded_handle_of<vk::device> auto& device) const {
+			handle<vk::deferred_operation> deferred_operation;
 
 			vk::result result {
 				(int) vkCreateDeferredOperationKHR(

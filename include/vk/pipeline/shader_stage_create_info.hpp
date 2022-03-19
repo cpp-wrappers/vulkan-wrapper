@@ -10,7 +10,7 @@
 #include "vk/handle/get_value.hpp"
 #include "vk/shader/stage.hpp"
 #include "vk/shader/module/handle.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -26,31 +26,31 @@ namespace vk {
 		const void* const next = nullptr;
 		flag_enum<vk::shader_stage_create_flag> flags{};
 		vk::shader_stages stages;
-		vk::handle<vk::shader_module> module;
+		handle<vk::shader_module> module;
 		vk::entrypoint_name entrypoint_name;
 		const void* specialization_info = nullptr;
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
 			types::are_contain_one_decayed<vk::shader_stages>,
 			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
 			stages = elements::decayed<vk::shader_stages>(args...);
-			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
+			module = vk::get_handle(elements::possibly_guarded_handle_of<vk::shader_module>(args...));
 			entrypoint_name = elements::decayed<vk::entrypoint_name>(args...);
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
 			types::are_contain_one_decayed<vk::shader_stage>,
 			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>
 		pipeline_shader_stage_create_info(Args&&... args) {
 			stages = elements::decayed<vk::shader_stage>(args...);
-			module = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::shader_module>(args...));
+			module = vk::get_handle(elements::possibly_guarded_handle_of<vk::shader_module>(args...));
 			entrypoint_name = elements::decayed<vk::entrypoint_name>(args...);
 		}
 	};

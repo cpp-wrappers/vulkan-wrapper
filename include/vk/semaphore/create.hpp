@@ -11,8 +11,8 @@ namespace vk {
 	template<>
 	struct vk::create_t<vk::semaphore> {
 
-		vk::expected<vk::handle<vk::semaphore>>
-		operator () (vk::possibly_guarded_handle_of<vk::device> auto&& device) const {
+		vk::expected<handle<vk::semaphore>>
+		operator () (possibly_guarded_handle_of<vk::device> auto&& device) const {
 			vk::semaphore_create_info ci{};
 
 			VkSemaphore semaphore;
@@ -27,7 +27,7 @@ namespace vk {
 			};
 
 			if(result.error()) return result;
-			return vk::handle<vk::semaphore>{ semaphore };
+			return handle<vk::semaphore>{ semaphore };
 		}
 
 	};

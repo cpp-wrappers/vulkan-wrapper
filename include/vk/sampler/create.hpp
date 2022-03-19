@@ -15,7 +15,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::sampler_create_flags>,
 			types::are_contain_one_decayed<vk::mag_filter>,
 			types::are_contain_one_decayed<vk::min_filter>,
@@ -33,7 +33,7 @@ namespace vk {
 			types::are_may_contain_one_decayed<vk::border_color>,
 			types::are_may_contain_one_decayed<vk::unnormalized_coordinates>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::sampler>>
+		vk::expected<handle<vk::sampler>>
 		operator () (Args&&... args) const {
 			vk::sampler_create_info ci {
 				.mag_filter = elements::decayed<vk::mag_filter>(args...),
@@ -75,9 +75,9 @@ namespace vk {
 				ci.unnormalized_coordinates = elements::decayed<vk::unnormalized_coordinates>(args...);
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::sampler> sampler;
+			handle<vk::sampler> sampler;
 
 			vk::result result {
 				(int32) vkCreateSampler(

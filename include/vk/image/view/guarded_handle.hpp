@@ -5,13 +5,9 @@
 
 #include "vk/handle/guarded/device_child_base.hpp"
 
-namespace vk {
+template<>
+struct guarded_handle<vk::image_view> : vk::guarded_device_child_handle_base<vk::image_view> {
+	using base_type = vk::guarded_device_child_handle_base<vk::image_view>;
 
-	template<>
-	struct guarded_handle<vk::image_view> : vk::guarded_device_child_handle_base<vk::image_view> {
-		using base_type = vk::guarded_device_child_handle_base<vk::image_view>;
-
-		using base_type::base_type;
-	};
-
-} // vk
+	using base_type::base_type;
+};

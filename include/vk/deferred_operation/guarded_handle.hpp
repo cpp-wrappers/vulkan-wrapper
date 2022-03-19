@@ -7,7 +7,7 @@
 namespace vk {
 
 	template<>
-	struct vk::guarded_handle<vk::deferred_operation> :
+	struct guarded_handle<vk::deferred_operation> :
 		vk::guarded_device_child_handle_base<vk::deferred_operation>
 	{
 		using base_type = vk::guarded_device_child_handle_base<vk::deferred_operation>;

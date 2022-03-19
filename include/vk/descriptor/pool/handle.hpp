@@ -6,9 +6,7 @@ namespace vk {
 
 	struct descriptor_pool;
 
-	template<>
-	struct vk::handle<vk::descriptor_pool> : vk::handle_base<vk::non_dispatchable> {
-		
-	};
-
 } // vk
+
+template<>
+struct handle<vk::descriptor_pool> : vk::handle_base<vk::non_dispatchable> {};

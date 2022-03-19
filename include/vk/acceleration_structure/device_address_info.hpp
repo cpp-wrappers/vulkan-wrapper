@@ -9,7 +9,7 @@ namespace vk {
 	struct acceleration_structure_device_address_info {
 		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR;
 		const void* next;
-		vk::handle<vk::acceleration_structure> acceleration_structure;
+		handle<vk::acceleration_structure> acceleration_structure;
 	};
 
 	namespace as {

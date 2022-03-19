@@ -6,6 +6,6 @@
 
 namespace vk {
 
-	struct wait_semaphore : wrapper::of<vk::handle<vk::semaphore>, struct wait_semaphore_t> {};
+	struct wait_semaphore : wrapper::of<handle<vk::semaphore>, struct wait_semaphore_t> {};
 
 }

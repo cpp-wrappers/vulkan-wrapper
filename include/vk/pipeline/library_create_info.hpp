@@ -10,7 +10,7 @@ namespace vk {
 		uint32 structure_type = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
 		const void* next;
 		uint32 library_count;
-		const vk::handle<vk::pipeline>* libraries;
+		const handle<vk::pipeline>* libraries;
 	};
 
 } // vk

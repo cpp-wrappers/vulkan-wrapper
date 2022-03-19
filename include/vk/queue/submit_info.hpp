@@ -1,7 +1,8 @@
 #pragma once
 
+#include <core/handle/declaration.hpp>
+
 #include "vk/headers.hpp"
-#include "vk/handle/declaration.hpp"
 #include "vk/pipeline/stage.hpp"
 
 namespace vk {
@@ -13,12 +14,12 @@ namespace vk {
 		const uint32 type = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		const void* const next;
 		uint32 wait_semaphore_count;
-		const vk::handle<vk::semaphore>* wait_semaphores;
+		const handle<vk::semaphore>* wait_semaphores;
 		const vk::pipeline_stages* wait_dst_stage_mask;
 		uint32 command_buffer_count;
-		const vk::handle<vk::command_buffer>* command_buffers;
+		const handle<vk::command_buffer>* command_buffers;
 		uint32 signal_semaphore_count;
-		const vk::handle<vk::semaphore>* signal_semaphores;
+		const handle<vk::semaphore>* signal_semaphores;
 	};
 
 } // vk

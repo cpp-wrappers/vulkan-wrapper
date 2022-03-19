@@ -27,8 +27,8 @@ namespace vk {
 		vk::acceleration_structure_type type;
 		vk::acceleration_structure_build_flags flags;
 		vk::acceleration_structure_build_mode mode;
-		vk::handle<vk::acceleration_structure> src;
-		vk::handle<vk::acceleration_structure> dst;
+		handle<vk::acceleration_structure> src;
+		handle<vk::acceleration_structure> dst;
 		uint32 geometry_count;
 		const vk::acceleration_structure_geometry* geometries;
 		const vk::acceleration_structure_geometry* const* geometries_pointers;

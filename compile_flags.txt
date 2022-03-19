@@ -12,4 +12,3 @@
 -Iinclude
 -I../core/include
 -Xclang -fimplicit-module-maps
--Xclang -fprebuilt-module-path=./build

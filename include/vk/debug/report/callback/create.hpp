@@ -16,13 +16,13 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::are_contain_one_decayed<vk::debug_report_flags>,
 			types::are_contain_one_decayed<vk::debug_report_callback_type>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::debug_report_callback>>
+		vk::expected<handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
-			auto& instance = elements::vk::possibly_guarded_handle_of<vk::instance>(args...);
+			auto& instance = elements::possibly_guarded_handle_of<vk::instance>(args...);
 			auto flags = elements::decayed<vk::debug_report_flags>(args...);
 			auto& callback = elements::decayed<vk::debug_report_callback_type>(args...);
 
@@ -31,7 +31,7 @@ namespace vk {
 				.callback = callback
 			};
 
-			vk::handle<vk::debug_report_callback> debug_report_callback;
+			handle<vk::debug_report_callback> debug_report_callback;
 
 			auto fn = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(
 				(VkInstance) vk::get_handle_value(instance),
@@ -56,11 +56,11 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::are_may_contain_decayed<vk::debug_report_flag>,
 			types::are_contain_one_decayed<vk::debug_report_callback_type>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::debug_report_callback>>
+		vk::expected<handle<vk::debug_report_callback>>
 		operator () (Args&&... args) const {
 			vk::debug_report_flags flags{};
 
@@ -70,7 +70,7 @@ namespace vk {
 				}
 			);
 
-			auto& instance = elements::vk::possibly_guarded_handle_of<vk::instance>(args...);
+			auto& instance = elements::possibly_guarded_handle_of<vk::instance>(args...);
 			auto& callback = elements::decayed<vk::debug_report_callback_type>(args...);
 
 			return this->operator () (flags, instance, callback);

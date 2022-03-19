@@ -10,7 +10,7 @@
 #include "vk/device/handle.hpp"
 #include "vk/subpass.hpp"
 #include "vk/create_or_allocate.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -21,10 +21,10 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::vk::are_may_contain_one_possibly_guarded_handle_of<vk::pipeline>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+			types::are_may_contain_one_possibly_guarded_handle_of<vk::pipeline>,
 			types::are_contain_one_range_of<vk::pipeline_shader_stage_create_info>,
 			types::are_may_contain_decayed<vk::pipeline_create_flag>,
 			types::are_may_contain_one_decayed<vk::pipeline_vertex_input_state_create_info>,
@@ -39,12 +39,12 @@ namespace vk {
 			types::are_contain_one_decayed<vk::subpass>,
 			types::are_may_contain_one_decayed<vk::base_pipeline_index>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::pipeline>>
+		vk::expected<handle<vk::pipeline>>
 		operator () (Args&&... args) const {
 			vk::pipeline_rasterization_state_create_info prsci = elements::decayed<vk::pipeline_rasterization_state_create_info>(args...);
 
-			auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>(args...);
-			auto& layout = elements::vk::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
+			auto& render_pass = elements::possibly_guarded_handle_of<vk::render_pass>(args...);
+			auto& layout = elements::possibly_guarded_handle_of<vk::pipeline_layout>(args...);
 
 			vk::subpass subpass = elements::decayed<vk::subpass>(args...);
 
@@ -90,10 +90,10 @@ namespace vk {
 			if constexpr(types::are_contain_decayed<vk::base_pipeline_index>::for_types<Args...>)
 				ci.base_pipeline_index = elements::decayed<vk::base_pipeline_index>(args...);
 
-			if constexpr(types::vk::are_contain_one_possibly_guarded_handle_of<vk::pipeline>::for_types<Args...>)
-				ci.base_pipeline = vk::get_handle(elements::vk::possibly_guarded_handle_of<vk::pipeline>(args...));
+			if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::pipeline>::for_types<Args...>)
+				ci.base_pipeline = vk::get_handle(elements::possibly_guarded_handle_of<vk::pipeline>(args...));
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 			VkPipeline pipeline;
 
 			vk::result result {
@@ -109,12 +109,12 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return vk::handle<vk::pipeline>{ pipeline };
+			return handle<vk::pipeline>{ pipeline };
 		}
 
 		template<typename... Args>
 		requires types::are_contain_one_decayed<vk::primitive_topology>::for_types<Args...>
-		vk::expected<vk::handle<vk::pipeline>>
+		vk::expected<handle<vk::pipeline>>
 		operator () (Args&&... args) const {
 			vk::primitive_topology topology = elements::decayed<vk::primitive_topology>(args...);
 

@@ -16,10 +16,10 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::fence_create_flags>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::fence>>
+		vk::expected<handle<vk::fence>>
 		operator () (Args&&... args) const {
 			vk::fence_create_info ci {};
 	
@@ -27,7 +27,7 @@ namespace vk {
 				ci.flags = elements::decayed<vk::fence_create_flags>(args...);
 			}
 	
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 			VkFence fence;
 	
 			vk::result result {
@@ -39,19 +39,19 @@ namespace vk {
 				)
 			};
 	
-			if(result.success()) return vk::handle<vk::fence>{ fence };
+			if(result.success()) return handle<vk::fence>{ fence };
 	
 			return result;
 		}
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_decayed<vk::fence_create_flag>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::fence>>
+		vk::expected<handle<vk::fence>>
 		operator () (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
 			vk::fence_create_flags create_flags;
 

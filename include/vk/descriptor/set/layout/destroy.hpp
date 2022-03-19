@@ -15,12 +15,12 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_decayed<vk::handle<vk::descriptor_set_layout>>
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::descriptor_set_layout>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-			auto set_layout = elements::decayed<vk::handle<vk::descriptor_set_layout>>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto set_layout = elements::decayed<handle<vk::descriptor_set_layout>>(args...);
 
 			vkDestroyDescriptorSetLayout(
 				(VkDevice) vk::get_handle_value(device),

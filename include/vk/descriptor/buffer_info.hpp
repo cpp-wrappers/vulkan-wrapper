@@ -8,7 +8,7 @@
 namespace vk {
 
 	struct descriptor_buffer_info {
-		vk::handle<vk::buffer> buffer;
+		handle<vk::buffer> buffer;
 		vk::memory_offset offset;
 		vk::memory_size size;
 	};

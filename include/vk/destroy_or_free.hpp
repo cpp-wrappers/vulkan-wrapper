@@ -1,7 +1,5 @@
 #pragma once
 
-#include "handle/declaration.hpp"
-
 namespace vk {
 
 	template<typename ObjectType>
@@ -15,4 +13,5 @@ namespace vk {
 
 	template<typename ObjectType>
 	constexpr inline vk::free_t<ObjectType> free = vk::free_t<ObjectType>{};
-}
+
+} // vk

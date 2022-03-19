@@ -16,8 +16,8 @@ namespace vk {
 		uniform_buffer_dynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
 		storage_buffer_dynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
 		input_attachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
-		inline_uniform_block_ext = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
-		acceleration_structure_khr = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+		inline_uniform_block = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
+		acceleration_structure = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
 		acceleration_structure_nv = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV,
 		//mutable_valve = VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
 	};

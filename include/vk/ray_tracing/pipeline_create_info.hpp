@@ -25,8 +25,8 @@ namespace vk {
 		const vk::pipeline_library_create_info* library_info;
 		const vk::ray_tracing_pipeline_interface_create_info* library_interface;
 		const vk::pipeline_dynamic_state_create_info dynamic_state;
-		vk::handle<vk::pipeline_layout> layout;
-		vk::handle<vk::pipeline> base_pipeline;
+		handle<vk::pipeline_layout> layout;
+		handle<vk::pipeline> base_pipeline;
 		uint32 base_pipeline_index;
 	};
 

@@ -9,12 +9,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::image>
+		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::image>
 	>::for_types<Args...>
 	vk::memory_requirements get_image_memory_requirements(Args&&... args) {
-		auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
-		auto& image = elements::vk::possibly_guarded_handle_of<vk::image>(args...);
+		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+		auto& image = elements::possibly_guarded_handle_of<vk::image>(args...);
 
 		vk::memory_requirements memory_requirements;
 

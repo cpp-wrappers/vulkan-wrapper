@@ -14,7 +14,7 @@ namespace vk {
 
 	inline
 	vk::physical_device_properties
-	get_properties(vk::handle<vk::physical_device> physical_device) {
+	get_properties(handle<vk::physical_device> physical_device) {
 		vk::physical_device_properties props;
 
 		vkGetPhysicalDeviceProperties(
@@ -26,14 +26,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::are_contain_one_decayed<vk::handle<vk::physical_device>>,
+		types::are_contain_one_decayed<handle<vk::physical_device>>,
 		types::are_contain_satisfying_predicate<vk::is_extension_properties_reference>
 	>::for_types<Args...>
 	vk::physical_device_properties
 	get_properties(Args&&... args) {
 		vk::physical_device_properties_2 props{};
 
-		auto physical_device = elements::decayed<vk::handle<vk::physical_device>>(args...);
+		auto physical_device = elements::decayed<handle<vk::physical_device>>(args...);
 
 		const void** next = &props.next;
 
@@ -56,6 +56,6 @@ namespace vk {
 
 template<typename... Args>
 vk::physical_device_properties
-vk::handle<vk::physical_device>::get_properties(Args&&... args) const {
+handle<vk::physical_device>::get_properties(Args&&... args) const {
 	return vk::get_properties(*this, forward<Args>(args)...);
 }

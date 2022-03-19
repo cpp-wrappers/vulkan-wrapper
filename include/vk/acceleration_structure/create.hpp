@@ -8,7 +8,7 @@
 #include "vk/result.hpp"
 #include "vk/device/handle.hpp"
 #include "vk/create_or_allocate.hpp"
-#include "vk/handle/possibly_guarded_handle_of.hpp"
+#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -17,17 +17,17 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_decayed<vk::acceleration_structure_create_flags>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 			types::are_may_contain_one_decayed<vk::memory_offset>,
 			types::are_contain_one_decayed<vk::memory_size>,
 			types::are_contain_one_decayed<vk::acceleration_structure_type>,
 			types::are_may_contain_one_decayed<vk::device_address>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::acceleration_structure>>
+		vk::expected<handle<vk::acceleration_structure>>
 		operator () (Args&&... args) const {
-			auto& buffer = elements::vk::possibly_guarded_handle_of<vk::buffer>(args...);
+			auto& buffer = elements::possibly_guarded_handle_of<vk::buffer>(args...);
 
 			vk::acceleration_structure_create_info ci {
 				.buffer = vk::get_handle(buffer),
@@ -47,9 +47,9 @@ namespace vk {
 				ci.device_address = elements::decayed<vk::device_address>(args...);
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::acceleration_structure> acceleration_structure;
+			handle<vk::acceleration_structure> acceleration_structure;
 
 			auto f =
 				(PFN_vkCreateAccelerationStructureKHR) vkGetDeviceProcAddr(

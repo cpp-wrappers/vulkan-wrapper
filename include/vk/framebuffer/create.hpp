@@ -14,16 +14,16 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::are_contain_one_range_of<vk::handle<vk::image_view>>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+			types::are_contain_one_range_of<handle<vk::image_view>>,
 			types::are_contain_one_decayed<vk::extent<3>>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::framebuffer>>
+		vk::expected<handle<vk::framebuffer>>
 		operator () (const Args&... args) const {
-			auto& attachments = elements::range_of<vk::handle<vk::image_view>>(args...);
+			auto& attachments = elements::range_of<handle<vk::image_view>>(args...);
 
-			auto& render_pass = elements::vk::possibly_guarded_handle_of<vk::render_pass>(args...);
+			auto& render_pass = elements::possibly_guarded_handle_of<vk::render_pass>(args...);
 
 			vk::framebuffer_create_info ci {
 				.render_pass = vk::get_handle(render_pass),
@@ -37,9 +37,9 @@ namespace vk {
 			ci.height = extent.height();
 			ci.layers = extent.depth();
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::framebuffer> framebuffer;
+			handle<vk::framebuffer> framebuffer;
 
 			vk::result result {
 				(int32) vkCreateFramebuffer(

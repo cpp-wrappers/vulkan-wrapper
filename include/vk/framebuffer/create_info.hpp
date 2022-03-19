@@ -21,9 +21,9 @@ namespace vk {
 		const uint32 type = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		const void* const next;
 		flag_enum<vk::framebuffer_create_flag> flags;
-		vk::handle<vk::render_pass> render_pass;
+		handle<vk::render_pass> render_pass;
 		uint32 attachment_count;
-		const vk::handle<vk::image_view>* attachments;
+		const handle<vk::image_view>* attachments;
 		uint32 width;
 		uint32 height;
 		uint32 layers;

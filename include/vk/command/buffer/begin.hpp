@@ -5,8 +5,8 @@
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/handle/possibly_guarded_of.hpp>
 
-#include "vk/handle/possibly_guarded_handle_of.hpp"
 #include "vk/handle/get_value.hpp"
 #include "vk/result.hpp"
 #include "vk/default_unexpected_handler.hpp"
@@ -17,7 +17,7 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::command_buffer_usages>,
 		types::are_may_contain_one_decayed<vk::command_buffer_inheritance_info>
 	>::for_types<Args...>
@@ -30,7 +30,7 @@ namespace vk {
 			bi.inheritance_info = elements::decayed<vk::command_buffer_inheritance_info>(args...);
 		}
 
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
 		return {
 			(int32) vkBeginCommandBuffer(
@@ -42,10 +42,10 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::command_buffer_usages>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
 		types::are_contain_one_decayed<vk::subpass>,
 		types::are_may_contain_one_decayed<vk::occlusion_query_enable>,
 		types::are_contain_one_decayed<vk::query_control_flags>,
@@ -65,14 +65,14 @@ namespace vk {
 		}
 
 		auto usages = elements::decayed<vk::command_buffer_usages>(args...);
-		auto& command_buffer = elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
 		return vk::try_begin_command_buffer(command_buffer, usages, ii);
 	}
 
 	template<typename... Args>
 	requires types::are_exclusively_satsify_predicates<
-		types::vk::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_decayed<vk::command_buffer_usage>
 	>::for_types<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
@@ -83,7 +83,7 @@ namespace vk {
 		);
 
 		return vk::try_begin_command_buffer(
-			elements::vk::possibly_guarded_handle_of<vk::command_buffer>(args...),
+			elements::possibly_guarded_handle_of<vk::command_buffer>(args...),
 			usages
 		);
 	}
@@ -97,12 +97,12 @@ namespace vk {
 } // vk
 
 template<typename... Args>
-vk::result vk::handle<vk::command_buffer>::try_begin(Args&&... args) const {
+vk::result handle<vk::command_buffer>::try_begin(Args&&... args) const {
 	return vk::try_begin_command_buffer(*this, forward<Args>(args)...);
 }
 
 template<typename... Args>
-auto& vk::handle<vk::command_buffer>::begin(Args&&... args) const {
+auto& handle<vk::command_buffer>::begin(Args&&... args) const {
 	vk::begin_command_buffer(*this, forward<Args>(args)...);
 	return *this;
 }

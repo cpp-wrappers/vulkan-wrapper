@@ -14,12 +14,12 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satsify_predicates<
-			types::vk::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_range_of<vk::subpass_description>,
 			types::are_may_contain_one_range_of<vk::subpass_dependency>,
 			types::are_may_contain_one_range_of<vk::attachment_description>
 		>::for_types<Args...>
-		vk::expected<vk::handle<vk::render_pass>>
+		vk::expected<handle<vk::render_pass>>
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
 
@@ -39,9 +39,9 @@ namespace vk {
 				ci.attachments = attachment_descriptions.data();
 			}
 
-			auto& device = elements::vk::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
-			vk::handle<vk::render_pass> render_pass;
+			handle<vk::render_pass> render_pass;
 
 			vk::result result {
 				(int32) vkCreateRenderPass(

@@ -11,9 +11,9 @@ namespace vk {
 	struct descriptor_set_allocate_info {
 		const uint32 type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		const void* const next;
-		vk::handle<vk::descriptor_pool> descriptor_pool;
+		handle<vk::descriptor_pool> descriptor_pool;
 		vk::count descriptor_set_count;
-		const vk::handle<vk::descriptor_set_layout>* descriptor_set_layouts;
+		const handle<vk::descriptor_set_layout>* descriptor_set_layouts;
 	};
 
 } // vk
