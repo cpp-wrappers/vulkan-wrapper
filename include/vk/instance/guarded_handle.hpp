@@ -29,14 +29,23 @@ struct guarded_handle<vk::instance> : vk::guarded_handle_base<vk::instance> {
 
 	template<typename ObjectType, typename... Args>
 	guarded_handle<ObjectType> create_guarded(Args&&... args) const {
-		return { handle().create<ObjectType>(forward<Args>(args)...), handle() };
+		return {
+			handle().create<ObjectType>(forward<Args>(args)...), handle()
+		};
 	}
 
 };
 
 template<typename... Args>
 guarded_handle<vk::instance> create_guarded_instance(Args&&... args) {
-	return { (handle<vk::instance>) vk::create<vk::instance>(forward<Args>(args)...) };
+	vk::expected<handle<vk::instance>> result =
+		vk::create<vk::instance>(forward<Args>(args)...);
+
+	if(result.is_unexpected()) {
+		vk::default_unexpected_handler(result.get_unexpected());
+	}
+
+	return { result.get_expected() };
 }
 
 #include "../debug/report/callback/guarded_handle.hpp"

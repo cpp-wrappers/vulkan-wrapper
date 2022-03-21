@@ -17,4 +17,4 @@ namespace vk {
 		vk::default_unexpected_handler();
 	}
 
-}
+} // vk

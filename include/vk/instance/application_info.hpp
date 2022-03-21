@@ -17,9 +17,10 @@ namespace vk {
 	struct engine_version : wrapper::of_integer<uint32> {};
 
 	struct application_info {
-		const uint32 m_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		const void* const next{};
-		vk::application_name app_name{};
+
+		uint32 structure_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		const void* next = nullptr;
+		vk::application_name app_name;
 		vk::application_version app_version{};
 		vk::engine_name engine_name{};
 		vk::engine_version engine_version{};
@@ -33,19 +34,40 @@ namespace vk {
 			types::are_may_contain_one_decayed<vk::engine_version>,
 			types::are_contain_one_decayed<vk::api_version>
 		>::for_types<Args...>
-		application_info(Args... args)
-			: api_version{ elements::decayed<vk::api_version>(args...) }
+		application_info(Args... args) :
+			api_version{ elements::decayed<vk::api_version>(args...) }
 		{
-			if constexpr(types::are_contain_decayed<vk::application_name>::for_types<Args...>)
+			if constexpr(
+				types::are_contain_decayed<vk::application_name>::
+				for_types<Args...>
+			) {
 				app_name = elements::decayed<vk::application_name>(args...);
-			if constexpr(types::are_contain_decayed<vk::application_version>::for_types<Args...>)
-				app_version = elements::decayed<vk::application_version>(args...);
-			if constexpr(types::are_contain_decayed<vk::engine_name>::for_types<Args...>)
+			}
+
+			if constexpr(
+				types::are_contain_decayed<vk::application_version>::
+				for_types<Args...>
+			) {
+				app_version =
+					elements::decayed<vk::application_version>(args...);
+			}
+
+			if constexpr(
+				types::are_contain_decayed<vk::engine_name>::
+				for_types<Args...>
+			) {
 				engine_name = elements::decayed<vk::engine_name>(args...);
-			if constexpr(types::are_contain_decayed<vk::engine_version>::for_types<Args...>)
+			}
+
+			if constexpr(
+				types::are_contain_decayed<vk::engine_version>::
+				for_types<Args...>
+			) {
 				engine_version = elements::decayed<vk::engine_version>(args...);
+			}
 		}
-	};
+
+	}; // application_info
 
 } // vk
 

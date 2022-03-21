@@ -19,8 +19,9 @@
 
 namespace vk {
 
+	template<range::of<vk::layer_properties> R>
 	vk::expected<vk::count>
-	enumerate_instance_layer_properties(range::of<vk::layer_properties> auto&& layer_properties) {
+	enumerate_instance_layer_properties(R&& layer_properties) {
 		uint32 count = layer_properties.size();
 
 		vk::result result {
@@ -36,14 +37,18 @@ namespace vk {
 
 	vk::expected<vk::count>
 	inline get_instance_layer_properties_count() {
-		return enumerate_instance_layer_properties(span<vk::layer_properties>{ nullptr, 0 });
+		return enumerate_instance_layer_properties(
+			span<vk::layer_properties>{ nullptr, 0 }
+		);
 	}
 
 	vk::expected<vk::count>
 	view_instance_layer_properties(auto&& f, vk::count count) {
 		vk::layer_properties layers_props[(uint32)count];
 
-		auto result = enumerate_instance_layer_properties(span{ layers_props, (uint32)count });
+		auto result = enumerate_instance_layer_properties(
+			span{ layers_props, (uint32)count }
+		);
 		if(result.is_unexpected()) return result;
 
 		count = result.get_expected();
@@ -87,14 +92,16 @@ namespace vk {
 	inline bool is_instance_layer_supported(vk::layer_name name) {
 		bool supported = false;
 
-		vk::view_instance_layer_properties([&](span<vk::layer_properties> props) {
-			supported =
-				range::contains(name)(
-					range::transform(props)([](auto& layer_props) {
-						return vk::layer_name{ layer_props.name };
-					})
-				);
-		});
+		vk::view_instance_layer_properties(
+			[&](span<vk::layer_properties> props) {
+				supported =
+					range::contains(name)(
+						range::transform(props)([](auto& layer_props) {
+							return vk::layer_name{ layer_props.name };
+						})
+					);
+			}
+		);
 
 		return supported;
 	}
