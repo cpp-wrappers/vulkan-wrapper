@@ -7,7 +7,7 @@
 #include "vk/device/handle.hpp"
 #include "vk/result.hpp"
 #include "vk/memory_offset.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 namespace vk {
 
@@ -41,7 +41,7 @@ namespace vk {
 	template<typename... Args>
 	void bind_buffer_memory(Args&&... args) {
 		vk::result result = vk::try_bind_buffer_memory(forward<Args>(args)...);
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

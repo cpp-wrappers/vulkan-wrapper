@@ -47,7 +47,7 @@ namespace vk {
 	template<typename... Args>
 	void wait_for_fences(Args&&... args) {
 		vk::result result = vk::try_wait_for_fences(forward<Args>(args)...);
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

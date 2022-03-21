@@ -75,7 +75,7 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 	get_first_physical_device() const {
 		auto result = try_get_first_physical_device();
 		if(result.is_unexpected()) {
-			vk::default_unexpected_handler(result.get_unexpected());
+			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
 	}
@@ -102,7 +102,7 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 	handle<ObjectType> create(Args&&... args) const {
 		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
 		if(result.is_unexpected()) {
-			vk::default_unexpected_handler(result.get_unexpected());
+			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
 	}

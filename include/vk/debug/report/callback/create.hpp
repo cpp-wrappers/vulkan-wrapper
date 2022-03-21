@@ -7,7 +7,7 @@
 
 #include "vk/instance/handle.hpp"
 #include "vk/create_or_allocate.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 namespace vk {
 
@@ -38,7 +38,7 @@ namespace vk {
 				"vkCreateDebugReportCallbackEXT"
 			);
 
-			if(fn == nullptr) vk::default_unexpected_handler();
+			if(fn == nullptr) vk::unexpected_handler();
 
 			vk::result result {
 				(int32) fn(

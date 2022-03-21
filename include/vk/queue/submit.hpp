@@ -103,7 +103,7 @@ namespace vk {
 	template<typename... Args>
 	void queue_submit(Args&&... args) {
 		vk::result result = vk::try_queue_submit(forward<Args>(args)...);
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

@@ -22,7 +22,7 @@
 #include "vk/extension_name.hpp"
 #include "vk/extension_properties.hpp"
 #include "vk/memory_type_index.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 namespace vk {
 
@@ -69,7 +69,7 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 			}
 		}
 
-		vk::default_unexpected_handler();
+		vk::unexpected_handler();
 	}
 
 	vk::count get_queue_family_properties(range::of<vk::queue_family_properties> auto&& range) const {
@@ -230,7 +230,7 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	get_first_surface_format(possibly_guarded_handle_of<vk::surface> auto& surface) const {
 		auto result = try_get_first_surface_format(surface);
 		if(result.is_unexpected()) {
-			vk::default_unexpected_handler(result.get_unexpected());
+			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
 	}

@@ -4,7 +4,7 @@
 #include "destroy.hpp"
 
 #include "vk/handle/guarded/base.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 
 template<>
@@ -42,7 +42,7 @@ struct guarded_handle<vk::device> : vk::guarded_handle_base<vk::device> {
 
 	void wait_idle() const {
 		auto result = try_wait_idle();
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 	template<typename... Args>

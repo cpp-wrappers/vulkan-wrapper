@@ -9,7 +9,7 @@
 
 #include "vk/handle/get_value.hpp"
 #include "vk/result.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 namespace vk {
 
@@ -91,7 +91,7 @@ namespace vk {
 	template<typename... Args>
 	void begin_command_buffer(Args&&... args) {
 		vk::result result = vk::try_begin_command_buffer(forward<Args>(args)...);
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

@@ -42,7 +42,7 @@ guarded_handle<vk::instance> create_guarded_instance(Args&&... args) {
 		vk::create<vk::instance>(forward<Args>(args)...);
 
 	if(result.is_unexpected()) {
-		vk::default_unexpected_handler(result.get_unexpected());
+		vk::unexpected_handler(result.get_unexpected());
 	}
 
 	return { result.get_expected() };

@@ -8,7 +8,7 @@
 #include "vk/result.hpp"
 #include "vk/memory_offset.hpp"
 #include "vk/memory_size.hpp"
-#include "vk/default_unexpected_handler.hpp"
+#include "vk/unexpected_handler.hpp"
 
 namespace vk {
 
@@ -48,7 +48,7 @@ namespace vk {
 	template<typename... Args>
 	void map_device_memory(Args&&... args) {
 		vk::result result = vk::try_map_device_memory(forward<Args>(args)...);
-		if(result.error()) vk::default_unexpected_handler(result);
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk
