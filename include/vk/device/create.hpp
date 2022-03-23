@@ -20,7 +20,7 @@ namespace vk {
 	struct vk::create_t<vk::device> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_decayed<handle<vk::physical_device>>,
 			types::are_may_contain_range_of<vk::queue_create_info>,
 			types::are_may_contain_range_of<vk::extension_name>,
@@ -86,7 +86,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<handle<vk::physical_device>>,
 			types::are_contain_one_decayed<vk::queue_family_index>,
 			types::are_contain_one_decayed<vk::queue_priority>,

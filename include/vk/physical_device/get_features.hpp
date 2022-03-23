@@ -4,13 +4,13 @@
 #include "features_2.hpp"
 #include "features.hpp"
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_decayed<handle<vk::physical_device>>,
 		types::are_may_contain_decayed<vk::physical_device_features>,
 		types::are_may_contain_decayed_satisfying_predicate<vk::is_physical_device_features>

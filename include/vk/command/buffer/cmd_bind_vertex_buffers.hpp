@@ -3,7 +3,7 @@
 #include "handle.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/buffer/handle.hpp"
 #include "vk/first_binding.hpp"
@@ -16,11 +16,11 @@ namespace vk {
 	struct command_buffer;
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_binding>,
-		types::are_contain_one_range_of<handle<vk::buffer>>,
-		types::are_contain_one_range_of<vk::memory_offset>
+		types::are_contain_range_of<handle<vk::buffer>>,
+		types::are_contain_range_of<vk::memory_offset>
 	>::for_types<Args...>
 	void cmd_bind_vertex_buffers(Args&&... args) {
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);

@@ -9,7 +9,7 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 		types::are_may_contain_one_decayed<vk::first_binding>,

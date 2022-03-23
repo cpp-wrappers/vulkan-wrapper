@@ -30,14 +30,14 @@ namespace vk {
 		const handle<vk::buffer_view>* texel_buffer_view{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set>,
 			types::are_contain_one_decayed<vk::dst_binding>,
 			types::are_contain_one_decayed<vk::dst_array_element>,
 			types::are_contain_one_decayed<vk::descriptor_type>,
-			types::are_may_contain_one_range_of<vk::descriptor_image_info>,
-			types::are_may_contain_one_range_of<vk::descriptor_buffer_info>,
-			types::are_may_contain_one_range_of<handle<vk::buffer_view>>
+			types::are_may_contain_range_of<vk::descriptor_image_info>,
+			types::are_may_contain_range_of<vk::descriptor_buffer_info>,
+			types::are_may_contain_range_of<handle<vk::buffer_view>>
 		>::for_types<Args...> &&
 		(
 			types::count_of_ranges_of<vk::descriptor_image_info>::for_types<Args...> + 

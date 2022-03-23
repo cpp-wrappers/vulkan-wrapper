@@ -15,7 +15,7 @@ namespace vk {
 	struct vk::create_t<vk::debug_report_callback> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::are_contain_one_decayed<vk::debug_report_flags>,
 			types::are_contain_one_decayed<vk::debug_report_callback_type>
@@ -55,7 +55,7 @@ namespace vk {
 		};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::are_may_contain_decayed<vk::debug_report_flag>,
 			types::are_contain_one_decayed<vk::debug_report_callback_type>

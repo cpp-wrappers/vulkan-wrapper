@@ -11,7 +11,7 @@ namespace vk {
 	struct vk::destroy_t<vk::debug_report_callback> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 		
 		>::for_types<Args...>
 		void operator () (handle<vk::instance> instance, handle<vk::debug_report_callback> debug_report_callback) const {

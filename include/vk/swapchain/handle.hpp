@@ -7,7 +7,7 @@
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/elements/one_of.hpp>
 
 #include "vk/semaphore/handle.hpp"
@@ -34,7 +34,7 @@ template<>
 struct handle<vk::swapchain> : vk::handle_base<vk::non_dispatchable> {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_may_contain_one_possibly_guarded_handle_of<vk::semaphore>,
 		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>,

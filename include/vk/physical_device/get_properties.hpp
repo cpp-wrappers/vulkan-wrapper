@@ -4,7 +4,7 @@
 #include "properties_2.hpp"
 #include "extension_properties.hpp"
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
 
@@ -25,7 +25,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::physical_device>>,
 		types::are_contain_satisfying_predicate<vk::is_extension_properties_reference>
 	>::for_types<Args...>

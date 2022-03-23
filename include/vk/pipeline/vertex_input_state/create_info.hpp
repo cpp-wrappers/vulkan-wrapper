@@ -19,9 +19,9 @@ namespace vk {
 		const vertex_input_attribute_description* vertex_attribute_descriptions{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_range_of<vk::vertex_input_binding_description>,
-			types::are_may_contain_one_range_of<vk::vertex_input_attribute_description>
+		requires types::are_exclusively_satisfying_predicates<
+			types::are_may_contain_range_of<vk::vertex_input_binding_description>,
+			types::are_may_contain_range_of<vk::vertex_input_attribute_description>
 		>::for_types<Args...>
 		pipeline_vertex_input_state_create_info(Args&&... args) {
 			if constexpr(types::are_contain_range_of<vk::vertex_input_binding_description>::for_types<Args...>) {

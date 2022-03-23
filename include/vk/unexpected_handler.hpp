@@ -7,11 +7,10 @@
 namespace vk {
 
 	[[ noreturn ]]
-	inline void unexpected_handler();
+	void unexpected_handler();
 
 	[[ noreturn ]]
-	inline void unexpected_handler(vk::result result);
-
+	void unexpected_handler(vk::result result);
 
 } // vk
 

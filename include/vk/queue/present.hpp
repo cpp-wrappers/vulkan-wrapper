@@ -5,7 +5,7 @@
 #include "present_info.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 #include "vk/swapchain/image_index.hpp"
@@ -14,7 +14,7 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::present_info>
 	>::for_types<Args...>
@@ -31,12 +31,12 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::are_contain_one_range_of<vk::wait_semaphore>,
-		types::are_contain_one_range_of<handle<vk::swapchain>>,
-		types::are_contain_one_range_of<vk::image_index>,
-		types::are_may_contain_one_range_of<vk::result>
+		types::are_contain_range_of<vk::wait_semaphore>,
+		types::are_contain_range_of<handle<vk::swapchain>>,
+		types::are_contain_range_of<vk::image_index>,
+		types::are_may_contain_range_of<vk::result>
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto& queue = elements::possibly_guarded_handle_of<vk::queue>(args...);
@@ -60,7 +60,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::wait_semaphore>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,

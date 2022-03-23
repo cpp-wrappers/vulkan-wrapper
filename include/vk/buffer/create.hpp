@@ -4,7 +4,7 @@
 #include "create_info.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/create_or_allocate.hpp"
 #include "vk/device/handle.hpp"
@@ -15,13 +15,13 @@ namespace vk {
 	struct vk::create_t<vk::buffer> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::buffer_create_flags>,
 			types::are_contain_one_decayed<vk::buffer_size>,
 			types::are_contain_one_decayed<vk::buffer_usages>,
 			types::are_may_contain_one_decayed<vk::sharing_mode>,
-			types::are_may_contain_one_range_of<vk::queue_family_index>
+			types::are_may_contain_range_of<vk::queue_family_index>
 		>::for_types<Args...>
 		vk::expected<handle<vk::buffer>>
 		operator () (Args&&... args) const {

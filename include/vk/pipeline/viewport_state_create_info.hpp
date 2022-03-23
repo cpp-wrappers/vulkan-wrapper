@@ -2,7 +2,7 @@
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/viewport.hpp"
@@ -25,11 +25,11 @@ namespace vk {
 		const vk::scissor* scissors{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_may_contain_decayed<vk::viewport_count>,
 			types::are_may_contain_decayed<vk::scissor_count>,
-			types::are_may_contain_one_range_of<vk::viewport>,
-			types::are_may_contain_one_range_of<vk::scissor>
+			types::are_may_contain_range_of<vk::viewport>,
+			types::are_may_contain_range_of<vk::scissor>
 		>::for_types<Args...> &&
 		(
 			(

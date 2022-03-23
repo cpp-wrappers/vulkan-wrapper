@@ -4,7 +4,7 @@
 #include "create_info.hpp"
 
 #include <core/meta/elements/one_of.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/create_or_allocate.hpp"
 #include "vk/device/handle.hpp"
@@ -15,7 +15,7 @@ namespace vk {
 	struct vk::create_t<vk::fence> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::fence_create_flags>
 		>::for_types<Args...>
@@ -45,7 +45,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_decayed<vk::fence_create_flag>
 		>::for_types<Args...>

@@ -19,7 +19,7 @@ namespace vk {
 	struct vk::create_t<vk::image_view> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::image>,
 			types::are_contain_one_decayed<vk::format>,

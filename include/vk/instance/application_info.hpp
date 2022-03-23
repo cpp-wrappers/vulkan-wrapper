@@ -4,7 +4,7 @@
 
 #include <core/c_string.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/elements/at_index.hpp>
 
 #include "vk/headers.hpp"
@@ -27,7 +27,7 @@ namespace vk {
 		vk::api_version api_version{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_may_contain_one_decayed<vk::application_name>,
 			types::are_may_contain_one_decayed<vk::application_version>,
 			types::are_may_contain_one_decayed<vk::engine_name>,

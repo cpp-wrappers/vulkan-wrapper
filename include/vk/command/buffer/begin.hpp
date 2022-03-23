@@ -4,7 +4,7 @@
 #include "begin_info.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/handle/possibly_guarded_of.hpp>
 
 #include "vk/handle/get_value.hpp"
@@ -16,7 +16,7 @@ namespace vk {
 	struct command_buffer;
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::command_buffer_usages>,
 		types::are_may_contain_one_decayed<vk::command_buffer_inheritance_info>
@@ -41,7 +41,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::command_buffer_usages>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
@@ -71,7 +71,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_decayed<vk::command_buffer_usage>
 	>::for_types<Args...>

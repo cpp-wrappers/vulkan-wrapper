@@ -3,7 +3,7 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/device/handle.hpp"
 #include "vk/create_or_allocate.hpp"
@@ -14,7 +14,7 @@ namespace vk {
 	struct vk::create_t<vk::image> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_decayed<vk::image_create_flags>,
 			types::are_contain_one_decayed<vk::image_type>,
@@ -26,7 +26,7 @@ namespace vk {
 			types::are_contain_one_decayed<vk::image_tiling>,
 			types::are_contain_one_decayed<vk::image_usages>,
 			types::are_contain_one_decayed<vk::sharing_mode>,
-			types::are_contain_one_range_of<vk::queue_family_index>,
+			types::are_contain_range_of<vk::queue_family_index>,
 			types::are_contain_one_decayed<vk::initial_layout>
 		>::for_types<Args...>
 		vk::expected<handle<vk::image>>

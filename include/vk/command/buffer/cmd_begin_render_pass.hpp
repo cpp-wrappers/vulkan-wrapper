@@ -4,12 +4,12 @@
 #include "render_pass_begin_info.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 	
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::render_pass_begin_info>
 	>::for_types<Args...>
@@ -25,12 +25,12 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::framebuffer>,
 		types::are_contain_one_decayed<vk::render_area>,
-		types::are_contain_one_range_of<vk::clear_value>
+		types::are_contain_range_of<vk::clear_value>
 	>::for_types<Args...>
 	void cmd_begin_render_pass(Args&&... args) {
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);

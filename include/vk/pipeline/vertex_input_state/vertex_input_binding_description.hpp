@@ -2,7 +2,7 @@
 
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/binding.hpp"
 
@@ -20,7 +20,7 @@ namespace vk {
 		vk::vertex_input_rate vertex_input_rate{ vertex_input_rate::vertex };
 	
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<vk::binding>,
 			types::are_contain_one_decayed<vk::stride>,
 			types::are_may_contain_one_decayed<vk::vertex_input_rate>

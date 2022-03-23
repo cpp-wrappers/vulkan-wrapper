@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/elements/satisfying_predicate.hpp>
 
 #include "vk/descriptor/type.hpp"
@@ -14,7 +14,7 @@ namespace vk {
 		vk::descriptor_count descriptor_count;
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<vk::descriptor_type>,
 			types::are_contain_one_decayed<vk::descriptor_count>
 		>::for_types<Args...>

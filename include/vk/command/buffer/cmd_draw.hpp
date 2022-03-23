@@ -3,7 +3,7 @@
 #include "handle.hpp"
 
 #include <core/wrapper/of_integer.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
@@ -13,7 +13,7 @@ namespace vk {
 	struct first_instance : wrapper::of_integer<uint32, struct first_instance_t>{};
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::vertex_count>,
 		types::are_may_contain_one_decayed<vk::instance_count>,

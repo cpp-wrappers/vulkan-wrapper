@@ -6,7 +6,7 @@
 
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/pipeline/stage.hpp"
 #include "vk/dependency.hpp"
@@ -14,13 +14,13 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::src_stages>,
 		types::are_contain_one_decayed<vk::dst_stages>,
 		types::are_may_contain_one_decayed<vk::dependencies>,
-		types::are_may_contain_one_range_of<vk::buffer_memory_barrier>,
-		types::are_may_contain_one_range_of<vk::image_memory_barrier>
+		types::are_may_contain_range_of<vk::buffer_memory_barrier>,
+		types::are_may_contain_range_of<vk::image_memory_barrier>
 	>::for_types<Args...>
 	void cmd_pipeline_barrier(Args&&... args) {
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);

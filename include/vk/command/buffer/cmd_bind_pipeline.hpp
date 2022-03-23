@@ -2,7 +2,7 @@
 
 #include "handle.hpp"
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/pipeline/handle.hpp"
 #include "vk/pipeline/bind_point.hpp"
@@ -10,7 +10,7 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::pipeline>,
 		types::are_contain_one_decayed<vk::pipeline_bind_point>

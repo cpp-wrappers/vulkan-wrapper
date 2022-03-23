@@ -3,7 +3,7 @@
 #include "handle.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/extent.hpp"
 #include "vk/viewport.hpp"
@@ -13,10 +13,10 @@ namespace vk {
 	struct first_viewport_index : wrapper::of_integer<uint32> {};
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
-		types::are_contain_one_range_of<vk::viewport>
+		types::are_contain_range_of<vk::viewport>
 	>::for_types<Args...>
 	void cmd_set_viewport(Args&&... args) {
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
@@ -37,7 +37,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
 		types::are_contain_decayed<vk::viewport>
@@ -56,7 +56,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_may_contain_one_decayed<vk::first_viewport_index>,
 		types::are_contain_one_decayed<vk::extent<2>>

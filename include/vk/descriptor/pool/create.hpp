@@ -4,7 +4,7 @@
 #include "create_info.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/create_or_allocate.hpp"
 #include "vk/result.hpp"
@@ -16,11 +16,11 @@ namespace vk {
 	struct vk::create_t<vk::descriptor_pool> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_may_contain_one_decayed<vk::descriptor_pool_create_flags>,
 			types::are_contain_one_decayed<vk::max_sets>,
-			types::are_contain_one_range_of<vk::descriptor_pool_size>
+			types::are_contain_range_of<vk::descriptor_pool_size>
 		>::for_types<Args...>
 		vk::expected<handle<vk::descriptor_pool>>
 		operator () (Args&&... args) const {

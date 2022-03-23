@@ -2,7 +2,7 @@
 
 #include "handle.hpp"
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/create_or_allocate.hpp"
 #include "vk/result.hpp"

@@ -350,13 +350,19 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 #include "vk/device/create.hpp"
 
 template<typename... Args>
-handle<vk::device> handle<vk::physical_device>::create_device(Args&&... args) const {
+handle<vk::device>
+handle<vk::physical_device>::create_device(Args&&... args) const {
 	return vk::create<vk::device>(*this, forward<Args>(args)...);
 }
 
 #include "vk/device/guarded_handle.hpp"
 
 template<typename... Args>
-guarded_handle<vk::device> handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
-	return { (handle<vk::device>) vk::create<vk::device>(*this, forward<Args>(args)...) };
+guarded_handle<vk::device>
+handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
+	auto result = vk::create<vk::device>(*this, forward<Args>(args)...);
+	if(result.is_unexpected()) {
+		vk::unexpected_handler(result.get_unexpected());
+	}
+	return { result.get_expected() };
 }

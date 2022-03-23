@@ -6,7 +6,7 @@
 #include <core/range/contains.hpp>
 #include <core/range/transform.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>

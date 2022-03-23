@@ -11,7 +11,7 @@ namespace vk {
 	struct vk::destroy_t<vk::surface> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
 			types::are_contain_one_decayed<handle<vk::surface>>
 		>::for_types<Args...>

@@ -4,7 +4,7 @@
 #include <core/c_string.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/handle/get_value.hpp"
@@ -31,7 +31,7 @@ namespace vk {
 		const void* specialization_info = nullptr;
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
 			types::are_contain_one_decayed<vk::shader_stages>,
 			types::are_contain_one_decayed<vk::entrypoint_name>
@@ -43,7 +43,7 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::shader_module>,
 			types::are_contain_one_decayed<vk::shader_stage>,
 			types::are_contain_one_decayed<vk::entrypoint_name>

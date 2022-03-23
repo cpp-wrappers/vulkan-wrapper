@@ -12,11 +12,11 @@ namespace vk {
 	constexpr inline bool is_allocatable<vk::descriptor_set> = true;
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
-		types::are_contain_one_range_of<handle<vk::descriptor_set_layout>>,
-		types::are_contain_one_range_of<handle<vk::descriptor_set>>
+		types::are_contain_range_of<handle<vk::descriptor_set_layout>>,
+		types::are_contain_range_of<handle<vk::descriptor_set>>
 	>::for_types<Args...>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
 		auto& pool = elements::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
@@ -44,7 +44,7 @@ namespace vk {
 	struct vk::allocate_t<vk::descriptor_set> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set_layout>

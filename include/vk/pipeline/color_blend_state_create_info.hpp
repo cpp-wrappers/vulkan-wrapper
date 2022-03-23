@@ -6,7 +6,7 @@
 #include <core/array.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/logic_op.hpp"
@@ -27,10 +27,10 @@ namespace vk {
 		vk::blend_constants blend_constants{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_may_contain_one_decayed<vk::enable_logic_op>,
 			types::are_may_contain_one_decayed<vk::logic_op>,
-			types::are_may_contain_one_range_of<vk::pipeline_color_blend_attachment_state>,
+			types::are_may_contain_range_of<vk::pipeline_color_blend_attachment_state>,
 			types::are_may_contain_one_decayed<vk::blend_constants>
 		>::for_types<Args...>
 		pipeline_color_blend_state_create_info(Args&&... args) {

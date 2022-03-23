@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/buffer/handle.hpp"
 #include "vk/queue_family_index.hpp"
@@ -25,7 +25,7 @@ namespace vk {
 		vk::memory_size size;
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<vk::src_access>,
 			types::are_contain_one_decayed<vk::dst_access>,
 			types::are_may_contain_one_decayed<vk::src_queue_family_index>,

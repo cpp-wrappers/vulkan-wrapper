@@ -3,7 +3,7 @@
 #include "mapped_range.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/device/handle.hpp"
 #include "vk/headers.hpp"
@@ -12,9 +12,9 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_range_of<vk::mapped_memory_range>
+		types::are_contain_range_of<vk::mapped_memory_range>
 	>::for_types<Args...>
 	vk::result try_flush_mapped_device_memory_ranges(Args&&... args) {
 		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);

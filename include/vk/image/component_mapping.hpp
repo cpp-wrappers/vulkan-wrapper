@@ -4,7 +4,7 @@
 
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
@@ -21,7 +21,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires(
-			types::are_exclusively_satsify_predicates<
+			types::are_exclusively_satisfying_predicates<
 				types::are_may_contain_one_decayed<vk::r>,
 				types::are_may_contain_one_decayed<vk::g>,
 				types::are_may_contain_one_decayed<vk::b>,

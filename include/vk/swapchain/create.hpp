@@ -16,7 +16,7 @@ namespace vk {
 	struct vk::create_t<vk::swapchain> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
 			types::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
@@ -27,7 +27,7 @@ namespace vk {
 			types::are_contain_one_decayed<vk::extent<2>>,
 			types::are_contain_one_decayed<vk::image_usages>,
 			types::are_contain_one_decayed<vk::sharing_mode>,
-			types::are_may_contain_one_range_of<vk::queue_family_index>,
+			types::are_may_contain_range_of<vk::queue_family_index>,
 			types::are_may_contain_decayed<vk::surface_transform>,
 			types::are_may_contain_decayed<vk::composite_alpha>,
 			types::are_contain_one_decayed<vk::present_mode>,

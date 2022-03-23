@@ -7,7 +7,7 @@
 #include <core/wrapper/of_pointer_to.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/headers.hpp"
 #include "vk/pipeline/bind_point.hpp"
@@ -40,12 +40,12 @@ namespace vk {
 		const vk::preserve_attachment_reference* preserve_attachments = nullptr;
 	
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
-			types::are_may_contain_one_range_of<vk::input_attachment_reference>,
-			types::are_may_contain_one_range_of<vk::color_attachment_reference>,
-			types::are_may_contain_one_range_of<vk::resolve_attachment_reference>,
-			types::are_may_contain_one_range_of<vk::depth_stencil_attachment_reference>,
-			types::are_may_contain_one_range_of<vk::preserve_attachment_reference>
+		requires types::are_exclusively_satisfying_predicates<
+			types::are_may_contain_range_of<vk::input_attachment_reference>,
+			types::are_may_contain_range_of<vk::color_attachment_reference>,
+			types::are_may_contain_range_of<vk::resolve_attachment_reference>,
+			types::are_may_contain_range_of<vk::depth_stencil_attachment_reference>,
+			types::are_may_contain_range_of<vk::preserve_attachment_reference>
 		>::for_types<Args...>
 		subpass_description(Args&... args) {
 	

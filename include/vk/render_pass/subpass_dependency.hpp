@@ -3,7 +3,7 @@
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/pipeline/stage.hpp"
 #include "vk/access.hpp"
@@ -25,7 +25,7 @@ namespace vk {
 	public:
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<vk::src_subpass>,
 			types::are_contain_one_decayed<vk::dst_subpass>,
 			types::are_contain_one_decayed<vk::src_stages>,

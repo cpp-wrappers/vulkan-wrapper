@@ -21,13 +21,13 @@ namespace vk {
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::pipeline_bind_point>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::pipeline_layout>,
 		types::are_may_contain_one_decayed<vk::first_set>,
-		types::are_contain_one_range_of<handle<vk::descriptor_set>>,
-		types::are_may_contain_one_range_of<vk::dynamic_offset>
+		types::are_contain_range_of<handle<vk::descriptor_set>>,
+		types::are_may_contain_range_of<vk::dynamic_offset>
 	>::for_types<Args...>
 	void cmd_bind_descriptor_sets(Args&&... args) {
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);

@@ -3,7 +3,7 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/wrapper/of_integer.hpp>
 
@@ -26,7 +26,7 @@ namespace vk {
 		vk::color_components color_write_mask;
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<vk::enable_blend>,
 			types::are_contain_one_decayed<vk::src_color_blend_factor>,
 			types::are_contain_one_decayed<vk::dst_color_blend_factor>,

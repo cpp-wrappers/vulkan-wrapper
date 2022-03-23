@@ -13,9 +13,9 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
-		types::are_contain_one_range_of<vk::submit_info>,
+		types::are_contain_range_of<vk::submit_info>,
 		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
 	>::for_types<Args...>
 	vk::result try_queue_submit(Args&&... args) {
@@ -39,7 +39,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_contain_one_decayed<vk::submit_info>,
 		types::are_may_contain_one_possibly_guarded_handle_of<vk::fence>
@@ -58,7 +58,7 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::queue>,
 		types::are_may_contain_one_decayed<vk::wait_semaphore>,
 		types::are_may_contain_one_decayed<vk::pipeline_stages>,

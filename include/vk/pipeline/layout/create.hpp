@@ -12,10 +12,10 @@ namespace vk {
 	struct vk::create_t<vk::pipeline_layout> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_one_range_of<handle<vk::descriptor_set_layout>>,
-			types::are_may_contain_one_range_of<vk::push_constant_range>
+			types::are_may_contain_range_of<handle<vk::descriptor_set_layout>>,
+			types::are_may_contain_range_of<vk::push_constant_range>
 		>::for_types<Args...>
 		vk::expected<handle<vk::pipeline_layout>>
 		operator () (Args&&... args) const {

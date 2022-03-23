@@ -13,11 +13,11 @@ namespace vk {
 	struct vk::create_t<vk::render_pass> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_range_of<vk::subpass_description>,
-			types::are_may_contain_one_range_of<vk::subpass_dependency>,
-			types::are_may_contain_one_range_of<vk::attachment_description>
+			types::are_contain_range_of<vk::subpass_description>,
+			types::are_may_contain_range_of<vk::subpass_dependency>,
+			types::are_may_contain_range_of<vk::attachment_description>
 		>::for_types<Args...>
 		vk::expected<handle<vk::render_pass>>
 		operator () (Args&&... args) const {

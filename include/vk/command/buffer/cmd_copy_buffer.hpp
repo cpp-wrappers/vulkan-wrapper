@@ -4,7 +4,7 @@
 
 #include <core/wrapper/of.hpp>
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satsify_predicates.hpp>
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 #include "vk/memory_size.hpp"
 #include "vk/memory_offset.hpp"
@@ -26,11 +26,11 @@ namespace vk {
 	struct dst_buffer : handle<vk::buffer> {};
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
 		types::are_contain_one_decayed<vk::src_buffer>,
 		types::are_contain_one_decayed<vk::dst_buffer>,
-		types::are_contain_one_range_of<vk::buffer_copy>
+		types::are_contain_range_of<vk::buffer_copy>
 	>::for_types<Args...>
 	void cmd_copy_buffer(Args&&... args) {
 

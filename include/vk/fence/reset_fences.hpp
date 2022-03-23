@@ -7,9 +7,9 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_range_of<handle<vk::fence>>
+		types::are_contain_range_of<handle<vk::fence>>
 	>::for_types<Args...>
 	vk::result try_reset_fences(Args&&... args) {
 		auto& fences = elements::range_of<handle<vk::fence>>(args...);

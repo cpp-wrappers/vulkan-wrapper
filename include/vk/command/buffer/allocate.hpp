@@ -11,11 +11,11 @@
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satsify_predicates<
+	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
 		types::are_contain_one_decayed<vk::command_buffer_level>,
-		types::are_contain_one_range_of<handle<vk::command_buffer>>
+		types::are_contain_range_of<handle<vk::command_buffer>>
 	>::for_types<Args...>
 	vk::result try_allocate_command_buffers(Args&&... args) {
 		vk::command_buffer_allocate_info ai {};
@@ -47,7 +47,7 @@ namespace vk {
 	struct vk::allocate_t<vk::command_buffer> {
 
 		template<typename... Args>
-		requires types::are_exclusively_satsify_predicates<
+		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
 			types::are_contain_one_decayed<vk::command_buffer_level>
