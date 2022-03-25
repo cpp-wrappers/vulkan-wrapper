@@ -3,8 +3,8 @@
 #include "handle.hpp"
 #include "destroy.hpp"
 
-#include "vk/handle/guarded/base.hpp"
-#include "vk/unexpected_handler.hpp"
+#include "../handle/guarded/base.hpp"
+#include "../unexpected_handler.hpp"
 
 
 template<>

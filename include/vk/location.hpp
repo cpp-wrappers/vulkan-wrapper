@@ -6,4 +6,4 @@ namespace vk {
 
 	struct location : wrapper::of_integer<uint32> {};
 
-}
+} // vk

@@ -1,14 +1,12 @@
 #pragma once
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class composite_alpha {
-		opaque = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
-		pre_multiplied = VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
-		post_multiplied = VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
-		inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+		opaque          = 0x00000001,
+		pre_multiplied  = 0x00000002,
+		post_multiplied = 0x00000004,
+		inherit         = 0x00000008
 	};
 
 } // vk

@@ -1,19 +1,19 @@
 #pragma once
 
+#include "../handle/base.hpp"
+#include "../handle/get_value.hpp"
+#include "../create_or_allocate.hpp"
+#include "../headers.hpp"
+#include "../queue_family_index.hpp"
+#include "../result.hpp"
+#include "../memory_requirements.hpp"
+#include "../timeout.hpp"
+
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/elements/one_of.hpp>
 #include <core/handle/possibly_guarded_of.hpp>
-
-#include "vk/handle/base.hpp"
-#include "vk/handle/get_value.hpp"
-#include "vk/create_or_allocate.hpp"
-#include "vk/headers.hpp"
-#include "vk/queue_family_index.hpp"
-#include "vk/result.hpp"
-#include "vk/memory_requirements.hpp"
-#include "vk/timeout.hpp"
 
 namespace vk {
 
@@ -41,81 +41,88 @@ namespace vk {
 
 }
 
-	template<>
-	struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
+template<>
+struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 
-		inline handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const;
+	handle<vk::queue> inline
+	get_queue(
+		vk::queue_family_index queue_family_index,
+		vk::queue_index queue_index
+	) const;
 
-		template<typename ObjectType, typename... Args>
-		vk::expected<handle<ObjectType>>
-		create(Args&&... args) const {
-			return vk::create<ObjectType>(*this, forward<Args>(args)...);
-		}
+	template<typename ObjectType, typename... Args>
+	vk::expected<handle<ObjectType>>
+	create(Args&&... args) const {
+		return vk::create<ObjectType>(*this, forward<Args>(args)...);
+	}
 
-		template<typename ObjectType, typename... Args>
-		vk::expected<handle<ObjectType>>
-		allocate(Args&&... args) const {
-			return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
-		}
+	template<typename ObjectType, typename... Args>
+	vk::expected<handle<ObjectType>>
+	allocate(Args&&... args) const {
+		return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
+	}
 
-		vk::result try_map_memory(
-			possibly_guarded_handle_of<vk::device_memory> auto& memory,
-			vk::device_size offset,
-			vk::device_size size,
-			void** data
-		) {
-			return {
-				(int32) vkMapMemory(
-					(VkDevice) vk::get_handle_value(*this),
-					(VkDeviceMemory) vk::get_handle_value(memory),
-					(VkDeviceSize) offset,
-					(VkDeviceSize) size,
-					(VkMemoryMapFlags) 0,
-					(void**) data
-				)
-			};
-		}
+	vk::result try_map_memory(
+		possibly_guarded_handle_of<vk::device_memory> auto& memory,
+		vk::device_size offset,
+		vk::device_size size,
+		void** data
+	) {
+		return {
+			(int32) vkMapMemory(
+				(VkDevice) vk::get_handle_value(*this),
+				(VkDeviceMemory) vk::get_handle_value(memory),
+				(VkDeviceSize) offset,
+				(VkDeviceSize) size,
+				(VkMemoryMapFlags) 0,
+				(void**) data
+			)
+		};
+	}
 
-		vk::result try_wait_idle() const {
-			return {
-				(int32) vkDeviceWaitIdle(
-					(VkDevice) value
-				)
-			};
-		}
+	vk::result try_wait_idle() const {
+		return {
+			(int32) vkDeviceWaitIdle(
+				(VkDevice) value
+			)
+		};
+	}
 
-		template<typename... Args>
-		void update_descriptor_sets(Args&&... args) const;
+	template<typename... Args>
+	void update_descriptor_sets(Args&&... args) const;
 
-		template<typename... Args>
-		void update_descriptor_set(Args&&... args) const;
+	template<typename... Args>
+	void update_descriptor_set(Args&&... args) const;
 		
-	}; // device
+}; // handle<device>
 
 #include "memory/allocate.hpp"
-#include "vk/command/pool/create.hpp"
-#include "vk/shader/module/create.hpp"
-#include "vk/framebuffer/create.hpp"
-#include "vk/image/create.hpp"
-#include "vk/image/view/create.hpp"
-#include "vk/pipeline/layout/create.hpp"
-#include "vk/pipeline/create.hpp"
-#include "vk/render_pass/create.hpp"
-#include "vk/semaphore/create.hpp"
-#include "vk/swapchain/create.hpp"
-#include "vk/buffer/create.hpp"
-#include "vk/buffer/view/create.hpp"
-#include "vk/fence/create.hpp"
-#include "vk/sampler/create.hpp"
-#include "vk/descriptor/set/layout/create.hpp"
-#include "vk/descriptor/pool/create.hpp"
-#include "vk/deferred_operation/create.hpp"
-#include "vk/acceleration_structure/create.hpp"
+#include "../command/pool/create.hpp"
+#include "../shader/module/create.hpp"
+#include "../framebuffer/create.hpp"
+#include "../image/create.hpp"
+#include "../image/view/create.hpp"
+#include "../pipeline/layout/create.hpp"
+#include "../pipeline/create.hpp"
+#include "../render_pass/create.hpp"
+#include "../semaphore/create.hpp"
+#include "../swapchain/create.hpp"
+#include "../buffer/create.hpp"
+#include "../buffer/view/create.hpp"
+#include "../fence/create.hpp"
+#include "../sampler/create.hpp"
+#include "../descriptor/set/layout/create.hpp"
+#include "../descriptor/pool/create.hpp"
+#include "../deferred_operation/create.hpp"
+#include "../acceleration_structure/create.hpp"
 
-#include "vk/queue/handle.hpp"
+#include "../queue/handle.hpp"
 
-inline handle<vk::queue>
-handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
+handle<vk::queue> inline
+handle<vk::device>::get_queue(
+	vk::queue_family_index queue_family_index,
+	vk::queue_index queue_index
+) const {
 	VkQueue queue;
 
 	vkGetDeviceQueue(
@@ -128,7 +135,7 @@ handle<vk::device>::get_queue(vk::queue_family_index queue_family_index, vk::que
 	return { queue };
 }
 
-#include "vk/descriptor/set/update.hpp"
+#include "../descriptor/set/update.hpp"
 
 template<typename... Args>
 void handle<vk::device>::update_descriptor_sets(Args&&... args) const {

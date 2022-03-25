@@ -2,12 +2,11 @@
 
 #include "clear.hpp"
 
-#include <core/integer.hpp>
+#include "../../rect2d.hpp"
+#include "../../render_pass/handle.hpp"
+#include "../../framebuffer/handle.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/rect2d.hpp"
-#include "vk/render_pass/handle.hpp"
-#include "vk/framebuffer/handle.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -23,15 +22,13 @@ namespace vk {
 	};
 
 	struct render_pass_begin_info {
-		const uint32 type = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		const void* const next;
+		uint32 structure_type = 43;
+		const void* next = nullptr;
 		handle<vk::render_pass> render_pass;
 		handle<vk::framebuffer> framebuffer;
 		vk::render_area render_area;
-		uint32 clear_value_count;
-		const vk::clear_value* clear_values;
+		uint32 clear_value_count = 0;
+		const vk::clear_value* clear_values = nullptr;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::render_pass_begin_info) == sizeof(VkRenderPassBeginInfo));

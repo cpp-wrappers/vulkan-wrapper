@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../image/layout.hpp"
 
-#include "vk/image/layout.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -12,5 +12,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::attachment_reference) == sizeof(VkAttachmentReference));

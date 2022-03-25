@@ -3,9 +3,9 @@
 #include "handle.hpp"
 #include "destroy.hpp"
 
-#include <core/exchange.hpp>
+#include "../handle/guarded/instance_child_base.hpp"
 
-#include "vk/handle/guarded/instance_child_base.hpp"
+#include <core/exchange.hpp>
 
 namespace vk {
 

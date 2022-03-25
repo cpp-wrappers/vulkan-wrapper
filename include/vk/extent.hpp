@@ -41,4 +41,5 @@ namespace vk {
 	};
 
 	extent(uint32, uint32, uint32) -> extent<3>;
+
 } // vk

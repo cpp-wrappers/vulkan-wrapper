@@ -1,12 +1,11 @@
 #pragma once
 
 #include "handle.hpp"
+#include "../device/handle.hpp"
+#include "../result.hpp"
+#include "../memory_offset.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-#include "vk/device/handle.hpp"
-#include "vk/result.hpp"
-#include "vk/memory_offset.hpp"
 
 namespace vk {
 
@@ -16,16 +15,23 @@ namespace vk {
 		types::are_contain_one_possibly_guarded_handle_of<vk::image>,
 		types::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
 		types::are_may_contain_one_decayed<vk::memory_offset>
-	>::for_types<Args...>
+	>::for_types<Args...> [[nodiscard]]
 	vk::result try_bind_image_memory(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-		auto& image = elements::possibly_guarded_handle_of<vk::image>(args...);
-		auto& device_memory = elements::possibly_guarded_handle_of<vk::device_memory>(args...);
+		auto& device {
+			elements::possibly_guarded_handle_of<vk::device>(args...)
+		};
+		auto& image {
+			elements::possibly_guarded_handle_of<vk::image>(args...)
+		};
+		auto& device_memory {
+			elements::possibly_guarded_handle_of<vk::device_memory>(args...)
+		};
+
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
-			offset = elements::decayed<vk::memory_offset>(args...);
-		}
+		if constexpr (
+			types::are_contain_decayed<vk::memory_offset>::for_types<Args...>
+		) { offset = elements::decayed<vk::memory_offset>(args...); }
 
 		return {
 			(int32) vkBindImageMemory(
@@ -35,7 +41,7 @@ namespace vk {
 				(VkDeviceSize) offset
 			)
 		};
-	}
+	} // try_bind_image_memory
 
 	template<typename... Args>
 	void bind_image_memory(Args&&... args) {

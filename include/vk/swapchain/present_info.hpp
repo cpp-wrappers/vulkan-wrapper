@@ -1,11 +1,9 @@
 #pragma once
 
 #include "image_index.hpp"
+#include "../result.hpp"
 
 #include <core/integer.hpp>
-
-#include "vk/headers.hpp"
-#include "vk/result.hpp"
 
 namespace vk {
 
@@ -13,16 +11,14 @@ namespace vk {
 	struct swapchain;
 
 	struct present_info {
-		const uint32 type = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		const void* const next;
-		uint32 wait_semaphore_count;
-		const vk::semaphore* wait_semaphores;
-		uint32 swapchain_count;
-		const vk::swapchain* swapchains;
-		const vk::image_index* image_indices;
-		vk::result* results;
+		uint32 structure_type = 1000001001;
+		const void* next = nullptr;
+		uint32 wait_semaphore_count = 0;
+		const vk::semaphore* wait_semaphores = nullptr;
+		uint32 swapchain_count = 0;
+		const vk::swapchain* swapchains = nullptr;
+		const vk::image_index* image_indices = nullptr;
+		vk::result* results = nullptr;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::present_info) == sizeof(VkPresentInfoKHR));

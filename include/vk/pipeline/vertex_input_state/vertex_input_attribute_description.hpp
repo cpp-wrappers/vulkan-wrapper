@@ -1,9 +1,9 @@
 #pragma once
 
-#include "vk/location.hpp"
-#include "vk/binding.hpp"
-#include "vk/offset.hpp"
-#include "vk/format.hpp"
+#include "../../location.hpp"
+#include "../../binding.hpp"
+#include "../../offset.hpp"
+#include "../../format.hpp"
 
 namespace vk {
 
@@ -15,5 +15,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::vertex_input_attribute_description) == sizeof(VkVertexInputAttributeDescription));

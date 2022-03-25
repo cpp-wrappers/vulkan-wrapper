@@ -5,4 +5,5 @@
 namespace vk {
 	
 	struct memory_offset : vk::device_size {};
-}
+
+} // vk

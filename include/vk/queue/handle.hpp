@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vk/result.hpp"
-#include "vk/handle/base.hpp"
+#include "../result.hpp"
+#include "../handle/base.hpp"
 
 namespace vk {
 

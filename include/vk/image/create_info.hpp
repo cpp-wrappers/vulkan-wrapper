@@ -26,7 +26,7 @@ namespace vk {
 		two_d_array_compatible            = 0x00000020,
 		block_texel_view_compatible       = 0x00000080,
 		extended                          = 0x00000100,
-		protect                           = 0x00000800,
+		_protected                        = 0x00000800,
 		disjoint                          = 0x00000200,
 		corner_sampled                    = 0x00002000,
 		sample_locations_compatible_depth = 0x00001000,

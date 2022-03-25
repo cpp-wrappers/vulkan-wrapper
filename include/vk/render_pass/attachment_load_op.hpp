@@ -3,9 +3,9 @@
 namespace vk {
 
 	enum class attachment_load_op {
-		load,
-		clear,
-		dont_care
+		load      = 0,
+		clear     = 1,
+		dont_care = 2
 	};
 
 } // vk

@@ -2,8 +2,6 @@
 
 #include <core/wrapper/of_integer.hpp>
 
-#include "headers.hpp"
-
 namespace vk {
 
 	template<nuint Dim>
@@ -28,7 +26,4 @@ namespace vk {
 
 	offset(int32, int32, int32) -> offset<3>;
 
-}
-
-static_assert(sizeof(vk::offset<2>) == sizeof(VkOffset2D));
-static_assert(sizeof(vk::offset<3>) == sizeof(VkOffset3D));
+} // vk

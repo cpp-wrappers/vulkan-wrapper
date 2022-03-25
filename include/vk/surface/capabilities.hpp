@@ -2,12 +2,12 @@
 
 #include "transform.hpp"
 
-#include <core/flag_enum.hpp>
-
 #include "../extent.hpp"
 #include "../surface/composite_alpha.hpp"
 #include "../image/usage.hpp"
 #include "../surface/min_image_count.hpp"
+ 
+#include <core/flag_enum.hpp>
 
 namespace vk {
 

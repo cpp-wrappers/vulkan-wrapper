@@ -2,28 +2,26 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class shader_stage {
-		vertex = VK_SHADER_STAGE_VERTEX_BIT,
-		tessellation_control = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
-		tessellation_evaluation = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
-		geometry = VK_SHADER_STAGE_GEOMETRY_BIT,
-		fragment = VK_SHADER_STAGE_FRAGMENT_BIT,
-		compute = VK_SHADER_STAGE_COMPUTE_BIT,
-		all_graphics = VK_SHADER_STAGE_ALL_GRAPHICS,
-		all = VK_SHADER_STAGE_ALL,
-		raygen = VK_SHADER_STAGE_RAYGEN_BIT_KHR,
-		any_hit = VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
-		closest_hit = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR,
-		miss = VK_SHADER_STAGE_MISS_BIT_KHR,
-		intersection = VK_SHADER_STAGE_INTERSECTION_BIT_KHR,
-		callable = VK_SHADER_STAGE_CALLABLE_BIT_KHR,
-		task = VK_SHADER_STAGE_TASK_BIT_NV,
-		mesh = VK_SHADER_STAGE_MESH_BIT_NV,
-		//subpass_shading = VK_SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI
+		vertex                  = 0x00000001,
+		tessellation_control    = 0x00000002,
+		tessellation_evaluation = 0x00000004,
+		geometry                = 0x00000008,
+		fragment                = 0x00000010,
+		compute                 = 0x00000020,
+		all_graphics            = 0x0000001F,
+		all                     = 0x7FFFFFFF,
+		raygen                  = 0x00000100,
+		any_hit                 = 0x00000200,
+		closest_hit             = 0x00000400,
+		miss                    = 0x00000800,
+		intersection            = 0x00001000,
+		callable                = 0x00002000,
+		task                    = 0x00000040,
+		mesh                    = 0x00000080,
+		subpass_shading         = 0x00004000
 	};
 
 	using shader_stages = flag_enum<vk::shader_stage>;

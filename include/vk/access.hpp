@@ -2,44 +2,42 @@
 
 #include <core/flag_enum.hpp>
 
-#include "headers.hpp"
-
 namespace vk {
 
 	enum class access {
-		indirect_command_read = VK_ACCESS_INDIRECT_COMMAND_READ_BIT,
-		index_read = VK_ACCESS_INDEX_READ_BIT,
-		vertex_attribute_read = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-		uniform_read = VK_ACCESS_UNIFORM_READ_BIT,
-		input_attachment_read = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT,
-		shader_read = VK_ACCESS_SHADER_READ_BIT,
-		shader_write = VK_ACCESS_SHADER_WRITE_BIT,
-		color_attachment_read = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
-		color_attachment_write = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		depth_stencil_attachment_read = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-		depth_stencil_attachment_write = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-		transfer_read = VK_ACCESS_TRANSFER_READ_BIT,
-		transfer_write = VK_ACCESS_TRANSFER_WRITE_BIT,
-		host_read = VK_ACCESS_HOST_READ_BIT,
-		host_write = VK_ACCESS_HOST_WRITE_BIT,
-		memory_read = VK_ACCESS_MEMORY_READ_BIT,
-		memory_write = VK_ACCESS_MEMORY_WRITE_BIT,
-		transform_feedback_write = VK_ACCESS_TRANSFORM_FEEDBACK_WRITE_BIT_EXT,
-		transform_feedback_counter_read = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT,
-		transform_feedback_counter_write = VK_ACCESS_TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT,
-		conditional_rendering_read = VK_ACCESS_CONDITIONAL_RENDERING_READ_BIT_EXT,
-		color_attachment_read_noncoherent = VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT,
-		acceleration_structure_read = VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_KHR,
-		acceleration_structure_write = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_KHR,
-		fragment_density_map_read = VK_ACCESS_FRAGMENT_DENSITY_MAP_READ_BIT_EXT,
-		fragment_shading_rate_attachment_read = VK_ACCESS_FRAGMENT_SHADING_RATE_ATTACHMENT_READ_BIT_KHR,
-		command_preprocess_read = VK_ACCESS_COMMAND_PREPROCESS_READ_BIT_NV,
-		command_preprocess_write = VK_ACCESS_COMMAND_PREPROCESS_WRITE_BIT_NV,
-		//none = VK_ACCESS_NONE_KHR,
-		//shading_rate_image_read = VK_ACCESS_SHADING_RATE_IMAGE_READ_BIT_NV
+		indirect_command_read                 = 0x00000001,
+		index_read                            = 0x00000002,
+		vertex_attribute_read                 = 0x00000004,
+		uniform_read                          = 0x00000008,
+		input_attachment_read                 = 0x00000010,
+		shader_read                           = 0x00000020,
+		shader_write                          = 0x00000040,
+		color_attachment_read                 = 0x00000080,
+		color_attachment_write                = 0x00000100,
+		depth_stencil_attachment_read         = 0x00000200,
+		depth_stencil_attachment_write        = 0x00000400,
+		transfer_read                         = 0x00000800,
+		transfer_write                        = 0x00001000,
+		host_read                             = 0x00002000,
+		host_write                            = 0x00004000,
+		memory_read                           = 0x00008000,
+		memory_write                          = 0x00010000,
+		none                                  = 0,
+		transform_feedback_write              = 0x02000000,
+		transform_feedback_counter_read       = 0x04000000,
+		transform_feedback_counter_write      = 0x08000000,
+		conditional_rendering_read            = 0x00100000,
+		color_attachment_read_noncoherent     = 0x00080000,
+		acceleration_structure_read           = 0x00200000,
+		acceleration_structure_write          = 0x00400000,
+		fragment_density_map_read             = 0x01000000,
+		fragment_shading_rate_attachment_read = 0x00800000,
+		shading_rate_image_read               = 0x00800000,
+		command_preprocess_read               = 0x00020000,
+		command_preprocess_write              = 0x00040000
 	};
 
 	struct src_access : flag_enum<vk::access> {};
 	struct dst_access : flag_enum<vk::access> {};
 
-}
+} // vk

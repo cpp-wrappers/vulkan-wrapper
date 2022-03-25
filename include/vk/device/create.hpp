@@ -4,15 +4,15 @@
 #include "create_info.hpp"
 #include "queue_create_info.hpp"
 
+#include "../physical_device/handle.hpp"
+#include "../physical_device/features_2.hpp"
+#include "../create_or_allocate.hpp"
+
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
 #include <core/meta/type/negated_predicate.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 #include <core/meta/type/conjuncted_predicates.hpp>
-
-#include "vk/physical_device/handle.hpp"
-#include "vk/physical_device/features_2.hpp"
-#include "vk/create_or_allocate.hpp"
 
 namespace vk {
 

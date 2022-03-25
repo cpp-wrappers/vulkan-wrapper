@@ -15,7 +15,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_decayed<vk::image_create_flags>,
+			types::are_may_contain_one_decayed<vk::image_create_flags>,
 			types::are_contain_one_decayed<vk::image_type>,
 			types::are_contain_one_decayed<vk::format>,
 			types::are_contain_one_decayed<vk::extent<3>>,
@@ -25,20 +25,24 @@ namespace vk {
 			types::are_contain_one_decayed<vk::image_tiling>,
 			types::are_contain_one_decayed<vk::image_usages>,
 			types::are_may_contain_one_decayed<vk::sharing_mode>,
-			types::are_contain_range_of<vk::queue_family_index>,
+			types::are_may_contain_range_of<vk::queue_family_index>,
 			types::are_may_contain_one_decayed<vk::initial_layout>
 		>::for_types<Args...>
 		vk::expected<handle<vk::image>>
 		operator () (Args&&... args) const {
 			vk::image_create_info ci{};
 
-			ci.flags = elements::decayed<vk::image_create_flags>(args...);
 			ci.image_type = elements::decayed<vk::image_type>(args...);
 			ci.format = elements::decayed<vk::format>(args...);
 			ci.extent = elements::decayed<vk::extent<3>>(args...);
-			ci.samples = elements::decayed<vk::sample_count>(args...);
 			ci.tiling = elements::decayed<vk::image_tiling>(args...);
 			ci.usages = elements::decayed<vk::image_usages>(args...);
+
+			if constexpr (
+				types::are_contain_decayed<
+					vk::image_create_flags
+				>::for_types<Args...>
+			) { ci.flags = elements::decayed<vk::image_create_flags>(args...); }
 
 			if constexpr (
 				types::are_contain_decayed<vk::mip_levels>::for_types<Args...>
@@ -70,10 +74,18 @@ namespace vk {
 				};
 			}
 
-			auto& queues = elements::range_of<vk::queue_family_index>(args...);
-
-			ci.queue_family_index_count = (uint32) queues.size();
-			ci.queue_family_indices = queues.data();
+			if constexpr (
+				types::are_contain_range_of<
+					vk::queue_family_index
+				>::for_types<Args...>
+			) {
+				auto& queues {
+					elements::range_of<vk::queue_family_index>(args...)
+				};
+				
+				ci.queue_family_index_count = (uint32) queues.size();
+				ci.queue_family_indices = queues.data();
+			}
 
 			auto& device {
 				elements::possibly_guarded_handle_of<vk::device>(args...)

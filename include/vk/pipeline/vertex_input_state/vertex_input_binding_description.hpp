@@ -1,17 +1,18 @@
 #pragma once
 
+#include "../../binding.hpp"
+
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-#include "vk/binding.hpp"
 
 namespace vk {
 
 	struct stride : wrapper::of_integer<uint32> {};
 	
 	enum class vertex_input_rate {
-		vertex, instance
+		vertex   = 0,
+		instance = 1
 	};
 	
 	struct vertex_input_binding_description {
@@ -29,10 +30,18 @@ namespace vk {
 			binding = elements::decayed<vk::binding>(args...);
 			stride = elements::decayed<vk::stride>(args...);
 	
-			if constexpr(types::are_contain_decayed<vk::vertex_input_rate>::for_types<Args...>) {
-				vertex_input_rate = elements::decayed<vk::vertex_input_rate>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::vertex_input_rate
+				>::for_types<Args...>
+			) {
+				vertex_input_rate = {
+					elements::decayed<vk::vertex_input_rate>(args...)
+				};
 			}
-		}
-	};
+
+		} // constructor
+
+	}; // vertex_input_binding_description
 
 } // vk

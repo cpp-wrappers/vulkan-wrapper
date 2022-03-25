@@ -2,7 +2,7 @@
 
 #include "handle.hpp"
 
-#include "vk/handle/guarded/device_child_base.hpp"
+#include "../../handle/guarded/device_child_base.hpp"
 
 template<>
 struct guarded_handle<vk::buffer_view> :

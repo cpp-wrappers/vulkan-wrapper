@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vk/handle/base.hpp"
+#include "../../handle/base.hpp"
 
 namespace vk {
 
@@ -9,4 +9,6 @@ namespace vk {
 } // vk
 
 template<>
-struct handle<vk::pipeline_layout> : vk::handle_base<vk::non_dispatchable> {};
+struct handle<vk::pipeline_layout> :
+	vk::handle_base<vk::non_dispatchable>
+{};

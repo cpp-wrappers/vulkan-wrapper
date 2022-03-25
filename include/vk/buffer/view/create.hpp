@@ -3,11 +3,11 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include <core/meta/decayed_same_as.hpp>
+#include "../../create_or_allocate.hpp"
+#include "../../result.hpp"
+#include "../../device/handle.hpp"
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/result.hpp"
-#include "vk/device/handle.hpp"
+#include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -24,7 +24,9 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::buffer_view>>
 		operator () (Args&&... args) const {
-			auto& buffer = elements::possibly_guarded_handle_of<vk::buffer>(args...);
+			auto& buffer {
+				elements::possibly_guarded_handle_of<vk::buffer>(args...)
+			};
 
 			auto format = elements::decayed<vk::format>(args...);
 			auto offset = elements::decayed<vk::memory_offset>(args...);
@@ -37,7 +39,9 @@ namespace vk {
 				.size = size
 			};
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device {
+				elements::possibly_guarded_handle_of<vk::device>(args...)
+			};
 
 			VkBufferView buffer_view;
 
@@ -53,8 +57,9 @@ namespace vk {
 			if(result.error()) return result;
 
 			return handle<vk::buffer_view>{ buffer_view };
-		}
 
-	};
+		} // constructor
+
+	}; // create_t<buffer_view>
 
 } // vk

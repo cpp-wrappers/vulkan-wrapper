@@ -2,11 +2,10 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
+#include "../result.hpp"
+#include "../device/handle.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-
-#include "vk/result.hpp"
-#include "vk/device/handle.hpp"
 
 namespace vk {
 
@@ -93,6 +92,6 @@ namespace vk {
 			return sampler;
 		}
 
-	};
+	}; // create_t<sampler>
 
 } // vk

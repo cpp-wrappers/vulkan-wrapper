@@ -106,7 +106,9 @@ namespace vk {
 			if constexpr(
 				types::are_contain_decayed<vk::final_layout>::for_types<Args...>
 			) { final_layout = elements::decayed<vk::final_layout>(args...); }
-		}
-	};
+
+		} // constructor
+
+	}; // attachment_description
 
 } // vk

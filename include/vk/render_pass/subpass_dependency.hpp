@@ -1,13 +1,13 @@
 #pragma once
 
+#include "../pipeline/stage.hpp"
+#include "../access.hpp"
+#include "../dependency.hpp"
+
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-#include "vk/pipeline/stage.hpp"
-#include "vk/access.hpp"
-#include "vk/dependency.hpp"
 
 namespace vk {
 
@@ -39,16 +39,15 @@ namespace vk {
 			src_stages = elements::decayed<vk::src_stages>(args...);
 			dst_stages = elements::decayed<vk::dst_stages>(args...);
 
-			if constexpr(types::are_contain_decayed<vk::src_access>::for_types<Args...>) {
-				src_access = elements::decayed<vk::src_access>(args...);
-			}
+			if constexpr (
+				types::are_contain_decayed<vk::src_access>::for_types<Args...>
+			) { src_access = elements::decayed<vk::src_access>(args...); }
 
-			if constexpr(types::are_contain_decayed<vk::dst_access>::for_types<Args...>) {
-				dst_access = elements::decayed<vk::dst_access>(args...);
-			}
-		}
-	};
+			if constexpr (
+				types::are_contain_decayed<vk::dst_access>::for_types<Args...>
+			) { dst_access = elements::decayed<vk::dst_access>(args...); }
+		} // constructor
+
+	}; // subpass_dependency
 
 } // vk
-
-static_assert(sizeof(vk::subpass_dependency) == sizeof(VkSubpassDependency));

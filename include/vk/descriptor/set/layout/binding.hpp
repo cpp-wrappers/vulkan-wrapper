@@ -1,14 +1,13 @@
 #pragma once
 
+#include "../../../shader/stage.hpp"
+#include "../../../descriptor/count.hpp"
+#include "../../../descriptor/type.hpp"
+#include "../../../descriptor/binding.hpp"
+
 #include <core/flag_enum.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-#include "vk/headers.hpp"
-#include "vk/shader/stage.hpp"
-#include "vk/descriptor/count.hpp"
-#include "vk/descriptor/type.hpp"
-#include "vk/descriptor/binding.hpp"
 
 namespace vk {
 
@@ -31,13 +30,18 @@ namespace vk {
 			descriptor_type = elements::decayed<vk::descriptor_type>(args...);
 			stage_flags = elements::decayed<vk::shader_stages>(args...);
 			
-			if constexpr(types::are_contain_decayed<vk::descriptor_count>::for_types<Args...>) {
-				descriptor_count = elements::decayed<vk::descriptor_count>(args...);
+			if constexpr(
+				types::are_contain_decayed<
+					vk::descriptor_count
+				>::for_types<Args...>
+			) {
+				descriptor_count = {
+					elements::decayed<vk::descriptor_count>(args...)
+				};
 			}
-		}
 
-	};
+		} // constructor
+
+	}; // descriptor_set_layout_binding
 
 } // vk
-
-static_assert(sizeof(vk::descriptor_set_layout_binding) == sizeof(VkDescriptorSetLayoutBinding));

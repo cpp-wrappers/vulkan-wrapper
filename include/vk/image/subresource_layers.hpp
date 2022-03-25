@@ -12,7 +12,3 @@ namespace vk {
 	};
 
 } // vk
-
-#include "vk/headers.hpp"
-
-static_assert(sizeof(vk::image_subresource_layers) == sizeof(VkImageSubresourceLayers));

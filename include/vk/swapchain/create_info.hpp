@@ -2,29 +2,28 @@
 
 #include "handle.hpp"
 
+#include "../sharing_mode.hpp"
+#include "../queue_family_index.hpp"
+#include "../extent.hpp"
+#include "../format.hpp"
+#include "../surface/present_mode.hpp"
+#include "../image/color_space.hpp"
+#include "../image/usage.hpp"
+#include "../surface/transform.hpp"
+#include "../surface/composite_alpha.hpp"
+#include "../surface/min_image_count.hpp"
+#include "../surface/handle.hpp"
+
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
 
-#include "vk/headers.hpp"
-#include "vk/sharing_mode.hpp"
-#include "vk/queue_family_index.hpp"
-#include "vk/extent.hpp"
-#include "vk/format.hpp"
-#include "vk/surface/present_mode.hpp"
-#include "vk/image/color_space.hpp"
-#include "vk/image/usage.hpp"
-#include "vk/surface/transform.hpp"
-#include "vk/surface/composite_alpha.hpp"
-#include "vk/surface/min_image_count.hpp"
-#include "vk/surface/handle.hpp"
-
 namespace vk {
 
 	enum class swapchain_create_flag {
-		split_instance_bind_regions = VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR,
-		рrotected = VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR,
-		mutable_format = VK_SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR
+		split_instance_bind_regions = 0x00000001,
+		_protected                  = 0x00000002,
+		mutable_format              = 0x00000004
 	};
 
 	struct image_array_layers : wrapper::of_integer<uint32> {};
@@ -36,8 +35,8 @@ namespace vk {
 	struct clipped : wrapper::of_integer<uint32> {};
 
 	struct swapchain_create_info {
-		uint32 structure_type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		const void* next;
+		uint32 structure_type = 1000001000;
+		const void* next = nullptr;
 		flag_enum<swapchain_create_flag> flags;
 		handle<vk::surface> surface;
 		vk::min_image_count min_image_count;
@@ -57,5 +56,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::swapchain_create_info) == sizeof(VkSwapchainCreateInfoKHR));

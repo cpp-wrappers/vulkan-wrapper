@@ -3,20 +3,19 @@
 #include "query_control.hpp"
 #include "query_pipeline_statistic.hpp"
 
+#include "../../subpass.hpp"
+#include "../../render_pass/handle.hpp"
+#include "../../framebuffer/handle.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
-
-#include "vk/headers.hpp"
-#include "vk/subpass.hpp"
-#include "vk/render_pass/handle.hpp"
-#include "vk/framebuffer/handle.hpp"
 
 namespace vk {
 
 	struct occlusion_query_enable : wrapper::of_integer<uint32> {};
 
 	struct command_buffer_inheritance_info {
-		const uint32 type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+		uint32 structure_type = 41;
 		const void* next;
 		handle<vk::render_pass> render_pass;
 		vk::subpass subpass;
@@ -27,5 +26,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::command_buffer_inheritance_info) == sizeof(VkCommandBufferInheritanceInfo));

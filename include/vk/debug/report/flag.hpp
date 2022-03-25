@@ -2,20 +2,17 @@
 
 #include <core/flag_enum.hpp>
 
-#include "../../headers.hpp"
-
 namespace vk {
 
 	enum class debug_report_flag {
-		information = VK_DEBUG_REPORT_INFORMATION_BIT_EXT,
-		warning = VK_DEBUG_REPORT_WARNING_BIT_EXT,
-		performance_warning = VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT,
-		error = VK_DEBUG_REPORT_ERROR_BIT_EXT,
-		debug = VK_DEBUG_REPORT_DEBUG_BIT_EXT,
+		information         = 0x00000001,
+		warning             = 0x00000002,
+		performance_warning = 0x00000004,
+		error               = 0x00000008,
+		debug               = 0x00000010,
 	};
 
 	using debug_report = debug_report_flag;
-
 	using debug_report_flags = flag_enum<vk::debug_report_flag>;
 
 } // vk

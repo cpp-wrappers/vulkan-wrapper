@@ -1,15 +1,12 @@
 #pragma once
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class pipeline_bind_point {
-		graphics = VK_PIPELINE_BIND_POINT_GRAPHICS,
-		compute = VK_PIPELINE_BIND_POINT_COMPUTE,
-		ray_tracing_khr = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR,
-		//subpass_shading_huawei = VK_PIPELINE_BIND_POINT_SUBPASS_SHADING_HUAWEI,
-		ray_tracing_nv = VK_PIPELINE_BIND_POINT_RAY_TRACING_NV
+		graphics        = 0,
+		compute         = 1,
+		ray_tracing_khr = 1000165000,
+		subpass_shading = 1000369003
 	};
 
 } // vk

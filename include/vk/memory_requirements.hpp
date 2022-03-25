@@ -1,6 +1,5 @@
 #pragma once
 
-#include "headers.hpp"
 #include "device_size.hpp"
 #include "memory_type_index.hpp"
 #include "memory_size.hpp"
@@ -14,5 +13,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::memory_requirements) == sizeof(VkMemoryRequirements));

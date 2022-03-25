@@ -11,7 +11,7 @@ namespace vk {
 		compute        = 0x00000002,
 		transfer       = 0x00000004,
 		sparse_binding = 0x00000008,
-		protect        = 0x00000010
+		_protected     = 0x00000010
 	};
 
 	struct queue_family_properties {

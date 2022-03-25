@@ -2,27 +2,24 @@
 
 #include "queue_create_info.hpp"
 
-#include <core/c_string.hpp>
+#include "../physical_device/features.hpp"
+#include "../extension_name.hpp"
 
-#include "vk/physical_device/features.hpp"
-#include "vk/headers.hpp"
-#include "vk/extension_name.hpp"
+#include <core/c_string.hpp>
 
 namespace vk {
 
 	struct device_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		const void* next;
-		uint32 flags;
-		uint32 queue_create_info_count;
-		const vk::queue_create_info* queue_create_infos;
-		uint32 enabled_layer_count;
-		const c_string* enabled_layer_names;
-		uint32 enabled_extension_count;
-		const vk::extension_name* enabled_extension_names;
-		const vk::physical_device_features* enabled_features;
+		uint32 structure_type = 3;
+		const void* next = nullptr;
+		uint32 flags = 0;
+		uint32 queue_create_info_count = 0;
+		const vk::queue_create_info* queue_create_infos = nullptr;
+		uint32 enabled_layer_count = 0;
+		const c_string* enabled_layer_names = nullptr;
+		uint32 enabled_extension_count = 0;
+		const vk::extension_name* enabled_extension_names = nullptr;
+		const vk::physical_device_features* enabled_features = nullptr;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::device_create_info) == sizeof(VkDeviceCreateInfo));

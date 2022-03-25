@@ -2,23 +2,20 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class image_usage {
-		transfer_src = VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-		transfer_dst = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-		sampled = VK_IMAGE_USAGE_SAMPLED_BIT,
-		storage = VK_IMAGE_USAGE_STORAGE_BIT,
-		color_attachment = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-		depth_stencil_attachment = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		transient_attachment = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
-		input_attachment = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
-		fragment_density_map_ext = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT,
-		fragment_shading_rate_attachment_khr = VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-		//invocation_mask_huawei = VK_IMAGE_USAGE_INVOCATION_MASK_BIT_HUAWEI,
-		shading_rate_image_nv = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV
+		transfer_src                     = 0x00000001,
+		transfer_dst                     = 0x00000002,
+		sampled                          = 0x00000004,
+		storage                          = 0x00000008,
+		color_attachment                 = 0x00000010,
+		depth_stencil_attachment         = 0x00000020,
+		transient_attachment             = 0x00000040,
+		input_attachment                 = 0x00000080,
+		fragment_density_map             = 0x00000200,
+		fragment_shading_rate_attachment = 0x00000100,
+		invocation_mask                  = 0x00040000
 	};
 
 	using image_usages = flag_enum<vk::image_usage>;

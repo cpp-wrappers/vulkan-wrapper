@@ -2,15 +2,12 @@
 
 #include <core/wrapper/of.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class filter {
-		nearest = VK_FILTER_NEAREST,
-		linear = VK_FILTER_LINEAR,
-		cubic_img = VK_FILTER_CUBIC_IMG,
-		cubic_ext = VK_FILTER_CUBIC_EXT,
+		nearest = 0,
+		linear  = 1,
+		cubic   = 2
 	};
 
 	struct mag_filter : wrapper::of<filter, struct mag_filter_t> {};

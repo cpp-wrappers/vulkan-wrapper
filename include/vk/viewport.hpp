@@ -1,7 +1,5 @@
 #pragma once
 
-#include "headers.hpp"
-
 namespace vk {
 
 	struct viewport {
@@ -12,6 +10,5 @@ namespace vk {
 		float min_depth = 0;
 		float max_depth = 1;
 	};
-}
 
-static_assert(sizeof(vk::viewport) == sizeof(VkViewport));
+} // vk

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "vk/headers.hpp"
-#include "vk/handle/base.hpp"
+#include "../handle/base.hpp"
 
 namespace vk {
 
@@ -11,16 +10,14 @@ namespace vk {
 	struct result;
 
 	struct present_info {
-		const uint32 type = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		const void* const next;
-		uint32 wait_semaphore_count;
-		const handle<vk::semaphore>* wait_semaphores;
-		uint32 swapchain_count;
-		const handle<vk::swapchain>* swapchains;
-		const vk::image_index* image_indices;
-		const vk::result* results;
+		uint32 structure_type = 1000001001;
+		const void* next = nullptr;
+		uint32 wait_semaphore_count = 0;
+		const handle<vk::semaphore>* wait_semaphores = nullptr;
+		uint32 swapchain_count = 0;
+		const handle<vk::swapchain>* swapchains = nullptr;
+		const vk::image_index* image_indices = nullptr;
+		const vk::result* results = nullptr;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::present_info) == sizeof(VkPresentInfoKHR));

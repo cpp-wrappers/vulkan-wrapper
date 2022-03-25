@@ -14,6 +14,5 @@ namespace vk {
 		uint32 write_mask;
 		uint32 reference;
 	};
-}
 
-static_assert(sizeof(vk::stencil_op_state) == sizeof(VkStencilOpState));
+} // vk

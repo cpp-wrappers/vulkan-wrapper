@@ -1,6 +1,7 @@
 #pragma once
 
 #include "attachment_reference.hpp"
+
 #include "../pipeline/bind_point.hpp"
 
 #include <core/flag_enum.hpp>
@@ -27,7 +28,7 @@ namespace vk {
 
 	struct subpass_description {
 		flag_enum<vk::subpass_description_flag> flags;
-		vk::pipeline_bind_point pipeline_bind_point{
+		vk::pipeline_bind_point pipeline_bind_point {
 			vk::pipeline_bind_point::graphics
 		};
 		uint32 input_attachment_count = 0;
@@ -51,7 +52,7 @@ namespace vk {
 			types::are_may_contain_range_of<vk::preserve_attachment_reference>
 		>::for_types<Args...>
 		subpass_description(Args&... args) {
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::input_attachment_reference
 				>::for_types<Args...>
@@ -63,7 +64,7 @@ namespace vk {
 				input_attachments = input.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::color_attachment_reference
 				>::for_types<Args...>
@@ -75,7 +76,7 @@ namespace vk {
 				color_attachments = color.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::resolve_attachment_reference
 				>::for_types<Args...>
@@ -86,7 +87,7 @@ namespace vk {
 				resolve_attachments = resolve.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::depth_stencil_attachment_reference
 				>::for_types<Args...>
@@ -97,7 +98,7 @@ namespace vk {
 				depth_stencil_attachments = depth_stencil.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::preserve_attachment_reference
 				>::for_types<Args...>
@@ -108,7 +109,8 @@ namespace vk {
 				preserve_attachment_count = (uint32) preserve.size();
 				preserve_attachments = preserve.data();
 			}
-		}
+
+		} // constructor
 
 	}; // subpass_description
 
