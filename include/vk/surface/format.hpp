@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vk/format.hpp"
-#include "vk/image/color_space.hpp"
+#include "../format.hpp"
+#include "../image/color_space.hpp"
 
 namespace vk {
 
@@ -11,5 +11,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::surface_format) == sizeof(VkSurfaceFormatKHR));

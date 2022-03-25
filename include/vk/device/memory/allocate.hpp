@@ -3,13 +3,12 @@
 #include "handle.hpp"
 #include "allocate_info.hpp"
 #include "allocate_flags_info.hpp"
+#include "../../device/handle.hpp"
+#include "../../create_or_allocate.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/types/are_contain_satisfying_predicate.hpp>
-
-#include "vk/device/handle.hpp"
-#include "vk/create_or_allocate.hpp"
 #include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
@@ -28,14 +27,24 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::memory_allocate_info ai {
 				.size = elements::decayed<vk::memory_size>(args...),
-				.memory_type_index = elements::decayed<vk::memory_type_index>(args...),
+				.memory_type_index {
+					elements::decayed<vk::memory_type_index>(args...)
+				}
 			};
 
-			if constexpr (types::are_contain_decayed<vk::memory_allocate_flags_info>::for_types<Args...>) {
-				ai.next = &elements::decayed<vk::memory_allocate_flags_info>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::memory_allocate_flags_info
+				>::for_types<Args...>
+			) {
+				ai.next = &elements::decayed<
+					vk::memory_allocate_flags_info
+				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::device_memory> device_memory;
 
@@ -51,8 +60,9 @@ namespace vk {
 			if(result.error()) return result;
 
 			return device_memory;
-		}
 
-	};
+		} // operator ()
+
+	}; // allocate_t<device_memory>
 
 } // vk

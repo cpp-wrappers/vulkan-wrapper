@@ -3,22 +3,22 @@
 #include "handle.hpp"
 #include "destroy.hpp"
 
-#include "vk/handle/guarded/device_child_base.hpp"
+#include "../handle/guarded/device_child_base.hpp"
 
 
 template<>
-struct guarded_handle<vk::swapchain> : vk::guarded_device_child_handle_base<vk::swapchain> {
+struct guarded_handle<vk::swapchain> : 
+	vk::guarded_device_child_handle_base<vk::swapchain>
+{
 	using base_type = vk::guarded_device_child_handle_base<vk::swapchain>;
-
 	using base_type::base_type;
-
-	guarded_handle(guarded_handle&&) = default;
-	guarded_handle& operator = (guarded_handle&&) = default;
 
 	template<typename... Args>
 	vk::expected<vk::image_index>
 	try_acquire_next_image(Args&&... args) const {
-		return handle().acquire_next_image(device(), forward<Args>(args)...);
+		return handle().try_acquire_next_image(
+			device(), forward<Args>(args)...
+		);
 	}
 
 	template<range::of<::handle<vk::image>> Images>
@@ -31,7 +31,13 @@ struct guarded_handle<vk::swapchain> : vk::guarded_device_child_handle_base<vk::
 	}
 
 	template<typename F>
-	vk::count for_each_image(F&& f) const {
-		return handle().for_each_image(device(), forward<F>(f));
+	void for_each_image(F&& f) const {
+		handle().for_each_image(device(), forward<F>(f));
 	}
-};
+
+	template<typename F>
+	decltype(auto) view_images(F&& f) const {
+		return handle().view_images(device(), forward<F>(f));
+	}
+
+}; // guarded_handle<swapchain>

@@ -38,8 +38,7 @@ struct guarded_handle<vk::instance> : vk::guarded_handle_base<vk::instance> {
 
 template<typename... Args>
 guarded_handle<vk::instance> create_guarded_instance(Args&&... args) {
-	vk::expected<handle<vk::instance>> result =
-		vk::create<vk::instance>(forward<Args>(args)...);
+	auto result = vk::create<vk::instance>(forward<Args>(args)...);
 
 	if(result.is_unexpected()) {
 		vk::unexpected_handler(result.get_unexpected());

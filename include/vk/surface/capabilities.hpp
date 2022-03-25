@@ -4,11 +4,10 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-#include "vk/extent.hpp"
-#include "vk/surface/composite_alpha.hpp"
-#include "vk/image/usage.hpp"
-#include "vk/surface/min_image_count.hpp"
+#include "../extent.hpp"
+#include "../surface/composite_alpha.hpp"
+#include "../image/usage.hpp"
+#include "../surface/min_image_count.hpp"
 
 namespace vk {
 
@@ -26,5 +25,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::surface_capabilities) == sizeof(VkSurfaceCapabilitiesKHR));

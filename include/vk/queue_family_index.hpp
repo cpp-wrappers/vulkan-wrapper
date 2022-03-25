@@ -9,4 +9,4 @@ namespace vk {
 	struct src_queue_family_index : queue_family_index {};
 	struct dst_queue_family_index : queue_family_index {};
 
-}
+} // vk

@@ -7,10 +7,10 @@
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 
-#include "vk/physical_device/handle.hpp"
-#include "vk/handle/base.hpp"
-#include "vk/count.hpp"
-#include "vk/result.hpp"
+#include "../physical_device/handle.hpp"
+#include "../handle/base.hpp"
+#include "../count.hpp"
+#include "../result.hpp"
 
 namespace vk {
 
@@ -22,8 +22,9 @@ namespace vk {
 template<>
 struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
+	template<range::of<handle<vk::physical_device>> DevicesRange>
 	vk::expected<vk::count>
-	enumerate_physical_devices(range::of<handle<vk::physical_device>> auto&& devices) const {
+	enumerate_physical_devices(DevicesRange&& devices) const {
 		uint32 count = (uint32) devices.size();
 
 		vk::result result {
@@ -55,7 +56,10 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 		);
 
 		if(result.is_expected()) {
-			f(span<handle<vk::physical_device>>{ devices_storage, (uint32) result.get_expected() });
+			f(span<handle<vk::physical_device>> {
+				devices_storage,
+				(uint32) result.get_expected()
+			});
 		}
 		
 		return result;
@@ -106,6 +110,7 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 		}
 		return result.get_expected();
 	}
-}; // instance
+
+}; // handle<vk::instance>
 
 #include "../debug/report/callback/create.hpp"

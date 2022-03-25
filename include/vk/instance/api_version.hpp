@@ -26,8 +26,7 @@ namespace vk {
 		constexpr operator uint32 () {
 			return *((uint32*)this);
 		}
-	};
+
+	}; // api_version
 
 } // vk
-
-static_assert(sizeof(vk::api_version) == sizeof(uint32));

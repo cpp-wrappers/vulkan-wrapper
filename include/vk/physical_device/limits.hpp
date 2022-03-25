@@ -2,8 +2,6 @@
 
 #include <core/integer.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct physical_device_limits {
@@ -116,5 +114,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_limits) == sizeof(VkPhysicalDeviceLimits));

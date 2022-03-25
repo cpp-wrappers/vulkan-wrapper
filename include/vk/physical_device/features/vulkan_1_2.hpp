@@ -1,12 +1,13 @@
 #pragma once
 
-#include "vk/physical_device/features.hpp"
-#include "vk/headers.hpp"
+#include "../features.hpp"
 
 namespace vk {
 
-	struct physical_device_vulkan_1_2_features : vk::physical_device_features_marker {
-		uint32 __type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+	struct physical_device_vulkan_1_2_features :
+		vk::physical_device_features_marker
+	{
+		uint32 structure_type = 51;
 		const void* next;
 		uint32 sampler_mirror_clamp_to_edge;
 		uint32 draw_indirect_count;
@@ -58,5 +59,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_vulkan_1_2_features) == sizeof(VkPhysicalDeviceVulkan12Features));

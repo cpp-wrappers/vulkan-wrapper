@@ -14,10 +14,9 @@ namespace vk {
 } // vk
 
 template<>
-struct guarded_handle<vk::surface> : vk::guarded_instance_child_handle_base<vk::surface> {
+struct guarded_handle<vk::surface> :
+	vk::guarded_instance_child_handle_base<vk::surface>
+{
 	using base_type = vk::guarded_instance_child_handle_base<vk::surface>;
-
 	using base_type::base_type;
-
-	guarded_handle& operator = (guarded_handle&&) = default;
 };

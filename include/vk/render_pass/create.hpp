@@ -1,11 +1,10 @@
 #pragma once
 
-#include "handle.hpp"
-#include "attachment_description.hpp"
-#include "create_info.hpp"
-
-#include "vk/create_or_allocate.hpp"
-#include "vk/device/handle.hpp"
+#include "./handle.hpp"
+#include "./attachment_description.hpp"
+#include "./create_info.hpp"
+#include "../create_or_allocate.hpp"
+#include "../device/handle.hpp"
 
 namespace vk {
 
@@ -23,23 +22,39 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
 
-			auto& subpass_descriptions = elements::range_of<vk::subpass_description>(args...);
+			auto& subpass_descriptions = elements::range_of<
+				vk::subpass_description
+			>(args...);
 			ci.subpass_count = (uint32) subpass_descriptions.size();
 			ci.subpasses = subpass_descriptions.data();
 
-			if constexpr(types::are_contain_range_of<vk::subpass_dependency>::for_types<Args...>) {
-				auto& subpass_dependencies = elements::range_of<vk::subpass_dependency>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::subpass_dependency
+				>::for_types<Args...>
+			) {
+				auto& subpass_dependencies = elements::range_of<
+					vk::subpass_dependency
+				>(args...);
 				ci.dependency_count = (uint32) subpass_dependencies.size();
 				ci.dependencies = subpass_dependencies.data();
 			}
 
-			if constexpr(types::are_contain_range_of<vk::attachment_description>::for_types<Args...>) {
-				auto& attachment_descriptions = elements::range_of<vk::attachment_description>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::attachment_description
+				>::for_types<Args...>
+			) {
+				auto& attachment_descriptions = elements::range_of<
+					vk::attachment_description
+				>(args...);
 				ci.attachment_count = (uint32) attachment_descriptions.size();
 				ci.attachments = attachment_descriptions.data();
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::render_pass> render_pass;
 
@@ -55,8 +70,9 @@ namespace vk {
 			if(result.error()) return result;
 
 			return render_pass;
-		}
 
-	};
+		} // operator ()
+
+	}; // create_t<render_pass>
 
 } // vk

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "base.hpp"
-
-#include "vk/destroy_or_free.hpp"
-#include "vk/device/handle.hpp"
+#include "../../device/handle.hpp"
 
 namespace vk {
 
@@ -18,12 +16,20 @@ namespace vk {
 
 		guarded_device_child_handle_base() = default;
 
-		guarded_device_child_handle_base(handle<ObjectType> handle, ::handle<vk::device> device)
-			: base_type{ handle }, m_device { device }
+		guarded_device_child_handle_base(
+			::handle<ObjectType> handle,
+			::handle<vk::device> device
+		) :
+			base_type{ handle }, m_device { device }
 		{}
 
-		guarded_device_child_handle_base(guarded_device_child_handle_base&& other) = default;
-		guarded_device_child_handle_base& operator = (guarded_device_child_handle_base&& other) = default;
+		guarded_device_child_handle_base(
+			guarded_device_child_handle_base&& other
+		) = default;
+
+		guarded_device_child_handle_base& operator = (
+			guarded_device_child_handle_base&& other
+		) = default;
 
 		void destroy() const requires vk::is_creatable<ObjectType> {
 			vk::destroy<ObjectType>(device(), ((base_type*)this)->handle());

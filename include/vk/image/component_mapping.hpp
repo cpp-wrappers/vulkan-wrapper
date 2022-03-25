@@ -42,6 +42,6 @@ namespace vk {
 				a = elements::decayed<vk::a>(args...);
 		}
 
-	};
+	}; // component_mapping
 
 } // vk

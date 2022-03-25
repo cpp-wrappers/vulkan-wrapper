@@ -1,6 +1,7 @@
 #pragma once
 
 #include "attachment_reference.hpp"
+#include "../pipeline/bind_point.hpp"
 
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_integer.hpp>
@@ -9,16 +10,13 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/headers.hpp"
-#include "vk/pipeline/bind_point.hpp"
-
 namespace vk {
 
 	enum class subpass_description_flag {
-		per_view_attributes = VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX,
-		per_view_position_x_only = VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX,
-		fragment_region = VK_SUBPASS_DESCRIPTION_FRAGMENT_REGION_BIT_QCOM,
-		shader_resolve = VK_SUBPASS_DESCRIPTION_SHADER_RESOLVE_BIT_QCOM
+		per_view_attributes      = 0x00000001,
+		per_view_position_x_only = 0x00000002,
+		fragment_region          = 0x00000004,
+		shader_resolve           = 0x00000008
 	};
 
 	struct input_attachment_reference : attachment_reference {};
@@ -29,13 +27,16 @@ namespace vk {
 
 	struct subpass_description {
 		flag_enum<vk::subpass_description_flag> flags;
-		vk::pipeline_bind_point pipeline_bind_point{ vk::pipeline_bind_point::graphics };
+		vk::pipeline_bind_point pipeline_bind_point{
+			vk::pipeline_bind_point::graphics
+		};
 		uint32 input_attachment_count = 0;
 		const vk::input_attachment_reference* input_attachments = nullptr;
 		uint32 color_attachment_count = 0;
 		const vk::color_attachment_reference* color_attachments = nullptr;
 		const vk::resolve_attachment_reference* resolve_attachments = nullptr;
-		const vk::depth_stencil_attachment_reference* depth_stencil_attachments = nullptr;
+		const vk::depth_stencil_attachment_reference*
+			depth_stencil_attachments = nullptr;
 		uint32 preserve_attachment_count = 0;
 		const vk::preserve_attachment_reference* preserve_attachments = nullptr;
 	
@@ -44,42 +45,71 @@ namespace vk {
 			types::are_may_contain_range_of<vk::input_attachment_reference>,
 			types::are_may_contain_range_of<vk::color_attachment_reference>,
 			types::are_may_contain_range_of<vk::resolve_attachment_reference>,
-			types::are_may_contain_range_of<vk::depth_stencil_attachment_reference>,
+			types::are_may_contain_range_of<
+				vk::depth_stencil_attachment_reference
+			>,
 			types::are_may_contain_range_of<vk::preserve_attachment_reference>
 		>::for_types<Args...>
 		subpass_description(Args&... args) {
-	
-			if constexpr(types::count_of_ranges_of<vk::input_attachment_reference>::for_types<Args...> == 1) {
-				auto& input = elements::range_of<vk::input_attachment_reference>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::input_attachment_reference
+				>::for_types<Args...>
+			) {
+				auto& input = elements::range_of<
+					vk::input_attachment_reference
+				>(args...);
 				input_attachment_count = (uint32) input.size();
 				input_attachments = input.data();
 			}
 
-			if constexpr(types::count_of_ranges_of<vk::color_attachment_reference>::for_types<Args...> == 1) {
-				auto& color = elements::range_of<vk::color_attachment_reference>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::color_attachment_reference
+				>::for_types<Args...>
+			) {
+				auto& color = elements::range_of<
+					vk::color_attachment_reference
+				>(args...);
 				color_attachment_count = (uint32) color.size();
 				color_attachments = color.data();
 			}
 
-			if constexpr(types::count_of_ranges_of<vk::resolve_attachment_reference>::for_types<Args...> == 1) {
-				auto& resolve = elements::range_of<vk::resolve_attachment_reference>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::resolve_attachment_reference
+				>::for_types<Args...>
+			) {
+				auto& resolve = elements::range_of<
+					vk::resolve_attachment_reference
+				>(args...);
 				resolve_attachments = resolve.data();
 			}
 
-			if constexpr(types::count_of_ranges_of<vk::depth_stencil_attachment_reference>::for_types<Args...> == 1) {
-				auto& depth_stencil = elements::range_of<vk::depth_stencil_attachment_reference>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::depth_stencil_attachment_reference
+				>::for_types<Args...>
+			) {
+				auto& depth_stencil = elements::range_of<
+					vk::depth_stencil_attachment_reference
+				>(args...);
 				depth_stencil_attachments = depth_stencil.data();
 			}
 
-			if constexpr(types::count_of_ranges_of<vk::preserve_attachment_reference>::for_types<Args...> == 1) {
-				auto& preserve = elements::range_of<vk::preserve_attachment_reference>(args...);
+			if constexpr(
+				types::are_contain_range_of<
+					vk::preserve_attachment_reference
+				>::for_types<Args...>
+			) {
+				auto& preserve = elements::range_of<
+					vk::preserve_attachment_reference
+				>(args...);
 				preserve_attachment_count = (uint32) preserve.size();
 				preserve_attachments = preserve.data();
 			}
 		}
 
-	};
+	}; // subpass_description
 
 } // vk
-
-static_assert(sizeof(vk::subpass_description) == sizeof(VkSubpassDescription));

@@ -58,8 +58,8 @@ namespace vk {
 		      ::handle<ObjectType>  handle() const && { return m_handle; }
 		      ::handle<ObjectType>  handle()       && { return m_handle; }
 
-		operator ::handle<ObjectType> () const {
+		/*operator ::handle<ObjectType> () const {
 			return handle();
-		}
+		}*/
 	};
 }

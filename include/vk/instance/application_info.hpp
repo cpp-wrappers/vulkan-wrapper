@@ -7,8 +7,6 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/elements/at_index.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct application_name : c_string {};
@@ -17,8 +15,7 @@ namespace vk {
 	struct engine_version : wrapper::of_integer<uint32> {};
 
 	struct application_info {
-
-		uint32 structure_type = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		uint32 structure_type = 0;
 		const void* next = nullptr;
 		vk::application_name app_name;
 		vk::application_version app_version{};
@@ -65,10 +62,9 @@ namespace vk {
 			) {
 				engine_version = elements::decayed<vk::engine_version>(args...);
 			}
-		}
+
+		} // constructor
 
 	}; // application_info
 
 } // vk
-
-static_assert(sizeof(vk::application_info) == sizeof(VkApplicationInfo));

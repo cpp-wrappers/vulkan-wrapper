@@ -1,12 +1,15 @@
 #pragma once
 
 #include "vk/physical_device/extension_properties.hpp"
-#include "vk/headers.hpp"
+
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct physical_device_ray_tracing_pipeline_properties : vk::extension_properties_marker {
-		const uint32 __type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
+	struct physical_device_ray_tracing_pipeline_properties :
+		vk::extension_properties_marker
+	{
+		uint32 structure_type = 1000347001;
 		const void* next;
 		uint32 shader_group_handle_size;
 		uint32 max_ray_recursion_depth;
@@ -19,5 +22,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_ray_tracing_pipeline_properties) == sizeof(VkPhysicalDeviceRayTracingPipelinePropertiesKHR));

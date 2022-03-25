@@ -3,9 +3,9 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include "vk/device/handle.hpp"
-#include "vk/create_or_allocate.hpp"
-#include "vk/extent.hpp"
+#include "../device/handle.hpp"
+#include "../create_or_allocate.hpp"
+#include "../extent.hpp"
 
 namespace vk {
 
@@ -21,9 +21,13 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::framebuffer>>
 		operator () (const Args&... args) const {
-			auto& attachments = elements::range_of<handle<vk::image_view>>(args...);
+			auto& attachments = elements::range_of<
+				handle<vk::image_view>
+			>(args...);
 
-			auto& render_pass = elements::possibly_guarded_handle_of<vk::render_pass>(args...);
+			auto& render_pass = elements::possibly_guarded_handle_of<
+				vk::render_pass
+			>(args...);
 
 			vk::framebuffer_create_info ci {
 				.render_pass = vk::get_handle(render_pass),
@@ -37,7 +41,9 @@ namespace vk {
 			ci.height = extent.height();
 			ci.layers = extent.depth();
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::framebuffer> framebuffer;
 
@@ -54,6 +60,7 @@ namespace vk {
 
 			return framebuffer;
 		}
-	};
+
+	}; // create_t<framebuffer>
 
 } // vk

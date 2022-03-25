@@ -2,27 +2,29 @@
 
 #include "handle.hpp"
 
-#include "vk/destroy_or_free.hpp"
-#include "vk/instance/handle.hpp"
+#include "../../../handle/get_value.hpp"
+#include "../../../destroy_or_free.hpp"
+#include "../../../instance/handle.hpp"
 
 namespace vk {
 
 	template<>
 	struct vk::destroy_t<vk::debug_report_callback> {
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-		
-		>::for_types<Args...>
-		void operator () (handle<vk::instance> instance, handle<vk::debug_report_callback> debug_report_callback) const {
-			auto fn = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(
-				(VkInstance) instance.value,
-				"vkDestroyDebugReportCallbackEXT"
-			);
+		void operator () (
+			handle<vk::instance> instance,
+			handle<vk::debug_report_callback> debug_report_callback
+		) const {
+			auto fn = (PFN_vkDestroyDebugReportCallbackEXT)
+				vkGetInstanceProcAddr(
+					(VkInstance) vk::get_handle_value(instance),
+					"vkDestroyDebugReportCallbackEXT"
+				);
 			
 			fn(
-				(VkInstance) instance.value,
-				(VkDebugReportCallbackEXT) debug_report_callback.value,
+				(VkInstance) vk::get_handle_value(instance),
+				(VkDebugReportCallbackEXT)
+					vk::get_handle_value(debug_report_callback),
 				(VkAllocationCallbacks*) nullptr
 			);
 		}

@@ -19,7 +19,9 @@ struct guarded_handle<vk::device> : vk::guarded_handle_base<vk::device> {
 
 	template<typename ObjectType, typename... Args>
 	guarded_handle<ObjectType> create_guarded(Args&&... args) const {
-		return { handle().create<ObjectType>(forward<Args>(args)...), handle() };
+		return {
+			handle().create<ObjectType>(forward<Args>(args)...), handle()
+		};
 	}
 
 	template<typename ObjectType, typename... Args>
@@ -29,10 +31,15 @@ struct guarded_handle<vk::device> : vk::guarded_handle_base<vk::device> {
 
 	template<typename ObjectType, typename... Args>
 	guarded_handle<ObjectType> allocate_guarded(Args&&... args) const {
-		return { handle().allocate<ObjectType>(forward<Args>(args)...), handle() };
+		return {
+			handle().allocate<ObjectType>(forward<Args>(args)...), handle()
+		};
 	}
 
-	::handle<vk::queue> get_queue(vk::queue_family_index queue_family_index, vk::queue_index queue_index) const {
+	::handle<vk::queue> get_queue(
+		vk::queue_family_index queue_family_index,
+		vk::queue_index queue_index
+	) const {
 		return handle().get_queue(queue_family_index, queue_index);
 	}
 

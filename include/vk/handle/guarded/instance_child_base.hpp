@@ -1,6 +1,7 @@
 #pragma once
 
-#include "vk/instance/handle.hpp"
+#include "base.hpp"
+#include "../../instance/handle.hpp"
 
 namespace vk {
 
@@ -15,14 +16,22 @@ namespace vk {
 
 		guarded_instance_child_handle_base() = default;
 
-		guarded_instance_child_handle_base(::handle<ObjectType> handle, ::handle<vk::instance> instance)
-			: base_type{ handle }, m_instance{ instance }
+		guarded_instance_child_handle_base(
+			::handle<ObjectType> handle,
+			::handle<vk::instance> instance
+		) :
+			base_type{ handle }, m_instance{ instance }
 		{}
 
-		guarded_instance_child_handle_base(guarded_instance_child_handle_base&& other) = default;
-		guarded_instance_child_handle_base& operator = (guarded_instance_child_handle_base&& other) = default;
+		guarded_instance_child_handle_base(
+			guarded_instance_child_handle_base&& other
+		) = default;
 
-		void destroy() const {
+		guarded_instance_child_handle_base& operator = (
+			guarded_instance_child_handle_base&& other
+		) = default;
+
+		void destroy() const requires vk::is_creatable<ObjectType> {
 			vk::destroy<ObjectType>(instance(), ((base_type*)this)->handle());
 		}
 

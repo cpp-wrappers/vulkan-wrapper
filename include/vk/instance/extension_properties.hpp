@@ -1,5 +1,10 @@
 #pragma once
 
+#include "../extension_properties.hpp"
+#include "../result.hpp"
+#include "../count.hpp"
+#include "../extension_name.hpp"
+
 #include <core/span.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/range/contains.hpp>
@@ -10,15 +15,11 @@
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>
 
-#include "vk/extension_properties.hpp"
-#include "vk/result.hpp"
-#include "vk/count.hpp"
-#include "vk/extension_name.hpp"
-
 namespace vk {
 
+	template<range::of<vk::extension_properties> Range>
 	vk::expected<vk::count>
-	enumerate_instance_extension_properties(range::of<vk::extension_properties> auto&& extension_properties) {
+	enumerate_instance_extension_properties(Range&& extension_properties) {
 		uint32 count = extension_properties.size();
 
 		vk::result result {
@@ -35,14 +36,18 @@ namespace vk {
 
 	vk::expected<vk::count>
 	inline get_instance_extension_properties_count() {
-		return enumerate_instance_extension_properties(span<vk::extension_properties>{ nullptr, 0 });
+		return enumerate_instance_extension_properties(
+			span<vk::extension_properties>{ nullptr, 0 }
+		);
 	}
 
 	vk::expected<vk::count>
 	view_instance_extension_properties(auto&& f, vk::count count) {
 		vk::extension_properties extensions_props[(uint32)count];
 
-		auto result = enumerate_instance_extension_properties(span{ extensions_props, (uint32)count });
+		auto result = enumerate_instance_extension_properties(
+			span{ extensions_props, (uint32)count }
+		);
 		if(result.is_unexpected()) return result;
 
 		count = result.get_expected();
@@ -86,14 +91,16 @@ namespace vk {
 	inline bool is_instance_extension_supported(vk::extension_name name) {
 		bool supported = false;
 
-		vk::view_instance_extension_properties([&](span<vk::extension_properties> props) {
-			supported =
-				range::contains(name)(
-					range::transform(props)([](auto& extension_props) {
-						return vk::extension_name{ extension_props.name };
-					})
-				);
-		});
+		vk::view_instance_extension_properties(
+			[&](span<vk::extension_properties> props) {
+				supported =
+					range::contains(name)(
+						range::transform(props)([](auto& extension_props) {
+							return vk::extension_name{ extension_props.name };
+						})
+					);
+			}
+		);
 
 		return supported;
 	}

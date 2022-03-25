@@ -14,8 +14,13 @@ namespace vk {
 		types::are_contain_one_decayed<vk::render_pass_begin_info>
 	>::for_types<Args...>
 	void cmd_begin_render_pass(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		auto& render_pass_begin_info = elements::decayed<vk::render_pass_begin_info>(args...);
+		auto& command_buffer {
+			elements::possibly_guarded_handle_of<vk::command_buffer>(args...)
+		};
+
+		auto& render_pass_begin_info {
+			elements::decayed<vk::render_pass_begin_info>(args...)
+		};
 
 		vkCmdBeginRenderPass(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),
@@ -33,17 +38,27 @@ namespace vk {
 		types::are_contain_range_of<vk::clear_value>
 	>::for_types<Args...>
 	void cmd_begin_render_pass(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		auto& render_pass = elements::possibly_guarded_handle_of<vk::render_pass>(args...);
-		auto& framebuffer = elements::possibly_guarded_handle_of<vk::framebuffer>(args...);
-		vk::render_area render_area = elements::decayed<vk::render_area>(args...);
-		auto& clear_values = elements::range_of<vk::clear_value>(args...);
+		auto& command_buffer {
+			elements::possibly_guarded_handle_of<vk::command_buffer>(args...)
+		};
+		auto& render_pass {
+			elements::possibly_guarded_handle_of<vk::render_pass>(args...)
+		};
+		auto& framebuffer {
+			elements::possibly_guarded_handle_of<vk::framebuffer>(args...)
+		};
+		vk::render_area render_area {
+			elements::decayed<vk::render_area>(args...)
+		};
+		auto& clear_values {
+			elements::range_of<vk::clear_value>(args...)
+		};
 
 		return vk::cmd_begin_render_pass(
 			command_buffer,
 			vk::render_pass_begin_info {
-				.render_pass = render_pass,
-				.framebuffer = framebuffer,
+				.render_pass = vk::get_handle(render_pass),
+				.framebuffer = vk::get_handle(framebuffer),
 				.render_area = render_area,
 				.clear_value_count = (uint32) clear_values.size(),
 				.clear_values = clear_values.data()

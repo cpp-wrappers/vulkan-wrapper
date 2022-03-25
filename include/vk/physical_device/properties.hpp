@@ -3,17 +3,13 @@
 #include "limits.hpp"
 #include "sparse_properties.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/instance/api_version.hpp"
+#include "../instance/api_version.hpp"
 
 namespace vk {
 
 	enum class physical_device_type {
-		other = VK_PHYSICAL_DEVICE_TYPE_OTHER,
-		integrated_gpu = VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU,
-		discrete_gpu = VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU,
-		virtual_gpu = VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU,
-		cpu = VK_PHYSICAL_DEVICE_TYPE_CPU
+		other, integrated_gpu, discrete_gpu,
+		virtual_gpu, cpu
 	};
 
 	struct physical_device_properties {
@@ -22,12 +18,10 @@ namespace vk {
 		uint32 vendor_id;
 		uint32 device_id;
 		physical_device_type type;
-		char name[VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
-		uint8 pipeline_cache_uuid[VK_UUID_SIZE];
+		char name[256];
+		uint8 pipeline_cache_uuid[16];
 		vk::physical_device_limits limits;
 		vk::physical_device_sparse_properties sparse_properties;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_properties) == sizeof(VkPhysicalDeviceProperties));

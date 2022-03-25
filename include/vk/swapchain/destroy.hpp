@@ -9,6 +9,12 @@
 namespace vk {
 
 	template<>
-	struct vk::destroy_t<vk::swapchain> : vk::device_child_destroy_base<vk::swapchain, VkSwapchainKHR, vkDestroySwapchainKHR>{};
+	struct vk::destroy_t<vk::swapchain> :
+		vk::device_child_destroy_base<
+			vk::swapchain,
+			VkSwapchainKHR,
+			vkDestroySwapchainKHR
+		>
+	{};
 
 } // vk

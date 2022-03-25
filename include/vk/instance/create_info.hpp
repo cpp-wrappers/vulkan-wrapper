@@ -2,15 +2,14 @@
 
 #include "application_info.hpp"
 
-#include "vk/extension_name.hpp"
-#include "vk/headers.hpp"
-#include "vk/layer_name.hpp"
+#include "../extension_name.hpp"
+#include "../layer_name.hpp"
 
 namespace vk {
 	
 	struct instance_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		const void* const next;
+		uint32 structure_type = 1;
+		const void* next;
 		uint32 flags;
 		const vk::application_info* application_info;
 		uint32 enabled_layer_count;
@@ -20,5 +19,3 @@ namespace vk {
 	};
 	
 } // vk
-
-static_assert(sizeof(vk::instance_create_info) == sizeof(VkInstanceCreateInfo));

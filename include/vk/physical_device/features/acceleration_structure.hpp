@@ -1,12 +1,13 @@
 #pragma once
 
-#include "vk/physical_device/features.hpp"
-#include "vk/headers.hpp"
+#include "../features.hpp"
 
 namespace vk {
 
-	struct physical_device_acceleration_structure_features : vk::physical_device_features_marker {
-		uint32 structure_type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+	struct physical_device_acceleration_structure_features :
+		vk::physical_device_features_marker
+	{
+		uint32 structure_type = 1000150013;
 		const void* next;
 		uint32 acceleration_structure;
 		uint32 acceleration_structure_capture_replay;
@@ -16,5 +17,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_acceleration_structure_features) == sizeof(VkPhysicalDeviceAccelerationStructureFeaturesKHR));

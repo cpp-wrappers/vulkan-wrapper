@@ -2,14 +2,13 @@
 
 #include <core/flag_enum.hpp>
 
-#include "headers.hpp"
-
 namespace vk {
+
 	enum class color_component {
-		r = VK_COLOR_COMPONENT_R_BIT,
-		g = VK_COLOR_COMPONENT_G_BIT,
-		b = VK_COLOR_COMPONENT_B_BIT,
-		a = VK_COLOR_COMPONENT_A_BIT
+		r = 0x00000001,
+		g = 0x00000002,
+		b = 0x00000004,
+		a = 0x00000008
 	};
 
 	using color_components = flag_enum<vk::color_component>;

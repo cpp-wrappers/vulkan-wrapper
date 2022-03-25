@@ -2,22 +2,21 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class image_aspect {
-		color = VK_IMAGE_ASPECT_COLOR_BIT,
-		depth = VK_IMAGE_ASPECT_DEPTH_BIT,
-		stencil = VK_IMAGE_ASPECT_STENCIL_BIT,
-		metadata = VK_IMAGE_ASPECT_METADATA_BIT,
-		plane_0 = VK_IMAGE_ASPECT_PLANE_0_BIT,
-		plane_1 = VK_IMAGE_ASPECT_PLANE_1_BIT,
-		plane_2 = VK_IMAGE_ASPECT_PLANE_2_BIT,
-		memory_plane_0 = VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT,
-		memory_plane_1 = VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT,
-		memory_plane_2 = VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT,
-		memory_plane_3 = VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT,
+		none           = 0,
+		color          = 0x00000001,
+		depth          = 0x00000002,
+		stencil        = 0x00000004,
+		metadata       = 0x00000008,
+		plane_0        = 0x00000010,
+		plane_1        = 0x00000020,
+		plane_2        = 0x00000040,
+		memory_plane_0 = 0x00000080,
+		memory_plane_1 = 0x00000100,
+		memory_plane_2 = 0x00000200,
+		memory_plane_3 = 0x00000400
 	};
 
 	using image_aspects = flag_enum<vk::image_aspect>;

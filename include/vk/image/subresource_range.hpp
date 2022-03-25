@@ -16,7 +16,7 @@ namespace vk {
 	struct layer_count : wrapper::of_integer<uint32> {};
 	
 	struct image_subresource_range {
-		vk::image_aspects aspect_mask{};
+		vk::image_aspects aspect_mask{ vk::image_aspect::color };
 		vk::base_mip_level base_mip_level{ 0 };
 		vk::level_count level_count{ 1 };
 		vk::base_array_layer base_array_layer{ 0 };
@@ -24,34 +24,47 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<vk::image_aspects>,
+			types::are_may_contain_one_decayed<vk::image_aspects>,
 			types::are_may_contain_one_decayed<vk::base_mip_level>,
 			types::are_may_contain_one_decayed<vk::level_count>,
 			types::are_may_contain_one_decayed<vk::base_array_layer>,
 			types::are_may_contain_one_decayed<vk::layer_count>
 		>::for_types<Args...>
 		image_subresource_range(Args... args) {
-			aspect_mask = elements::decayed<vk::image_aspects>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::image_aspects
+				>::for_types<Args...>
+			) { aspect_mask = elements::decayed<vk::image_aspects>(args...); }
 	
-			if constexpr(types::are_contain_decayed<vk::base_mip_level>::for_types<Args...>) {
+			if constexpr (
+				types::are_contain_decayed<
+					vk::base_mip_level
+				>::for_types<Args...>
+			) {
 				base_mip_level = elements::decayed<vk::base_mip_level>(args...);
 			}
 	
-			if constexpr(types::are_contain_decayed<vk::level_count>::for_types<Args...>) {
-				level_count = elements::decayed<vk::level_count>(args...);
+			if constexpr (
+				types::are_contain_decayed<vk::level_count>::for_types<Args...>
+			) { level_count = elements::decayed<vk::level_count>(args...); }
+	
+			if constexpr (
+				types::are_contain_decayed<
+					vk::base_array_layer
+				>::for_types<Args...>
+			) {
+				base_array_layer = {
+					elements::decayed<vk::base_array_layer>(args...)
+				};
 			}
 	
-			if constexpr(types::are_contain_decayed<vk::base_array_layer>::for_types<Args...>) {
-				base_array_layer = elements::decayed<vk::base_array_layer>(args...);
-			}
+			if constexpr (
+				types::are_contain_decayed<vk::layer_count>::for_types<Args...>
+			) { layer_count = elements::decayed<vk::layer_count>(args...); }
+
+		} // constructor
 	
-			if constexpr(types::are_contain_decayed<vk::layer_count>::for_types<Args...>) {
-				layer_count = elements::decayed<vk::layer_count>(args...);
-			}
-		}
-	
-	};
+	}; // image_subresource_range
 
 } // vk
-
-static_assert(sizeof(vk::image_subresource_range) == sizeof(VkImageSubresourceRange));

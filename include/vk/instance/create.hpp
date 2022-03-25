@@ -3,9 +3,9 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include <core/meta/decayed_same_as.hpp>
+#include "../create_or_allocate.hpp"
 
-#include "vk/create_or_allocate.hpp"
+#include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 
@@ -22,20 +22,29 @@ namespace vk {
 		operator () (Args&&... args) const {
 			instance_create_info ici{};
 
-			if constexpr(types::are_contain_decayed<vk::application_info>::for_types<Args...>) {
-				ici.application_info =
-					& elements::decayed<
-						vk::application_info
-					>(args...);
+			if constexpr(
+				types::are_contain_decayed<
+					vk::application_info
+				>::for_types<Args...>
+			) {
+				ici.application_info = & elements::decayed<
+					vk::application_info
+				>(args...);
 			}
 
-			if constexpr(types::are_contain_range_of<vk::extension_name>::for_types<Args...>) {
+			if constexpr(
+				types::are_contain_range_of<
+					vk::extension_name
+				>::for_types<Args...>
+			) {
 				auto& range = elements::range_of<vk::extension_name>(args...);
 				ici.enabled_extension_count = (uint32) range.size();
 				ici.enabled_extension_names = range.data();
 			}
 
-			if constexpr(types::are_contain_range_of<vk::layer_name>::for_types<Args...>) {
+			if constexpr(
+				types::are_contain_range_of<vk::layer_name>::for_types<Args...>
+			) {
 				auto& range = elements::range_of<vk::layer_name>(args...);
 				ici.enabled_layer_count = (uint32) range.size();
 				ici.enabled_layer_names = range.data();
@@ -54,8 +63,9 @@ namespace vk {
 			if(result.error()) return result;
 
 			return instance;
-		}
 
-	};
+		} // operator ()
+
+	}; // create_t<instance>
 
 } // vk

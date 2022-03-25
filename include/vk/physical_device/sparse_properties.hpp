@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vk/headers.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -13,5 +13,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_sparse_properties) == sizeof(VkPhysicalDeviceSparseProperties));

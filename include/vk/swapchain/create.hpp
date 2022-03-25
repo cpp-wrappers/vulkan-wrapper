@@ -35,7 +35,8 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::swapchain>>
 		operator () (Args&&... args) const {
-			auto& surface = elements::possibly_guarded_handle_of<vk::surface>(args...);
+			auto& surface =
+				elements::possibly_guarded_handle_of<vk::surface>(args...);
 
 			vk::swapchain_create_info ci {
 				.surface = vk::get_handle(surface),
@@ -61,17 +62,36 @@ namespace vk {
 				[&](auto f) { ci.composite_alpha.set(f); }
 			);
 
-			if constexpr(types::are_contain_range_of<vk::queue_family_index>::for_types<Args...>) {
-				auto& family_indices = elements::range_of<vk::queue_family_index>(args...);
-				ci.queue_family_index_count = vk::queue_family_index_count{ (uint32) family_indices.size() };
-				ci.queue_family_indices = vk::queue_family_indices{ family_indices.data() };
+			if constexpr(
+				types::are_contain_range_of<vk::queue_family_index>::for_types<Args...>
+			) {
+				auto& family_indices =
+					elements::range_of<vk::queue_family_index>(args...);
+
+				ci.queue_family_index_count =
+					vk::queue_family_index_count {
+						(uint32) family_indices.size()
+					};
+
+				ci.queue_family_indices =
+					vk::queue_family_indices{ family_indices.data() };
 			}
 
-			if constexpr(types::are_contain_one_possibly_guarded_handle_of<vk::swapchain>::for_types<Args...>) {
-				ci.old_swapchain = vk::get_handle(elements::possibly_guarded_handle_of<vk::swapchain>(args...));
+			if constexpr(
+				types::are_contain_one_possibly_guarded_handle_of<
+					vk::swapchain
+				>::for_types<Args...>
+			) {
+				ci.old_swapchain =
+					vk::get_handle(
+						elements::possibly_guarded_handle_of<
+							vk::swapchain
+						>(args...)
+					);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device =
+				elements::possibly_guarded_handle_of<vk::device>(args...);
 			handle<vk::swapchain> swapchain;
 
 			vk::result result {
@@ -89,18 +109,25 @@ namespace vk {
 		}
 
 		template<typename... Args>
-		requires types::are_contain_one_decayed<vk::surface_format>::for_types<Args...>
+		requires types::are_contain_one_decayed<
+			vk::surface_format
+		>::for_types<Args...>
 		vk::expected<handle<vk::swapchain>>
 		operator () (Args&&... args) const {
-			vk::surface_format surface_format = elements::decayed<vk::surface_format>(args...);
+			vk::surface_format surface_format =
+				elements::decayed<vk::surface_format>(args...);
 
-			return elements::pass_not_satisfying_type_predicate<type::is_decayed<vk::surface_format>>(
+			return elements::pass_not_satisfying_type_predicate<
+				type::is_decayed<vk::surface_format>
+			>(
 				surface_format.format,
 				surface_format.color_space,
 				forward<Args>(args)...
 			)(
 				[]<typename... Others>(Others&&... others) {
-					return vk::create_t<vk::swapchain>{}(forward<Others>(others)...);
+					return vk::create_t<vk::swapchain>{}(
+						forward<Others>(others)...
+					);
 				}
 			);
 		}

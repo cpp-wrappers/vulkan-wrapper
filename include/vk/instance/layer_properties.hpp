@@ -1,5 +1,10 @@
 #pragma once
 
+#include "../layer_properties.hpp"
+#include "../result.hpp"
+#include "../count.hpp"
+#include "../layer_name.hpp"
+
 #include <core/span.hpp>
 #include <core/array.hpp>
 #include <core/range/of_value_type_same_as.hpp>
@@ -12,16 +17,11 @@
 #include <core/meta/elements/one_of.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 
-#include "vk/layer_properties.hpp"
-#include "vk/result.hpp"
-#include "vk/count.hpp"
-#include "vk/layer_name.hpp"
-
 namespace vk {
 
-	template<range::of<vk::layer_properties> R>
+	template<range::of<vk::layer_properties> Range>
 	vk::expected<vk::count>
-	enumerate_instance_layer_properties(R&& layer_properties) {
+	enumerate_instance_layer_properties(Range&& layer_properties) {
 		uint32 count = layer_properties.size();
 
 		vk::result result {

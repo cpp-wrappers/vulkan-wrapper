@@ -14,7 +14,9 @@ namespace vk {
 		template<typename Type>
 		static constexpr bool for_type =
 			type::is_reference::for_type<Type> &&
-			type::is_base<vk::extension_properties_marker>::for_type<remove_reference<Type>>;
+			type::is_base<vk::extension_properties_marker>::for_type<
+				remove_reference<Type>
+			>;
 
 	};
 

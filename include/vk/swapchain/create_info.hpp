@@ -29,12 +29,15 @@ namespace vk {
 
 	struct image_array_layers : wrapper::of_integer<uint32> {};
 	struct queue_family_index_count : wrapper::of_integer<uint32> {};
-	struct queue_family_indices : wrapper::of_pointer_to<const vk::queue_family_index> {};
+	struct queue_family_indices :
+		wrapper::of_pointer_to<const vk::queue_family_index>
+	{};
+
 	struct clipped : wrapper::of_integer<uint32> {};
 
 	struct swapchain_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		const void* const next;
+		uint32 structure_type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		const void* next;
 		flag_enum<swapchain_create_flag> flags;
 		handle<vk::surface> surface;
 		vk::min_image_count min_image_count;
@@ -50,8 +53,8 @@ namespace vk {
 		flag_enum<vk::composite_alpha> composite_alpha;
 		vk::present_mode present_mode;
 		vk::clipped clipped;
-		handle<vk::swapchain> old_swapchain;
-	}; // swapchain_create_info
+		handle<vk::swapchain> old_swapchain{};
+	};
 
 } // vk
 

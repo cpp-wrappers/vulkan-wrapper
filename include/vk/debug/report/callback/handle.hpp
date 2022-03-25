@@ -9,4 +9,6 @@ namespace vk {
 } // vk
 
 template<>
-struct handle<vk::debug_report_callback> : vk::handle_base<vk::non_dispatchable> {};
+struct handle<vk::debug_report_callback> :
+	vk::handle_base<vk::non_dispatchable>
+{};

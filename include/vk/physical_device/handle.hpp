@@ -347,7 +347,7 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 #include "get_properties.hpp"
 #include "get_features.hpp"
 
-#include "vk/device/create.hpp"
+#include "../device/create.hpp"
 
 template<typename... Args>
 handle<vk::device>
@@ -355,7 +355,7 @@ handle<vk::physical_device>::create_device(Args&&... args) const {
 	return vk::create<vk::device>(*this, forward<Args>(args)...);
 }
 
-#include "vk/device/guarded_handle.hpp"
+#include "../device/guarded_handle.hpp"
 
 template<typename... Args>
 guarded_handle<vk::device>

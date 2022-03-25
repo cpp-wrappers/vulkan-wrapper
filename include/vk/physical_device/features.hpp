@@ -2,17 +2,18 @@
 
 #include <core/meta/type/is_base.hpp>
 #include <core/meta/decayed_satisfying_predicate.hpp>
-
-#include "vk/headers.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
 	struct physical_device_features_marker {};
 
-	struct is_physical_device_features : type::is_base<vk::physical_device_features_marker> {};
+	struct is_physical_device_features :
+		type::is_base<vk::physical_device_features_marker>
+	{};
 
 	struct physical_device_features {
-		uint32_t
+		uint32
 			robust_buffer_access,
 			full_draw_index_uint32,
 			image_cube_array,
@@ -71,5 +72,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::physical_device_features) == sizeof(VkPhysicalDeviceFeatures));
