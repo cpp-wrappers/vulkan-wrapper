@@ -17,15 +17,14 @@
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 
-#include "vk/render_pass/handle.hpp"
-#include "vk/headers.hpp"
-#include "vk/subpass.hpp"
+#include "../render_pass/handle.hpp"
+#include "../subpass.hpp"
 
 namespace vk {
 
 	struct graphics_pipeline_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		const void* const next;
+		uint32 structure_type = 28;
+		const void* next;
 		vk::pipeline_create_flags flags;
 		uint32 stage_count;
 		const vk::pipeline_shader_stage_create_info* stages;
@@ -46,5 +45,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::graphics_pipeline_create_info) == sizeof(VkGraphicsPipelineCreateInfo));

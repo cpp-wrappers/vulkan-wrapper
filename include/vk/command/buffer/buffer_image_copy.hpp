@@ -1,9 +1,9 @@
 #pragma once
 
-#include "vk/image/subresource_layers.hpp"
-#include "vk/memory_offset.hpp"
-#include "vk/offset.hpp"
-#include "vk/extent.hpp"
+#include "../../image/subresource_layers.hpp"
+#include "../../memory_offset.hpp"
+#include "../../offset.hpp"
+#include "../../extent.hpp"
 
 namespace vk {
 
@@ -17,5 +17,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::buffer_image_copy) == sizeof(VkBufferImageCopy));

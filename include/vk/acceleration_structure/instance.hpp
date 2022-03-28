@@ -4,8 +4,7 @@
 #include "transform_matrix.hpp"
 #include "geometry_instance_flags.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/device_address.hpp"
+#include "../device_address.hpp"
 
 namespace vk {
 
@@ -26,5 +25,3 @@ namespace vk {
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_instance) == sizeof(VkAccelerationStructureInstanceKHR));

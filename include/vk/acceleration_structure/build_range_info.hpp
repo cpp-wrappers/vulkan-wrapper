@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vk/headers.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -16,5 +16,3 @@ namespace vk {
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_build_range_info) == sizeof(VkAccelerationStructureBuildRangeInfoKHR));

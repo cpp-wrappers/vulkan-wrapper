@@ -25,7 +25,7 @@ namespace vk {
 		vkCmdBeginRenderPass(
 			(VkCommandBuffer) vk::get_handle_value(command_buffer),
 			(VkRenderPassBeginInfo*) &render_pass_begin_info,
-			VK_SUBPASS_CONTENTS_INLINE
+			(VkSubpassContents)0
 		);
 	}
 

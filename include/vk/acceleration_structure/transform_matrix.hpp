@@ -1,7 +1,5 @@
 #pragma once
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct transform_matrix {
@@ -9,5 +7,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::transform_matrix) == sizeof(VkTransformMatrixKHR));

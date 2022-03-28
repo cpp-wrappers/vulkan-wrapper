@@ -1,15 +1,14 @@
 #pragma once
 
-#include "vk/headers.hpp"
-#include "vk/format.hpp"
-#include "vk/device_or_host_address.hpp"
-#include "vk/device_size.hpp"
-#include "vk/index_type.hpp"
+#include "../format.hpp"
+#include "../device_or_host_address.hpp"
+#include "../device_size.hpp"
+#include "../index_type.hpp"
 
 namespace vk {
 
 	struct acceleration_structure_geometry_triangles_data {
-		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR;
+		uint32 structure_type = 1000150005;
 		const void* next;
 		vk::format format;
 		vk::device_or_host_address vertex_data;
@@ -21,9 +20,8 @@ namespace vk {
 	};
 
 	namespace as {
-		using geometry_triangles_data = vk::acceleration_structure_geometry_triangles_data;
+		using geometry_triangles_data =
+			vk::acceleration_structure_geometry_triangles_data;
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_geometry_triangles_data) == sizeof(VkAccelerationStructureGeometryTrianglesDataKHR));

@@ -3,9 +3,16 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
+#include "../function.hpp"
 #include "../create_or_allocate.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
+
+VK_ATTR VkResult VK_CALL vkCreateInstance(
+	const vk::instance_create_info*,
+	const void*,
+	handle<vk::instance>*
+);
 
 namespace vk {
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../headers.hpp"
 #include "../polygon_mode.hpp"
 #include "../cull_mode.hpp"
 #include "../front_face.hpp"

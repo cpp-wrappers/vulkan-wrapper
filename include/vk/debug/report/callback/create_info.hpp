@@ -3,8 +3,6 @@
 #include <core/flag_enum.hpp>
 #include <core/c_string.hpp>
 
-#include "vk/headers.hpp"
-
 #include "vk/debug/report/flag.hpp"
 #include "vk/debug/report/object_type.hpp"
 
@@ -33,13 +31,11 @@ namespace vk {
 	);
 
 	struct debug_report_callback_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-		const void* const next;
+		uint32 structure_type = 1000011000;
+		const void* next;
 		flag_enum<vk::debug_report_flag> flags;
 		debug_report_callback_type callback;
 		void* user_data;
 	};
 
 } // vk
-
-static_assert(sizeof(vk::debug_report_callback_create_info) == sizeof(VkDebugReportCallbackCreateInfoEXT) );

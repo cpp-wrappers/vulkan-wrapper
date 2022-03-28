@@ -5,7 +5,7 @@
 namespace vk {
 
 	struct memory_requirements_2 {
-		uint32 structure_type = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+		uint32 structure_type = 1000146003;
 		const void* next;
 		vk::memory_requirements memory_requirements;
 	};

@@ -2,8 +2,6 @@
 
 #include <core/integer.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct clear_color_value {
@@ -21,7 +19,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::clear_color_value) == sizeof(VkClearColorValue));
-static_assert(sizeof(vk::clear_depth_stencil_value) == sizeof(VkClearDepthStencilValue));
-static_assert(sizeof(vk::clear_value) == sizeof(VkClearValue));

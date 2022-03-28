@@ -1,9 +1,8 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../shader/stage.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/shader/stage.hpp"
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -14,5 +13,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::push_constant_range) == sizeof(VkPushConstantRange));

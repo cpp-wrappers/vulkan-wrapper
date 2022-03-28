@@ -4,6 +4,11 @@
 
 #include "../destroy_or_free.hpp"
 
+extern "C" void vkDestroyInstance(
+	VkInstance,
+	const VkAllocationCallbacks*
+);
+
 namespace vk {
 
 	template<>

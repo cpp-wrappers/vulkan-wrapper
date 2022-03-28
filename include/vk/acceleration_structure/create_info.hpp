@@ -2,25 +2,25 @@
 
 #include "type.hpp"
 
-#include <core/flag_enum.hpp>
+#include "../buffer/handle.hpp"
+#include "../memory_size.hpp"
+#include "../memory_offset.hpp"
+#include "../device_address.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/buffer/handle.hpp"
-#include "vk/memory_size.hpp"
-#include "vk/memory_offset.hpp"
-#include "vk/device_address.hpp"
+#include <core/flag_enum.hpp>
 
 namespace vk {
 
 	enum class acceleration_structure_create_flag {
-		device_address_capture_replay = VK_ACCELERATION_STRUCTURE_CREATE_DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR
+		device_address_capture_replay = 0x00000001
 	};
 
-	using acceleration_structure_create_flags = flag_enum<acceleration_structure_create_flag>;
+	using acceleration_structure_create_flags =
+		flag_enum<acceleration_structure_create_flag>;
 
 	struct acceleration_structure_create_info {
-		const uint32 __type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
-		const void* const __next;
+		uint32 structure_type = 1000150017;
+		const void* next;
 		vk::acceleration_structure_create_flags flags;
 		handle<vk::buffer> buffer;
 		vk::memory_offset offset;
@@ -36,5 +36,3 @@ namespace vk {
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_create_info) == sizeof(VkAccelerationStructureCreateInfoKHR));

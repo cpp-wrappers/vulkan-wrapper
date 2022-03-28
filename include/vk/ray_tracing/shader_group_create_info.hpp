@@ -2,13 +2,11 @@
 
 #include "shader_group_type.hpp"
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct ray_tracing_shader_group_create_info {
-		uint32 structure_type = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
-		const void* next;
+		uint32 structure_type = 1000150016;
+		const void* next = nullptr;
 		vk::ray_tracing_shader_group_type type;
 		uint32 general_shader;
 		uint32 closest_hot_shader;
@@ -18,5 +16,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::ray_tracing_shader_group_create_info) == sizeof(VkRayTracingShaderGroupCreateInfoKHR));

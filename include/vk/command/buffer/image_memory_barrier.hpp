@@ -1,11 +1,10 @@
 #pragma once
 
-#include "vk/headers.hpp"
-#include "vk/access.hpp"
-#include "vk/queue_family_index.hpp"
-#include "vk/image/layout.hpp"
-#include "vk/image/handle.hpp"
-#include "vk/image/subresource_range.hpp"
+#include "../../access.hpp"
+#include "../../queue_family_index.hpp"
+#include "../../image/layout.hpp"
+#include "../../image/handle.hpp"
+#include "../../image/subresource_range.hpp"
 
 namespace vk {
 
@@ -13,7 +12,7 @@ namespace vk {
 	struct new_layout : flag_enum<vk::image_layout> {};
 
 	struct image_memory_barrier {
-		uint32 structure_type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		uint32 structure_type = 45;
 		const void* next;
 		vk::src_access src_access;
 		vk::dst_access dst_access;
@@ -26,5 +25,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::image_memory_barrier) == sizeof(VkImageMemoryBarrier));

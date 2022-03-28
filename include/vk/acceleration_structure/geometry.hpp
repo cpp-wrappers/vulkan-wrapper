@@ -4,12 +4,10 @@
 #include "geometry_data.hpp"
 #include "geometry_flags.hpp"
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	struct acceleration_structure_geometry {
-		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR;
+		uint32 structure_type = 1000150006;
 		const void* next = nullptr;
 		vk::geometry_type type;
 		vk::acceleration_structure_geometry_data geometry;
@@ -21,5 +19,3 @@ namespace vk {
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_geometry) == sizeof(VkAccelerationStructureGeometryKHR));

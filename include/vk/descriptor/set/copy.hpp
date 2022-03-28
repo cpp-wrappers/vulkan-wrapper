@@ -2,16 +2,15 @@
 
 #include "handle.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/descriptor/binding.hpp"
-#include "vk/descriptor/array_element.hpp"
-#include "vk/descriptor/count.hpp"
+#include "../../descriptor/binding.hpp"
+#include "../../descriptor/array_element.hpp"
+#include "../../descriptor/count.hpp"
 
 namespace vk {
 
 	struct copy_descriptor_set {
-		const uint32 type = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
-		const void* const next;
+		uint32 structure_type = 36;
+		const void* next;
 		handle<vk::descriptor_set> src_set;
 		vk::src_binding src_binding;
 		vk::src_array_element src_array_element;
@@ -22,5 +21,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::copy_descriptor_set) == sizeof(VkCopyDescriptorSet));

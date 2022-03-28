@@ -3,19 +3,18 @@
 #include "shader_group_create_info.hpp"
 #include "pipeline_interface_create_info.hpp"
 
-#include "vk/headers.hpp"
-#include "vk/pipeline/create_info.hpp"
-#include "vk/pipeline/handle.hpp"
-#include "vk/pipeline/shader_stage_create_info.hpp"
-#include "vk/pipeline/library_create_info.hpp"
-#include "vk/pipeline/dynamic_state_create_info.hpp"
-#include "vk/pipeline/layout/handle.hpp"
+#include "../pipeline/create_info.hpp"
+#include "../pipeline/handle.hpp"
+#include "../pipeline/shader_stage_create_info.hpp"
+#include "../pipeline/library_create_info.hpp"
+#include "../pipeline/dynamic_state_create_info.hpp"
+#include "../pipeline/layout/handle.hpp"
 
 namespace vk {
 
 	struct ray_tracing_pipeline_create_info {
-		uint32 structure_type = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
-		const void* next;
+		uint32 structure_type = 1000150015;
+		const void* next = nullptr;
 		vk::pipeline_create_flags flags;
 		uint32 stage_count;
 		const vk::pipeline_shader_stage_create_info* stages;
@@ -31,5 +30,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::ray_tracing_pipeline_interface_create_info) == sizeof(VkRayTracingPipelineInterfaceCreateInfoKHR));

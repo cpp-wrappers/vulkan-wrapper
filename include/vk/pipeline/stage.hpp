@@ -2,41 +2,37 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class pipeline_stage {
-		top_of_pipe = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-		draw_indirect = VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT,
-		vertex_input = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT,
-		vertex_shader = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
-		tessellation_control_shader = VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT,
-		tessellation_evaluation_shader = VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT,
-		geometry_shader = VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT,
-		fragment_shader = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-		early_fragment_tests = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-		late_fragment_tests = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT,
-		color_attachment_output = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-		compute_shader = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		transfer = VK_PIPELINE_STAGE_TRANSFER_BIT,
-		bottom_of_pipe = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-		host = VK_PIPELINE_STAGE_HOST_BIT,
-		all_graphics = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-		all_commands = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-		transform_feedback = VK_PIPELINE_STAGE_TRANSFORM_FEEDBACK_BIT_EXT,
-		conditional_rendering = VK_PIPELINE_STAGE_CONDITIONAL_RENDERING_BIT_EXT,
-		acceleration_structure_build = VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_KHR,
-		ray_tracing_shader = VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR,
-		task_shader = VK_PIPELINE_STAGE_TASK_SHADER_BIT_NV,
-		mesh_shader = VK_PIPELINE_STAGE_MESH_SHADER_BIT_NV,
-		fragment_density_process = VK_PIPELINE_STAGE_FRAGMENT_DENSITY_PROCESS_BIT_EXT,
-		fragment_shading_rate_attachment = VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-		command_preprocess = VK_PIPELINE_STAGE_COMMAND_PREPROCESS_BIT_NV,
-		//none = VK_PIPELINE_STAGE_NONE_KHR,
-		//shading_rate_image = VK_PIPELINE_STAGE_SHADING_RATE_IMAGE_BIT_NV
+		top_of_pipe                      = 0x00000001,
+		draw_indirect                    = 0x00000002,
+		vertex_input                     = 0x00000004,
+		vertex_shader                    = 0x00000008,
+		tessellation_control_shader      = 0x00000010,
+		tessellation_evaluation_shader   = 0x00000020,
+		geometry_shader                  = 0x00000040,
+		fragment_shader                  = 0x00000080,
+		early_fragment_tests             = 0x00000100,
+		late_fragment_tests              = 0x00000200,
+		color_attachment_output          = 0x00000400,
+		compute_shader                   = 0x00000800,
+		transfer                         = 0x00001000,
+		bottom_of_pipe                   = 0x00002000,
+		host                             = 0x00004000,
+		all_graphics                     = 0x00008000,
+		all_commands                     = 0x00010000,
+		none                             = 0,
+		transform_feedback               = 0x01000000,
+		conditional_rendering            = 0x00040000,
+		acceleration_structure_build     = 0x02000000,
+		ray_tracing_shader               = 0x00200000,
+		task_shader                      = 0x00080000,
+		mesh_shader                      = 0x00100000,
+		fragment_density_process         = 0x00800000,
+		fragment_shading_rate_attachment = 0x00400000,
+		command_preprocess               = 0x00020000
 	};
-
 
 	using pipeline_stages = flag_enum<pipeline_stage>;
 

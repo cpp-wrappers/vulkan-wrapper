@@ -114,7 +114,7 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 			if((p.flags.get(args) && ...)) return { index };
 			++index;
 		}
-		return { VK_QUEUE_FAMILY_IGNORED };
+		return { vk::queue_family_ignored };
 	}
 
 	vk::count for_each_queue_family_properties(auto&& f) const {

@@ -9,7 +9,7 @@
 
 namespace vk {
 
-	template<vk::possibly_guarded_handle_of<vk::device> Device>
+	template<possibly_guarded_handle_of<vk::device> Device>
 	vk::acceleration_structure_build_sizes_info
 	get_acceleration_structure_build_sizes(
 		Device&& device,

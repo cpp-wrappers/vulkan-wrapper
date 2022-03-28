@@ -7,22 +7,20 @@
 
 #include <core/flag_enum.hpp>
 
-#include "vk/headers.hpp"
-
 namespace vk {
 
 	enum class acceleration_structure_build_flag {
-		allow_update = VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR,
-		allow_compaction = VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
-		prefer_fast_trace = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
-		prefer_fast_build = VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR,
-		low_memory = VK_BUILD_ACCELERATION_STRUCTURE_LOW_MEMORY_BIT_KHR
+		allow_update      = 0x00000001,
+		allow_compaction  = 0x00000002,
+		prefer_fast_trace = 0x00000004,
+		prefer_fast_build = 0x00000008,
+		low_memory        = 0x00000010
 	};
 
 	using acceleration_structure_build_flags = flag_enum<vk::acceleration_structure_build_flag>;
 
 	struct acceleration_structure_build_geometry_info {
-		uint32 structure_type = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+		uint32 structure_type = 1000150000;
 		const void* next = nullptr;
 		vk::acceleration_structure_type type;
 		vk::acceleration_structure_build_flags flags;
@@ -38,9 +36,8 @@ namespace vk {
 	namespace as {
 		using build_flag = vk::acceleration_structure_build_flag;
 		using build_flags = vk::acceleration_structure_build_flags;
-		using build_geometry_info = vk::acceleration_structure_build_geometry_info;
+		using build_geometry_info =
+			vk::acceleration_structure_build_geometry_info;
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_build_geometry_info) == sizeof(VkAccelerationStructureBuildGeometryInfoKHR));

@@ -17,5 +17,3 @@ namespace vk {
 	}
 
 } // vk
-
-static_assert(sizeof(vk::acceleration_structure_geometry_data) == sizeof(VkAccelerationStructureGeometryDataKHR));

@@ -28,7 +28,7 @@ namespace vk {
 			types::are_contain_decayed<vk::timeout>::for_types<Args...>
 		) { timeout = elements::decayed<vk::timeout>(args...); }
 
-		handle<vk::semaphore> semaphore{ VK_NULL_HANDLE };
+		handle<vk::semaphore> semaphore{};
 
 		if constexpr(
 			types::are_contain_one_possibly_guarded_handle_of<
@@ -40,7 +40,7 @@ namespace vk {
 			);
 		}
 
-		handle<vk::fence> fence{ VK_NULL_HANDLE };
+		handle<vk::fence> fence{};
 
 		if constexpr(
 			types::are_contain_one_possibly_guarded_handle_of<

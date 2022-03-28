@@ -3,8 +3,8 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/queue_family_index.hpp"
+#include "../../create_or_allocate.hpp"
+#include "../../queue_family_index.hpp"
 
 namespace vk {
 
@@ -21,13 +21,23 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::command_pool_create_info ci{};
 
-			ci.queue_family_index = elements::decayed<vk::queue_family_index>(args...);
+			ci.queue_family_index = elements::decayed<
+				vk::queue_family_index
+			>(args...);
 
-			if constexpr(types::are_contain_decayed<vk::command_pool_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed<vk::command_pool_create_flags>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::command_pool_create_flags
+				>::for_types<Args...>
+			) {
+				ci.flags = elements::decayed<
+					vk::command_pool_create_flags
+				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device {
+				elements::possibly_guarded_handle_of<vk::device>(args...)
+			};
 
 			VkCommandPool command_pool;
 

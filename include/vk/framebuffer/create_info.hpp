@@ -1,12 +1,11 @@
 #pragma once
 
+#include "../render_pass/handle.hpp"
+
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
 #include <core/wrapper/of_pointer_to.hpp>
 #include <core/wrapper/of_integer.hpp>
-
-#include "vk/headers.hpp"
-#include "vk/render_pass/handle.hpp"
 
 namespace vk {
 
@@ -14,12 +13,12 @@ namespace vk {
 	struct image_view;
 
 	enum class framebuffer_create_flag {
-		imageless = VK_FRAMEBUFFER_CREATE_IMAGELESS_BIT
+		imageless = 0x00000001
 	};
 
 	struct framebuffer_create_info {
-		const uint32 type = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		const void* const next;
+		uint32 structure_type = 37;
+		const void* next;
 		flag_enum<vk::framebuffer_create_flag> flags;
 		handle<vk::render_pass> render_pass;
 		uint32 attachment_count;
@@ -30,5 +29,3 @@ namespace vk {
 	};
 
 } // vk
-
-static_assert(sizeof(vk::framebuffer_create_info) == sizeof(VkFramebufferCreateInfo));

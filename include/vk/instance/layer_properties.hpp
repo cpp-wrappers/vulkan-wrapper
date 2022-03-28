@@ -4,6 +4,7 @@
 #include "../result.hpp"
 #include "../count.hpp"
 #include "../layer_name.hpp"
+#include "../headers.hpp"
 
 #include <core/span.hpp>
 #include <core/array.hpp>
@@ -16,6 +17,11 @@
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
+
+extern "C" VkResult vkEnumerateInstanceLayerProperties(
+	uint32_t* property_count,
+	VkLayerProperties* properties
+);
 
 namespace vk {
 
