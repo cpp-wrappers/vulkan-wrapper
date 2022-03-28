@@ -3,8 +3,16 @@
 #include "handle.hpp"
 #include "render_pass_begin_info.hpp"
 
+#include "../../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+
+extern "C" VK_ATTR void VK_CALL vkCmdBeginRenderPass(
+	handle<vk::command_buffer> command_buffer,
+	const vk::render_pass_begin_info* render_pass_begin,
+	int32 contents
+);
 
 namespace vk {
 	
@@ -23,9 +31,9 @@ namespace vk {
 		};
 
 		vkCmdBeginRenderPass(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
-			(VkRenderPassBeginInfo*) &render_pass_begin_info,
-			(VkSubpassContents)0
+			vk::get_handle(command_buffer),
+			&render_pass_begin_info,
+			0
 		);
 	}
 

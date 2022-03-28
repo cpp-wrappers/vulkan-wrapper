@@ -2,10 +2,17 @@
 
 #include "handle.hpp"
 
+#include "../../pipeline/handle.hpp"
+#include "../../pipeline/bind_point.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/pipeline/handle.hpp"
-#include "vk/pipeline/bind_point.hpp"
+extern "C" VK_ATTR void VK_CALL vkCmdBindPipeline(
+	handle<vk::command_buffer> command_buffer,
+	vk::pipeline_bind_point pipeline_bind_point,
+	handle<vk::pipeline> pipeline
+);
 
 namespace vk {
 
@@ -21,9 +28,9 @@ namespace vk {
 		auto& pipeline = elements::possibly_guarded_handle_of<vk::pipeline>(args...);
 
 		vkCmdBindPipeline(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
-			(VkPipelineBindPoint) bind_point,
-			(VkPipeline) vk::get_handle_value(pipeline)
+			vk::get_handle(command_buffer),
+			bind_point,
+			vk::get_handle(pipeline)
 		);
 	}
 

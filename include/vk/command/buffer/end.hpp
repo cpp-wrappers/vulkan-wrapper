@@ -1,20 +1,27 @@
 #pragma once
 
 #include "handle.hpp"
+#include "../../handle/get_value.hpp"
+#include "../../result.hpp"
+#include "../../function.hpp"
 
 #include <core/handle/possibly_guarded_of.hpp>
 
-#include "vk/handle/get_value.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkEndCommandBuffer(
+	handle<vk::command_buffer> command_buffer
+);
 
 namespace vk {
 
-	vk::result try_end_command_buffer(possibly_guarded_handle_of<vk::command_buffer> auto& command_buffer) {
+	template<possibly_guarded_handle_of<vk::command_buffer> CommandBuffer>
+	vk::result try_end_command_buffer(CommandBuffer& command_buffer) {
 		return {
-			(int32) vkEndCommandBuffer((VkCommandBuffer) vk::get_handle_value(command_buffer))
+			vkEndCommandBuffer(vk::get_handle(command_buffer))
 		};
 	}
 
-	void end_command_buffer(possibly_guarded_handle_of<vk::command_buffer> auto& command_buffer) {
+	template<possibly_guarded_handle_of<vk::command_buffer> CommandBuffer>
+	void end_command_buffer(CommandBuffer& command_buffer) {
 		vk::result result = vk::try_end_command_buffer(command_buffer);
 		if(result.error()) vk::unexpected_handler(result);
 	}

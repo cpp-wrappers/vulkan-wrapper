@@ -3,11 +3,19 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
+#include "../create_or_allocate.hpp"
+#include "../device/handle.hpp"
+#include "../function.hpp"
+
 #include <core/meta/elements/one_of.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/device/handle.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkCreateFence(
+	handle<vk::device> device,
+	const vk::fence_create_info* create_info,
+	const void* allocator,
+	handle<vk::fence>* fence
+);
 
 namespace vk {
 
@@ -28,14 +36,14 @@ namespace vk {
 			}
 	
 			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-			VkFence fence;
+			handle<vk::fence> fence;
 	
 			vk::result result {
-				(int32) vkCreateFence(
-					(VkDevice) vk::get_handle_value(device),
-					(VkFenceCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkFence*) &fence
+				vkCreateFence(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&fence
 				)
 			};
 	
@@ -62,6 +70,6 @@ namespace vk {
 			return this-> operator() (device, create_flags);
 		}
 
-	};
+	}; // create_t<fence>
 
 } // vk

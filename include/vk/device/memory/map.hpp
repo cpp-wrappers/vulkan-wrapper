@@ -2,13 +2,23 @@
 
 #include "handle.hpp"
 
+#include "../../function.hpp"
+#include "../../device/handle.hpp"
+#include "../../result.hpp"
+#include "../../memory_offset.hpp"
+#include "../../memory_size.hpp"
+#include "../../unexpected_handler.hpp"
+
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/device/handle.hpp"
-#include "vk/result.hpp"
-#include "vk/memory_offset.hpp"
-#include "vk/memory_size.hpp"
-#include "vk/unexpected_handler.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkMapMemory(
+	handle<vk::device> device,
+	handle<vk::device_memory> memory,
+	vk::memory_offset offset,
+	vk::memory_size size,
+	int32 flags,
+	void** dataata
+);
 
 namespace vk {
 
@@ -21,13 +31,19 @@ namespace vk {
 		types::are_contain_one_decayed<void**>
 	>::for_types<Args...>
 	vk::result try_map_device_memory(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-		auto& device_memory = elements::possibly_guarded_handle_of<vk::device_memory>(args...);
+		auto& device = elements::possibly_guarded_handle_of<
+			vk::device
+		>(args...);
+
+		auto& device_memory = elements::possibly_guarded_handle_of<
+			vk::device_memory
+		>(args...);
+
 		vk::memory_offset offset{ 0 };
 
-		if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
-			offset = elements::decayed<vk::memory_offset>(args...);
-		}
+		if constexpr (
+			types::are_contain_decayed<vk::memory_offset>::for_types<Args...>
+		) { offset = elements::decayed<vk::memory_offset>(args...); }
 
 		vk::memory_size size = elements::decayed<vk::memory_size>(args...);
 
@@ -35,11 +51,11 @@ namespace vk {
 
 		return {
 			(int32) vkMapMemory(
-				(VkDevice) vk::get_handle_value(device),
-				(VkDeviceMemory) vk::get_handle_value(device_memory),
-				(VkDeviceSize) offset,
-				(VkDeviceSize) size,
-				(VkMemoryMapFlags) 0,
+				vk::get_handle(device),
+				vk::get_handle(device_memory),
+				offset,
+				size,
+				0,
 				data
 			)
 		};

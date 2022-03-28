@@ -3,11 +3,11 @@
 #include "../handle/base.hpp"
 #include "../handle/get_value.hpp"
 #include "../create_or_allocate.hpp"
-#include "../headers.hpp"
 #include "../queue_family_index.hpp"
 #include "../result.hpp"
 #include "../memory_requirements.hpp"
 #include "../timeout.hpp"
+#include "../function.hpp"
 
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
@@ -41,6 +41,10 @@ namespace vk {
 
 }
 
+extern "C" VK_ATTR int32 VK_CALL vkDeviceWaitIdle(
+	handle<vk::device> device
+);
+
 template<>
 struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 
@@ -69,23 +73,19 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 		void** data
 	) {
 		return {
-			(int32) vkMapMemory(
-				(VkDevice) vk::get_handle_value(*this),
-				(VkDeviceMemory) vk::get_handle_value(memory),
-				(VkDeviceSize) offset,
-				(VkDeviceSize) size,
-				(VkMemoryMapFlags) 0,
+			vkMapMemory(
+				vk::get_handle(*this),
+				vk::get_handle(memory),
+				offset,
+				size,
+				0,
 				(void**) data
 			)
 		};
 	}
 
 	vk::result try_wait_idle() const {
-		return {
-			(int32) vkDeviceWaitIdle(
-				(VkDevice) value
-			)
-		};
+		return { vkDeviceWaitIdle(*this) };
 	}
 
 	template<typename... Args>
@@ -118,18 +118,25 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 
 #include "../queue/handle.hpp"
 
+extern "C" VK_ATTR void VK_CALL vkGetDeviceQueue(
+	handle<vk::device> device,
+	uint32 queue_family_index,
+	uint32 queue_index,
+	handle<vk::queue>* queue
+);
+
 handle<vk::queue> inline
 handle<vk::device>::get_queue(
 	vk::queue_family_index queue_family_index,
 	vk::queue_index queue_index
 ) const {
-	VkQueue queue;
+	handle<vk::queue> queue;
 
 	vkGetDeviceQueue(
-		(VkDevice) value,
+		*this,
 		(uint32) queue_family_index,
 		(uint32) queue_index,
-		(VkQueue*) &queue
+		&queue
 	);
 
 	return { queue };

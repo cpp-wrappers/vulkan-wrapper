@@ -3,12 +3,20 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
+#include "../result.hpp"
+#include "../device/handle.hpp"
+#include "../create_or_allocate.hpp"
+#include "../device/get_proc_address.hpp"
+
+#include <core/handle/possibly_guarded_of.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/result.hpp"
-#include "vk/device/handle.hpp"
-#include "vk/create_or_allocate.hpp"
-#include <core/handle/possibly_guarded_of.hpp>
+typedef int32 (VK_PTR* PFN_vkCreateAccelerationStructureKHR)(
+	handle<vk::device> device,
+	const vk::acceleration_structure_create_info* create_info,
+	const void*       pAllocator,
+	handle<vk::acceleration_structure>* acceleration_structure
+);
 
 namespace vk {
 
@@ -18,7 +26,9 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_decayed<vk::acceleration_structure_create_flags>,
+			types::are_may_contain_decayed<
+				vk::acceleration_structure_create_flags
+			>,
 			types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
 			types::are_may_contain_one_decayed<vk::memory_offset>,
 			types::are_contain_one_decayed<vk::memory_size>,
@@ -27,50 +37,74 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::acceleration_structure>>
 		operator () (Args&&... args) const {
-			auto& buffer = elements::possibly_guarded_handle_of<vk::buffer>(args...);
+			auto& buffer = elements::possibly_guarded_handle_of<
+				vk::buffer
+			>(args...);
 
 			vk::acceleration_structure_create_info ci {
 				.buffer = vk::get_handle(buffer),
 				.size = elements::decayed<vk::memory_size>(args...),
-				.type = elements::decayed<vk::acceleration_structure_type>(args...)
+				.type = elements::decayed<
+					vk::acceleration_structure_type
+				>(args...)
 			};
 
-			if constexpr(types::are_contain_decayed<vk::acceleration_structure_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed<vk::acceleration_structure_create_flags>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::acceleration_structure_create_flags
+				>::for_types<Args...>
+			) {
+				ci.flags = elements::decayed<
+					vk::acceleration_structure_create_flags
+				>(args...);
 			}
 
-			if constexpr(types::are_contain_decayed<vk::memory_offset>::for_types<Args...>) {
+			if constexpr (
+				types::are_contain_decayed<
+					vk::memory_offset	
+				>::for_types<Args...>
+			) {
 				ci.offset = elements::decayed<vk::memory_offset>(args...);
 			}
 
-			if constexpr(types::are_contain_decayed<vk::device_address>::for_types<Args...>) {
-				ci.device_address = elements::decayed<vk::device_address>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::device_address
+				>::for_types<Args...>
+			) {
+				ci.device_address = elements::decayed<
+					vk::device_address
+				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::acceleration_structure> acceleration_structure;
 
 			auto f =
-				(PFN_vkCreateAccelerationStructureKHR) vkGetDeviceProcAddr(
-					(VkDevice) vk::get_handle_value(device),
+				(PFN_vkCreateAccelerationStructureKHR)
+				vk::get_device_proc_address(
+					device,
 					"vkCreateAccelerationStructureKHR"
 				);
 
 			vk::result result {
-				(int) f(
-					(VkDevice) vk::get_handle_value(device),
-					(const VkAccelerationStructureCreateInfoKHR*) &ci,
-					(const VkAllocationCallbacks*) nullptr,
-					(VkAccelerationStructureKHR*) &acceleration_structure
+				f(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&acceleration_structure
 				)
 			};
 
 			if(result.error()) return result;
 
 			return acceleration_structure;
-		}
 
-	};
+		} // operator ()
+
+	}; // create_t<acceleration_structure>
 
 } // vk

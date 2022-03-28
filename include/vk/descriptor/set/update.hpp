@@ -3,9 +3,18 @@
 #include "write.hpp"
 #include "copy.hpp"
 
+#include "../../device/handle.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/device/handle.hpp"
+extern "C" VK_ATTR void VK_CALL vkUpdateDescriptorSets(
+	handle<vk::device> device,
+	uint32 descriptor_write_count,
+	const vk::write_descriptor_set* descriptor_writes,
+	uint32 descriptor_copy_count,
+	const vk::copy_descriptor_set* descriptor_copies
+);
 
 namespace vk {
 
@@ -37,11 +46,11 @@ namespace vk {
 		}
 
 		vkUpdateDescriptorSets(
-			(VkDevice) vk::get_handle_value(device),
+			vk::get_handle(device),
 			write_count,
-			(VkWriteDescriptorSet*) writes,
+			writes,
 			copy_count,
-			(VkCopyDescriptorSet*) copies
+			copies
 		);
 	}
 

@@ -2,11 +2,12 @@
 
 #include "handle.hpp"
 
+#include "../function.hpp"
 #include "../destroy_or_free.hpp"
 
-extern "C" void vkDestroyInstance(
-	VkInstance,
-	const VkAllocationCallbacks*
+extern "C" VK_ATTR void VK_CALL vkDestroyInstance(
+	handle<vk::instance> instance,
+	const void* allocator
 );
 
 namespace vk {
@@ -16,8 +17,8 @@ namespace vk {
 
 		void operator () (handle<vk::instance> instance) const {
 			vkDestroyInstance(
-				(VkInstance) vk::get_handle_value(instance),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(instance),
+				nullptr
 			);
 		}
 

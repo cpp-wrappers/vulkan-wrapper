@@ -6,8 +6,16 @@
 #include "../../create_or_allocate.hpp"
 #include "../../result.hpp"
 #include "../../device/handle.hpp"
+#include "../../function.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateBufferView(
+	handle<vk::device> device,
+	const vk::buffer_view_create_info* create_info,
+	const void* allocator,
+	handle<vk::buffer_view>* view
+);
 
 namespace vk {
 
@@ -43,14 +51,14 @@ namespace vk {
 				elements::possibly_guarded_handle_of<vk::device>(args...)
 			};
 
-			VkBufferView buffer_view;
+			handle<vk::buffer_view> buffer_view;
 
 			vk::result result {
-				(int32) vkCreateBufferView(
-					(VkDevice) vk::get_handle_value(device),
-					(VkBufferViewCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkBufferView*) &buffer_view
+				vkCreateBufferView(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&buffer_view
 				)
 			};
 

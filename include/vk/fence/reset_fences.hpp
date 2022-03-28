@@ -2,7 +2,14 @@
 
 #include "handle.hpp"
 
-#include "vk/device/handle.hpp"
+#include "../function.hpp"
+#include "../device/handle.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkResetFences(
+	handle<vk::device> device,
+	uint32 fence_count,
+	const handle<vk::fence>* fences
+);
 
 namespace vk {
 
@@ -14,11 +21,15 @@ namespace vk {
 	vk::result try_reset_fences(Args&&... args) {
 		auto& fences = elements::range_of<handle<vk::fence>>(args...);
 
+		auto& device = elements::possibly_guarded_handle_of<
+			vk::device
+		>(args...);
+
 		return {
-			(int) vkResetFences(
-				(VkDevice) vk::get_handle_value(elements::possibly_guarded_handle_of<vk::device>(args...)),
+			vkResetFences(
+				vk::get_handle(device),
 				(uint32) fences.size(),
-				(VkFence*) fences.data()
+				fences.data()
 			)
 		};
 	}

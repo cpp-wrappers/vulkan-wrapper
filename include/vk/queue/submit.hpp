@@ -5,10 +5,17 @@
 #include "signal_semaphore.hpp"
 #include "submit_info.hpp"
 
+#include "../fence/handle.hpp"
+#include "../command/buffer/handle.hpp"
+
 #include <core/range/of_value_type_same_as.hpp>
 
-#include "vk/fence/handle.hpp"
-#include "vk/command/buffer/handle.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkQueueSubmit(
+	handle<vk::queue> queue,
+	uint32 submit_count,
+	const vk::submit_info* submits,
+	handle<vk::fence> fence
+);
 
 namespace vk {
 
@@ -29,11 +36,11 @@ namespace vk {
 		auto& submit_infos = elements::range_of<vk::submit_info>(args...);
 
 		return vk::result {
-			(int32)vkQueueSubmit(
-				(VkQueue) vk::get_handle_value(queue),
+			vkQueueSubmit(
+				vk::get_handle(queue),
 				(uint32) submit_infos.size(),
-				(VkSubmitInfo*) submit_infos.data(),
-				(VkFence) vk::get_handle_value(fence)
+				submit_infos.data(),
+				vk::get_handle(fence)
 			)
 		};
 	}

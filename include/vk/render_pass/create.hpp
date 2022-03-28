@@ -6,6 +6,14 @@
 
 #include "../create_or_allocate.hpp"
 #include "../device/handle.hpp"
+#include "../function.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateRenderPass(
+	handle<vk::device> device,
+	const vk::render_pass_create_info* create_info,
+	const void* allocator,
+	handle<vk::render_pass>* render_pass
+);
 
 namespace vk {
 
@@ -60,11 +68,11 @@ namespace vk {
 			handle<vk::render_pass> render_pass;
 
 			vk::result result {
-				(int32) vkCreateRenderPass(
-					(VkDevice) vk::get_handle_value(device),
-					(VkRenderPassCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkRenderPass*) &render_pass
+				vkCreateRenderPass(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&render_pass
 				)
 			};
 

@@ -4,12 +4,18 @@
 #include "wait_semaphore.hpp"
 #include "present_info.hpp"
 
+#include "../swapchain/image_index.hpp"
+#include "../function.hpp"
+
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
-
-#include "vk/swapchain/image_index.hpp"
 #include <core/handle/possibly_guarded_of.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkQueuePresentKHR(
+	handle<vk::queue> queue,
+	const vk::present_info* present_info
+);
 
 namespace vk {
 
@@ -23,9 +29,9 @@ namespace vk {
 		auto present_info = elements::decayed<vk::present_info>(args...);
 
 		return {
-			(int32) vkQueuePresentKHR(
-				(VkQueue) vk::get_handle_value(queue),
-				(VkPresentInfoKHR*) &present_info
+			vkQueuePresentKHR(
+				vk::get_handle(queue),
+				&present_info
 			)
 		};
 	}

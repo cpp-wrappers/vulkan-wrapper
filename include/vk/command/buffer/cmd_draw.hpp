@@ -2,8 +2,18 @@
 
 #include "handle.hpp"
 
+#include "../../function.hpp"
+
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+
+extern "C" VK_ATTR void VK_CALL vkCmdDraw(
+	handle<vk::command_buffer> commandBuffer,
+	uint32 vertex_count,
+	uint32 instance_count,
+	uint32 first_vertex,
+	uint32 first_instance
+);
 
 namespace vk {
 
@@ -43,7 +53,7 @@ namespace vk {
 		}
 
 		vkCmdDraw(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
+			vk::get_handle(command_buffer),
 			(uint32) vertex_count,
 			(uint32) instance_count,
 			(uint32) first_vertex,

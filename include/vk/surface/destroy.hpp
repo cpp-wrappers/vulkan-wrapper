@@ -2,8 +2,15 @@
 
 #include "handle.hpp"
 
-#include "vk/destroy_or_free.hpp"
-#include "vk/instance/handle.hpp"
+#include "../destroy_or_free.hpp"
+#include "../instance/handle.hpp"
+#include "../function.hpp"
+
+extern "C" VK_ATTR void VK_CALL vkDestroySurfaceKHR(
+	handle<vk::instance> instance,
+	handle<vk::surface> surface,
+	const void* allocator
+);
 
 namespace vk {
 
@@ -20,9 +27,9 @@ namespace vk {
 			auto surface = elements::decayed<handle<vk::surface>>(args...);
 
 			vkDestroySurfaceKHR(
-				(VkInstance) vk::get_handle_value(instance),
-				(VkSurfaceKHR) vk::get_handle_value(surface),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(instance),
+				vk::get_handle(surface),
+				nullptr
 			);
 		}
 

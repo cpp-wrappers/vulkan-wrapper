@@ -14,6 +14,13 @@
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 #include <core/meta/type/conjuncted_predicates.hpp>
 
+extern "C" VK_ATTR int32 VK_CALL vkCreateDevice(
+	handle<vk::physical_device> physical_device,
+	const vk::device_create_info* create_info,
+	const void* allocator,
+	handle<vk::device>* device
+);
+
 namespace vk {
 
 	template<>
@@ -25,40 +32,73 @@ namespace vk {
 			types::are_may_contain_range_of<vk::queue_create_info>,
 			types::are_may_contain_range_of<vk::extension_name>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
-			types::are_may_contain_decayed_satisfying_predicate<vk::is_physical_device_features>
+			types::are_may_contain_decayed_satisfying_predicate<
+				vk::is_physical_device_features
+			>
 		>::for_types<Args...>
 		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
 			vk::device_create_info ci{};
 
-			auto& physical_device = elements::decayed<handle<vk::physical_device>>(args...);
+			auto& physical_device = elements::decayed<
+				handle<vk::physical_device>
+			>(args...);
 
-			if constexpr(types::are_contain_range_of<vk::queue_create_info>::for_types<Args...>) {
-				const auto& queue_create_infos = elements::range_of<vk::queue_create_info>(args...);
+			if constexpr (
+				types::are_contain_range_of<
+					vk::queue_create_info
+				>::for_types<Args...>
+			) {
+				const auto& queue_create_infos = elements::range_of<
+					vk::queue_create_info
+				>(args...);
+
 				ci.queue_create_info_count = (uint32) queue_create_infos.size();
 				ci.queue_create_infos = queue_create_infos.data();
 			}
 
-			if constexpr(types::are_contain_range_of<vk::extension_name>::for_types<Args...>) {
-				const auto& extensions = elements::range_of<vk::extension_name>(args...);
+			if constexpr (
+				types::are_contain_range_of<
+					vk::extension_name
+				>::for_types<Args...>
+			) {
+				const auto& extensions = elements::range_of<
+					vk::extension_name
+				>(args...);
+
 				ci.enabled_extension_count = (uint32) extensions.size();
 				ci.enabled_extension_names = extensions.data();
 			}
 
-			constexpr bool contain_features = types::are_contain_decayed<vk::physical_device_features>::for_types<Args...>;
-			constexpr bool contain_aditional_features = types::are_contain_decayed_satisfying_predicate<vk::is_physical_device_features>::for_types<Args...>;
+			constexpr bool contain_features {
+				types::are_contain_decayed<
+					vk::physical_device_features
+				>::for_types<Args...>
+			};
+
+			constexpr bool contain_aditional_features {
+				types::are_contain_decayed_satisfying_predicate<
+					vk::is_physical_device_features
+				>::for_types<Args...>
+			};
 
 			vk::physical_device_features_2 features_2{};
 
 			if constexpr(contain_aditional_features) {
 
 				if constexpr(contain_features) {
-					features_2.features = elements::decayed_satisfying_predicate<vk::is_physical_device_features>(args...);
+					features_2.features = {
+						elements::decayed_satisfying_predicate<
+							vk::is_physical_device_features
+						>(args...)
+					};
 				}
 
 				const void** next = &features_2.next;
 
-				elements::for_each_decayed_satisfying_predicate<vk::is_physical_device_features>(args...)([&](auto& features){
+				elements::for_each_decayed_satisfying_predicate<
+					vk::is_physical_device_features
+				>(args...)([&](auto& features) {
 					*next = &features;
 					next = &features.next;
 				});
@@ -66,17 +106,19 @@ namespace vk {
 				ci.next = &features_2;
 			}
 			else if constexpr (contain_features) {
-				ci.enabled_features = elements::decayed<vk::physical_device_features>(args...);
+				ci.enabled_features = elements::decayed<
+					vk::physical_device_features
+				>(args...);
 			}
 
 			handle<vk::device> device;
 
 			vk::result result {
-				(int32) vkCreateDevice(
-					(VkPhysicalDevice) physical_device.value,
-					(VkDeviceCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkDevice*) &device
+				vkCreateDevice(
+					physical_device,
+					&ci,
+					nullptr,
+					&device
 				)
 			};
 

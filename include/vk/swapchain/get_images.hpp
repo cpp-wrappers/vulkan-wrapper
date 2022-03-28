@@ -1,9 +1,18 @@
 #pragma once
 
 #include "handle.hpp"
+
 #include "../unexpected_handler.hpp"
+#include "../function.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkGetSwapchainImagesKHR(
+	handle<vk::device> device,
+	handle<vk::swapchain> swapchain,
+	uint32* swapchain_image_count,
+	handle<vk::image>* swapchain_images
+);
 
 namespace vk {
 
@@ -28,11 +37,11 @@ namespace vk {
 		uint32 count = images.size();
 
 		vk::result result {
-			(int32) vkGetSwapchainImagesKHR(
-				(VkDevice) vk::get_handle_value(device),
-				(VkSwapchainKHR) vk::get_handle_value(swapchain),
+			vkGetSwapchainImagesKHR(
+				vk::get_handle(device),
+				vk::get_handle(swapchain),
 				&count,
-				(VkImage*) images.data()
+				images.data()
 			)
 		};
 

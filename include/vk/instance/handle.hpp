@@ -19,6 +19,12 @@ namespace vk {
 
 } // vk
 
+extern "C" VK_ATTR int32 VK_CALL vkEnumeratePhysicalDevices(
+	handle<vk::instance> instance,
+	uint32* physical_device_count,
+	handle<vk::physical_device>* physical_devices
+);
+
 template<>
 struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
@@ -28,10 +34,10 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 		uint32 count = (uint32) devices.size();
 
 		vk::result result {
-			(int32) vkEnumeratePhysicalDevices(
-				(VkInstance) value,
+			vkEnumeratePhysicalDevices(
+				*this,
 				&count,
-				(VkPhysicalDevice*) devices.data()
+				devices.data()
 			)
 		};
 

@@ -4,8 +4,17 @@
 #include "build_sizes_info.hpp"
 #include "build_type.hpp"
 
-#include "vk/device/handle.hpp"
-#include "vk/headers.hpp"
+#include "../device/handle.hpp"
+#include "../device/get_proc_address.hpp"
+#include "../function.hpp"
+
+typedef void (VK_PTR *PFN_vkGetAccelerationStructureBuildSizesKHR)(
+	handle<vk::device> device,
+	vk::acceleration_structure_build_type buildType,
+	const vk::acceleration_structure_build_geometry_info* build_info,
+	const uint32* pMaxPrimitiveCounts,
+	vk::acceleration_structure_build_sizes_info* size_info
+);
 
 namespace vk {
 
@@ -20,18 +29,19 @@ namespace vk {
 		vk::acceleration_structure_build_sizes_info build_sizes_info{};
 
 		auto f {
-			(PFN_vkGetAccelerationStructureBuildSizesKHR) vkGetDeviceProcAddr(
-				(VkDevice) vk::get_handle_value(device),
+			(PFN_vkGetAccelerationStructureBuildSizesKHR)
+			vk::get_device_proc_address(
+				vk::get_handle(device),
 				"vkGetAccelerationStructureBuildSizesKHR"
 			)
 		};
 
 		f(
-			(VkDevice) vk::get_handle_value(device),
-			(VkAccelerationStructureBuildTypeKHR) build_type,
-			(const VkAccelerationStructureBuildGeometryInfoKHR*) &geometry_info,
-			(const uint32_t*) max_primitive_counts,
-			(VkAccelerationStructureBuildSizesInfoKHR*) &build_sizes_info
+			vk::get_handle(device),
+			build_type,
+			&geometry_info,
+			max_primitive_counts,
+			&build_sizes_info
 		);
 
 		return build_sizes_info;

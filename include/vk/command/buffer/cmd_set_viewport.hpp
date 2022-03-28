@@ -2,11 +2,19 @@
 
 #include "handle.hpp"
 
+#include "../../extent.hpp"
+#include "../../viewport.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/extent.hpp"
-#include "vk/viewport.hpp"
+extern "C" VK_ATTR void VK_CALL vkCmdSetViewport(
+	handle<vk::command_buffer> command_buffer,
+	uint32 first_viewport,
+	uint32 viewport_count,
+	const vk::viewport* viewports
+);
 
 namespace vk {
 
@@ -29,10 +37,10 @@ namespace vk {
 		auto& viewports = elements::range_of<vk::viewport>(args...);
 
 		vkCmdSetViewport(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
+			vk::get_handle(command_buffer),
 			(uint32) first,
 			(uint32) viewports.size(),
-			(VkViewport*) viewports.data()
+			viewports.data()
 		);
 	}
 

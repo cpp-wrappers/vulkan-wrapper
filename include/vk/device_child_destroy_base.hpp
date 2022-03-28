@@ -4,14 +4,20 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/handle/possibly_guarded_of.hpp>
 
-#include "headers.hpp"
 #include "handle/get_value.hpp"
 
 namespace vk {
 
 	struct device;
 
-	template<typename ObjectType, typename HandleType, void Function(const VkDevice, const HandleType, const VkAllocationCallbacks*)>
+	template<
+		typename ObjectType,
+		void Function(
+			handle<vk::device>,
+			handle<ObjectType>,
+			const void*
+		)
+	>
 	struct device_child_destroy_base {
 
 		template<typename... Args>
@@ -21,12 +27,12 @@ namespace vk {
 		>::template for_types<Args...>
 		void operator() (Args&&... args) const {
 			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-			auto fence = elements::decayed<handle<ObjectType>>(args...);
+			auto o = elements::decayed<handle<ObjectType>>(args...);
 
 			Function(
-				(VkDevice) vk::get_handle_value(device),
-				(HandleType) vk::get_handle_value(fence),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(device),
+				vk::get_handle(o),
+				nullptr
 			);
 		}
 

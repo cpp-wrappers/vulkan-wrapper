@@ -4,6 +4,11 @@
 
 #include "../destroy_or_free.hpp"
 
+extern "C" VK_ATTR void VK_CALL vkDestroyDevice(
+	handle<vk::device> device,
+	const void* allocator
+);
+
 namespace vk {
 
 	template<>
@@ -11,8 +16,8 @@ namespace vk {
 
 		void operator () (handle<vk::device> device) const {
 			vkDestroyDevice(
-				(VkDevice) vk::get_handle_value(device),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(device),
+				nullptr
 			);
 		}
 

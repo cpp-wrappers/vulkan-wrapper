@@ -4,6 +4,7 @@
 #include "../result.hpp"
 #include "../count.hpp"
 #include "../extension_name.hpp"
+#include "../function.hpp"
 
 #include <core/span.hpp>
 #include <core/range/of_value_type_same_as.hpp>
@@ -15,6 +16,12 @@
 #include <core/meta/elements/satisfying_predicate.hpp>
 #include <core/meta/elements/one_of.hpp>
 
+extern "C" VK_ATTR int32 VK_CALL vkEnumerateInstanceExtensionProperties(
+	const char* layer_name,
+	uint32* property_count,
+	vk::extension_properties* properties
+);
+
 namespace vk {
 
 	template<range::of<vk::extension_properties> Range>
@@ -23,10 +30,10 @@ namespace vk {
 		uint32 count = extension_properties.size();
 
 		vk::result result {
-			(int32) vkEnumerateInstanceExtensionProperties(
+			vkEnumerateInstanceExtensionProperties(
 				nullptr,
 				&count,
-				(VkExtensionProperties*) extension_properties.data()
+				extension_properties.data()
 			)
 		};
 

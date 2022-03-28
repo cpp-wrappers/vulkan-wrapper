@@ -10,6 +10,13 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
+extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorSetLayout(
+	handle<vk::device> device,
+	const vk::descriptor_set_layout_create_info* create_info,
+	const void* allocator,
+	vk::descriptor_set_layout* set_layout
+);
+
 namespace vk {
 
 	template<>
@@ -51,11 +58,11 @@ namespace vk {
 			handle<vk::descriptor_set_layout> descriptor_set_layout;
 
 			vk::result result {
-				(int32) vkCreateDescriptorSetLayout(
-					(VkDevice) vk::get_handle_value(device),
-					(VkDescriptorSetLayoutCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkDescriptorSetLayout*) &descriptor_set_layout
+				vkCreateDescriptorSetLayout(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&descriptor_set_layout
 				)
 			};
 

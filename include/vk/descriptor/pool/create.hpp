@@ -3,12 +3,20 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
+#include "../../create_or_allocate.hpp"
+#include "../../result.hpp"
+#include "../../device/handle.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/result.hpp"
-#include "vk/device/handle.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorPool(
+	handle<vk::device> device,
+	const vk::descriptor_pool_create_info* create_info,
+	const void* allocator,
+	handle<vk::descriptor_pool>* descriptor_pool
+);
 
 namespace vk {
 
@@ -18,7 +26,9 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_may_contain_one_decayed<vk::descriptor_pool_create_flags>,
+			types::are_may_contain_one_decayed<
+				vk::descriptor_pool_create_flags
+			>,
 			types::are_contain_one_decayed<vk::max_sets>,
 			types::are_contain_range_of<vk::descriptor_pool_size>
 		>::for_types<Args...>
@@ -34,28 +44,37 @@ namespace vk {
 				.pool_sizes = sizes.data()
 			};
 
-			if constexpr(types::are_contain_decayed<vk::descriptor_pool_create_flags>::for_types<Args...>) {
-				ci.flags = elements::decayed<vk::descriptor_pool_create_flags>(args...);
+			if constexpr (
+				types::are_contain_decayed<
+					vk::descriptor_pool_create_flags
+				>::for_types<Args...>
+			) {
+				ci.flags = elements::decayed<
+					vk::descriptor_pool_create_flags
+				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::descriptor_pool> descriptor_pool;
 
 			vk::result result {
-				(int) vkCreateDescriptorPool(
-					(VkDevice) vk::get_handle_value(device),
-					(VkDescriptorPoolCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkDescriptorPool*) &descriptor_pool
+				vkCreateDescriptorPool(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&descriptor_pool
 				)
 			};
 
 			if(result.error()) return result;
 
 			return descriptor_pool;
-		}
 
-	};
+		} // operator ()
+
+	}; // create_t<descriptor_pool>
 
 } // vk

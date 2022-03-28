@@ -3,26 +3,35 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/device/handle.hpp"
+#include "../create_or_allocate.hpp"
+#include "../device/handle.hpp"
+#include "../function.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateSemaphore(
+	handle<vk::device> device,
+	const vk::semaphore_create_info* create_info,
+	const void* allocator,
+	handle<vk::semaphore>* semaphore
+);
 
 namespace vk {
 
 	template<>
 	struct vk::create_t<vk::semaphore> {
 
+		template<possibly_guarded_handle_of<vk::device> Device>
 		vk::expected<handle<vk::semaphore>>
-		operator () (possibly_guarded_handle_of<vk::device> auto&& device) const {
+		operator () (Device&& device) const {
 			vk::semaphore_create_info ci{};
 
-			VkSemaphore semaphore;
+			handle<vk::semaphore> semaphore;
 
 			vk::result result {
-				(int32) vkCreateSemaphore(
-					(VkDevice) vk::get_handle_value(device),
-					(VkSemaphoreCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkSemaphore*) &semaphore
+				vkCreateSemaphore(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&semaphore
 				)
 			};
 
@@ -30,6 +39,6 @@ namespace vk {
 			return handle<vk::semaphore>{ semaphore };
 		}
 
-	};
+	}; // create_t<semaphore>
 
 } // vk

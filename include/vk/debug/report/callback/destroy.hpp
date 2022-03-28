@@ -5,6 +5,13 @@
 #include "../../../handle/get_value.hpp"
 #include "../../../destroy_or_free.hpp"
 #include "../../../instance/handle.hpp"
+#include "../../../instance/get_proc_address.hpp"
+
+typedef void (VK_PTR* PFN_vkDestroyDebugReportCallbackEXT)(
+	handle<vk::instance> instance,
+	handle<vk::debug_report_callback> callback,
+	const void* allocator
+);
 
 namespace vk {
 
@@ -16,16 +23,15 @@ namespace vk {
 			handle<vk::debug_report_callback> debug_report_callback
 		) const {
 			auto fn = (PFN_vkDestroyDebugReportCallbackEXT)
-				vkGetInstanceProcAddr(
-					(VkInstance) vk::get_handle_value(instance),
+				vk::get_instance_proc_address(
+					instance,
 					"vkDestroyDebugReportCallbackEXT"
 				);
 			
 			fn(
-				(VkInstance) vk::get_handle_value(instance),
-				(VkDebugReportCallbackEXT)
-					vk::get_handle_value(debug_report_callback),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(instance),
+				vk::get_handle(debug_report_callback),
+				nullptr
 			);
 		}
 

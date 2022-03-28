@@ -14,6 +14,8 @@ namespace vk {
 	struct src_subpass : wrapper::of_integer<uint32> {};
 	struct dst_subpass : wrapper::of_integer<uint32> {};
 
+	inline constexpr uint32 subpass_external( ~0u );
+
 	class subpass_dependency {
 		vk::src_subpass src_subpass;
 		vk::dst_subpass dst_subpass;

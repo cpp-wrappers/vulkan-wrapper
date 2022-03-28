@@ -7,6 +7,11 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
+extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceFeatures2(
+	handle<vk::physical_device> physical_device,
+	vk::physical_device_features_2* features
+);
+
 namespace vk {
 
 	template<typename... Args>
@@ -46,8 +51,8 @@ namespace vk {
 		>(args...);
 
 		vkGetPhysicalDeviceFeatures2(
-			(VkPhysicalDevice) vk::get_handle_value(physical_device),
-			(VkPhysicalDeviceFeatures2*) &features
+			vk::get_handle(physical_device),
+			&features
 		);
 
 	} // get_features

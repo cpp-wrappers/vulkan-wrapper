@@ -3,12 +3,21 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
+#include "../surface/handle.hpp"
+#include "../surface/format.hpp"
+#include "../create_or_allocate.hpp"
+#include "../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
-#include "vk/surface/handle.hpp"
-#include "vk/surface/format.hpp"
-#include "vk/create_or_allocate.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkCreateSwapchainKHR(
+	handle<vk::device> device,
+	const vk::swapchain_create_info* create_info,
+	const void* allocator,
+	handle<vk::swapchain>* swapchain
+);
+
 
 namespace vk {
 
@@ -40,7 +49,9 @@ namespace vk {
 
 			vk::swapchain_create_info ci {
 				.surface = vk::get_handle(surface),
-				.min_image_count = elements::decayed<vk::min_image_count>(args...),
+				.min_image_count = elements::decayed<
+					vk::min_image_count
+				>(args...),
 				.format = elements::decayed<vk::format>(args...),
 				.color_space = elements::decayed<vk::color_space>(args...),
 				.extent = elements::decayed<vk::extent<2>>(args...),
@@ -63,7 +74,9 @@ namespace vk {
 			);
 
 			if constexpr(
-				types::are_contain_range_of<vk::queue_family_index>::for_types<Args...>
+				types::are_contain_range_of<
+					vk::queue_family_index
+				>::for_types<Args...>
 			) {
 				auto& family_indices =
 					elements::range_of<vk::queue_family_index>(args...);
@@ -95,18 +108,19 @@ namespace vk {
 			handle<vk::swapchain> swapchain;
 
 			vk::result result {
-				(int32) vkCreateSwapchainKHR(
-					(VkDevice) vk::get_handle_value(device),
-					(VkSwapchainCreateInfoKHR*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkSwapchainKHR*) &swapchain
+				vkCreateSwapchainKHR(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&swapchain
 				)
 			};
 
 			if(result.error()) return result;
 
 			return swapchain;
-		}
+
+		} // operator ()
 
 		template<typename... Args>
 		requires types::are_contain_one_decayed<
@@ -130,8 +144,9 @@ namespace vk {
 					);
 				}
 			);
-		}
 
-	};
+		} // operator ()
+
+	}; // create_t<swapchain>
 
 } // vk

@@ -3,11 +3,22 @@
 #include "handle.hpp"
 #include "properties_2.hpp"
 #include "extension_properties.hpp"
+
 #include "../handle/get_value.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
+
+extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties(
+	handle<vk::physical_device> physical_device,
+	vk::physical_device_properties* properties
+);
+
+extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties2(
+	handle<vk::physical_device> physical_device,
+	vk::physical_device_properties_2* properties
+);
 
 namespace vk {
 
@@ -17,8 +28,8 @@ namespace vk {
 		vk::physical_device_properties props;
 
 		vkGetPhysicalDeviceProperties(
-			(VkPhysicalDevice) vk::get_handle_value(physical_device),
-			(VkPhysicalDeviceProperties*) &props
+			vk::get_handle(physical_device),
+			&props
 		);
 		return props;
 	}
@@ -50,8 +61,8 @@ namespace vk {
 		);
 
 		vkGetPhysicalDeviceProperties2(
-			(VkPhysicalDevice) vk::get_handle_value(physical_device),
-			(VkPhysicalDeviceProperties2*) &props
+			vk::get_handle(physical_device),
+			&props
 		);
 
 		return props.properties;

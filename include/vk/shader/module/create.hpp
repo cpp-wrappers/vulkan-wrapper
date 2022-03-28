@@ -3,8 +3,16 @@
 #include "handle.hpp"
 #include "create_info.hpp"
 
-#include "vk/device/handle.hpp"
-#include "vk/create_or_allocate.hpp"
+#include "../../function.hpp"
+#include "../../device/handle.hpp"
+#include "../../create_or_allocate.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateShaderModule(
+	handle<vk::device> device,
+	const vk::shader_module_create_info* create_info,
+	const void* allocator,
+	handle<vk::shader_module>* shader_module
+);
 
 namespace vk {
 
@@ -29,11 +37,11 @@ namespace vk {
 			handle<vk::shader_module> shader_module;
 
 			vk::result result {
-				(int32) vkCreateShaderModule(
-					(VkDevice) vk::get_handle_value(device),
-					(VkShaderModuleCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkShaderModule*) &shader_module
+				vkCreateShaderModule(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&shader_module
 				)
 			};
 

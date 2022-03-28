@@ -1,10 +1,17 @@
 #pragma once
 
 #include "handle.hpp"
+#include "../../rect2d.hpp"
+#include "../../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/rect2d.hpp"
+extern "C" VK_ATTR void VK_CALL vkCmdSetScissor(
+	handle<vk::command_buffer> command_buffer,
+	uint32 first_scissor,
+	uint32 scissor_count,
+	const vk::rect2d* scissors
+);
 
 namespace vk {
 
@@ -17,20 +24,27 @@ namespace vk {
 		types::are_contain_range_of<vk::rect2d>
 	>::for_types<Args...>
 	void cmd_set_scissor(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<
+			vk::command_buffer
+		>(args...);
+
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed<vk::first_scissor_index>::for_types<Args...>) {
+		if constexpr(
+			types::are_contain_decayed<
+				vk::first_scissor_index
+			>::for_types<Args...>
+		) {
 			first = elements::decayed<vk::first_scissor_index>(args...);
 		}
 
 		auto& scissors = elements::range_of<vk::rect2d>(args...);
 
 		vkCmdSetScissor(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
+			vk::get_handle(command_buffer),
 			(uint32) first,
 			(uint32) scissors.size(),
-			(VkRect2D*) scissors.data()
+			scissors.data()
 		);
 	}
 
@@ -41,10 +55,17 @@ namespace vk {
 		types::are_contain_one_decayed<vk::rect2d>
 	>::for_types<Args...>
 	void cmd_set_scissor(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<
+			vk::command_buffer
+		>(args...);
+
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed<vk::first_scissor_index>::for_types<Args...>) {
+		if constexpr(
+			types::are_contain_decayed<
+				vk::first_scissor_index
+			>::for_types<Args...>
+		) {
 			first = elements::decayed<vk::first_scissor_index>(args...);
 		}
 
@@ -60,16 +81,27 @@ namespace vk {
 		types::are_contain_one_decayed<vk::extent<2>>
 	>::for_types<Args...>
 	void cmd_set_scissor(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<
+			vk::command_buffer
+		>(args...);
+
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr(types::are_contain_decayed<vk::first_scissor_index>::for_types<Args...>) {
+		if constexpr(
+			types::are_contain_decayed<
+				vk::first_scissor_index
+			>::for_types<Args...>
+		) {
 			first = elements::decayed<vk::first_scissor_index>(args...);
 		}
 
 		vk::extent<2> extent  = elements::decayed<vk::extent<2>>(args...);
 
-		vk::cmd_set_scissor(command_buffer, first, vk::rect2d{ .extent{ extent } } );
+		vk::cmd_set_scissor(
+			command_buffer,
+			first,
+			vk::rect2d{ .extent{ extent } }
+		);
 	}
 
 } // vk

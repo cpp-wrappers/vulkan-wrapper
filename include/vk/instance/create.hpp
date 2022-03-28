@@ -8,10 +8,10 @@
 
 #include <core/meta/decayed_same_as.hpp>
 
-VK_ATTR VkResult VK_CALL vkCreateInstance(
-	const vk::instance_create_info*,
-	const void*,
-	handle<vk::instance>*
+extern "C" VK_ATTR int32 VK_CALL vkCreateInstance(
+	const vk::instance_create_info* create_info,
+	const void* allocator,
+	handle<vk::instance>* instance
 );
 
 namespace vk {
@@ -60,10 +60,10 @@ namespace vk {
 			handle<vk::instance> instance;
 
 			vk::result result {
-				(int32) vkCreateInstance(
-					(VkInstanceCreateInfo*) &ici,
-					(VkAllocationCallbacks*) nullptr,
-					(VkInstance*) &instance
+				vkCreateInstance(
+					&ici,
+					nullptr,
+					&instance
 				)
 			};
 

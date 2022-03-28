@@ -1,8 +1,16 @@
 #pragma once
 
-#include "../../destroy_or_free.hpp"
-#include "../handle.hpp"
 #include "handle.hpp"
+
+#include "../handle.hpp"
+#include "../../function.hpp"
+#include "../../destroy_or_free.hpp"
+
+extern "C" VK_ATTR void VK_CALL vkFreeMemory(
+	handle<vk::device> device,
+	handle<vk::device_memory> memory,
+	const void* allocator
+);
 
 namespace vk {
 
@@ -19,9 +27,9 @@ namespace vk {
 			auto device_memory = elements::decayed<handle<vk::device_memory>>(args...);
 
 			vkFreeMemory(
-				(VkDevice) vk::get_handle_value(device),
-				(VkDeviceMemory) vk::get_handle_value(device_memory),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(device),
+				vk::get_handle(device_memory),
+				nullptr
 			);
 		} 
 

@@ -5,6 +5,14 @@
 
 #include "../../create_or_allocate.hpp"
 #include "../../queue_family_index.hpp"
+#include "../../function.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateCommandPool(
+	handle<vk::device> device,
+	const vk::command_pool_create_info* create_info,
+	const void* allocator,
+	handle<vk::command_pool>* command_pool
+);
 
 namespace vk {
 
@@ -39,12 +47,12 @@ namespace vk {
 				elements::possibly_guarded_handle_of<vk::device>(args...)
 			};
 
-			VkCommandPool command_pool;
+			handle<vk::command_pool> command_pool;
 
 			vk::result result {
 				(int32) vkCreateCommandPool(
-					(VkDevice) vk::get_handle_value(device),
-					(VkCommandPoolCreateInfo*) &ci,
+					vk::get_handle(device),
+					&ci,
 					nullptr,
 					&command_pool
 				)
@@ -52,7 +60,7 @@ namespace vk {
 
 			if(result.error()) return result;
 
-			return handle<vk::command_pool>{ command_pool };
+			return command_pool;
 		}
 
 	};

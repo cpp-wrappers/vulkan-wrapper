@@ -2,14 +2,19 @@
 
 #include "handle.hpp"
 #include "begin_info.hpp"
+#include "../../handle/get_value.hpp"
+#include "../../result.hpp"
+#include "../../function.hpp"
+#include "../../unexpected_handler.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/handle/possibly_guarded_of.hpp>
 
-#include "vk/handle/get_value.hpp"
-#include "vk/result.hpp"
-#include "vk/unexpected_handler.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkBeginCommandBuffer(
+	handle<vk::command_buffer> command_buffer,
+	const vk::command_buffer_begin_info* begin_info
+);
 
 namespace vk {
 
@@ -32,12 +37,7 @@ namespace vk {
 
 		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
 
-		return {
-			(int32) vkBeginCommandBuffer(
-				(VkCommandBuffer) vk::get_handle_value(command_buffer),
-				(VkCommandBufferBeginInfo*) &bi
-			)
-		};
+		return { vkBeginCommandBuffer(vk::get_handle(command_buffer), &bi) };
 	}
 
 	template<typename... Args>

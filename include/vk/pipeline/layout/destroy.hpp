@@ -1,7 +1,14 @@
 #pragma once
 
-#include "vk/destroy_or_free.hpp"
-#include "vk/device/handle.hpp"
+#include "../../function.hpp"
+#include "../../destroy_or_free.hpp"
+#include "../../device/handle.hpp"
+
+extern "C" VK_ATTR void VK_CALL vkDestroyPipelineLayout(
+	handle<vk::device> device,
+	handle<vk::pipeline_layout> pipeline_layout,
+	const void* allocator
+);
 
 namespace vk {
 
@@ -14,9 +21,9 @@ namespace vk {
 			auto layout = elements::decayed<handle<vk::pipeline_layout>>(args...);
 
 			vkDestroyPipelineLayout(
-				(VkDevice) vk::get_handle_value(device),
-				(VkPipelineLayout) vk::get_handle_value(layout),
-				(VkAllocationCallbacks*) nullptr
+				vk::get_handle(device),
+				vk::get_handle(layout),
+				nullptr
 			);
 		}
 

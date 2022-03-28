@@ -2,10 +2,19 @@
 
 #include "handle.hpp"
 
+#include "../device/handle.hpp"
+#include "../function.hpp"
+
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/device/handle.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkWaitForFences(
+	handle<vk::device> device,
+	uint32 fence_count,
+	const handle<vk::fence>* fences,
+	uint32 wait_all,
+	uint64 timeout
+);
 
 namespace vk {
 
@@ -21,23 +30,25 @@ namespace vk {
 
 		bool wait_all = true;
 
-		if constexpr(types::are_contain_decayed<vk::wait_all>::for_types<Args...>) {
-			wait_all = (bool) elements::decayed<vk::wait_all>(args...);
-		}
+		if constexpr(
+			types::are_contain_decayed<vk::wait_all>::for_types<Args...>
+		) { wait_all = (bool) elements::decayed<vk::wait_all>(args...); }
 
-		vk::timeout timeout{ UINT64_MAX };
+		vk::timeout timeout{ ~uint64{ 0 } };
 
-		if constexpr(types::are_contain_decayed<vk::timeout>::for_types<Args...>) {
-			timeout = elements::decayed<vk::timeout>(args...);
-		}
+		if constexpr(
+			types::are_contain_decayed<vk::timeout>::for_types<Args...>
+		) { timeout = elements::decayed<vk::timeout>(args...); }
 
-		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+		auto& device = elements::possibly_guarded_handle_of<
+			vk::device
+		>(args...);
 
 		return {
-			(int32) vkWaitForFences(
-				(VkDevice) vk::get_handle_value(device),
+			vkWaitForFences(
+				vk::get_handle(device),
 				(uint32) fences.size(),
-				(VkFence*) fences.data(),
+				fences.data(),
 				uint32{ wait_all },
 				(uint64) timeout
 			)

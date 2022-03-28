@@ -3,8 +3,15 @@
 #include "allocate_info.hpp"
 #include "handle.hpp"
 
-#include "vk/create_or_allocate.hpp"
-#include "vk/device/handle.hpp"
+#include "../../function.hpp"
+#include "../../create_or_allocate.hpp"
+#include "../../device/handle.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkAllocateDescriptorSets(
+	handle<vk::device> device,
+	const vk::descriptor_set_allocate_info* allocate_info,
+	handle<vk::descriptor_set>* descriptor_sets
+);
 
 namespace vk {
 
@@ -32,10 +39,10 @@ namespace vk {
 		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
 		return {
-			(int32) vkAllocateDescriptorSets(
-				(VkDevice) vk::get_handle_value(device),
-				(VkDescriptorSetAllocateInfo*) &ai,
-				(VkDescriptorSet*) sets.data()
+			vkAllocateDescriptorSets(
+				vk::get_handle(device),
+				&ai,
+				sets.data()
 			)
 		};
 	}
@@ -46,21 +53,35 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_pool>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::descriptor_set_layout>
+			types::are_contain_one_possibly_guarded_handle_of<
+				vk::descriptor_pool
+			>,
+			types::are_contain_one_possibly_guarded_handle_of<
+				vk::descriptor_set_layout
+			>
 		>::for_types<Args...>
 		vk::expected<handle<descriptor_set>>
 		operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-			auto& pool = elements::possibly_guarded_handle_of<vk::descriptor_pool>(args...);
-			auto& layout = elements::possibly_guarded_handle_of<vk::descriptor_set_layout>(args...);
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
+
+			auto& pool = elements::possibly_guarded_handle_of<
+				vk::descriptor_pool
+			>(args...);
+
+			auto& layout = elements::possibly_guarded_handle_of<
+				vk::descriptor_set_layout
+			>(args...);
 			
 			handle<vk::descriptor_set> set;
 
 			vk::result result = vk::try_allocate_descriptor_sets(
 				device,
 				pool,
-				array<handle<vk::descriptor_set_layout>, 1>{ vk::get_handle(layout) },
+				array<handle<vk::descriptor_set_layout>, 1>{
+					vk::get_handle(layout)
+				},
 				span{ &set, 1 }
 			);
 

@@ -2,8 +2,15 @@
 
 #include "../device/handle.hpp"
 #include "../memory_requirements.hpp"
+#include "../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+
+extern "C" VK_ATTR void VK_CALL vkGetImageMemoryRequirements(
+	handle<vk::device> device,
+	handle<vk::image> image,
+	vk::memory_requirements* memory_requirements
+);
 
 namespace vk {
 
@@ -24,9 +31,9 @@ namespace vk {
 		vk::memory_requirements memory_requirements;
 
 		vkGetImageMemoryRequirements(
-			(VkDevice) vk::get_handle_value(device),
-			(VkImage) vk::get_handle_value(image),
-			(VkMemoryRequirements*) &memory_requirements
+			vk::get_handle(device),
+			vk::get_handle(image),
+			&memory_requirements
 		);
 
 		return memory_requirements;

@@ -2,11 +2,18 @@
 
 #include "handle.hpp"
 
+#include "../../device/handle.hpp"
+#include "../../destroy_or_free.hpp"
+#include "../../function.hpp"
+
 #include <core/range/of_value_type_same_as.hpp>
 
-#include "vk/headers.hpp"
-#include "vk/device/handle.hpp"
-#include "vk/destroy_or_free.hpp"
+extern "C" VK_ATTR void VK_CALL vkFreeCommandBuffers(
+	handle<vk::device> device,
+	handle<vk::command_pool> command_pool,
+	uint32 command_buffer_count,
+	const handle<vk::command_buffer>* command_buffers
+);
 
 namespace vk {
 
@@ -22,10 +29,10 @@ namespace vk {
 		auto& buffers = elements::range_of<handle<vk::command_buffer>>(args...);
 
 		vkFreeCommandBuffers(
-			(VkDevice) vk::get_handle_value(device),
-			(VkCommandPool) vk::get_handle_value(pool),
+			vk::get_handle(device),
+			vk::get_handle(pool),
 			(uint32) buffers.size(),
-			(VkCommandBuffer*) buffers.data()
+			buffers.data()
 		);
 	}
 

@@ -3,10 +3,17 @@
 #include "handle.hpp"
 #include "allocate_info.hpp"
 
+#include "../../device/handle.hpp"
+#include "../../create_or_allocate.hpp"
+#include "../../function.hpp"
+
 #include <core/span.hpp>
 
-#include "vk/device/handle.hpp"
-#include "vk/create_or_allocate.hpp"
+extern "C" VK_ATTR int32 VK_CALL vkAllocateCommandBuffers(
+	handle<vk::device> device,
+	const vk::command_buffer_allocate_info* allocate_info,
+	handle<vk::command_buffer>* command_buffers
+);
 
 namespace vk {
 
@@ -29,10 +36,10 @@ namespace vk {
 		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
 		return {
-			(int32) vkAllocateCommandBuffers(
-				(VkDevice) vk::get_handle_value(device),
-				(VkCommandBufferAllocateInfo*) &ai,
-				(VkCommandBuffer*) command_buffers.data()
+			vkAllocateCommandBuffers(
+				vk::get_handle(device),
+				&ai,
+				command_buffers.data()
 			)
 		};
 	}

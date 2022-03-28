@@ -11,6 +11,13 @@
 #include <core/meta/types/are_contain_satisfying_predicate.hpp>
 #include <core/handle/possibly_guarded_of.hpp>
 
+VK_ATTR int32 VK_CALL vkAllocateMemory(
+	handle<vk::device> device,
+	const vk::memory_allocate_info* allocate_info,
+	const void* allocator,
+	handle<vk::device_memory>* memory
+);
+
 namespace vk {
 
 	template<>
@@ -49,11 +56,8 @@ namespace vk {
 			handle<vk::device_memory> device_memory;
 
 			vk::result result {
-				(int32) vkAllocateMemory(
-					(VkDevice) vk::get_handle_value(device),
-					(VkMemoryAllocateInfo*) &ai,
-					(VkAllocationCallbacks*) nullptr,
-					(VkDeviceMemory*) &device_memory
+				vkAllocateMemory(
+					vk::get_handle(device), &ai, nullptr, &device_memory
 				)
 			};
 

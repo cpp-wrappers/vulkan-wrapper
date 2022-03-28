@@ -2,10 +2,19 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
+
 #include "../device/handle.hpp"
 #include "../create_or_allocate.hpp"
+#include "../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateImage(
+	handle<vk::device> device,
+	const vk::image_create_info* create_info,
+	const void* allocator,
+	handle<vk::image>* image
+);
 
 namespace vk {
 
@@ -94,11 +103,11 @@ namespace vk {
 			handle<vk::image> image;
 
 			vk::result result {
-				(int32) vkCreateImage(
-					(VkDevice) vk::get_handle_value(device),
-					(VkImageCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkImage*) &image
+				vkCreateImage(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&image
 				)
 			};
 

@@ -2,10 +2,18 @@
 
 #include "handle.hpp"
 #include "create_info.hpp"
+
 #include "../result.hpp"
 #include "../device/handle.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateSampler(
+	handle<vk::device> device,
+	const vk::sampler_create_info* create_info,
+	const void* allocator,
+	handle<vk::sampler>* sampler
+);
 
 namespace vk {
 
@@ -38,52 +46,117 @@ namespace vk {
 				.mag_filter = elements::decayed<vk::mag_filter>(args...),
 				.min_filter = elements::decayed<vk::min_filter>(args...),
 				.mipmap_mode = elements::decayed<vk::mipmap_mode>(args...),
-				.address_mode_u = elements::decayed<vk::address_mode_u>(args...),
-				.address_mode_v = elements::decayed<vk::address_mode_v>(args...),
-				.address_mode_w = elements::decayed<vk::address_mode_w>(args...)
+				.address_mode_u = elements::decayed<
+					vk::address_mode_u
+				>(args...),
+				.address_mode_v = elements::decayed<
+					vk::address_mode_v
+				>(args...),
+				.address_mode_w = elements::decayed<
+					vk::address_mode_w
+				>(args...)
 			};
 
-			if constexpr (types::are_contain_one_decayed<vk::sampler_create_flags>::for_types<Args...>) {
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::sampler_create_flags
+				>::for_types<Args...>
+			) {
 				ci.flags = elements::decayed<vk::sampler_create_flags>(args...);
 			}
-			if constexpr (types::are_contain_one_decayed<vk::mip_lod_bias>::for_types<Args...>) {
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::mip_lod_bias
+				>::for_types<Args...>
+			) {
 				ci.mip_lod_bias = elements::decayed<vk::mip_lod_bias>(args...);
 			}
-			if constexpr (types::are_contain_one_decayed<vk::anisotropy_enable>::for_types<Args...>) {
-				ci.anisotropy_enable = elements::decayed<vk::anisotropy_enable>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::max_anisotropy>::for_types<Args...>) {
-				ci.max_anisotropy = elements::decayed<vk::max_anisotropy>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::compare_enable>::for_types<Args...>) {
-				ci.compare_enable = elements::decayed<vk::compare_enable>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::compare_op>::for_types<Args...>) {
-				ci.compare_op = elements::decayed<vk::compare_op>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::min_lod>::for_types<Args...>) {
-				ci.min_lod = elements::decayed<vk::min_lod>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::max_lod>::for_types<Args...>) {
-				ci.max_lod = elements::decayed<vk::max_lod>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::border_color>::for_types<Args...>) {
-				ci.border_color = elements::decayed<vk::border_color>(args...);
-			}
-			if constexpr (types::are_contain_one_decayed<vk::unnormalized_coordinates>::for_types<Args...>) {
-				ci.unnormalized_coordinates = elements::decayed<vk::unnormalized_coordinates>(args...);
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::anisotropy_enable
+				>::for_types<Args...>
+			) {
+				ci.anisotropy_enable = elements::decayed<
+					vk::anisotropy_enable
+				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::max_anisotropy
+				>::for_types<Args...>
+			) {
+				ci.max_anisotropy = elements::decayed<
+					vk::max_anisotropy
+				>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::compare_enable
+				>::for_types<Args...>
+			) {
+				ci.compare_enable = elements::decayed<
+					vk::compare_enable
+				>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::compare_op
+				>::for_types<Args...>
+			) {
+				ci.compare_op = elements::decayed<vk::compare_op>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::min_lod
+				>::for_types<Args...>
+			) {
+				ci.min_lod = elements::decayed<vk::min_lod>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::max_lod
+				>::for_types<Args...>
+			) {
+				ci.max_lod = elements::decayed<vk::max_lod>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::border_color
+				>::for_types<Args...>
+			) {
+				ci.border_color = elements::decayed<vk::border_color>(args...);
+			}
+
+			if constexpr (
+				types::are_contain_one_decayed<
+					vk::unnormalized_coordinates
+				>::for_types<Args...>
+			) {
+				ci.unnormalized_coordinates = elements::decayed<
+					vk::unnormalized_coordinates
+				>(args...);
+			}
+
+			auto& device = elements::possibly_guarded_handle_of<
+				vk::device
+			>(args...);
 
 			handle<vk::sampler> sampler;
 
 			vk::result result {
-				(int32) vkCreateSampler(
-					(VkDevice) vk::get_handle_value(device),
-					(VkSamplerCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkSampler*) &sampler
+				vkCreateSampler(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&sampler
 				)
 			};
 

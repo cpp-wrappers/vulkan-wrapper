@@ -4,6 +4,7 @@
 #include "memory_properties.hpp"
 #include "queue_family_properties.hpp"
 
+#include "../function.hpp"
 #include "../surface/capabilities.hpp"
 #include "../surface/present_mode.hpp"
 #include "../surface/format.hpp"
@@ -32,6 +33,51 @@ namespace vk {
 
 } // vk
 
+extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceMemoryProperties(
+	handle<vk::physical_device> physical_device,
+	vk::physical_device_memory_properties* memory_properties
+);
+
+extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceQueueFamilyProperties(
+	handle<vk::physical_device> physical_device,
+	uint32* queue_family_property_count,
+	vk::queue_family_properties* queue_family_properties
+);
+
+extern "C" VK_ATTR int32 VK_CALL vkEnumerateDeviceExtensionProperties(
+	handle<vk::physical_device> physical_device,
+	const char* layer_name,
+	uint32* property_count,
+	vk::extension_properties* properties
+);
+
+extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+	handle<vk::physical_device> physical_device,
+	handle<vk::surface> surface,
+	vk::surface_capabilities* surface_capabilities
+);
+
+extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceSupportKHR(
+	handle<vk::physical_device> physical_device,
+	uint32 queue_family_index,
+	handle<vk::surface> surface,
+	uint32* supported
+);
+
+extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
+	handle<vk::physical_device> physical_device,
+	handle<vk::surface> surface,
+	uint32* surface_format_count,
+	vk::surface_format* surface_formats
+);
+
+extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(
+	handle<vk::physical_device> physical_device,
+	handle<vk::surface> surface,
+	uint32* present_mode_count,
+	vk::present_mode* present_modes
+);
+
 template<>
 struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 
@@ -47,8 +93,8 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	vk::physical_device_memory_properties get_memory_properties() const {
 		vk::physical_device_memory_properties props;
 		vkGetPhysicalDeviceMemoryProperties(
-			(VkPhysicalDevice) vk::get_handle_value(*this),
-			(VkPhysicalDeviceMemoryProperties*) &props
+			vk::get_handle(*this),
+			&props
 		);
 		return props;
 	}
@@ -76,9 +122,9 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		uint32 count = (uint32) range.size();
 
 		vkGetPhysicalDeviceQueueFamilyProperties(
-			(VkPhysicalDevice) vk::get_handle_value(*this),
+			vk::get_handle(*this),
 			&count,
-			(VkQueueFamilyProperties*) range.data()
+			range.data()
 		);
 
 		return { count };
@@ -131,11 +177,11 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		const char* name = extension_name.begin();
 
 		vk::result result {
-			(int32) vkEnumerateDeviceExtensionProperties(
-				(VkPhysicalDevice) vk::get_handle_value(*this),
+			vkEnumerateDeviceExtensionProperties(
+				vk::get_handle(*this),
 				name,
 				&count,
-				(VkExtensionProperties*) props.data()
+				props.data()
 			)
 		};
 
@@ -180,15 +226,16 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		});
 	}
 
+	template<possibly_guarded_handle_of<vk::surface> Surface>
 	vk::expected<vk::surface_capabilities>
-	get_surface_capabilities(possibly_guarded_handle_of<vk::surface> auto& surface) const {
+	get_surface_capabilities(Surface&& surface) const {
 		vk::surface_capabilities caps;
 
 		vk::result result {
-			(int32) vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-				(VkPhysicalDevice) vk::get_handle_value(*this),
-				(VkSurfaceKHR) vk::get_handle_value(surface),
-				(VkSurfaceCapabilitiesKHR*) &caps
+			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+				vk::get_handle(*this),
+				vk::get_handle(surface),
+				&caps
 			)
 		};
 
@@ -205,11 +252,11 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		uint32 count = (uint32) formats.size();
 
 		vk::result result {
-			(int32) vkGetPhysicalDeviceSurfaceFormatsKHR(
-				(VkPhysicalDevice) vk::get_handle_value(*this),
-				(VkSurfaceKHR) vk::get_handle_value(surface),
+			vkGetPhysicalDeviceSurfaceFormatsKHR(
+				vk::get_handle(*this),
+				vk::get_handle(surface),
 				&count,
-				(VkSurfaceFormatKHR*) formats.data()
+				formats.data()
 			)
 		};
 
@@ -271,11 +318,11 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		uint32 count = (uint32) present_modes.size();
 
 		vk::result result {
-			(int32) vkGetPhysicalDeviceSurfacePresentModesKHR(
-				(VkPhysicalDevice) vk::get_handle_value(*this),
-				(VkSurfaceKHR) surface.value,
+			vkGetPhysicalDeviceSurfacePresentModesKHR(
+				vk::get_handle(*this),
+				vk::get_handle(surface),
 				&count,
-				(VkPresentModeKHR*) present_modes.data()
+				present_modes.data()
 			)
 		};
 
@@ -327,9 +374,9 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 
 		vk::result result {
 			(int32) vkGetPhysicalDeviceSurfaceSupportKHR(
-				(VkPhysicalDevice) value,
+				*this,
 				(uint32) queue_family_index,
-				(VkSurfaceKHR) vk::get_handle_value(surface),
+				vk::get_handle(surface),
 				&supports
 			)
 		};

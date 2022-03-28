@@ -6,15 +6,21 @@
 #include "../../create_or_allocate.hpp"
 #include "../../handle/get_value.hpp"
 #include "../../result.hpp"
+#include "../../device/handle.hpp"
 #include "../../image/component_mapping.hpp"
 #include "../../image/subresource_range.hpp"
+#include "../../function.hpp"
 
 #include <core/handle/possibly_guarded_of.hpp>
 
-namespace vk {
+extern "C" VK_ATTR int32 VK_CALL vkCreateImageView(
+	handle<vk::device> device,
+	const vk::image_view_create_info* create_info,
+	const void* allocator,
+	handle<vk::image_view>* view
+);
 
-	struct device;
-	struct image_view;
+namespace vk {
 
 	template<>
 	struct vk::create_t<vk::image_view> {
@@ -67,11 +73,11 @@ namespace vk {
 			handle<vk::image_view> image_view;
 
 			vk::result result {
-				(int32) vkCreateImageView(
-					(VkDevice) vk::get_handle_value(device),
-					(VkImageViewCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkImageView*) &image_view
+				vkCreateImageView(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&image_view
 				)
 			};
 

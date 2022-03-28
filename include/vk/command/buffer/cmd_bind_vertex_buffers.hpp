@@ -2,14 +2,22 @@
 
 #include "handle.hpp"
 
+#include "../../buffer/handle.hpp"
+#include "../../first_binding.hpp"
+#include "../../memory_offset.hpp"
+#include "../../handle/get_value.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/buffer/handle.hpp"
-#include "vk/first_binding.hpp"
-#include "vk/memory_offset.hpp"
-#include "vk/headers.hpp"
-#include "vk/handle/get_value.hpp"
+VK_ATTR void VK_CALL vkCmdBindVertexBuffers(
+	handle<vk::command_buffer> command_buffer,
+	uint32 first_binding,
+	uint32 binding_count,
+	const handle<vk::buffer>* buffers,
+	const vk::memory_offset* offsets
+);
 
 namespace vk {
 
@@ -34,11 +42,11 @@ namespace vk {
 		auto& offsets = elements::range_of<vk::memory_offset>(args...);
 
 		vkCmdBindVertexBuffers(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
+			vk::get_handle(command_buffer),
 			(uint32) first_binding,
 			(uint32) buffers.size(),
-			(VkBuffer*) buffers.data(),
-			(VkDeviceSize*) offsets.data()
+			buffers.data(),
+			offsets.data()
 		);
 	}
 

@@ -6,6 +6,14 @@
 #include "../device/handle.hpp"
 #include "../create_or_allocate.hpp"
 #include "../extent.hpp"
+#include "../function.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkCreateFramebuffer(
+	handle<vk::device> device,
+	const vk::framebuffer_create_info* create_info,
+	const void* allocator,
+	handle<vk::framebuffer>* framebuffer
+);
 
 namespace vk {
 
@@ -48,11 +56,11 @@ namespace vk {
 			handle<vk::framebuffer> framebuffer;
 
 			vk::result result {
-				(int32) vkCreateFramebuffer(
-					(VkDevice) vk::get_handle_value(device),
-					(VkFramebufferCreateInfo*) &ci,
-					(VkAllocationCallbacks*) nullptr,
-					(VkFramebuffer*) &framebuffer
+				vkCreateFramebuffer(
+					vk::get_handle(device),
+					&ci,
+					nullptr,
+					&framebuffer
 				)
 			};
 

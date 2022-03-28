@@ -2,13 +2,21 @@
 
 #include "handle.hpp"
 
+#include "../../acceleration_structure/build_geometry_info.hpp"
+#include "../../acceleration_structure/build_range_info.hpp"
+#include "../../device/handle.hpp"
+#include "../../device/get_proc_address.hpp"
+
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/range/of_value_type_same_as.hpp>
-
-#include "vk/acceleration_structure/build_geometry_info.hpp"
-#include "vk/acceleration_structure/build_range_info.hpp"
-#include "vk/device/handle.hpp"
 #include <core/handle/possibly_guarded_of.hpp>
+
+typedef void (VK_PTR* PFN_vkCmdBuildAccelerationStructuresKHR)(
+	handle<vk::command_buffer> command_buffer,
+	uint32 info_count,
+	const vk::acceleration_structure_build_geometry_info* infos,
+	const vk::acceleration_structure_build_range_info* const* build_range_infos
+);
 
 namespace vk {
 
@@ -25,8 +33,8 @@ namespace vk {
 		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
 
 		auto f = (PFN_vkCmdBuildAccelerationStructuresKHR)
-			vkGetDeviceProcAddr(
-				(VkDevice) vk::get_handle_value(device),
+			vk::get_device_proc_address(
+				device,
 				"vkCmdBuildAccelerationStructuresKHR"
 			);
 
@@ -36,10 +44,10 @@ namespace vk {
 		auto& ranges = elements::range_of<const vk::acceleration_structure_build_range_info*>(args...);
 
 		f(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
+			vk::get_handle(command_buffer),
 			infos.size(),
-			(const VkAccelerationStructureBuildGeometryInfoKHR*) infos.data(),
-			(const VkAccelerationStructureBuildRangeInfoKHR* const*) ranges.data()
+			infos.data(),
+			ranges.data()
 		);
 	}
 

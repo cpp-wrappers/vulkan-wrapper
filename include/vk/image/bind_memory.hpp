@@ -1,11 +1,20 @@
 #pragma once
 
 #include "handle.hpp"
+
 #include "../device/handle.hpp"
 #include "../result.hpp"
 #include "../memory_offset.hpp"
+#include "../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+
+extern "C" VK_ATTR int32 VK_CALL vkBindImageMemory(
+	handle<vk::device> device,
+	handle<vk::image> image,
+	handle<vk::device_memory> memory,
+	vk::device_size memory_offset
+);
 
 namespace vk {
 
@@ -34,11 +43,11 @@ namespace vk {
 		) { offset = elements::decayed<vk::memory_offset>(args...); }
 
 		return {
-			(int32) vkBindImageMemory(
-				(VkDevice) vk::get_handle_value(device),
-				(VkImage) vk::get_handle_value(image),
-				(VkDeviceMemory) vk::get_handle_value(device_memory),
-				(VkDeviceSize) offset
+			vkBindImageMemory(
+				vk::get_handle(device),
+				vk::get_handle(image),
+				vk::get_handle(device_memory),
+				offset
 			)
 		};
 	} // try_bind_image_memory

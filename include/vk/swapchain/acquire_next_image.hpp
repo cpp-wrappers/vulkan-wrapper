@@ -2,6 +2,17 @@
 
 #include "handle.hpp"
 
+#include "../function.hpp"
+
+extern "C" VK_ATTR int32 VK_CALL vkAcquireNextImageKHR(
+	handle<vk::device> device,
+	handle<vk::swapchain> swapchain,
+	uint64 timeout,
+	handle<vk::semaphore> semaphore,
+	handle<vk::fence> fence,
+	uint32* image_index
+);
+
 namespace vk {
 
 	template<typename... Args>
@@ -22,7 +33,7 @@ namespace vk {
 			vk::swapchain
 		>(args...);
 		
-		vk::timeout timeout{ UINT64_MAX };
+		vk::timeout timeout{ ~uint64{ 0 } };
 
 		if constexpr(
 			types::are_contain_decayed<vk::timeout>::for_types<Args...>
@@ -55,12 +66,12 @@ namespace vk {
 		uint32 index;
 
 		vk::result result {
-			(int32) vkAcquireNextImageKHR(
-				(VkDevice) vk::get_handle_value(device),
-				(VkSwapchainKHR) vk::get_handle_value(swapchain),
+			vkAcquireNextImageKHR(
+				vk::get_handle(device),
+				vk::get_handle(swapchain),
 				(uint64) timeout,
-				(VkSemaphore) vk::get_handle_value(semaphore),
-				(VkFence) vk::get_handle_value(fence),
+				vk::get_handle(semaphore),
+				vk::get_handle(fence),
 				&index
 			)
 		};

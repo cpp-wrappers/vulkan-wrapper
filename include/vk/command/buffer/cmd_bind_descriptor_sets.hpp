@@ -2,7 +2,7 @@
 
 #include <core/wrapper/of_integer.hpp>
 
-#include "vk/descriptor/set/handle.hpp"
+#include "../../descriptor/set/handle.hpp"
 
 namespace vk {
 
@@ -13,10 +13,22 @@ namespace vk {
 
 #include "handle.hpp"
 
+#include "../../pipeline/bind_point.hpp"
+#include "../../pipeline/layout/handle.hpp"
+#include "../../function.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 
-#include "vk/pipeline/bind_point.hpp"
-#include "vk/pipeline/layout/handle.hpp"
+extern "C" VK_ATTR void VK_CALL vkCmdBindDescriptorSets(
+	handle<vk::command_buffer> command_buffer,
+	vk::pipeline_bind_point pipeline_bind_point,
+	vk::pipeline_layout layout,
+	uint32 first_set,
+	uint32 descriptor_set_count,
+	const handle<vk::descriptor_set>* descriptor_sets,
+	uint32 dynamic_offset_count,
+	const uint32* dynamic_offsets
+);
 
 namespace vk {
 
@@ -52,12 +64,12 @@ namespace vk {
 		}
 
 		vkCmdBindDescriptorSets(
-			(VkCommandBuffer) vk::get_handle_value(command_buffer),
-			(VkPipelineBindPoint) bind_point,
-			(VkPipelineLayout) vk::get_handle_value(pipeline_layout),
+			vk::get_handle(command_buffer),
+			bind_point,
+			vk::get_handle(pipeline_layout),
 			(uint32) first,
 			(uint32) sets.size(),
-			(VkDescriptorSet*) sets.data(),
+			sets.data(),
 			(uint32) dynamic_offset_count,
 			(uint32*) dynamic_offsets
 		);

@@ -5,7 +5,6 @@
 #include "../semaphore/handle.hpp"
 #include "../fence/handle.hpp"
 #include "../timeout.hpp"
-#include "../headers.hpp"
 #include "../result.hpp"
 #include "../count.hpp"
 #include "../handle/get_value.hpp"
