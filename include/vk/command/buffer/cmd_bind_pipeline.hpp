@@ -23,9 +23,17 @@ namespace vk {
 		types::are_contain_one_decayed<vk::pipeline_bind_point>
 	>::for_types<Args...>
 	void cmd_bind_pipeline(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
-		vk::pipeline_bind_point bind_point = elements::decayed<vk::pipeline_bind_point>(args...);
-		auto& pipeline = elements::possibly_guarded_handle_of<vk::pipeline>(args...);
+		auto& command_buffer = elements::possibly_guarded_handle_of<
+			vk::command_buffer
+		>(args...);
+
+		vk::pipeline_bind_point bind_point = elements::decayed<
+			vk::pipeline_bind_point
+		>(args...);
+
+		auto& pipeline = elements::possibly_guarded_handle_of<
+			vk::pipeline
+		>(args...);
 
 		vkCmdBindPipeline(
 			vk::get_handle(command_buffer),

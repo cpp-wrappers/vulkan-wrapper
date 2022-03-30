@@ -24,7 +24,9 @@ namespace vk {
 
 	inline
 	vk::physical_device_properties
-	get_properties(handle<vk::physical_device> physical_device) {
+	get_physical_device_properties(
+		handle<vk::physical_device> physical_device
+	) {
 		vk::physical_device_properties props;
 
 		vkGetPhysicalDeviceProperties(
@@ -42,7 +44,7 @@ namespace vk {
 		>
 	>::for_types<Args...>
 	vk::physical_device_properties
-	get_properties(Args&&... args) {
+	get_physical_device_properties(Args&&... args) {
 		vk::physical_device_properties_2 props{};
 
 		auto physical_device = elements::decayed<
@@ -74,5 +76,7 @@ namespace vk {
 template<typename... Args>
 vk::physical_device_properties
 handle<vk::physical_device>::get_properties(Args&&... args) const {
-	return vk::get_properties(*this, forward<Args>(args)...);
+	return vk::get_physical_device_properties(
+		*this, forward<Args>(args)...
+	);
 }
