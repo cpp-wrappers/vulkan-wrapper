@@ -22,23 +22,17 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<handle<vk::descriptor_set_layout>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
-			auto set_layout = elements::decayed<handle<
-				vk::descriptor_set_layout>
-			>(args...);
+			auto set_layout {
+				elements::decayed<handle<vk::descriptor_set_layout>>(args...)
+			};
 
-			vkDestroyDescriptorSetLayout(
-				vk::get_handle(device),
-				vk::get_handle(set_layout),
-				(void*) nullptr
-			);
+			vkDestroyDescriptorSetLayout(device, set_layout, (void*) nullptr);
 		}
 
 	}; // destroy_t<descriptor_set_layout>

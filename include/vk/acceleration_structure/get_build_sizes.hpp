@@ -18,10 +18,9 @@ typedef void (VK_PTR *PFN_vkGetAccelerationStructureBuildSizesKHR)(
 
 namespace vk {
 
-	template<possibly_guarded_handle_of<vk::device> Device>
-	vk::acceleration_structure_build_sizes_info
+	vk::acceleration_structure_build_sizes_info inline
 	get_acceleration_structure_build_sizes(
-		Device&& device,
+		handle<vk::device> device,
 		vk::acceleration_structure_build_type build_type,
 		const vk::acceleration_structure_build_geometry_info& geometry_info,
 		const uint32* max_primitive_counts
@@ -31,14 +30,12 @@ namespace vk {
 		auto f {
 			(PFN_vkGetAccelerationStructureBuildSizesKHR)
 			vk::get_device_proc_address(
-				vk::get_handle(device),
-				"vkGetAccelerationStructureBuildSizesKHR"
+				device, "vkGetAccelerationStructureBuildSizesKHR"
 			)
 		};
 
 		f(
-			vk::get_handle(device),
-			build_type,
+			device, build_type,
 			&geometry_info,
 			max_primitive_counts,
 			&build_sizes_info

@@ -19,23 +19,17 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<handle<vk::image_view>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
-			auto image_view = elements::decayed<
-				handle<vk::image_view>
-			>(args...);
+			auto image_view {
+				elements::decayed<handle<vk::image_view>>(args...)
+			};
 
-			vkDestroyImageView(
-				vk::get_handle(device),
-				image_view,
-				(void*) nullptr
-			);
+			vkDestroyImageView(device, image_view, (void*) nullptr);
 
 		} // operator ()
 

@@ -7,8 +7,6 @@
 #include "../device/handle.hpp"
 #include "../device_address.hpp"
 
-#include <core/handle/possibly_guarded_of.hpp>
-
 extern "C" VK_ATTR vk::device_address VK_CALL vkGetBufferDeviceAddress(
 	handle<vk::device> device,
 	const vk::buffer_device_address_info* nfo
@@ -16,19 +14,18 @@ extern "C" VK_ATTR vk::device_address VK_CALL vkGetBufferDeviceAddress(
 
 namespace vk {
 
-	template<
-		possibly_guarded_handle_of<vk::device> Device,
-		possibly_guarded_handle_of<vk::buffer> Buffer
-	>
-	vk::device_address
-	get_device_address(Device&& device, Buffer&& buffer) {
+	vk::device_address inline
+	get_device_address(
+		handle<vk::device> device,
+		handle<vk::buffer> buffer
+	) {
 		vk::buffer_device_address_info i{
-			.buffer = vk::get_handle(buffer)
+			.buffer = buffer
 		};
 
 		return vk::device_address {
 			vkGetBufferDeviceAddress(
-				vk::get_handle(device),
+				device,
 				&i
 			)
 		};

@@ -19,18 +19,16 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<handle<vk::device_memory>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-			auto device_memory = elements::decayed<handle<vk::device_memory>>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
+			auto device_memory {
+				elements::decayed<handle<vk::device_memory>>(args...)
+			};
 
-			vkFreeMemory(
-				vk::get_handle(device),
-				vk::get_handle(device_memory),
-				nullptr
-			);
+			vkFreeMemory(device, device_memory, nullptr);
 		} 
 
 	};

@@ -2,30 +2,37 @@
 
 #include "handle.hpp"
 
+#include "../device/handle.hpp"
+#include "../result.hpp"
+#include "../function.hpp"
+
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
-#include "vk/device/handle.hpp"
-#include <core/handle/possibly_guarded_of.hpp>
-#include "vk/result.hpp"
+typedef int32 (VK_PTR* PFN_vkDeferredOperationJoinKHR)(
+	handle<vk::device> device,
+	handle<vk::deferred_operation> operation
+);
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::deferred_operation>
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::deferred_operation>>
 	>::for_types<Args...>
 	vk::result
 	join(Args&&... args) {
-		auto& device =
-			elements::possibly_guarded_handle_of<vk::device>(args...);
-		auto& deferred_operation =
-			elements::possibly_guarded_handle_of<vk::deferred_operation>(args...);
+		auto device = elements::decayed<handle<vk::device>>(args...);
 
-		return (int) vkDeferredOperationJoinKHR(
-			(VkDevice) vk::get_handle_value(device),
-			(VkDeferredOperationKHR) vk::get_handle_value(deferred_operation)
-		);
+		auto deferred_operation {
+			elements::decayed<vk::deferred_operation>(args...)
+		};
+
+		auto f =
+			(PFN_vkDeferredOperationJoinKHR)
+			vk::get_device_proc_address(device, "vkDeferredOperationJoinKHR");
+
+		return f(device, deferred_operation);
 	}
 
 } // vk

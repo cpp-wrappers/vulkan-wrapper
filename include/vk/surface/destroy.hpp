@@ -19,16 +19,16 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::instance>,
+			types::are_contain_one_decayed<handle<vk::instance>>,
 			types::are_contain_one_decayed<handle<vk::surface>>
 		>::for_types<Args...>
 		void operator () (Args&&... args) const {
-			auto& instance = elements::possibly_guarded_handle_of<vk::instance>(args...);
+			auto instance = elements::decayed<handle<vk::instance>>(args...);
 			auto surface = elements::decayed<handle<vk::surface>>(args...);
 
 			vkDestroySurfaceKHR(
-				vk::get_handle(instance),
-				vk::get_handle(surface),
+				instance,
+				surface,
 				nullptr
 			);
 		}

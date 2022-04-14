@@ -17,14 +17,12 @@ namespace vk {
 
 		template<typename... Args>
 		void operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
-			auto layout = elements::decayed<handle<vk::pipeline_layout>>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
+			auto layout {
+				elements::decayed<handle<vk::pipeline_layout>>(args...)
+			};
 
-			vkDestroyPipelineLayout(
-				vk::get_handle(device),
-				vk::get_handle(layout),
-				nullptr
-			);
+			vkDestroyPipelineLayout(device, layout, nullptr);
 		}
 
 	};
