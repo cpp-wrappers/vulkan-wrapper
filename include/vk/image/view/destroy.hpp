@@ -33,7 +33,7 @@ namespace vk {
 
 			vkDestroyImageView(
 				vk::get_handle(device),
-				vk::get_handle(image_view),
+				image_view,
 				(void*) nullptr
 			);
 

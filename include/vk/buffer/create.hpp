@@ -17,7 +17,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<vk::device>,
 			types::are_may_contain_one_decayed<vk::buffer_create_flags>,
 			types::are_contain_one_decayed<vk::buffer_size>,
 			types::are_contain_one_decayed<vk::buffer_usages>,
@@ -26,9 +26,9 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::buffer>>
 		operator () (Args&&... args) const {
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device {
+				elements::decayed<handle<vk::device>>(args...)
+			};
 
 			vk::buffer_create_info ci {
 				.size = elements::decayed<vk::buffer_size>(args...),
@@ -68,7 +68,7 @@ namespace vk {
 
 			vk::result result {
 				vkCreateBuffer(
-					vk::get_handle(device),
+					device,
 					(vk::buffer_create_info*) &ci ,
 					(void*) nullptr,
 					(handle<vk::buffer>*) &buffer

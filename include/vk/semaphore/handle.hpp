@@ -1,10 +1,16 @@
 #pragma once
 
 #include "../handle/base.hpp"
+#include "../create_or_allocate.hpp"
+
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 
 	struct semaphore;
+
+	template<>
+	inline constexpr bool is_creatable<vk::semaphore> = true;
 
 } // vk
 

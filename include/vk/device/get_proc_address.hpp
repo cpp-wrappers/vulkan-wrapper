@@ -11,11 +11,10 @@ vkGetDeviceProcAddr(
 
 namespace vk {
 
-	template<possibly_guarded_handle_of<vk::device> Device>
 	PFN_vkVoidFunction
-	get_device_proc_address(Device&& device, const char* name) {
+	get_device_proc_address(handle<vk::device> device, const char* name) {
 		return vkGetDeviceProcAddr(
-			vk::get_handle(device),
+			device,
 			name
 		);
 	}

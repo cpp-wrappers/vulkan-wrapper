@@ -1,6 +1,5 @@
 #pragma once
 
-#include "handle.hpp"
 #include "create_info.hpp"
 
 #include "../surface/handle.hpp"
@@ -18,7 +17,6 @@ extern "C" VK_ATTR int32 VK_CALL vkCreateSwapchainKHR(
 	handle<vk::swapchain>* swapchain
 );
 
-
 namespace vk {
 
 	template<>
@@ -26,9 +24,9 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
-			types::are_may_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+			types::are_contain_one_decayed<handle<vk::device>>,
+			types::are_contain_one_decayed<handle<vk::surface>>,
+			types::are_may_contain_one_decayed<handle<vk::swapchain>>,
 			types::are_may_contain_decayed<vk::swapchain_create_flag>,
 			types::are_contain_one_decayed<vk::min_image_count>,
 			types::are_contain_one_decayed<vk::format>,
@@ -44,11 +42,12 @@ namespace vk {
 		>::for_types<Args...>
 		vk::expected<handle<vk::swapchain>>
 		operator () (Args&&... args) const {
-			auto& surface =
-				elements::possibly_guarded_handle_of<vk::surface>(args...);
+			auto surface {
+				elements::decayed<handle<vk::surface>>(args...)
+			};
 
 			vk::swapchain_create_info ci {
-				.surface = vk::get_handle(surface),
+				.surface = surface,
 				.min_image_count = elements::decayed<
 					vk::min_image_count
 				>(args...),
@@ -73,7 +72,7 @@ namespace vk {
 				[&](auto f) { ci.composite_alpha.set(f); }
 			);
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::queue_family_index
 				>::for_types<Args...>
@@ -90,26 +89,25 @@ namespace vk {
 					vk::queue_family_indices{ family_indices.data() };
 			}
 
-			if constexpr(
-				types::are_contain_one_possibly_guarded_handle_of<
-					vk::swapchain
+			if constexpr (
+				types::are_contain_one_decayed<
+					handle<vk::swapchain>
 				>::for_types<Args...>
 			) {
-				ci.old_swapchain =
-					vk::get_handle(
-						elements::possibly_guarded_handle_of<
-							vk::swapchain
-						>(args...)
-					);
+				ci.old_swapchain = {
+					elements::decayed<handle<vk::swapchain>>(args...)
+				};
 			}
 
-			auto& device =
-				elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto device {
+				elements::decayed<handle<vk::device>>(args...)
+			};
+
 			handle<vk::swapchain> swapchain;
 
 			vk::result result {
 				vkCreateSwapchainKHR(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&swapchain
@@ -137,13 +135,7 @@ namespace vk {
 				surface_format.format,
 				surface_format.color_space,
 				forward<Args>(args)...
-			)(
-				[]<typename... Others>(Others&&... others) {
-					return vk::create_t<vk::swapchain>{}(
-						forward<Others>(others)...
-					);
-				}
-			);
+			)(vk::create_t<vk::swapchain>{});
 
 		} // operator ()
 

@@ -4,6 +4,8 @@
 
 #include "../../command/pool/handle.hpp"
 
+#include <core/handle/declaration.hpp>
+
 namespace vk {
 
 	struct command_buffer_allocate_info {

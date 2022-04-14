@@ -9,7 +9,6 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/types/are_contain_satisfying_predicate.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 
 VK_ATTR int32 VK_CALL vkAllocateMemory(
 	handle<vk::device> device,
@@ -25,7 +24,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<vk::memory_size>,
 			types::are_contain_one_decayed<vk::memory_type_index>,
 			types::are_may_contain_decayed<vk::memory_allocate_flags_info>
@@ -49,15 +48,16 @@ namespace vk {
 				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::device_memory> device_memory;
 
 			vk::result result {
 				vkAllocateMemory(
-					vk::get_handle(device), &ai, nullptr, &device_memory
+					device,
+					&ai,
+					nullptr,
+					&device_memory
 				)
 			};
 

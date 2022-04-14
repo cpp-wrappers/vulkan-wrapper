@@ -22,7 +22,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_may_contain_one_decayed<vk::sampler_create_flags>,
 			types::are_contain_one_decayed<vk::mag_filter>,
 			types::are_contain_one_decayed<vk::min_filter>,
@@ -145,15 +145,13 @@ namespace vk {
 				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::sampler> sampler;
 
 			vk::result result {
 				vkCreateSampler(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&sampler

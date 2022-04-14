@@ -51,7 +51,7 @@ namespace vk {
 		>(args...);
 
 		vkGetPhysicalDeviceFeatures2(
-			vk::get_handle(physical_device),
+			physical_device,
 			&features
 		);
 

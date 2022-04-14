@@ -21,7 +21,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<vk::code_size>,
 			types::are_contain_one_decayed<vk::code>
 		>::for_types<Args...>
@@ -32,13 +32,13 @@ namespace vk {
 			ci.code_size = elements::decayed<vk::code_size>(args...);
 			ci.code = elements::decayed<vk::code>(args...);
 
-			auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::shader_module> shader_module;
 
 			vk::result result {
 				vkCreateShaderModule(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&shader_module

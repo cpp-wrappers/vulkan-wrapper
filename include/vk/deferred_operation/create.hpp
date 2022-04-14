@@ -8,7 +8,6 @@
 #include "../device/handle.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateDeferredOperationKHR(
 	handle<vk::device> device,
@@ -21,14 +20,13 @@ namespace vk {
 	template<>
 	struct vk::create_t<vk::deferred_operation> {
 
-		template<possibly_guarded_handle_of<vk::device> Device>
 		vk::expected<handle<deferred_operation>>
-		operator () (Device&& device) const {
+		operator () (handle<vk::device> device) const {
 			handle<vk::deferred_operation> deferred_operation;
 
 			vk::result result {
-				(int) vkCreateDeferredOperationKHR(
-					vk::get_handle(device),
+				vkCreateDeferredOperationKHR(
+					device,
 					nullptr,
 					&deferred_operation
 				)

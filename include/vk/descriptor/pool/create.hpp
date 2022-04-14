@@ -25,7 +25,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_may_contain_one_decayed<
 				vk::descriptor_pool_create_flags
 			>,
@@ -54,15 +54,13 @@ namespace vk {
 				>(args...);
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::descriptor_pool> descriptor_pool;
 
 			vk::result result {
 				vkCreateDescriptorPool(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&descriptor_pool

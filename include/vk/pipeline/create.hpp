@@ -11,7 +11,6 @@
 
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateGraphicsPipelines(
 	handle<vk::device> device,
@@ -31,12 +30,10 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_possibly_guarded_handle_of<
-				vk::pipeline_layout
-			>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
-			types::are_may_contain_one_possibly_guarded_handle_of<vk::pipeline>,
+			types::are_contain_one_decayed<handle<vk::device>>,
+			types::are_contain_one_decayed<handle<vk::pipeline_layout>>,
+			types::are_contain_one_decayed<handle<vk::render_pass>>,
+			types::are_may_contain_one_decayed<handle<vk::pipeline>>,
 			types::are_contain_range_of<vk::pipeline_shader_stage_create_info>,
 			types::are_may_contain_decayed<vk::pipeline_create_flag>,
 			types::are_may_contain_one_decayed<
@@ -77,20 +74,20 @@ namespace vk {
 				>(args...)
 			};
 
-			auto& render_pass = elements::possibly_guarded_handle_of<
-				vk::render_pass
-			>(args...);
+			auto render_pass {
+				elements::decayed<handle<vk::render_pass>>(args...)
+			};
 
-			auto& layout = elements::possibly_guarded_handle_of<
-				vk::pipeline_layout
-			>(args...);
+			auto layout {
+				elements::decayed<handle<vk::pipeline_layout>>(args...)
+			};
 
 			vk::subpass subpass = elements::decayed<vk::subpass>(args...);
 
 			vk::graphics_pipeline_create_info ci {
 				.rasterization_state = &prsci,
-				.layout = vk::get_handle(layout),
-				.render_pass = vk::get_handle(render_pass),
+				.layout = layout,
+				.render_pass = render_pass,
 				.subpass = subpass
 			};
 
@@ -196,24 +193,22 @@ namespace vk {
 			}
 
 			if constexpr (
-				types::are_contain_one_possibly_guarded_handle_of<
-					vk::pipeline
+				types::are_contain_one_decayed<
+					handle<vk::pipeline>
 				>::for_types<Args...>
 			) {
-				ci.base_pipeline = vk::get_handle(
-					elements::possibly_guarded_handle_of<vk::pipeline>(args...)
-				);
+				ci.base_pipeline = {
+					elements::decayed<handle<vk::pipeline>>(args...)
+				};
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::pipeline> pipeline;
 
 			vk::result result {
 				vkCreateGraphicsPipelines(
-					vk::get_handle(device),
+					device,
 					nullptr,
 					(uint32) 1,
 					&ci,
@@ -240,17 +235,11 @@ namespace vk {
 			return elements::pass_not_satisfying_type_predicate<
 				type::is_same_as<vk::primitive_topology>
 			>(
-				vk::pipeline_input_assembly_state_create_info{
+				vk::pipeline_input_assembly_state_create_info {
 					.topology = topology
 				},
 				forward<Args>(args)...
-			)(
-				[]<typename... Others>(Others&&... others) {
-					return vk::create_t<vk::pipeline>{}(
-						forward<Others>(others)...
-					);
-				}
-			);
+			)(vk::create_t<vk::pipeline>{});
 		}
 
 	}; // create_t<pipeline>

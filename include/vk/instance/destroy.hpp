@@ -17,7 +17,7 @@ namespace vk {
 
 		void operator () (handle<vk::instance> instance) const {
 			vkDestroyInstance(
-				vk::get_handle(instance),
+				instance,
 				nullptr
 			);
 		}

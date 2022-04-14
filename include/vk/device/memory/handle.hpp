@@ -3,6 +3,8 @@
 #include "../../handle/base.hpp"
 #include "../../create_or_allocate.hpp"
 
+#include <core/handle/declaration.hpp>
+
 namespace vk {
 
 	struct device_memory;

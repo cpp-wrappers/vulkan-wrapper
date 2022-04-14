@@ -1,10 +1,16 @@
 #pragma once
 
-#include "vk/handle/base.hpp"
+#include "../handle/base.hpp"
+#include "../create_or_allocate.hpp"
+
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 
 	struct pipeline;
+
+	template<>
+	inline constexpr bool is_creatable<vk::pipeline> = true;
 
 } // vk
 

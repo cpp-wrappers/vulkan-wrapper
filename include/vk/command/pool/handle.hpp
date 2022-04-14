@@ -3,8 +3,10 @@
 #include "../../handle/base.hpp"
 #include "../../result.hpp"
 #include "../../command/buffer/level.hpp"
+#include "../../create_or_allocate.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 
@@ -12,6 +14,9 @@ namespace vk {
 	struct device;
 
 	struct command_pool;
+
+	template<>
+	constexpr inline bool is_creatable<vk::command_pool> = true;
 
 } // vk
 
@@ -35,7 +40,7 @@ struct handle<vk::command_pool> : vk::handle_base<vk::non_dispatchable> {
 
 template<typename... Args>
 void handle<vk::command_pool>::allocate_command_buffers(Args&&... args) {
-	vk::allocate_command_buffers(forward<Args>(args)...);
+	vk::allocate_command_buffers(*this, forward<Args>(args)...);
 }
 
 template<range::of<handle<vk::command_buffer>> CommandBuffers>

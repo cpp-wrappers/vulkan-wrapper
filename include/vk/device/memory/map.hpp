@@ -9,6 +9,7 @@
 #include "../../memory_size.hpp"
 #include "../../unexpected_handler.hpp"
 
+#include <core/handle/declaration.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkMapMemory(
@@ -17,27 +18,27 @@ extern "C" VK_ATTR int32 VK_CALL vkMapMemory(
 	vk::memory_offset offset,
 	vk::memory_size size,
 	int32 flags,
-	void** dataata
+	void** data
 );
 
 namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::device_memory>>,
 		types::are_may_contain_one_decayed<vk::memory_offset>,
 		types::are_contain_one_decayed<vk::memory_size>,
 		types::are_contain_one_decayed<void**>
 	>::for_types<Args...>
 	vk::result try_map_device_memory(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<
-			vk::device
-		>(args...);
+		auto device {
+			elements::decayed<handle<vk::device>>(args...)
+		};
 
-		auto& device_memory = elements::possibly_guarded_handle_of<
-			vk::device_memory
-		>(args...);
+		auto device_memory {
+			elements::decayed<handle<vk::device_memory>>(args...)
+		};
 
 		vk::memory_offset offset{ 0 };
 
@@ -51,15 +52,15 @@ namespace vk {
 
 		return {
 			(int32) vkMapMemory(
-				vk::get_handle(device),
-				vk::get_handle(device_memory),
+				device,
+				device_memory,
 				offset,
 				size,
 				0,
 				data
 			)
 		};
-	}
+	} // try_map_device_memory
 
 	template<typename... Args>
 	void map_device_memory(Args&&... args) {

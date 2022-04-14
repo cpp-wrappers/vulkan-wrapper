@@ -6,7 +6,7 @@ namespace vk {
 	inline constexpr bool is_allocatable = false;
 
 	template<typename ObjectType>
-	inline constexpr bool is_creatable = !is_allocatable<ObjectType>;
+	inline constexpr bool is_creatable = false;
 
 	template<typename ObjectType>
 	requires(vk::is_creatable<ObjectType>)

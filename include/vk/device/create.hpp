@@ -134,24 +134,41 @@ namespace vk {
 			types::are_contain_one_decayed<vk::queue_priority>,
 			types::are_may_contain_decayed<vk::extension_name>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
-			types::are_may_contain_decayed_satisfying_predicate<vk::is_physical_device_features>
+			types::are_may_contain_decayed_satisfying_predicate<
+				vk::is_physical_device_features
+			>
 		>::for_types<Args...>
 		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
-			nuint extensions_count = types::count_of_decayed<vk::extension_name>::for_types<Args...>;
+			nuint extensions_count = types::count_of_decayed<
+				vk::extension_name>
+			::for_types<Args...>;
+
 			vk::extension_name extension_names[extensions_count];
+
 			nuint extensions = 0;
 
 			elements::for_each_decayed<vk::extension_name>(args...)(
-				[&](vk::extension_name name) { extension_names[extensions++] = name; }
+				[&](vk::extension_name name) {
+					extension_names[extensions++] = name;
+				}
 			);
 
-			vk::queue_family_index family_index = elements::decayed<vk::queue_family_index>(args...);
-			vk::queue_priority priority = elements::decayed<vk::queue_priority>(args...);
+			vk::queue_family_index family_index = elements::decayed<
+				vk::queue_family_index
+			>(args...);
+
+			vk::queue_priority priority = elements::decayed<
+				vk::queue_priority
+			>(args...);
 
 			vk::queue_priorities priorities { &priority };
 
-			vk::queue_create_info ci { family_index, priorities, vk::queue_count{ 1 } };
+			vk::queue_create_info ci {
+				family_index,
+				priorities,
+				vk::queue_count{ 1 }
+			};
 
 			return elements::pass_not_satisfying_type_predicate<
 				type::disjuncted_predicates<
@@ -162,12 +179,8 @@ namespace vk {
 			>(
 				array{ ci },
 				span{ extension_names, extensions_count },
-				args...
-			)(
-				[]<typename... NewArgs>(NewArgs&&... args) {
-					return vk::create_t<vk::device>{}(forward<NewArgs>(args)...);
-				}
-			);
+				forward<Args>(args)...
+			)(vk::create_t<vk::device>{});
 		}
 
 	};

@@ -10,7 +10,6 @@
 #include "../surface/format.hpp"
 #include "../surface/handle.hpp"
 #include "../handle/base.hpp"
-#include "../handle/get_value.hpp"
 #include "../result.hpp"
 #include "../queue_family_index.hpp"
 #include "../count.hpp"
@@ -20,7 +19,6 @@
 #include "../memory_type_index.hpp"
 #include "../unexpected_handler.hpp"
 
-#include <core/handle/possibly_guarded_of.hpp>
 #include <core/forward.hpp>
 #include <core/span.hpp>
 #include <core/range/of_value_type_same_as.hpp>
@@ -40,10 +38,6 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	template<typename... Args>
 	handle<vk::device>
 	create_device(Args&&... args) const;
-
-	template<typename... Args>
-	guarded_handle<vk::device>
-	create_guarded_device(Args&&... args) const;
 
 	template<typename... Args>
 	vk::physical_device_properties
@@ -143,41 +137,42 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	vk::count
 	get_surface_formats(Args&&... args) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface>
 	vk::surface_format
-	get_first_surface_format(Surface& surface) const;
+	get_first_surface_format(handle<vk::surface> surface) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface>
 	vk::count
-	get_surface_formats_count(Surface& surface) const;
+	get_surface_formats_count(handle<vk::surface> surface) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+	template<typename F>
 	vk::count
-	view_surface_formats(Surface& surface, vk::count count, F&& f) const;
+	view_surface_formats(
+		handle<vk::surface> surface, vk::count count, F&& f
+	) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+	template<typename F>
 	vk::count
-	view_surface_formats(Surface& surface, F&& f) const;
+	view_surface_formats(handle<vk::surface> surface, F&& f) const;
 
 	template<typename... Args>
 	vk::count
 	get_surface_present_modes(Args&&... args) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface>
 	vk::count
-	get_surface_present_mode_count(Surface& surface) const;
+	get_surface_present_mode_count(handle<vk::surface> surface) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+	template<typename F>
 	vk::count
-	view_surface_present_modes(Surface& surface, vk::count count, F&& f) const;
+	view_surface_present_modes(
+		handle<vk::surface> surface, vk::count count, F&& f
+	) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+	template<typename F>
 	vk::count
-	view_surface_present_modes(Surface& surface, F&& f) const;
+	view_surface_present_modes(handle<vk::surface> surface, F&& f) const;
 
-	template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+	template<typename F>
 	vk::count
-	for_each_surface_presesnt_mode(Surface& surface, F&& f) const;
+	for_each_surface_presesnt_mode(handle<vk::surface> surface, F&& f) const;
 
 	template<typename... Args>
 	bool
@@ -199,20 +194,9 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 #include "enumerate_extension_properties.hpp"
 
 #include "../device/create.hpp"
-#include "../device/guarded_handle.hpp"
 
 template<typename... Args>
 handle<vk::device>
 handle<vk::physical_device>::create_device(Args&&... args) const {
 	return vk::create<vk::device>(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-guarded_handle<vk::device>
-handle<vk::physical_device>::create_guarded_device(Args&&... args) const {
-	auto result = vk::create<vk::device>(*this, forward<Args>(args)...);
-	if(result.is_unexpected()) {
-		vk::unexpected_handler(result.get_unexpected());
-	}
-	return { result.get_expected() };
 }

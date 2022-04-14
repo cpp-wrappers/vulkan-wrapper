@@ -9,8 +9,8 @@ namespace vk {
 
 		template<typename Type>
 		requires types_are_same<int32, remove_reference<Type>>
-		result(Type val) :
-			wrapper::of_integer<int32, struct vk_result>{ val }
+		result(Type code) :
+			wrapper::of_integer<int32, struct vk_result>{ code }
 		{}
 
 		bool  suboptimal() const { return (int32) *this == 1000001003; }

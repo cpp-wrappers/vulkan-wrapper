@@ -2,6 +2,7 @@
 
 #include "handle.hpp"
 
+#include "../device/handle.hpp"
 #include "../unexpected_handler.hpp"
 #include "../function.hpp"
 
@@ -18,19 +19,17 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::swapchain>,
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::swapchain>>,
 		types::are_contain_range_of<handle<vk::image>>
 	>::for_types<Args...>
 	vk::expected<vk::count>
 	try_get_swapchain_images(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<
-			vk::device
-		>(args...);
+		auto device {
+			elements::decayed<handle<vk::device>>(args...)
+		};
 
-		auto& swapchain = elements::possibly_guarded_handle_of<
-			vk::swapchain
-		>(args...);
+		auto swapchain = elements::decayed<handle<vk::swapchain>>(args...);
 
 		auto& images = elements::range_of<handle<vk::image>>(args...);
 
@@ -38,8 +37,8 @@ namespace vk {
 
 		vk::result result {
 			vkGetSwapchainImagesKHR(
-				vk::get_handle(device),
-				vk::get_handle(swapchain),
+				device,
+				swapchain,
 				&count,
 				images.data()
 			)
@@ -65,4 +64,42 @@ namespace vk {
 template<typename... Args>
 vk::count handle<vk::swapchain>::get_images(Args&&... args) const {
 	return vk::get_swapchain_images(*this, forward<Args>(args)...);
+}
+
+vk::count inline
+handle<vk::swapchain>::get_image_count(handle<vk::device> device) const {
+	return get_images(device, span<handle<vk::image>>{ nullptr, 0 });
+}
+
+decltype(auto)
+handle<vk::swapchain>::
+view_images(handle<vk::device> device, vk::count count, auto&& f) const {
+	handle<vk::image> images[(uint32)count];
+	count = get_images(device, span{ images, (uint32)count });
+	return f(span{ images, (uint32)count });
+}
+
+template<typename F>
+decltype(auto)
+handle<vk::swapchain>::view_images(handle<vk::device> device, F&& f) const {
+	auto count = get_image_count(device);
+	return view_images(device, count, forward<F>(f));
+}
+
+void
+handle<vk::swapchain>::for_each_image(
+	handle<vk::device> device, vk::count count, auto&& f
+) const {
+	view_images(device, count, [&](auto view) {
+		for(handle<vk::image> image : view) {
+			f(image);
+		}
+	});
+}
+
+template<typename F>
+void
+handle<vk::swapchain>::for_each_image(handle<vk::device> device, F&& f) const {
+	auto count = get_image_count(device);
+	for_feach_image(device, count, forward<F>(f));
 }

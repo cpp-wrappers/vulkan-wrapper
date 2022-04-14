@@ -3,6 +3,8 @@
 #include "../result.hpp"
 #include "../handle/base.hpp"
 
+#include <core/handle/declaration.hpp>
+
 namespace vk {
 
 	struct queue;

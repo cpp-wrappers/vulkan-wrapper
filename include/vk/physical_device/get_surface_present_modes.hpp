@@ -14,18 +14,16 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
+		types::are_contain_one_decayed<handle<vk::surface>>,
 		types::are_contain_range_of<vk::present_mode>
 	>::for_types<Args...>
 	vk::expected<vk::count>
 	try_get_physical_device_surface_present_modes(Args&&... args) {
-		handle<vk::physical_device> physical_device = elements::decayed<
-			handle<vk::physical_device>
-		>(args...);
+		auto physical_device {
+			elements::decayed<handle<vk::physical_device>>(args...)
+		};
 
-		auto& surface = elements::possibly_guarded_handle_of<
-			vk::surface
-		>(args...);
+		auto surface = elements::decayed<handle<vk::surface>>(args...);
 
 		auto& range = elements::range_of<vk::present_mode>(args...);
 
@@ -34,7 +32,7 @@ namespace vk {
 		vk::result result {
 			vkGetPhysicalDeviceSurfacePresentModesKHR(
 				physical_device,
-				vk::get_handle(surface),
+				surface,
 				&count,
 				range.data()
 			)
@@ -50,9 +48,11 @@ namespace vk {
 		auto result = vk::try_get_physical_device_surface_present_modes(
 			forward<Args>(args)...
 		);
+
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
+
 		return result.get_expected();
 	}
 
@@ -67,27 +67,32 @@ get_surface_present_modes(Args&&... args) const {
 	);
 }
 
-template<possibly_guarded_handle_of<vk::surface> Surface>
 vk::count
 handle<vk::physical_device>::
-get_surface_present_mode_count(Surface& surface) const {
-	return get_surface_present_modes(surface, span<vk::present_mode>{ nullptr, 0 });
+get_surface_present_mode_count(handle<vk::surface> surface) const {
+	return get_surface_present_modes(
+		surface, span<vk::present_mode>{ nullptr, 0 }
+	);
 }
 
-template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+template<typename F>
 vk::count
 handle<vk::physical_device>::
-view_surface_present_modes(Surface& surface, vk::count count, F&& f) const {
+view_surface_present_modes(
+	handle<vk::surface> surface, vk::count count, F&& f
+) const {
 	vk::present_mode present_modes[(uint32) count];
-	count = get_surface_present_modes(surface, span{ present_modes, (uint32) count });
+	count = get_surface_present_modes(
+		surface, span{ present_modes, (uint32) count }
+	);
 	f(span{ present_modes, (uint32) count});
 	return count;
 }
 
-template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+template<typename F>
 vk::count
 handle<vk::physical_device>::
-view_surface_present_modes(Surface& surface, F&& f) const {
+view_surface_present_modes(handle<vk::surface> surface, F&& f) const {
 	return view_surface_present_modes(
 		surface,
 		get_surface_present_mode_count(surface),
@@ -96,10 +101,10 @@ view_surface_present_modes(Surface& surface, F&& f) const {
 }
 
 
-template<possibly_guarded_handle_of<vk::surface> Surface, typename F>
+template<typename F>
 vk::count
 handle<vk::physical_device>::
-for_each_surface_presesnt_mode(Surface& surface, F&& f) const {
+for_each_surface_presesnt_mode(handle<vk::surface> surface, F&& f) const {
 	return view_surface_present_modes(surface, [&](auto view) {
 		for(auto present_mode : view) {
 			f(present_mode);

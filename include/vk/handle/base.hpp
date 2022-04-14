@@ -1,9 +1,8 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/handle/declaration.hpp>
-
 #include "type.hpp"
+
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -12,16 +11,22 @@ namespace vk {
 
 	template<>
 	struct handle_base<vk::dispatchable> {
-		void* value;
+		void* m_value = nullptr;
 
-		void reset_value() { value = nullptr; }
+		auto& value() { return m_value; }
+		auto& value() const { return m_value; }
+
+		void reset_value() { value() = nullptr; }
 	};
 
 	template<>
 	struct handle_base<vk::non_dispatchable> {
-		uint64 value;
+		uint64 m_value = 0;
 
-		void reset_value() { value = 0; }
+		auto& value() { return m_value; }
+		auto& value() const { return m_value; }
+
+		void reset_value() { value() = 0; }
 	};
 
 } // vk

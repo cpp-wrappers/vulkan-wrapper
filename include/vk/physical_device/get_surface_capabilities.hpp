@@ -4,7 +4,6 @@
 #include "../surface/capabilities.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
@@ -17,25 +16,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
+		types::are_contain_one_decayed<handle<vk::surface>>,
 		types::are_contain_one_decayed<handle<vk::physical_device>>
 	>::for_types<Args...>
 	vk::expected<vk::surface_capabilities>
 	try_get_physical_device_surface_capabilities(Args&&... args) {
-		auto& surface = elements::possibly_guarded_handle_of<
-			vk::surface
-		>(args...);
+		auto surface {
+			elements::decayed<handle<vk::surface>>(args...)
+		};
 
-		handle<vk::physical_device> physical_device = elements::decayed<
-			handle<vk::physical_device>
-		>(args...);
+		auto physical_device {
+			elements::decayed<handle<vk::physical_device>>(args...)
+		};
 
 		vk::surface_capabilities caps;
 
 		vk::result result {
 			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 				physical_device,
-				vk::get_handle(surface),
+				surface,
 				&caps
 			)
 		};

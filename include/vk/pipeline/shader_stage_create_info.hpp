@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../handle/get_value.hpp"
 #include "../shader/stage.hpp"
 #include "../shader/module/handle.hpp"
 
@@ -9,7 +8,6 @@
 #include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -33,22 +31,15 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<
-				vk::shader_module
-			>,
+			types::are_contain_one_decayed<handle<vk::shader_module>>,
 			types::are_contain_one_decayed<vk::shader_stage>,
 			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>
-		pipeline_shader_stage_create_info(Args&&... args) {
-			stages = elements::decayed<vk::shader_stage>(args...);
-
-			auto& shader_module {
-				elements::possibly_guarded_handle_of<vk::shader_module>(args...)
-			};
-			module = vk::get_handle(shader_module);
-			entrypoint_name = elements::decayed<vk::entrypoint_name>(args...);
-
-		} // constructor
+		pipeline_shader_stage_create_info(Args&&... args) :
+			stages { elements::decayed<vk::shader_stage>(args...) },
+			module { elements::decayed<handle<vk::shader_module>>(args...) },
+			entrypoint_name { elements::decayed<vk::entrypoint_name>(args...) }
+		{}
 
 	}; // pipeline_shader_stage_info
 

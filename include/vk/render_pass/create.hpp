@@ -22,7 +22,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_range_of<vk::subpass_description>,
 			types::are_may_contain_range_of<vk::subpass_dependency>,
 			types::are_may_contain_range_of<vk::attachment_description>
@@ -31,45 +31,48 @@ namespace vk {
 		operator () (Args&&... args) const {
 			vk::render_pass_create_info ci{};
 
-			auto& subpass_descriptions = elements::range_of<
-				vk::subpass_description
-			>(args...);
+			auto& subpass_descriptions {
+				elements::range_of<vk::subpass_description>(args...)
+			};
+
 			ci.subpass_count = (uint32) subpass_descriptions.size();
 			ci.subpasses = subpass_descriptions.data();
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::subpass_dependency
 				>::for_types<Args...>
 			) {
-				auto& subpass_dependencies = elements::range_of<
-					vk::subpass_dependency
-				>(args...);
+				auto& subpass_dependencies {
+					elements::range_of<vk::subpass_dependency>(args...)
+				};
+
 				ci.dependency_count = (uint32) subpass_dependencies.size();
 				ci.dependencies = subpass_dependencies.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::attachment_description
 				>::for_types<Args...>
 			) {
-				auto& attachment_descriptions = elements::range_of<
-					vk::attachment_description
-				>(args...);
+				auto& attachment_descriptions {
+					elements::range_of<vk::attachment_description>(args...)
+				};
+
 				ci.attachment_count = (uint32) attachment_descriptions.size();
 				ci.attachments = attachment_descriptions.data();
 			}
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device {
+				elements::decayed<handle<vk::device>>(args...)
+			};
 
 			handle<vk::render_pass> render_pass;
 
 			vk::result result {
 				vkCreateRenderPass(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&render_pass

@@ -1,15 +1,13 @@
 #pragma once
 
+#include "../../buffer/handle.hpp"
+#include "../../queue_family_index.hpp"
+#include "../../access.hpp"
+#include "../../memory_offset.hpp"
+#include "../../memory_size.hpp"
+
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-#include "vk/buffer/handle.hpp"
-#include "vk/queue_family_index.hpp"
-#include "vk/access.hpp"
-#include "vk/memory_offset.hpp"
-#include "vk/memory_size.hpp"
-#include "vk/handle/get.hpp"
-#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -35,19 +33,14 @@ namespace vk {
 			types::are_may_contain_one_decayed<vk::src_queue_family_index>,
 			types::are_may_contain_one_decayed<vk::dst_queue_family_index>,
 			// TODO
-			types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
+			types::are_contain_one_decayed<vk::buffer>,
 			types::are_may_contain_one_decayed<vk::memory_offset>,
 			types::are_contain_one_decayed<vk::memory_size>
 		>::for_types<Args...>
-		buffer_memory_barrier(Args&&... args)
-		:
+		buffer_memory_barrier(Args&&... args) :
 			src_acccess{ elements::decayed<vk::src_access>(args...) },
 			dst_acccess{ elements::decayed<vk::dst_access>(args...) },
-			buffer {
-				vk::get_handle(
-					elements::possibly_guarded_handle_of<vk::buffer>(args...)
-				)
-			},
+			buffer { elements::decayed<handle<vk::buffer>>(args...) },
 			size{ elements::decayed<vk::memory_size>(args...) }
 		{
 			if constexpr (
@@ -65,9 +58,9 @@ namespace vk {
 					vk::dst_queue_family_index
 				>::for_types<Args...>
 			) {
-				dst_queue_family_index = elements::decayed<
-					vk::dst_queue_family_index
-				>(args...);
+				dst_queue_family_index = {
+					elements::decayed<vk::dst_queue_family_index>(args...)
+				};
 			}
 
 			if constexpr (

@@ -1,19 +1,15 @@
 #pragma once
 
 #include "../handle/base.hpp"
-#include "../handle/get_value.hpp"
 #include "../create_or_allocate.hpp"
 #include "../queue_family_index.hpp"
 #include "../result.hpp"
 #include "../memory_requirements.hpp"
 #include "../timeout.hpp"
 #include "../function.hpp"
+#include "../unexpected_handler.hpp"
 
-#include <core/forward.hpp>
-#include <core/exchange.hpp>
-#include <core/range/of_value_type_same_as.hpp>
-#include <core/meta/elements/one_of.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 
@@ -39,7 +35,10 @@ namespace vk {
 	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
 	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
 
-}
+	template<>
+	inline constexpr bool is_creatable<vk::device> = true;
+
+} // vk
 
 extern "C" VK_ATTR int32 VK_CALL vkDeviceWaitIdle(
 	handle<vk::device> device
@@ -55,37 +54,32 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 	) const;
 
 	template<typename ObjectType, typename... Args>
-	vk::expected<handle<ObjectType>>
+	handle<ObjectType>
 	create(Args&&... args) const {
-		return vk::create<ObjectType>(*this, forward<Args>(args)...);
+		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
 	}
 
 	template<typename ObjectType, typename... Args>
 	vk::expected<handle<ObjectType>>
 	allocate(Args&&... args) const {
-		return vk::allocate<ObjectType>(*this, forward<Args>(args)...);
-	}
-
-	vk::result try_map_memory(
-		possibly_guarded_handle_of<vk::device_memory> auto& memory,
-		vk::device_size offset,
-		vk::device_size size,
-		void** data
-	) {
-		return {
-			vkMapMemory(
-				vk::get_handle(*this),
-				vk::get_handle(memory),
-				offset,
-				size,
-				0,
-				(void**) data
-			)
-		};
+		auto result = vk::allocate<ObjectType>(*this, forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
 	}
 
 	vk::result try_wait_idle() const {
 		return { vkDeviceWaitIdle(*this) };
+	}
+
+	void wait_idle() const {
+		auto result = try_wait_idle();
+		if(result.error()) vk::unexpected_handler(result);
 	}
 
 	template<typename... Args>

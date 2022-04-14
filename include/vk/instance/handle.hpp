@@ -4,6 +4,7 @@
 #include "../handle/base.hpp"
 #include "../count.hpp"
 #include "../result.hpp"
+#include "../create_or_allocate.hpp"
 
 #include <core/forward.hpp>
 #include <core/span.hpp>
@@ -11,11 +12,15 @@
 #include <core/array.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 
 	struct debug_report_callback;
 	struct instance;
+
+	template<>
+	inline constexpr bool is_creatable<vk::instance> = true;
 
 } // vk
 

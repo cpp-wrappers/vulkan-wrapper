@@ -11,11 +11,10 @@ vkGetInstanceProcAddr(
 
 namespace vk {
 
-	template<possibly_guarded_handle_of<vk::instance> Instance>
 	PFN_vkVoidFunction
-	get_instance_proc_address(Instance&& instance, const char* name) {
+	get_instance_proc_address(handle<vk::instance> instance, const char* name) {
 		return vkGetInstanceProcAddr(
-			vk::get_handle(instance),
+			instance,
 			name
 		);
 	}

@@ -4,8 +4,6 @@
 #include "properties_2.hpp"
 #include "extension_properties.hpp"
 
-#include "../handle/get_value.hpp"
-
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
@@ -30,7 +28,7 @@ namespace vk {
 		vk::physical_device_properties props;
 
 		vkGetPhysicalDeviceProperties(
-			vk::get_handle(physical_device),
+			physical_device,
 			&props
 		);
 		return props;
@@ -63,7 +61,7 @@ namespace vk {
 		);
 
 		vkGetPhysicalDeviceProperties2(
-			vk::get_handle(physical_device),
+			physical_device,
 			&props
 		);
 

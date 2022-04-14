@@ -18,27 +18,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::pipeline>,
+		types::are_contain_one_decayed<handle<vk::command_buffer>>,
+		types::are_contain_one_decayed<handle<vk::pipeline>>,
 		types::are_contain_one_decayed<vk::pipeline_bind_point>
 	>::for_types<Args...>
 	void cmd_bind_pipeline(Args&&... args) {
-		auto& command_buffer = elements::possibly_guarded_handle_of<
-			vk::command_buffer
-		>(args...);
+		auto command_buffer {
+			elements::decayed<handle<vk::command_buffer>>(args...)
+		};
 
-		vk::pipeline_bind_point bind_point = elements::decayed<
-			vk::pipeline_bind_point
-		>(args...);
+		vk::pipeline_bind_point bind_point {
+			elements::decayed<vk::pipeline_bind_point>(args...)
+		};
 
-		auto& pipeline = elements::possibly_guarded_handle_of<
-			vk::pipeline
-		>(args...);
+		auto pipeline = elements::decayed<handle<vk::pipeline>>(args...);
 
 		vkCmdBindPipeline(
-			vk::get_handle(command_buffer),
+			command_buffer,
 			bind_point,
-			vk::get_handle(pipeline)
+			pipeline
 		);
 	}
 

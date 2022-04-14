@@ -19,34 +19,39 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::command_pool>>,
 		types::are_contain_one_decayed<vk::command_buffer_level>,
 		types::are_contain_range_of<handle<vk::command_buffer>>
 	>::for_types<Args...>
 	vk::result try_allocate_command_buffers(Args&&... args) {
 		vk::command_buffer_allocate_info ai {};
 
-		auto& command_buffers = elements::range_of<handle<vk::command_buffer>>(args...);
+		auto& command_buffers {
+			elements::range_of<handle<vk::command_buffer>>(args...)
+		};
 
-		ai.command_pool = vk::get_handle(elements::possibly_guarded_handle_of<vk::command_pool>(args...));
+		ai.command_pool = elements::decayed<handle<vk::command_pool>>(args...);
 		ai.level = elements::decayed<vk::command_buffer_level>(args...);
 		ai.count = (uint32) command_buffers.size();
 
-		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+		auto device = elements::decayed<handle<vk::device>>(args...);
 
 		return {
 			vkAllocateCommandBuffers(
-				vk::get_handle(device),
+				device,
 				&ai,
 				command_buffers.data()
 			)
 		};
-	}
+	} // try_allocate_command_buffers
 
 	template<typename... Args>
 	void allocate_command_buffers(Args&&... args) {
-		vk::result result = vk::try_allocate_command_buffers(forward<Args>(args)...);
+		vk::result result {
+			vk::try_allocate_command_buffers(forward<Args>(args)...)
+		};
+
 		if(result.error()) vk::unexpected_handler(result);
 	}
 
@@ -55,8 +60,8 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::command_pool>,
+			types::are_contain_one_decayed<handle<vk::device>>,
+			types::are_contain_one_decayed<handle<vk::command_pool>>,
 			types::are_contain_one_decayed<vk::command_buffer_level>
 		>::for_types<Args...>
 		vk::expected<handle<vk::command_buffer>>

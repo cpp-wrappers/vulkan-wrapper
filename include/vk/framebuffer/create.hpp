@@ -22,8 +22,8 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-			types::are_contain_one_possibly_guarded_handle_of<vk::render_pass>,
+			types::are_contain_one_decayed<handle<vk::device>>,
+			types::are_contain_one_decayed<handle<vk::render_pass>>,
 			types::are_contain_range_of<handle<vk::image_view>>,
 			types::are_contain_one_decayed<vk::extent<3>>
 		>::for_types<Args...>
@@ -33,12 +33,12 @@ namespace vk {
 				handle<vk::image_view>
 			>(args...);
 
-			auto& render_pass = elements::possibly_guarded_handle_of<
-				vk::render_pass
-			>(args...);
+			auto render_pass {
+				elements::decayed<handle<vk::render_pass>>(args...)
+			};
 
 			vk::framebuffer_create_info ci {
-				.render_pass = vk::get_handle(render_pass),
+				.render_pass = render_pass,
 				.attachment_count = (uint32) attachments.size(),
 				.attachments = attachments.data()
 			};
@@ -49,15 +49,15 @@ namespace vk {
 			ci.height = extent.height();
 			ci.layers = extent.depth();
 
-			auto& device = elements::possibly_guarded_handle_of<
-				vk::device
-			>(args...);
+			auto device {
+				elements::decayed<handle<vk::device>>(args...)
+			};
 
 			handle<vk::framebuffer> framebuffer;
 
 			vk::result result {
 				vkCreateFramebuffer(
-					vk::get_handle(device),
+					device,
 					&ci,
 					nullptr,
 					&framebuffer

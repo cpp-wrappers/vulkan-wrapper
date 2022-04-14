@@ -1,6 +1,8 @@
 #pragma once
 
-#include "vk/handle/base.hpp"
+#include "../../handle/base.hpp"
+
+#include <core/handle/declaration.hpp>
 
 namespace vk {
 

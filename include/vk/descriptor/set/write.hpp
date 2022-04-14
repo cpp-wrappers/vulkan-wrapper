@@ -3,7 +3,6 @@
 #include "handle.hpp"
 
 #include "../../buffer/view/handle.hpp"
-#include "../../handle/get.hpp"
 #include "../../count.hpp"
 #include "../../descriptor/binding.hpp"
 #include "../../descriptor/type.hpp"
@@ -30,9 +29,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_possibly_guarded_handle_of<
-				vk::descriptor_set
-			>,
+			types::are_contain_one_decayed<handle<vk::descriptor_set>>,
 			types::are_contain_one_decayed<vk::dst_binding>,
 			types::are_contain_one_decayed<vk::dst_array_element>,
 			types::are_contain_one_decayed<vk::descriptor_type>,
@@ -52,38 +49,38 @@ namespace vk {
 			>::for_types<Args...>
 			== 1
 		)
-		write_descriptor_set(Args&&... args) {
-			auto& set = elements::possibly_guarded_handle_of<
-				vk::descriptor_set
-			>(args...);
-
-			dst_set = vk::get_handle(set);
-			dst_binding = elements::decayed<vk::dst_binding>(args...);
-			dst_array_element = elements::decayed<
-				vk::dst_array_element
-			>(args...);
-			descriptor_type = elements::decayed<vk::descriptor_type>(args...);
-
-			if constexpr(
+		write_descriptor_set(Args&&... args) :
+			dst_set {
+				elements::decayed<handle<vk::descriptor_set>>(args...)
+			},
+			dst_binding { elements::decayed<vk::dst_binding>(args...) },
+			dst_array_element {
+				elements::decayed<vk::dst_array_element>(args...)
+			},
+			descriptor_type { elements::decayed<vk::descriptor_type>(args...) }
+		{
+			if constexpr (
 				types::are_contain_range_of<
 					vk::descriptor_image_info
 				>::for_types<Args...>
 			) {
-				auto& r = elements::range_of<
-					vk::descriptor_image_info
-				>(args...);
+				auto& r {
+					elements::range_of<vk::descriptor_image_info>(args...)
+				};
+
 				count = vk::count{ (uint32) r.size() };
 				image_info = r.data();
 			}
 
-			if constexpr(
+			if constexpr (
 				types::are_contain_range_of<
 					vk::descriptor_buffer_info
 				>::for_types<Args...>
 			) {
-				auto& r = elements::range_of<
-					vk::descriptor_buffer_info
-				>(args...);
+				auto& r {
+					elements::range_of<vk::descriptor_buffer_info>(args...)
+				};
+
 				count = vk::count{ (uint32) r.size() };
 				buffer_info = r.data();
 			}

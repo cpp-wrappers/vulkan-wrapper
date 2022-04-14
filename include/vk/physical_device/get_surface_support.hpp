@@ -14,7 +14,7 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::surface>,
+		types::are_contain_one_decayed<handle<vk::surface>>,
 		types::are_contain_one_decayed<vk::queue_family_index>
 	>::for_types<Args...>
 	vk::expected<bool>
@@ -23,21 +23,19 @@ namespace vk {
 			handle<vk::physical_device>
 		>(args...);
 
-		auto& surface = elements::possibly_guarded_handle_of<
-			vk::surface
-		>(args...);
+		auto surface = elements::decayed<handle<vk::surface>>(args...);
 
-		vk::queue_family_index queue_family_index = elements::decayed<
-			vk::queue_family_index
-		>(args...);
+		vk::queue_family_index queue_family_index {
+			elements::decayed<vk::queue_family_index>(args...)
+		};
 
 		uint32 supports;
 
 		vk::result result {
-			(int32) vkGetPhysicalDeviceSurfaceSupportKHR(
+			vkGetPhysicalDeviceSurfaceSupportKHR(
 				physical_device,
 				queue_family_index,
-				vk::get_handle(surface),
+				surface,
 				&supports
 			)
 		};
@@ -52,9 +50,11 @@ namespace vk {
 		auto result = vk::try_get_physical_device_surface_support(
 			forward<Args>(args)...
 		);
+
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
+
 		return result.get_expected();
 	}
 

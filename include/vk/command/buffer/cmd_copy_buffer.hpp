@@ -10,7 +10,6 @@
 #include <core/wrapper/of.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/handle/possibly_guarded_of.hpp>
 
 namespace vk {
 
@@ -40,20 +39,20 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::command_buffer>,
+		types::are_contain_one_decayed<handle<vk::command_buffer>>,
 		types::are_contain_one_decayed<vk::src_buffer>,
 		types::are_contain_one_decayed<vk::dst_buffer>,
 		types::are_contain_range_of<vk::buffer_copy>
 	>::for_types<Args...>
 	void cmd_copy_buffer(Args&&... args) {
 
-		auto& command_buffer = elements::possibly_guarded_handle_of<vk::command_buffer>(args...);
+		auto command_buffer = elements::decayed<handle<vk::command_buffer>>(args...);
 		vk::src_buffer src = elements::decayed<vk::src_buffer>(args...);
 		vk::dst_buffer dst = elements::decayed<vk::dst_buffer>(args...);
 		auto& regions = elements::range_of<vk::buffer_copy>(args...);
 
 		vkCmdCopyBuffer(
-			vk::get_handle(command_buffer),
+			command_buffer,
 			src,
 			dst,
 			(uint32) regions.size(),
