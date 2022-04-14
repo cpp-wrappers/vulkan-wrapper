@@ -8,8 +8,11 @@
 #include "../timeout.hpp"
 #include "../function.hpp"
 #include "../unexpected_handler.hpp"
+#include "../count.hpp"
+#include "../swapchain/image_index.hpp"
 
 #include <core/handle/declaration.hpp>
+#include <core/range/of_value_type_same_as.hpp>
 
 namespace vk {
 
@@ -17,6 +20,7 @@ namespace vk {
 	struct physical_device;
 	struct shader_module;
 	struct command_pool;
+	struct command_buffer;
 	struct framebuffer;
 	struct image_view;
 	struct pipeline_layout;
@@ -40,18 +44,8 @@ namespace vk {
 
 } // vk
 
-extern "C" VK_ATTR int32 VK_CALL vkDeviceWaitIdle(
-	handle<vk::device> device
-);
-
 template<>
 struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
-
-	handle<vk::queue> inline
-	get_queue(
-		vk::queue_family_index queue_family_index,
-		vk::queue_index queue_index
-	) const;
 
 	template<typename ObjectType, typename... Args>
 	handle<ObjectType>
@@ -64,7 +58,7 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 	}
 
 	template<typename ObjectType, typename... Args>
-	vk::expected<handle<ObjectType>>
+	handle<ObjectType>
 	allocate(Args&&... args) const {
 		auto result = vk::allocate<ObjectType>(*this, forward<Args>(args)...);
 		if(result.is_unexpected()) {
@@ -73,25 +67,83 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 		return result.get_expected();
 	}
 
-	vk::result try_wait_idle() const {
-		return { vkDeviceWaitIdle(*this) };
-	}
+	template<typename... Args>
+	handle<vk::queue>
+	get_queue(Args&&... args) const;
 
-	void wait_idle() const {
-		auto result = try_wait_idle();
-		if(result.error()) vk::unexpected_handler(result);
-	}
+	vk::result inline try_wait_idle() const;
+
+	void inline wait_idle() const;
 
 	template<typename... Args>
 	void update_descriptor_sets(Args&&... args) const;
 
 	template<typename... Args>
 	void update_descriptor_set(Args&&... args) const;
-		
+
+	vk::memory_requirements inline
+	get_memory_requirements(handle<vk::buffer>) const;
+
+	vk::memory_requirements inline
+	get_memory_requirements(handle<vk::image>) const;
+
+	void inline
+	bind_memory(
+		handle<vk::buffer> buffer, handle<vk::device_memory> memory
+	) const;
+
+	void inline
+	bind_memory(
+		handle<vk::image> image, handle<vk::device_memory> memory
+	) const;
+
+	template<typename... Args>
+	void map_memory(Args&&... args) const;
+
+	void inline
+	unmap_memory(handle<vk::device_memory> device_memory) const;
+
+	template<typename... Args>
+	void flush_mapped_memory_range(Args&&... args) const;
+
+	template<typename... Args>
+	void wait_for_fence(Args&&... args) const;
+
+	void inline reset_fence(handle<vk::fence> fence) const;
+
+	template<typename... Args>
+	vk::count get_swapchain_images(Args&&...) const;
+
+	vk::count inline
+	get_swapchain_image_count(handle<vk::swapchain> swapchain) const;
+
+	template<typename... Args>
+	vk::expected<vk::image_index>
+	try_acquire_next_image(Args&&... args) const;
+
+	decltype(auto)
+	view_swapchain_images(
+		handle<vk::swapchain> swapchain, vk::count count, auto&& f
+	) const;
+
+	template<typename F>
+	decltype(auto)
+	view_swapchain_images(handle<vk::swapchain> swapchain, F&& f) const;
+
+	template<typename F>
+	void
+	for_each_swapchain_image(handle<vk::swapchain> swapchain, F&& f) const;
+
+	template<range::of<handle<vk::command_buffer>> CommandBuffers>
+	void free_command_buffers(
+		handle<vk::command_pool> command_pool, CommandBuffers&& command_buffers
+	) const;
+
 }; // handle<device>
 
 #include "memory/allocate.hpp"
 #include "../command/pool/create.hpp"
+#include "../command/buffer/allocate.hpp"
 #include "../shader/module/create.hpp"
 #include "../framebuffer/create.hpp"
 #include "../image/create.hpp"
@@ -105,45 +157,27 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 #include "../buffer/view/create.hpp"
 #include "../fence/create.hpp"
 #include "../sampler/create.hpp"
+#include "../descriptor/set/allocate.hpp"
 #include "../descriptor/set/layout/create.hpp"
 #include "../descriptor/pool/create.hpp"
 #include "../deferred_operation/create.hpp"
 #include "../acceleration_structure/create.hpp"
 
-#include "../queue/handle.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkGetDeviceQueue(
-	handle<vk::device> device,
-	uint32 queue_family_index,
-	uint32 queue_index,
-	handle<vk::queue>* queue
-);
-
-handle<vk::queue> inline
-handle<vk::device>::get_queue(
-	vk::queue_family_index queue_family_index,
-	vk::queue_index queue_index
-) const {
-	handle<vk::queue> queue;
-
-	vkGetDeviceQueue(
-		*this,
-		(uint32) queue_family_index,
-		(uint32) queue_index,
-		&queue
-	);
-
-	return { queue };
-}
-
+#include "get_queue.hpp"
+#include "wait_idle.hpp"
 #include "../descriptor/set/update.hpp"
-
-template<typename... Args>
-void handle<vk::device>::update_descriptor_sets(Args&&... args) const {
-	vk::update_descriptor_sets(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-void handle<vk::device>::update_descriptor_set(Args&&... args) const {
-	vk::update_descriptor_set(*this, forward<Args>(args)...);
-}
+#include "../buffer/get_memory_requirements.hpp"
+#include "../image/get_memory_requirements.hpp"
+#include "../buffer/bind_memory.hpp"
+#include "../image/bind_memory.hpp"
+#include "memory/map.hpp"
+#include "memory/flush_mapped_range.hpp"
+#include "memory/unmap.hpp"
+#include "../fence/wait.hpp"
+#include "../fence/reset.hpp"
+#include "../swapchain/get_images.hpp"
+#include "../swapchain/get_image_count.hpp"
+#include "../swapchain/acquire_next_image.hpp"
+#include "../swapchain/view_images.hpp"
+#include "../swapchain/for_each_image.hpp"
+#include "../command/buffer/free.hpp"

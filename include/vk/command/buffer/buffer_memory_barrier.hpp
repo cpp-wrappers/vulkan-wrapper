@@ -33,7 +33,7 @@ namespace vk {
 			types::are_may_contain_one_decayed<vk::src_queue_family_index>,
 			types::are_may_contain_one_decayed<vk::dst_queue_family_index>,
 			// TODO
-			types::are_contain_one_decayed<vk::buffer>,
+			types::are_contain_one_decayed<handle<vk::buffer>>,
 			types::are_may_contain_one_decayed<vk::memory_offset>,
 			types::are_contain_one_decayed<vk::memory_size>
 		>::for_types<Args...>

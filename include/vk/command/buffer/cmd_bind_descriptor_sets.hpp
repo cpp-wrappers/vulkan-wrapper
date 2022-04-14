@@ -22,12 +22,12 @@ namespace vk {
 extern "C" VK_ATTR void VK_CALL vkCmdBindDescriptorSets(
 	handle<vk::command_buffer> command_buffer,
 	vk::pipeline_bind_point pipeline_bind_point,
-	vk::pipeline_layout layout,
+	handle<vk::pipeline_layout> layout,
 	uint32 first_set,
 	uint32 descriptor_set_count,
 	const handle<vk::descriptor_set>* descriptor_sets,
 	uint32 dynamic_offset_count,
-	const uint32* dynamic_offsets
+	const vk::dynamic_offset* dynamic_offsets
 );
 
 namespace vk {
@@ -81,7 +81,7 @@ namespace vk {
 			(uint32) sets.size(),
 			sets.data(),
 			(uint32) dynamic_offset_count,
-			(uint32*) dynamic_offsets
+			dynamic_offsets
 		);
 	} // cmd_bind_descriptor_sets
 

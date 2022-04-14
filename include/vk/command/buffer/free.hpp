@@ -53,6 +53,14 @@ namespace vk {
 			vk::free_command_buffers(device, pool, array{ buff });
 		}
 
-	};
+	}; // free_t<vk::command_buffer>
 
 } // vk
+
+template<range::of<handle<vk::command_buffer>> CommandBuffers>
+void
+handle<vk::device>::free_command_buffers(
+	handle<vk::command_pool> command_pool, CommandBuffers&& command_buffers
+) const {
+	vk::free_command_buffers(*this, command_pool, command_buffers);
+}

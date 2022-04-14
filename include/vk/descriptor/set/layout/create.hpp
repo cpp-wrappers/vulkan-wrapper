@@ -14,7 +14,7 @@ extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorSetLayout(
 	handle<vk::device> device,
 	const vk::descriptor_set_layout_create_info* create_info,
 	const void* allocator,
-	vk::descriptor_set_layout* set_layout
+	handle<vk::descriptor_set_layout>* set_layout
 );
 
 namespace vk {

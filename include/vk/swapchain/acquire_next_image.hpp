@@ -2,6 +2,7 @@
 
 #include "handle.hpp"
 
+#include "../device/handle.hpp"
 #include "../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
@@ -79,6 +80,6 @@ namespace vk {
 
 template<typename... Args>
 vk::expected<vk::image_index>
-handle<vk::swapchain>::try_acquire_next_image(Args&&... args) const {
+handle<vk::device>::try_acquire_next_image(Args&&... args) const {
 	return vk::try_acquire_next_image(*this, forward<Args>(args)...);
 }

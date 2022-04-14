@@ -97,3 +97,13 @@ namespace vk {
 	}
 
 } // vk
+
+template<typename... Args>
+void handle<vk::device>::update_descriptor_sets(Args&&... args) const {
+	vk::update_descriptor_sets(*this, forward<Args>(args)...);
+}
+
+template<typename... Args>
+void handle<vk::device>::update_descriptor_set(Args&&... args) const {
+	vk::update_descriptor_set(*this, forward<Args>(args)...);
+}

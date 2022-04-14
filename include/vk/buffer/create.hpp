@@ -10,6 +10,13 @@
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
+extern "C" VK_ATTR int32 VK_CALL vkCreateBuffer(
+	handle<vk::device> device,
+	const vk::buffer_create_info* create_info,
+	const void* allocator,
+	handle<vk::buffer>* buffer
+);
+
 namespace vk {
 
 	template<>
@@ -17,7 +24,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<vk::device>,
+			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_may_contain_one_decayed<vk::buffer_create_flags>,
 			types::are_contain_one_decayed<vk::buffer_size>,
 			types::are_contain_one_decayed<vk::buffer_usages>,

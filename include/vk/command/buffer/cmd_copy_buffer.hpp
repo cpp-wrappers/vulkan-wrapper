@@ -27,7 +27,7 @@ namespace vk {
 
 } // vk
 
-VK_ATTR void VK_CALL vkCmdCopyBuffer(
+extern "C" VK_ATTR void VK_CALL vkCmdCopyBuffer(
 	handle<vk::command_buffer> command_buffer,
 	vk::src_buffer src_buffer,
 	vk::dst_buffer dst_buffer,

@@ -31,30 +31,4 @@ namespace vk {
 
 template<>
 struct handle<vk::swapchain> : vk::handle_base<vk::non_dispatchable> {
-
-	template<typename... Args>
-	vk::expected<vk::image_index> try_acquire_next_image(Args&&...) const;
-
-	template<typename... Args>
-	vk::count get_images(Args&&...) const;
-
-	vk::count inline get_image_count(handle<vk::device> device) const;
-
-	decltype(auto)
-	view_images(handle<vk::device> device, vk::count count, auto&& f) const;
-
-	template<typename F>
-	decltype(auto)
-	view_images(handle<vk::device> device, F&& f) const;
-
-	void for_each_image(
-		handle<vk::device> device, vk::count count, auto&& f
-	) const;
-
-	template<typename F>
-	void for_each_image(handle<vk::device> device, F&& f) const;
-
 }; // handle<swapchain>
-
-#include "acquire_next_image.hpp"
-#include "get_images.hpp"

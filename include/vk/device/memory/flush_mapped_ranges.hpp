@@ -19,16 +19,16 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
+		types::are_contain_one_decayed<handle<vk::device>>,
 		types::are_contain_range_of<vk::mapped_memory_range>
 	>::for_types<Args...>
-	vk::result try_flush_mapped_device_memory_ranges(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<vk::device>(args...);
+	vk::result try_flush_mapped_memory_ranges(Args&&... args) {
+		auto device = elements::decayed<handle<vk::device>>(args...);
 		auto& ranges = elements::range_of<vk::mapped_memory_range>(args...);
 
 		return {
 			vkFlushMappedMemoryRanges(
-				vk::get_handle(device),
+				device,
 				(uint32) ranges.size(),
 				ranges.data()
 			)
@@ -36,8 +36,11 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	void flush_mapped_device_memory_ranges(Args&&... args) {
-		vk::result result = vk::try_flush_mapped_device_memory_ranges(forward<Args>(args)...);
+	void flush_mapped_memory_ranges(Args&&... args) {
+		vk::result result = vk::try_flush_mapped_memory_ranges(
+			forward<Args>(args)...
+		);
+
 		if(result.error()) vk::unexpected_handler(result);
 	}
 

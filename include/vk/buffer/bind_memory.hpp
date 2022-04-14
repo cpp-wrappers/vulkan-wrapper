@@ -20,23 +20,18 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::buffer>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::buffer>>,
+		types::are_contain_one_decayed<handle<vk::device_memory>>,
 		types::are_may_contain_one_decayed<vk::memory_offset>
 	>::for_types<Args...>
 	vk::result try_bind_buffer_memory(Args&&... args) {
-		auto& device = elements::possibly_guarded_handle_of<
-			vk::device
-		>(args...);
+		auto device = elements::decayed<handle<vk::device>>(args...);
+		auto buffer = elements::decayed<handle<vk::buffer>>(args...);
 
-		auto& buffer = elements::possibly_guarded_handle_of<
-			vk::buffer
-		>(args...);
-
-		auto& device_memory = elements::possibly_guarded_handle_of<
-			vk::device_memory
-		>(args...);
+		auto device_memory {
+			elements::decayed<handle<vk::device_memory>>(args...)
+		};
 
 		vk::memory_offset offset{ 0 };
 		
@@ -46,9 +41,9 @@ namespace vk {
 
 		return {
 			vkBindBufferMemory(
-				vk::get_handle(device),
-				vk::get_handle(buffer),
-				vk::get_handle(device_memory),
+				device,
+				buffer,
+				device_memory,
 				offset
 			)
 		};
@@ -61,3 +56,10 @@ namespace vk {
 	}
 
 } // vk
+
+void inline
+handle<vk::device>::bind_memory(
+	handle<vk::buffer> buffer, handle<vk::device_memory> memory
+) const {
+	vk::bind_buffer_memory(*this, buffer, memory);
+}

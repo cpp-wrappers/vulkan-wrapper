@@ -32,17 +32,17 @@ namespace vk {
 		types::are_contain_range_of<vk::image_subresource_range>
 	>::for_types<Args...>
 	void cmd_clear_color_image(Args&&... args) {
-		auto command_buffer = elements::decayed<
-			handle<vk::command_buffer>
-		>(args...);
+		auto command_buffer {
+			elements::decayed<handle<vk::command_buffer>>(args...)
+		};
 
-		auto image = elements::decayed<vk::image>(args...);
+		auto image = elements::decayed<handle<vk::image>>(args...);
 
 		vk::image_layout layout = elements::decayed<vk::image_layout>(args...);
 
-		vk::clear_color_value clear_color = elements::decayed<
-			vk::clear_color_value
-		>(args...);
+		vk::clear_color_value clear_color {
+			elements::decayed<vk::clear_color_value>(args...)
+		};
 	
 		auto& ranges = elements::range_of<vk::image_subresource_range>(args...);
 

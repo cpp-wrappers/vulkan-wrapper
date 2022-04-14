@@ -62,44 +62,6 @@ namespace vk {
 } // vk
 
 template<typename... Args>
-vk::count handle<vk::swapchain>::get_images(Args&&... args) const {
+vk::count handle<vk::device>::get_swapchain_images(Args&&... args) const {
 	return vk::get_swapchain_images(*this, forward<Args>(args)...);
-}
-
-vk::count inline
-handle<vk::swapchain>::get_image_count(handle<vk::device> device) const {
-	return get_images(device, span<handle<vk::image>>{ nullptr, 0 });
-}
-
-decltype(auto)
-handle<vk::swapchain>::
-view_images(handle<vk::device> device, vk::count count, auto&& f) const {
-	handle<vk::image> images[(uint32)count];
-	count = get_images(device, span{ images, (uint32)count });
-	return f(span{ images, (uint32)count });
-}
-
-template<typename F>
-decltype(auto)
-handle<vk::swapchain>::view_images(handle<vk::device> device, F&& f) const {
-	auto count = get_image_count(device);
-	return view_images(device, count, forward<F>(f));
-}
-
-void
-handle<vk::swapchain>::for_each_image(
-	handle<vk::device> device, vk::count count, auto&& f
-) const {
-	view_images(device, count, [&](auto view) {
-		for(handle<vk::image> image : view) {
-			f(image);
-		}
-	});
-}
-
-template<typename F>
-void
-handle<vk::swapchain>::for_each_image(handle<vk::device> device, F&& f) const {
-	auto count = get_image_count(device);
-	for_feach_image(device, count, forward<F>(f));
 }

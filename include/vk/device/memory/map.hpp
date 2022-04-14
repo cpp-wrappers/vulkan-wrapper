@@ -31,7 +31,7 @@ namespace vk {
 		types::are_contain_one_decayed<vk::memory_size>,
 		types::are_contain_one_decayed<void**>
 	>::for_types<Args...>
-	vk::result try_map_device_memory(Args&&... args) {
+	vk::result try_map_memory(Args&&... args) {
 		auto device {
 			elements::decayed<handle<vk::device>>(args...)
 		};
@@ -63,9 +63,15 @@ namespace vk {
 	} // try_map_device_memory
 
 	template<typename... Args>
-	void map_device_memory(Args&&... args) {
-		vk::result result = vk::try_map_device_memory(forward<Args>(args)...);
+	void map_memory(Args&&... args) {
+		vk::result result = vk::try_map_memory(forward<Args>(args)...);
 		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk
+
+template<typename... Args>
+void
+handle<vk::device>::map_memory(Args&&... args) const {
+	vk::map_memory(*this, forward<Args>(args)...);
+}

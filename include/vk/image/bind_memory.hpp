@@ -20,20 +20,16 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::image>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::device_memory>,
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::image>>,
+		types::are_contain_one_decayed<handle<vk::device_memory>>,
 		types::are_may_contain_one_decayed<vk::memory_offset>
 	>::for_types<Args...> [[nodiscard]]
 	vk::result try_bind_image_memory(Args&&... args) {
-		auto& device {
-			elements::possibly_guarded_handle_of<vk::device>(args...)
-		};
-		auto& image {
-			elements::possibly_guarded_handle_of<vk::image>(args...)
-		};
-		auto& device_memory {
-			elements::possibly_guarded_handle_of<vk::device_memory>(args...)
+		auto device = elements::decayed<handle<vk::device>>(args...);
+		auto image = elements::decayed<handle<vk::image>>(args...);
+		auto device_memory {
+			elements::decayed<handle<vk::device_memory>>(args...)
 		};
 
 		vk::memory_offset offset{ 0 };
@@ -44,10 +40,7 @@ namespace vk {
 
 		return {
 			vkBindImageMemory(
-				vk::get_handle(device),
-				vk::get_handle(image),
-				vk::get_handle(device_memory),
-				offset
+				device, image, device_memory, offset
 			)
 		};
 	} // try_bind_image_memory
@@ -59,3 +52,10 @@ namespace vk {
 	}
 
 } // vk
+
+void inline
+handle<vk::device>::bind_memory(
+	handle<vk::image> image, handle<vk::device_memory> memory
+) const {
+	vk::bind_image_memory(*this, image, memory);
+}

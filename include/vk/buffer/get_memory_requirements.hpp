@@ -16,29 +16,29 @@ namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_possibly_guarded_handle_of<vk::device>,
-		types::are_contain_one_possibly_guarded_handle_of<vk::buffer>
+		types::are_contain_one_decayed<handle<vk::device>>,
+		types::are_contain_one_decayed<handle<vk::buffer>>
 	>::for_types<Args...>
 	vk::memory_requirements
 	get_memory_requirements(Args&&... args) {
-		auto& buffer = elements::possibly_guarded_handle_of<
-			vk::buffer
-		>(args...);
+		auto buffer = elements::decayed<handle<vk::buffer>>(args...);
+		auto device = elements::decayed<handle<vk::device>>(args...);
 
-		auto& device = elements::possibly_guarded_handle_of<
-			vk::device
-		>(args...);
-
-		vk::memory_requirements mr;
+		vk::memory_requirements requirements;
 
 		vkGetBufferMemoryRequirements(
-			vk::get_handle(device),
-			vk::get_handle(buffer),
-			&mr
+			device,
+			buffer,
+			&requirements
 		);
 
-		return mr;
+		return requirements;
 
 	} // get_memory_requirements
 
 } // vk
+
+vk::memory_requirements inline
+handle<vk::device>::get_memory_requirements(handle<vk::buffer> buffer) const {
+	return vk::get_memory_requirements(*this, buffer);
+}
