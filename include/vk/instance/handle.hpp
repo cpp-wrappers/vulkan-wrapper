@@ -33,95 +33,38 @@ extern "C" VK_ATTR int32 VK_CALL vkEnumeratePhysicalDevices(
 template<>
 struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
-	template<range::of<handle<vk::physical_device>> DevicesRange>
-	vk::expected<vk::count>
-	enumerate_physical_devices(DevicesRange&& devices) const {
-		uint32 count = (uint32) devices.size();
+	template<range::of<handle<vk::physical_device>> PhysicalDevices>
+	vk::count enumerate_physical_devices(PhysicalDevices&& devices) const;
 
-		vk::result result {
-			vkEnumeratePhysicalDevices(
-				*this,
-				&count,
-				devices.data()
-			)
-		};
-
-		if(result.error()) return result;
-
-		return vk::count{ count };
-	}
-
-	vk::expected<vk::count>
-	get_physical_devices_count() const {
-		return enumerate_physical_devices(
-			span<handle<vk::physical_device>>{ nullptr, 0 }
-		);
-	}
-
-	vk::expected<vk::count>
-	view_physical_devices(auto&& f, vk::count count) const {
-		handle<vk::physical_device> devices_storage[(uint32) count];
-
-		auto result = enumerate_physical_devices(
-			span{ devices_storage, (uint32) count }
-		);
-
-		if(result.is_expected()) {
-			f(span<handle<vk::physical_device>> {
-				devices_storage,
-				(uint32) result.get_expected()
-			});
-		}
-		
-		return result;
-	}
-
-	vk::expected<handle<vk::physical_device>>
-	try_get_first_physical_device() const {
-		handle<vk::physical_device> physical_device;
-		auto result = enumerate_physical_devices(span{ &physical_device, 1 });
-		if(result.is_unexpected()) {
-			return result.get_unexpected();
-		}
-		return physical_device;
-	}
-
-	handle<vk::physical_device>
-	get_first_physical_device() const {
-		auto result = try_get_first_physical_device();
-		if(result.is_unexpected()) {
-			vk::unexpected_handler(result.get_unexpected());
-		}
-		return result.get_expected();
-	}
-
-	vk::expected<vk::count>
-	for_each_physical_device(auto&& f, vk::count count) const {
-		return view_physical_devices([&](auto view) {
-			for(handle<vk::physical_device> device : view) f(device);
-		}, count);
-	}
+	vk::count inline get_physical_device_count() const;
 
 	template<typename F>
-	vk::expected<vk::count>
-	for_each_physical_device(F&& f) const {
-		auto result = get_physical_devices_count();
-		if(result.is_unexpected()) return result;
-		return for_each_physical_device(
-			forward<F>(f),
-			result.get_expected()
-		);
-	}
+	vk::count view_physical_devices(vk::count count, F&& f) const;
+
+	handle<vk::physical_device> inline get_first_physical_device() const;
+
+	template<typename F>
+	vk::count for_each_physical_device(vk::count count, F&& f) const;
 
 	template<typename ObjectType, typename... Args>
 	handle<ObjectType> create(Args&&... args) const {
-		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
+		auto result {
+			vk::create<ObjectType>(*this, forward<Args>(args)...)
+		};
+
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
+
 		return result.get_expected();
 	}
 
 }; // handle<vk::instance>
 
 #include "../debug/report/callback/create.hpp"
+
+#include "enumerate_physical_devices.hpp"
+#include "get_physical_device_count.hpp"
+#include "view_physical_devices.hpp"
+#include "get_first_physical_device.hpp"
+#include "for_each_physical_device.hpp"

@@ -23,19 +23,19 @@ namespace vk {
 		>
 	>::for_types<Args...>
 	void get_features(Args&&... args) {
-		vk::physical_device_features_2 features{};
+		vk::physical_device_features_2 features2{};
 
 		if constexpr (
 			types::are_contain_decayed<
 				vk::physical_device_features
 			>::for_types<Args...>
 		) {
-			features.features = elements::decayed<
-				vk::physical_device_features
-			>(args...);
+			features2.features = {
+				elements::decayed<vk::physical_device_features>(args...)
+			};
 		}
 
-		const void** next = &features.next;
+		const void** next = &features2.next;
 
 		elements::for_each_decayed_satisfying_predicate<
 			vk::is_physical_device_features
@@ -46,13 +46,13 @@ namespace vk {
 			}
 		);
 
-		auto physical_device = elements::decayed<
-			handle<vk::physical_device>
-		>(args...);
+		auto physical_device {
+			elements::decayed<handle<vk::physical_device>>(args...)
+		};
 
 		vkGetPhysicalDeviceFeatures2(
 			physical_device,
-			&features
+			&features2
 		);
 
 	} // get_features

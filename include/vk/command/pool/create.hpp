@@ -7,6 +7,9 @@
 #include "../../queue_family_index.hpp"
 #include "../../function.hpp"
 
+#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+#include <core/meta/decayed_same_as.hpp>
+
 extern "C" VK_ATTR int32 VK_CALL vkCreateCommandPool(
 	handle<vk::device> device,
 	const vk::command_pool_create_info* create_info,
@@ -50,7 +53,7 @@ namespace vk {
 			handle<vk::command_pool> command_pool;
 
 			vk::result result {
-				(int32) vkCreateCommandPool(
+				vkCreateCommandPool(
 					device,
 					&ci,
 					nullptr,

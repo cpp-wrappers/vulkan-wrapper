@@ -51,7 +51,7 @@ namespace vk {
 		void** data = data = elements::decayed<void**>(args...);
 
 		return {
-			(int32) vkMapMemory(
+			vkMapMemory(
 				device,
 				device_memory,
 				offset,
