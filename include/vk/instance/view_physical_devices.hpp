@@ -2,7 +2,6 @@
 
 #include "get_physical_device_count.hpp"
 
-#include <core/box.hpp>
 #include <core/span.hpp>
 #include <core/range/view_copy_on_stack.hpp>
 
@@ -12,11 +11,10 @@ namespace vk {
 	view_physical_devices(
 		handle<vk::instance> instance, vk::count count, auto&& f
 	) {
-		view_box_of_capacity<vk::physical_device>(
-			(uint32) count,
-			[&](auto& physical_devices) {
+		range::view_on_stack<handle<vk::physical_device>>((uint32) count)(
+			[&](auto physical_devices) {
 				count = instance.enumerate_physical_devices(physical_devices);
-				f(span{ physical_devices.data(), count });
+				f(physical_devices.cut(count));
 			}
 		);
 

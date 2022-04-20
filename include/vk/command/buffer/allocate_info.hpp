@@ -4,7 +4,7 @@
 
 #include "../../command/pool/handle.hpp"
 
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 

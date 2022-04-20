@@ -103,7 +103,7 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	find_first_queue_family_index_with_capabilities(Args... args) const {
 		uint32 count = (uint32) get_queue_family_properties_count();
 		vk::queue_family_properties props[count];
-		get_queue_family_properties(span{ props, count });
+		count = get_queue_family_properties(span{ props, count });
 		uint32 index = 0;
 		for(vk::queue_family_properties p : span{ props, count }) {
 			if((p.flags.get(args) && ...))

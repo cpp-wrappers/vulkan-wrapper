@@ -3,7 +3,7 @@
 #include "get_queue_family_properties.hpp"
 #include "get_queue_family_properties_count.hpp"
 
-#include <core/box.hpp>
+#include <core/range/view_on_stack.hpp>
 
 namespace vk {
 
@@ -14,13 +14,12 @@ namespace vk {
 		vk::count count,
 		F&& f
 	) {
-		view_box_of_capacity<vk::queue_family_properties>(
-			(uint32) count,
-			[&](auto& families) {
+		range::view_on_stack<vk::queue_family_properties>((uint32) count)(
+			[&](auto families) {
 				count = vk::get_physical_device_queue_family_properties(
 					physical_device, families
 				);
-				
+
 				f(span{ families.data(), (uint32) count });
 			}
 		);

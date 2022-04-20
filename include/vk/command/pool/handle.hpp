@@ -6,7 +6,7 @@
 #include "../../create_or_allocate.hpp"
 
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 

@@ -40,7 +40,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return unexpected{ result };
+		if(result.error()) return result;
 
 		return { (bool) supports };
 	} // try_get_physical_device_surface_support

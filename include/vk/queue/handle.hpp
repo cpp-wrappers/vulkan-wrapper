@@ -3,7 +3,7 @@
 #include "../result.hpp"
 #include "../handle/base.hpp"
 
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 

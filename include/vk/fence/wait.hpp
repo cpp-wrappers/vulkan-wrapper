@@ -13,7 +13,7 @@ extern "C" VK_ATTR int32 VK_CALL vkWaitForFences(
 	uint32 fence_count,
 	const handle<vk::fence>* fences,
 	uint32 wait_all,
-	uint64 timeout
+	vk::timeout timeout
 );
 
 namespace vk {

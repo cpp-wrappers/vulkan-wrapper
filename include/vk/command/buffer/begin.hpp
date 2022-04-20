@@ -8,7 +8,7 @@
 #include "../../unexpected_handler.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkBeginCommandBuffer(

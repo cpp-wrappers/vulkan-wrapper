@@ -2,7 +2,7 @@
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 

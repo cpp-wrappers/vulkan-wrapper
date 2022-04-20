@@ -20,7 +20,7 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_ranges_of<vk::extension_properties>,
+		types::are_contain_range_of<vk::extension_properties>,
 		types::are_may_contain_one_decayed<vk::layer_name>
 	>::for_types<Args...>
 	vk::expected<vk::count>

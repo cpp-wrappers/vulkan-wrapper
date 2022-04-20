@@ -6,7 +6,7 @@
 #include "../function.hpp"
 #include "../create_or_allocate.hpp"
 
-#include <core/handle/of.hpp>
+#include <core/handle.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateInstance(

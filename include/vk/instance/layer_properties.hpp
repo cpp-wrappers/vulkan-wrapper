@@ -55,7 +55,7 @@ namespace vk {
 		auto result = enumerate_instance_layer_properties(
 			span{ layers_props, (uint32)count }
 		);
-		if(result.is_unexpected()) return unexpected{ result.get_unexpected() };
+		if(result.is_unexpected()) return result;
 
 		count = result.get_expected();
 		f(span{layers_props, (uint32)count});
@@ -66,14 +66,14 @@ namespace vk {
 	vk::expected<vk::count>
 	view_instance_layer_properties(F&& f) {
 		auto result = get_instance_layer_properties_count();
-		if(result.is_unexpected()) return unexpected{ result.get_unexpected() };
+		if(result.is_unexpected()) return result;
 		return view_instance_layer_properties(
 			forward<F>(f),
 			result.get_expected()
 		);
 	}
 
-	elements::one_of<vk::result, vk::count>
+	vk::expected<vk::count>
 	for_each_instance_layer_properties(auto&& f, vk::count count) {
 		return view_instance_layer_properties(
 			[&](span<vk::layer_properties> view) {
@@ -85,11 +85,11 @@ namespace vk {
 	}
 
 	template<typename F>
-	elements::one_of<vk::result, vk::count>
+	vk::expected<vk::count>
 	for_each_instance_layer_properties(F&& f) {
 		auto result = get_instance_layer_properties_count();
-		if(result.is_unexpected()) return result.get_unexpected();
-		return for_each_instance_layer_properties(
+		if(result.is_unexpected()) return result;
+		return vk::for_each_instance_layer_properties(
 			forward<F>(f),
 			result.get_expected()
 		);

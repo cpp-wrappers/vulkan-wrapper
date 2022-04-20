@@ -2,7 +2,7 @@
 
 #include "get_surface_formats.hpp"
 
-#include <core/box.hpp>
+#include <core/range/view_on_stack.hpp>
 
 namespace vk {
 
@@ -15,8 +15,9 @@ namespace vk {
 		vk::count count,
 		F&& f
 	) {
-		view_box_of_capacity<vk::surface_format>(
-			count,
+		range::view_on_stack<vk::surface_format>(
+			(uint32) count
+		)(
 			[&](auto& surface_formats) {
 				count = vk::get_physical_device_surface_formats(
 					physical_device, surface, surface_formats

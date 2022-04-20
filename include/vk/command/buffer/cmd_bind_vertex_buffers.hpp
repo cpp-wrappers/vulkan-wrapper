@@ -12,7 +12,7 @@
 
 extern "C" VK_ATTR void VK_CALL vkCmdBindVertexBuffers(
 	handle<vk::command_buffer> command_buffer,
-	uint32 first_binding,
+	vk::first_binding first_binding,
 	uint32 binding_count,
 	const handle<vk::buffer>* buffers,
 	const vk::memory_offset* offsets

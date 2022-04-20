@@ -55,7 +55,7 @@ namespace vk {
 		auto result = enumerate_instance_extension_properties(
 			span{ extensions_props, (uint32)count }
 		);
-		if(result.is_unexpected()) return unexpected{ result.get_unexpected() };
+		if(result.is_unexpected()) return result;
 
 		count = result.get_expected();
 		f(span{extensions_props, (uint32)count});
@@ -66,7 +66,7 @@ namespace vk {
 	vk::expected<vk::count>
 	view_instance_extension_properties(F&& f) {
 		auto result = get_instance_extension_properties_count();
-		if(result.is_unexpected()) return unexpected{ result.get_unexpected() };
+		if(result.is_unexpected()) return result;
 		return view_instance_extension_properties(
 			forward<F>(f),
 			result.get_expected()
@@ -85,10 +85,10 @@ namespace vk {
 	}
 
 	template<typename F>
-	elements::one_of<vk::result, vk::count>
+	vk::expected<vk::count>
 	for_each_instance_extension_properties(F&& f) {
 		auto result = get_instance_extension_properties_count();
-		if(result.is_unexpected()) return result.get_unexpected();
+		if(result.is_unexpected()) return result;
 		return for_each_instance_extension_properties(
 			forward<F>(f),
 			result.get_expected()

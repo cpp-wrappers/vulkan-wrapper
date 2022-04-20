@@ -11,7 +11,7 @@
 #include "../count.hpp"
 #include "../swapchain/image_index.hpp"
 
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 
 namespace vk {

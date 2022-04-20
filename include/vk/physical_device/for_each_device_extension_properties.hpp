@@ -13,10 +13,10 @@ namespace vk {
 	) {
 		return vk::view_device_extension_properties(
 			physical_device,
-			layer_name,
 			[&](auto view) {
 				for(auto props : view) f(props);
-			}
+			},
+			layer_name
 		);
 	}
 

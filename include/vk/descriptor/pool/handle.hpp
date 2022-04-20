@@ -3,7 +3,7 @@
 #include "../../handle/base.hpp"
 #include "../../create_or_allocate.hpp"
 
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 

@@ -12,7 +12,7 @@
 #include <core/array.hpp>
 #include <core/exchange.hpp>
 #include <core/range/of_value_type_same_as.hpp>
-#include <core/handle/declaration.hpp>
+#include <core/handle.hpp>
 
 namespace vk {
 
@@ -45,6 +45,9 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
 	template<typename F>
 	vk::count for_each_physical_device(vk::count count, F&& f) const;
+
+	template<typename F>
+	vk::count for_each_physical_device(F&& f) const;
 
 	template<typename ObjectType, typename... Args>
 	handle<ObjectType> create(Args&&... args) const {
