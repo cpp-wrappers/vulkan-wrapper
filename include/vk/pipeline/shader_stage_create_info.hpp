@@ -5,7 +5,6 @@
 
 #include <core/flag_enum.hpp>
 #include <core/c_string.hpp>
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
@@ -18,7 +17,7 @@ namespace vk {
 
 	using shader_stage_create_flags = flag_enum<shader_stage_create_flag>;
 
-	struct entrypoint_name : wrapper::of<c_string> {};
+	struct entrypoint_name { c_string _; };
 
 	struct pipeline_shader_stage_create_info {
 		uint32 structure_type = 18;

@@ -45,7 +45,7 @@ namespace vk {
 
 		vkCmdBindVertexBuffers(
 			command_buffer,
-			(uint32) first_binding,
+			first_binding,
 			(uint32) buffers.size(),
 			buffers.data(),
 			offsets.data()

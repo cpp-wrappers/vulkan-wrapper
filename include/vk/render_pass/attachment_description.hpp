@@ -8,7 +8,6 @@
 #include "../format.hpp"
 
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
@@ -18,11 +17,11 @@ namespace vk {
 		may_alias = 0x00000001
 	};
 	
-	struct load_op : wrapper::of<vk::attachment_load_op> {};
-	struct store_op : wrapper::of<vk::attachment_store_op> {};
+	struct load_op { vk::attachment_load_op _; };
+	struct store_op { vk::attachment_store_op _; };
 	
-	struct stencil_load_op : wrapper::of<vk::attachment_load_op> {};
-	struct stencil_store_op : wrapper::of<vk::attachment_store_op> {};
+	struct stencil_load_op { vk::attachment_load_op _; };
+	struct stencil_store_op { vk::attachment_store_op _; };
 	
 	struct attachment_description {
 		flag_enum<attachment_description_flag> flags;

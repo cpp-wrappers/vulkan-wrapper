@@ -7,7 +7,6 @@
 #include "../../buffer/handle.hpp"
 #include "../../function.hpp"
 
-#include <core/wrapper/of.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 

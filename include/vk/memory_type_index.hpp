@@ -1,6 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/flag_enum.hpp>
 
 namespace vk {

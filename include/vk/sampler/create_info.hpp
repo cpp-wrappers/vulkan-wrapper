@@ -17,17 +17,13 @@ namespace vk {
 
 	using sampler_create_flags = flag_enum<vk::sampler_create_flag>;
 
-	struct mip_lod_bias : wrapper::of<float, struct mip_lod_bias_t> {};
-	struct anisotropy_enable :
-		wrapper::of<uint32, struct anisotropy_enable_t>
-	{};
-	struct max_anisotropy : wrapper::of<float, struct max_anisotropy_t> {};
-	struct compare_enable : wrapper::of<uint32, struct compare_enable_t> {};
-	struct min_lod : wrapper::of<float, struct min_lod_t> {};
-	struct max_lod : wrapper::of<float, struct max_lod_t> {};
-	struct unnormalized_coordinates :
-		wrapper::of<uint32, struct unnormalized_coordinates_t>
-	{};
+	struct mip_lod_bias { float _; };
+	struct anisotropy_enable { uint32 _; };
+	struct max_anisotropy { float _; };
+	struct compare_enable { uint32 _; };
+	struct min_lod { float _; };
+	struct max_lod { float _; };
+	struct unnormalized_coordinates { uint32 _; };
 
 	struct sampler_create_info {
 		uint32 structure_type = 31;

@@ -4,8 +4,6 @@
 
 #include <core/integer.hpp>
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of_pointer_to.hpp>
-#include <core/wrapper/of_integer.hpp>
 
 namespace vk {
 

@@ -3,16 +3,14 @@
 #include "../queue_family_index.hpp"
 
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of_pointer_to.hpp>
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
-	struct queue_count : wrapper::of_integer<uint32> {};
-	struct queue_priority : wrapper::of<float> {};
-	struct queue_priorities : wrapper::of_pointer_to<const queue_priority> {};
+	struct queue_count { uint32 _; };
+	struct queue_priority { float _; };
+	struct queue_priorities { const queue_priority* _; };
 
 	enum queue_create_flag {
 		_protected

@@ -12,7 +12,7 @@
 
 namespace vk {
 
-	struct occlusion_query_enable : wrapper::of_integer<uint32> {};
+	struct occlusion_query_enable { uint32 _; };
 
 	struct command_buffer_inheritance_info {
 		uint32 structure_type = 41;

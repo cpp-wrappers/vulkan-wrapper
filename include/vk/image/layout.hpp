@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of.hpp>
-
 namespace vk {
 
 	enum class image_layout {
@@ -28,7 +26,7 @@ namespace vk {
 		fragment_shading_rate_attachment_optimal   = 1000164003
 	};
 
-	struct initial_layout : wrapper::of<vk::image_layout> {};
-	struct final_layout : wrapper::of<vk::image_layout> {};
+	struct initial_layout { vk::image_layout _; };
+	struct final_layout { vk::image_layout _; };
 
 } // vk

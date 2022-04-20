@@ -5,14 +5,13 @@
 #include "../dependency.hpp"
 
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
-	struct src_subpass : wrapper::of_integer<uint32> {};
-	struct dst_subpass : wrapper::of_integer<uint32> {};
+	struct src_subpass { uint32 _; };
+	struct dst_subpass { uint32 _; };
 
 	inline constexpr uint32 subpass_external( ~0u );
 

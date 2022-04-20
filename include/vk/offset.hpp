@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
@@ -8,7 +8,7 @@ namespace vk {
 	struct offset;
 
 	template<>
-	struct offset<1> : wrapper::of_integer<int32> {};
+	struct offset<1> { int32 _; };
 
 	offset(int32) -> offset<1>;
 

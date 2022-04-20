@@ -2,13 +2,12 @@
 
 #include "../../binding.hpp"
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
-	struct stride : wrapper::of_integer<uint32> {};
+	struct stride { uint32 _; };
 	
 	enum class vertex_input_rate {
 		vertex   = 0,

@@ -15,8 +15,6 @@
 #include "../surface/handle.hpp"
 
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of_integer.hpp>
-#include <core/wrapper/of_pointer_to.hpp>
 
 namespace vk {
 
@@ -26,13 +24,11 @@ namespace vk {
 		mutable_format              = 0x00000004
 	};
 
-	struct image_array_layers : wrapper::of_integer<uint32> {};
-	struct queue_family_index_count : wrapper::of_integer<uint32> {};
-	struct queue_family_indices :
-		wrapper::of_pointer_to<const vk::queue_family_index>
-	{};
+	struct image_array_layers { uint32 _; };
+	struct queue_family_index_count { uint32 _; };
+	struct queue_family_indices { const vk::queue_family_index* _; };
 
-	struct clipped : wrapper::of_integer<uint32> {};
+	struct clipped { uint32 _; };
 
 	struct swapchain_create_info {
 		uint32 structure_type = 1000001000;

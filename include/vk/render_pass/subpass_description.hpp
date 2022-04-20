@@ -5,8 +5,6 @@
 #include "../pipeline/bind_point.hpp"
 
 #include <core/flag_enum.hpp>
-#include <core/wrapper/of_integer.hpp>
-#include <core/wrapper/of_pointer_to.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>

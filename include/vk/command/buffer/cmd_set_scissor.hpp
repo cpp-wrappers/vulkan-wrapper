@@ -6,16 +6,20 @@
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
+namespace vk {
+
+	struct first_scissor_index { uint32 _; };
+
+}
+
 extern "C" VK_ATTR void VK_CALL vkCmdSetScissor(
 	handle<vk::command_buffer> command_buffer,
-	uint32 first_scissor,
+	vk::first_scissor_index first_scissor,
 	uint32 scissor_count,
 	const vk::rect2d* scissors
 );
 
 namespace vk {
-
-	struct first_scissor_index : wrapper::of_integer<uint32> {};
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
@@ -40,7 +44,7 @@ namespace vk {
 
 		vkCmdSetScissor(
 			command_buffer,
-			(uint32) first,
+			first,
 			(uint32) scissors.size(),
 			scissors.data()
 		);

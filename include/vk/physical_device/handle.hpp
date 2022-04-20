@@ -106,10 +106,11 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		get_queue_family_properties(span{ props, count });
 		uint32 index = 0;
 		for(vk::queue_family_properties p : span{ props, count }) {
-			if((p.flags.get(args) && ...)) return { index };
+			if((p.flags.get(args) && ...))
+				return vk::queue_family_index{ index };
 			++index;
 		}
-		return { vk::queue_family_ignored };
+		return vk::queue_family_ignored;
 	}
 
 	vk::count for_each_queue_family_properties(auto&& f) const {

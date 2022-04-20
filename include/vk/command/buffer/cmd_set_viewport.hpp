@@ -9,16 +9,20 @@
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
+namespace vk {
+
+	struct first_viewport_index { uint32 _; };
+
+}
+
 extern "C" VK_ATTR void VK_CALL vkCmdSetViewport(
 	handle<vk::command_buffer> command_buffer,
-	uint32 first_viewport,
+	vk::first_viewport_index first_viewport,
 	uint32 viewport_count,
 	const vk::viewport* viewports
 );
 
 namespace vk {
-
-	struct first_viewport_index : wrapper::of_integer<uint32> {};
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
@@ -43,7 +47,7 @@ namespace vk {
 
 		vkCmdSetViewport(
 			command_buffer,
-			(uint32) first,
+			first,
 			(uint32) viewports.size(),
 			viewports.data()
 		);

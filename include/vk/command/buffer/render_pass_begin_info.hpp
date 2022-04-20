@@ -10,14 +10,14 @@
 
 namespace vk {
 
-	struct render_area : wrapper::of<vk::rect2d> {
+	struct render_area : vk::rect2d {
 
-		render_area(vk::offset<2> offset, vk::extent<2> extent)
-			: wrapper::of<vk::rect2d>{ offset, extent }
+		render_area(vk::offset<2> offset, vk::extent<2> extent) :
+			vk::rect2d{ offset, extent }
 		{}
 
-		render_area(vk::extent<2> extent)
-			: wrapper::of<vk::rect2d>{ vk::offset<2>{ 0,0 }, extent }
+		render_area(vk::extent<2> extent) :
+			vk::rect2d{ vk::offset<2>{ 0,0 }, extent }
 		{}
 	};
 

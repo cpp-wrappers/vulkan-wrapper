@@ -4,34 +4,26 @@
 
 #include "../../function.hpp"
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkCmdDraw(
-	handle<vk::command_buffer> commandBuffer,
-	uint32 vertex_count,
-	uint32 instance_count,
-	uint32 first_vertex,
-	uint32 first_instance
-);
 
 namespace vk {
 
-	struct vertex_count :
-		wrapper::of_integer<uint32, struct vertex_count_t>
-	{};
+	struct vertex_count { uint32 _; };
+	struct instance_count { uint32 _; };
+	struct first_vertex { uint32 _; };
+	struct first_instance { uint32 _; };
 
-	struct instance_count :
-		wrapper::of_integer<uint32, struct instance_count_t>
-	{};
+}
 
-	struct first_vertex :
-		wrapper::of_integer<uint32, struct first_vertex_t>
-	{};
+extern "C" VK_ATTR void VK_CALL vkCmdDraw(
+	handle<vk::command_buffer> commandBuffer,
+	vk::vertex_count vertex_count,
+	vk::instance_count instance_count,
+	vk::first_vertex first_vertex,
+	vk::first_instance first_instance
+);
 
-	struct first_instance :
-		wrapper::of_integer<uint32, struct first_instance_t>
-	{};
+namespace vk {
 
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
@@ -70,10 +62,10 @@ namespace vk {
 
 		vkCmdDraw(
 			command_buffer,
-			(uint32) vertex_count,
-			(uint32) instance_count,
-			(uint32) first_vertex,
-			(uint32) first_instance
+			vertex_count,
+			instance_count,
+			first_vertex,
+			first_instance
 		);
 	} // cmd_draw
 

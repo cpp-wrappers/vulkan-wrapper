@@ -1,11 +1,9 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct device_address :
-		wrapper::of_integer<uint64, struct device_address_t>
-	{};
+	enum device_address : uint64 {};
 
 } // vk

@@ -3,7 +3,6 @@
 #include <core/flag_enum.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/wrapper/of_integer.hpp>
 
 #include "../blend_factor.hpp"
 #include "../blend_op.hpp"
@@ -11,7 +10,7 @@
 
 namespace vk {
 
-	struct enable_blend : wrapper::of_integer<uint32, struct enable_blend_t>{};
+	struct enable_blend { uint32 _; };
 
 	struct pipeline_color_blend_attachment_state {
 		vk::enable_blend enable_blend;

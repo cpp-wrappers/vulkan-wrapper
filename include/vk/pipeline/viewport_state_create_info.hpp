@@ -9,13 +9,8 @@
 
 namespace vk {
 
-	struct viewport_count :
-		wrapper::of_integer<uint32, struct viewport_count_t>
-	{};
-
-	struct scissor_count :
-		wrapper::of_integer<uint32, struct scissor_count_t>
-	{};
+	struct viewport_count { uint32 _; };
+	struct scissor_count { uint32 _; };
 
 	using scissor = vk::rect2d;
 

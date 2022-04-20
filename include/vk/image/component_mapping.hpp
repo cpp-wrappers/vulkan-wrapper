@@ -2,16 +2,15 @@
 
 #include "component_swizzle.hpp"
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
-	struct r : wrapper::of<vk::component_swizzle> {};
-	struct g : wrapper::of<vk::component_swizzle> {};
-	struct b : wrapper::of<vk::component_swizzle> {};
-	struct a : wrapper::of<vk::component_swizzle> {};
+	struct r { vk::component_swizzle _; };
+	struct g { vk::component_swizzle _; };
+	struct b { vk::component_swizzle _; };
+	struct a { vk::component_swizzle _; };
 
 	struct component_mapping {
 		vk::r r{ vk::component_swizzle::identity };

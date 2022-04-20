@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct timeout : wrapper::of_integer<uint64> {};
+	struct timeout { uint64 _; };
 
 } // vk

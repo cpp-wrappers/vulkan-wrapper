@@ -40,9 +40,9 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if(result.error()) return unexpected{ result };
 
-		return { (bool)supports };
+		return { (bool) supports };
 	} // try_get_physical_device_surface_support
 
 	template<typename... Args>

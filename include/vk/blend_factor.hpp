@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of.hpp>
-
 namespace vk {
 
 	enum class blend_factor {
@@ -26,10 +24,10 @@ namespace vk {
 		one_minus_src1_alpha     = 18,
 	};
 
-	struct src_color_blend_factor : wrapper::of<vk::blend_factor, struct src_color_blend_factor_t>{};
-	struct dst_color_blend_factor : wrapper::of<vk::blend_factor, struct dst_color_blend_factor_t>{};
+	struct src_color_blend_factor { vk::blend_factor _; };
+	struct dst_color_blend_factor { vk::blend_factor _; };
 
-	struct src_alpha_blend_factor : wrapper::of<vk::blend_factor, struct src_alpha_blend_factor_t>{};
-	struct dst_alpha_blend_factor : wrapper::of<vk::blend_factor, struct dst_alpha_blend_factor_t>{};
+	struct src_alpha_blend_factor { vk::blend_factor _; };
+	struct dst_alpha_blend_factor { vk::blend_factor _; };
 
 } // vk

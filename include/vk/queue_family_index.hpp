@@ -1,10 +1,14 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct queue_family_index : wrapper::of_integer<uint32> {};
+	struct queue_family_index {
+		uint32 _;
+
+		operator uint32 () const { return _; }
+	};
 
 	inline constexpr vk::queue_family_index queue_family_ignored{ ~0U };
 

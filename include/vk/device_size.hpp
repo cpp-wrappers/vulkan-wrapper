@@ -1,11 +1,9 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct device_size :
-		wrapper::of_integer<uint64, struct device_size_t>
-	{};
+	struct device_size { uint64 _; };
 
 } // vk

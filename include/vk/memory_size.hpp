@@ -4,7 +4,7 @@
 
 namespace vk {
 	
-	struct memory_size : vk::device_size {};
+	struct memory_size { vk::device_size _; };
 
 	constexpr inline vk::memory_size whole_size{ ~0ULL };
 

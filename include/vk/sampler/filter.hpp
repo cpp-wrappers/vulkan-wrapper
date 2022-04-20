@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of.hpp>
-
 namespace vk {
 
 	enum class filter {
@@ -10,7 +8,7 @@ namespace vk {
 		cubic   = 2
 	};
 
-	struct mag_filter : wrapper::of<filter, struct mag_filter_t> {};
-	struct min_filter : wrapper::of<filter, struct min_filter_t> {};
+	struct mag_filter { vk::filter _; };
+	struct min_filter { vk::filter _; };
 
 } // vk

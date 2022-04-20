@@ -1,9 +1,13 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct count : wrapper::of_integer<uint32, struct count_t> {};
+	struct count {
+		uint32 _;
+
+		operator uint32 () const { return _; }
+	};
 
 } // vk

@@ -10,7 +10,7 @@
 extern "C" VK_ATTR int32 VK_CALL vkAcquireNextImageKHR(
 	handle<vk::device> device,
 	handle<vk::swapchain> swapchain,
-	uint64 timeout,
+	vk::timeout timeout,
 	handle<vk::semaphore> semaphore,
 	handle<vk::fence> fence,
 	uint32* image_index
@@ -64,7 +64,7 @@ namespace vk {
 			vkAcquireNextImageKHR(
 				device,
 				swapchain,
-				(uint64) timeout,
+				timeout,
 				semaphore,
 				fence,
 				&index

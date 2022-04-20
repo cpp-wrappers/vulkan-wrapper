@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of.hpp>
-
 namespace vk {
 
 	enum class blend_op {
@@ -58,7 +56,7 @@ namespace vk {
 		blue               = 1000148045,
 	};
 
-	struct color_blend_op : wrapper::of<vk::blend_op, struct color_blend_op>{};
-	struct alpha_blend_op : wrapper::of<vk::blend_op, struct alpha_blend_op>{};
+	struct color_blend_op { vk::blend_op _; };
+	struct alpha_blend_op { vk::blend_op _; };
 
 } // vk

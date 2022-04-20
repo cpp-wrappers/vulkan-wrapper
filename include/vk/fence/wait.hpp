@@ -48,7 +48,7 @@ namespace vk {
 				(uint32) fences.size(),
 				fences.data(),
 				uint32{ wait_all },
-				(uint64) timeout
+				timeout
 			)
 		};
 	} // try_wait_for_fences

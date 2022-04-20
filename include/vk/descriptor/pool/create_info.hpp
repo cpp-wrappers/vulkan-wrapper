@@ -2,7 +2,6 @@
 
 #include "size.hpp"
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/flag_enum.hpp>
 
 namespace vk {
@@ -16,7 +15,7 @@ namespace vk {
 	using descriptor_pool_create_flags =
 		flag_enum<vk::descriptor_pool_create_flag>;
 
-	struct max_sets : wrapper::of_integer<uint32, struct max_sets_t> {};
+	struct max_sets { uint32 _; };
 
 	struct descriptor_pool_create_info {
 		uint32 structure_type = 33;

@@ -23,7 +23,7 @@ extern "C" VK_ATTR int32 VK_CALL vkCreateGraphicsPipelines(
 
 namespace vk {
 
-	struct base_pipeline_index : wrapper::of_integer<uint32> {};
+	struct base_pipeline_index { uint32 _; };
 
 	template<>
 	struct vk::create_t<vk::pipeline> {

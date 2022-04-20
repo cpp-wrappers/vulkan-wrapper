@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct min_image_count : wrapper::of_integer<uint32> {};
+	struct min_image_count { uint32 _; };
 
 } // vk

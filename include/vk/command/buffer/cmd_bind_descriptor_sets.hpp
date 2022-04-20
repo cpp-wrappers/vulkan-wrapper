@@ -2,12 +2,10 @@
 
 #include "../../descriptor/set/handle.hpp"
 
-#include <core/wrapper/of_integer.hpp>
-
 namespace vk {
 
-	struct first_set : wrapper::of_integer<uint32, struct first_set_t> {};
-	struct dynamic_offset : wrapper::of_integer<uint32> {};
+	struct first_set { uint32 _; };
+	struct dynamic_offset { uint32 _; };
 
 }
 
@@ -23,7 +21,7 @@ extern "C" VK_ATTR void VK_CALL vkCmdBindDescriptorSets(
 	handle<vk::command_buffer> command_buffer,
 	vk::pipeline_bind_point pipeline_bind_point,
 	handle<vk::pipeline_layout> layout,
-	uint32 first_set,
+	vk::first_set first_set,
 	uint32 descriptor_set_count,
 	const handle<vk::descriptor_set>* descriptor_sets,
 	uint32 dynamic_offset_count,
@@ -77,7 +75,7 @@ namespace vk {
 			command_buffer,
 			bind_point,
 			pipeline_layout,
-			(uint32) first,
+			first,
 			(uint32) sets.size(),
 			sets.data(),
 			(uint32) dynamic_offset_count,

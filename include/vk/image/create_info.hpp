@@ -40,8 +40,8 @@ namespace vk {
 
 	using image_create_flags = flag_enum<vk::image_create_flag>;
 
-	struct mip_levels : wrapper::of_integer<uint32, struct mip_levels_t> {};
-	struct array_layers : wrapper::of_integer<uint32, struct array_layers_t> {};
+	struct mip_levels { uint32 _; };
+	struct array_layers { uint32 _; };
 	
 	struct image_create_info {
 		uint32 structure_type = 14;

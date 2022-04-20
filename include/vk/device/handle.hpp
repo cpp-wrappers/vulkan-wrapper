@@ -36,8 +36,8 @@ namespace vk {
 	struct deferred_operation;
 	struct acceleration_structure;
 
-	struct queue_index : wrapper::of_integer<uint32, struct queue_index_t> {};
-	struct wait_all : wrapper::of<bool, struct wait_all_t> {};
+	struct queue_index { uint32 _; };
+	struct wait_all { bool _; };
 
 	template<>
 	inline constexpr bool is_creatable<vk::device> = true;

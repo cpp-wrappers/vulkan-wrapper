@@ -4,37 +4,18 @@
 #include "../cull_mode.hpp"
 #include "../front_face.hpp"
 
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
 
-	struct enable_depth_clamp :
-		wrapper::of_integer<uint32, struct enable_depth_clamp_t>
-	{};
-
-	struct enable_rasterizer_discard :
-		wrapper::of_integer<uint32, struct enable_rasterizer_discard_t>
-	{};
-
-	struct enable_depth_bias :
-		wrapper::of_integer<uint32, struct enable_depth_bias_t>
-	{};
-
-	struct depth_bias_constant_factor :
-		wrapper::of<float, struct depth_bias_constant_factor_t>
-	{};
-
-	struct depth_bias_clamp :
-		wrapper::of<float, struct depth_bias_clamp_t>
-	{};
-
-	struct depth_bias_slope_factor :
-		wrapper::of<float, struct depth_bias_slope_factor_t>
-	{};
-
-	struct line_width : wrapper::of<float, struct line_width_t> {};
+	struct enable_depth_clamp { uint32 _; };
+	struct enable_rasterizer_discard { uint32 _; };
+	struct enable_depth_bias { uint32 _; };
+	struct depth_bias_constant_factor { uint32 _; };
+	struct depth_bias_clamp { uint32 _; };
+	struct depth_bias_slope_factor { uint32 _; };
+	struct line_width { float _; };
 
 	struct pipeline_rasterization_state_create_info {
 		uint32 structure_type = 23;

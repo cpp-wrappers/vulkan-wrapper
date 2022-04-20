@@ -4,7 +4,6 @@
 
 #include "../logic_op.hpp"
 
-#include <core/wrapper/of.hpp>
 #include <core/array.hpp>
 #include <core/range/of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
@@ -12,10 +11,8 @@
 
 namespace vk {
 
-	struct enable_logic_op : wrapper::of<uint32, struct enable_logic_op_t> {};
-	struct blend_constants :
-		wrapper::of<array<float, 4>, struct blend_constants_t>
-	{};
+	struct enable_logic_op { uint32 _; };
+	struct blend_constants : array<float, 4> {};
 
 	struct pipeline_color_blend_state_create_info {
 		uint32 structure_type = 26;

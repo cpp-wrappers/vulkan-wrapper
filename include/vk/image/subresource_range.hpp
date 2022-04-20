@@ -4,16 +4,15 @@
 
 #include <core/flag_enum.hpp>
 #include <core/integer.hpp>
-#include <core/wrapper/of_integer.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 namespace vk {
 
-	struct base_mip_level : wrapper::of_integer<uint32> {};
-	struct level_count : wrapper::of_integer<uint32> {};
-	struct base_array_layer : wrapper::of_integer<uint32> {};
-	struct layer_count : wrapper::of_integer<uint32> {};
+	struct base_mip_level { uint32 _; };
+	struct level_count { uint32 _; };
+	struct base_array_layer { uint32 _; };
+	struct layer_count { uint32 _; };
 	
 	struct image_subresource_range {
 		vk::image_aspects aspect_mask{ vk::image_aspect::color };

@@ -1,9 +1,13 @@
 #pragma once
 
-#include <core/wrapper/of_integer.hpp>
+#include <core/integer.hpp>
 
 namespace vk {
 
-	struct image_index : wrapper::of_integer<uint32, struct vk_image_index> {};
+	struct image_index {
+		uint32 _;
+
+		operator uint32 () const { return _; }
+	};
 	
 } // vk

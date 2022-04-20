@@ -1,7 +1,5 @@
 #pragma once
 
-#include <core/wrapper/of.hpp>
-
 namespace vk {
 
 	enum class sampler_address_mode {
@@ -14,16 +12,8 @@ namespace vk {
 
 	using address_mode = vk::sampler_address_mode;
 
-	struct address_mode_u :
-		wrapper::of<vk::address_mode, struct address_mode_u_t>
-	{};
-
-	struct address_mode_v :
-		wrapper::of<vk::address_mode, struct address_mode_v_t>
-	{};
-
-	struct address_mode_w :
-		wrapper::of<vk::address_mode, struct address_mode_w_t>
-	{};
+	struct address_mode_u { vk::address_mode _; };
+	struct address_mode_v { vk::address_mode _; };
+	struct address_mode_w { vk::address_mode _; };
 
 } // vk

@@ -10,9 +10,9 @@
 namespace vk {
 
 	struct application_name : c_string {};
-	struct application_version : wrapper::of_integer<uint32> {};
+	enum application_version : uint32 {};
 	struct engine_name : c_string {};
-	struct engine_version : wrapper::of_integer<uint32> {};
+	enum engine_version : uint32 {};
 
 	struct application_info {
 		uint32 structure_type = 0;
