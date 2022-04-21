@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vk/physical_device/extension_properties.hpp"
+#include "../extension_properties.hpp"
 
 #include <core/integer.hpp>
 

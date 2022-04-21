@@ -1,8 +1,8 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
+#include "../extent.hpp"
 
-#include "vk/extent.hpp"
+#include <core/flag_enum.hpp>
 
 namespace vk {
 

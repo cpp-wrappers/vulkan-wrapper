@@ -1,9 +1,9 @@
 #pragma once
 
+#include "../dynamic_state.hpp"
+
 #include <core/integer.hpp>
 #include <core/range/of_value_type_same_as.hpp>
-
-#include "vk/dynamic_state.hpp"
 
 namespace vk {
 

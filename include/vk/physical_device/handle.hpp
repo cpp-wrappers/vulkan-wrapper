@@ -88,17 +88,13 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	get_queue_family_properties_count() const;
 
 	template<typename F>
-	[[ nodiscard ]]
-	vk::count
-	view_queue_family_properties(vk::count count, F&& f) const;
+	void view_queue_family_properties(vk::count count, F&& f) const;
 
 	template<typename F>
-	[[ nodiscard ]]
-	vk::count
-	view_queue_family_properties(F&& f) const;
+	void view_queue_family_properties(F&& f) const;
 
 	template<typename... Args>
-	requires(types::are_same::for_types<Args..., vk::queue_flag>)
+	requires types::are_same::for_types<Args..., vk::queue_flag>
 	vk::queue_family_index
 	find_first_queue_family_index_with_capabilities(Args... args) const {
 		uint32 count = (uint32) get_queue_family_properties_count();
@@ -113,37 +109,28 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		return vk::queue_family_ignored;
 	}
 
-	vk::count for_each_queue_family_properties(auto&& f) const {
-		return view_queue_family_properties(
-			[&](auto view) {
-				for(auto props : view) f(props);
-			}
-		);
-	}
+	template<typename F>
+	void for_each_queue_family_properties(F&& f) const;
 
 	template<typename... Args>
 	[[ nodiscard ]]
 	vk::count enumerate_device_extension_properties(Args&&...) const;
 
-	[[ nodiscard ]] inline
-	vk::count
+	[[ nodiscard ]] vk::count inline
 	get_device_extension_properties_count(vk::layer_name layer_name = {}) const;
 
 	template<typename F>
-	vk::count
-	view_device_extension_properties(
+	void view_device_extension_properties(
 		vk::count count, F&& f, vk::layer_name layer_name = {}
 	) const;
 
 	template<typename F>
-	vk::count
-	view_device_extension_properties(
+	void view_device_extension_properties(
 		F&& f, vk::layer_name layer_name = {}
 	) const;
 
 	template<typename F>
-	vk::count
-	for_each_device_extension_properties(
+	void for_each_device_extension_properties(
 		F&& f, vk::layer_name layer_name = {}
 	) const;
 
@@ -165,39 +152,36 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 	get_surface_format_count(handle<vk::surface> surface) const;
 
 	template<typename F>
-	[[ nodiscard ]]
-	vk::count
-	view_surface_formats(
+	void view_surface_formats(
 		handle<vk::surface> surface, vk::count count, F&& f
 	) const;
 
 	template<typename F>
-	[[ nodiscard ]]
-	vk::count
-	view_surface_formats(handle<vk::surface> surface, F&& f) const;
+	void view_surface_formats(handle<vk::surface> surface, F&& f) const;
 
 	template<typename... Args>
 	vk::count
 	get_surface_present_modes(Args&&... args) const;
 
-	vk::count
-	get_surface_present_mode_count(handle<vk::surface> surface) const;
+	[[ nodiscard ]] inline
+	vk::count get_surface_present_mode_count(handle<vk::surface> surface) const;
 
 	template<typename F>
-	vk::count
+	void
 	view_surface_present_modes(
 		handle<vk::surface> surface, vk::count count, F&& f
 	) const;
 
 	template<typename F>
-	vk::count
-	view_surface_present_modes(handle<vk::surface> surface, F&& f) const;
+	void view_surface_present_modes(handle<vk::surface> surface, F&& f) const;
 
 	template<typename F>
-	vk::count
-	for_each_surface_presesnt_mode(handle<vk::surface> surface, F&& f) const;
+	void for_each_surface_presesnt_mode(
+		handle<vk::surface> surface, F&& f
+	) const;
 
 	template<typename... Args>
+	[[ nodiscard ]]
 	bool
 	get_surface_support(Args&&...) const;
 
@@ -207,22 +191,33 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 }; // handle<physical_device>
 
 #include "get_properties.hpp"
-#include "get_queue_family_properties.hpp"
-#include "get_queue_family_properties_count.hpp"
-#include "view_queue_family_properties.hpp"
+
+#include "queue_family_properties/get.hpp"
+#include "queue_family_properties/get_count.hpp"
+#include "queue_family_properties/view.hpp"
+#include "queue_family_properties/for_each.hpp"
+
 #include "get_memory_properties.hpp"
-#include "get_surface_capabilities.hpp"
-#include "get_surface_formats.hpp"
-#include "get_surface_format_count.hpp"
-#include "get_first_surface_format.hpp"
-#include "view_surface_formats.hpp"
-#include "get_surface_present_modes.hpp"
+
+#include "surface/get_capabilities.hpp"
+#include "surface/get_support.hpp"
+
+#include "surface/formats/get.hpp"
+#include "surface/formats/get_count.hpp"
+#include "surface/formats/get_first.hpp"
+#include "surface/formats/view.hpp"
+
+#include "surface/present_modes/get.hpp"
+#include "surface/present_modes/get_count.hpp"
+#include "surface/present_modes/view.hpp"
+#include "surface/present_modes/for_each.hpp"
+
 #include "get_features.hpp"
-#include "get_surface_support.hpp"
-#include "enumerate_device_extension_properties.hpp"
-#include "get_device_extension_properties_count.hpp"
-#include "view_device_extension_properties.hpp"
-#include "for_each_device_extension_properties.hpp"
+
+#include "device_extension_properties/enumerate.hpp"
+#include "device_extension_properties/get_count.hpp"
+#include "device_extension_properties/view.hpp"
+#include "device_extension_properties/for_each.hpp"
 
 #include "../device/create.hpp"
 

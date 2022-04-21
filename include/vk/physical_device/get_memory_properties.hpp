@@ -10,6 +10,7 @@ extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceMemoryProperties(
 
 namespace vk {
 
+	[[ nodiscard ]]
 	vk::physical_device_memory_properties inline
 	get_physical_device_memory_properties(
 		handle<vk::physical_device> physical_device

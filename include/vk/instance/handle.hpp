@@ -34,22 +34,28 @@ template<>
 struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
 	template<range::of<handle<vk::physical_device>> PhysicalDevices>
-	vk::count enumerate_physical_devices(PhysicalDevices&& devices) const;
+	[[ nodiscard ]] vk::count
+	enumerate_physical_devices(PhysicalDevices&& devices) const;
 
-	vk::count inline get_physical_device_count() const;
-
-	template<typename F>
-	vk::count view_physical_devices(vk::count count, F&& f) const;
-
-	handle<vk::physical_device> inline get_first_physical_device() const;
+	[[ nodiscard ]]
+	vk::count inline
+	get_physical_device_count() const;
 
 	template<typename F>
-	vk::count for_each_physical_device(vk::count count, F&& f) const;
+	void view_physical_devices(vk::count count, F&& f) const;
+
+	[[ nodiscard ]]
+	handle<vk::physical_device> inline
+	get_first_physical_device() const;
 
 	template<typename F>
-	vk::count for_each_physical_device(F&& f) const;
+	void for_each_physical_device(vk::count count, F&& f) const;
+
+	template<typename F>
+	void for_each_physical_device(F&& f) const;
 
 	template<typename ObjectType, typename... Args>
+	[[ nodiscard ]]
 	handle<ObjectType> create(Args&&... args) const {
 		auto result {
 			vk::create<ObjectType>(*this, forward<Args>(args)...)
@@ -66,8 +72,8 @@ struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
 #include "../debug/report/callback/create.hpp"
 
-#include "enumerate_physical_devices.hpp"
-#include "get_physical_device_count.hpp"
-#include "view_physical_devices.hpp"
-#include "get_first_physical_device.hpp"
-#include "for_each_physical_device.hpp"
+#include "physical_devices/enumerate.hpp"
+#include "physical_devices/get_count.hpp"
+#include "physical_devices/view.hpp"
+#include "physical_devices/get_first.hpp"
+#include "physical_devices/for_each.hpp"

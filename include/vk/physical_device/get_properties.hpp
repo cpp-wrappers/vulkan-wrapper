@@ -20,8 +20,8 @@ extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties2(
 
 namespace vk {
 
-	inline
-	vk::physical_device_properties
+	[[ nodiscard ]]
+	vk::physical_device_properties inline
 	get_physical_device_properties(
 		handle<vk::physical_device> physical_device
 	) {
@@ -31,6 +31,7 @@ namespace vk {
 			physical_device,
 			&props
 		);
+
 		return props;
 	}
 
@@ -41,6 +42,7 @@ namespace vk {
 			vk::is_extension_properties_reference
 		>
 	>::for_types<Args...>
+	[[ nodiscard ]]
 	vk::physical_device_properties
 	get_physical_device_properties(Args&&... args) {
 		vk::physical_device_properties_2 props{};

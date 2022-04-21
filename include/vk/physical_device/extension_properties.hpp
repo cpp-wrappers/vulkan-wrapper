@@ -7,7 +7,7 @@
 
 namespace vk {
 
-	struct extension_properties_marker{};
+	struct extension_properties_marker {};
 
 	struct is_extension_properties_reference : type::predicate_marker {
 
@@ -20,4 +20,4 @@ namespace vk {
 
 	};
 
-}
+} // vk
