@@ -26,8 +26,8 @@ namespace vk {
 	template<>
 	struct vk::create_t<vk::device> {
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
+		template<nuint Order, typename... Args>
+		requires (Order == 0) && types::are_exclusively_satisfying_predicates<
 			types::are_contain_decayed<handle<vk::physical_device>>,
 			types::are_may_contain_range_of<vk::queue_create_info>,
 			types::are_may_contain_range_of<vk::extension>,
@@ -127,40 +127,31 @@ namespace vk {
 			return device;
 		}
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::physical_device>>,
-			types::are_contain_one_decayed<vk::queue_family_index>,
-			types::are_may_contain_one_decayed<vk::queue_priority>,
-			types::are_may_contain_decayed<vk::extension>,
-			types::are_may_contain_one_decayed<vk::physical_device_features>,
-			types::are_may_contain_decayed_satisfying_predicate<
-				vk::is_physical_device_features
-			>
+		template<nuint Order, typename... Args>
+		auto operator () (Args&&... args) const {
+			static_assert(Order > 0);
+			return operator () <Order - 1, Args...>(forward<Args>(args)...);
+		}
+
+		template<nuint Order, typename... Args>
+		requires (Order == 1) &&
+		types::are_contain_one_decayed<
+			vk::queue_family_index
+		>::for_types<Args...> &&
+		types::are_may_contain_one_decayed<
+			vk::queue_priority
 		>::for_types<Args...>
 		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
-			nuint extensions_count = types::count_of_decayed<
-				vk::extension>
-			::for_types<Args...>;
-
-			vk::extension extension_names[extensions_count];
-
-			nuint extensions = 0;
-
-			elements::for_each_decayed<vk::extension>(args...)(
-				[&](vk::extension name) {
-					extension_names[extensions++] = name;
-				}
-			);
-
 			vk::queue_family_index family_index {
 				elements::decayed<vk::queue_family_index>(args...)
 			};
 
 			vk::queue_priority priority { 1.0F };
 			if constexpr (
-				types::are_contain_decayed<vk::queue_priority>::for_types<Args...>
+				types::are_contain_decayed<
+					vk::queue_priority
+				>::for_types<Args...>
 			) { priority = elements::decayed<vk::queue_priority>(args...); };
 
 			vk::queue_priorities priorities { &priority };
@@ -173,15 +164,49 @@ namespace vk {
 
 			return elements::pass_not_satisfying_type_predicate<
 				type::disjuncted_predicates<
-					type::is_decayed<vk::extension>,
 					type::is_decayed<vk::queue_family_index>,
 					type::is_decayed<vk::queue_priority>
 				>
 			>(
 				array{ ci },
-				span{ extension_names, extensions_count },
 				forward<Args>(args)...
-			)(vk::create_t<vk::device>{});
+			)(
+				[&]<typename... A>(A&&... a) {
+					return operator () <Order - 1, A...>(forward<A>(a)...);
+				}
+			);
+		}
+
+		template<nuint Order, typename... Args>
+		requires (Order == 2) &&
+		types::are_contain_decayed<vk::extension>::for_types<Args...>
+		vk::expected<handle<vk::device>>
+		operator () (Args&&... args) const {
+			nuint extensions_count = types::count_of_decayed<
+				vk::extension>
+			::for_types<Args...>;
+			vk::extension extension_storage[extensions_count];
+			nuint extension_count = 0;
+			elements::for_each_decayed<vk::extension>(args...)(
+				[&](vk::extension name) {
+					extension_storage[extension_count++] = name;
+				}
+			);
+			return elements::pass_not_satisfying_type_predicate<
+				type::disjuncted_predicates<type::is_decayed<vk::extension>>
+			>(
+				span{ extension_storage, extension_count },
+				forward<Args>(args)...
+			)(
+				[&]<typename... A>(A&&... a) {
+					return operator () <Order - 1, A...>(forward<A>(a)...);
+				}
+			);
+		}
+
+		template<typename... Args>
+		auto operator () (Args&&... args) const {
+			return operator () <2, Args...>(forward<Args>(args)...);
 		}
 
 	};

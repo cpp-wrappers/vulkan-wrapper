@@ -9,28 +9,28 @@
 
 namespace vk {
 
-	struct enable_depth_clamp { uint32 _; };
-	struct enable_rasterizer_discard { uint32 _; };
-	struct enable_depth_bias { uint32 _; };
+	struct enable_depth_clamp         { uint32 _; };
+	struct enable_rasterizer_discard  { uint32 _; };
+	struct enable_depth_bias          { uint32 _; };
 	struct depth_bias_constant_factor { uint32 _; };
-	struct depth_bias_clamp { uint32 _; };
-	struct depth_bias_slope_factor { uint32 _; };
-	struct line_width { float _; };
+	struct depth_bias_clamp           { uint32 _; };
+	struct depth_bias_slope_factor    { uint32 _; };
+	struct line_width                 { float _;  };
 
 	struct pipeline_rasterization_state_create_info {
-		uint32 structure_type = 23;
-		const void* next = nullptr;
-		uint32 flags{};
-		vk::enable_depth_clamp enable_depth_clamp{};
-		vk::enable_rasterizer_discard enable_rasterizer_discard{};
-		vk::polygon_mode polygon_mode;
-		vk::cull_mode cull_mode;
-		vk::front_face front_face;
-		vk::enable_depth_bias enable_depth_bias{};
+		uint32                         structure_type = 23;
+		const void*                    next = nullptr;
+		uint32                         flags{};
+		vk::enable_depth_clamp         enable_depth_clamp{};
+		vk::enable_rasterizer_discard  enable_rasterizer_discard{};
+		vk::polygon_mode               polygon_mode;
+		vk::cull_mode                  cull_mode;
+		vk::front_face                 front_face;
+		vk::enable_depth_bias          enable_depth_bias{};
 		vk::depth_bias_constant_factor depth_bias_constant_factor{};
-		vk::depth_bias_clamp depth_bias_clamp{};
-		vk::depth_bias_slope_factor depth_bias_slope_factor{};
-		vk::line_width line_width{ 1.0 };
+		vk::depth_bias_clamp           depth_bias_clamp{};
+		vk::depth_bias_slope_factor    depth_bias_slope_factor{};
+		vk::line_width                 line_width{ 1.0 };
 
 
 		template<typename... Args>
@@ -56,9 +56,9 @@ namespace vk {
 					vk::enable_depth_clamp
 				>::for_types<Args...>
 			) {
-				enable_depth_clamp = elements::decayed<
-					vk::enable_depth_clamp
-				>(args...);
+				enable_depth_clamp = {
+					elements::decayed<vk::enable_depth_clamp>(args...)
+				};
 			}
 
 			if constexpr (
@@ -66,9 +66,9 @@ namespace vk {
 					vk::enable_rasterizer_discard
 				>::for_types<Args...>
 			) {
-				enable_rasterizer_discard = elements::decayed<
-					vk::enable_rasterizer_discard
-				>(args...);
+				enable_rasterizer_discard = {
+					elements::decayed<vk::enable_rasterizer_discard>(args...)
+				};
 			}
 
 			if constexpr (
@@ -76,9 +76,9 @@ namespace vk {
 					vk::enable_depth_bias
 				>::for_types<Args...>
 			) {
-				enable_depth_bias = elements::decayed<
-					vk::enable_depth_bias
-				>(args...);
+				enable_depth_bias = {
+					elements::decayed<vk::enable_depth_bias>(args...)
+				};
 			}
 
 			if constexpr (
@@ -86,9 +86,9 @@ namespace vk {
 					vk::depth_bias_constant_factor
 				>::for_types<Args...>
 			) {
-				depth_bias_constant_factor = elements::decayed<
-					vk::depth_bias_constant_factor
-				>(args...);
+				depth_bias_constant_factor = {
+					elements::decayed<vk::depth_bias_constant_factor>(args...)
+				};
 			}
 
 			if constexpr (
@@ -96,9 +96,9 @@ namespace vk {
 					vk::depth_bias_clamp
 				>::for_types<Args...>
 			) {
-				depth_bias_clamp = elements::decayed<
-					vk::depth_bias_clamp
-				>(args...);
+				depth_bias_clamp = {
+					elements::decayed<vk::depth_bias_clamp>(args...)
+				};
 			}
 
 			if constexpr (
@@ -106,9 +106,9 @@ namespace vk {
 					vk::depth_bias_slope_factor
 				>::for_types<Args...>
 			) {
-				depth_bias_slope_factor = elements::decayed<
-					vk::depth_bias_slope_factor
-				>(args...);
+				depth_bias_slope_factor = {
+					elements::decayed<vk::depth_bias_slope_factor>(args...)
+				};
 			}
 
 			if constexpr (

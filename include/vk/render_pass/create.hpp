@@ -8,6 +8,8 @@
 #include "../device/handle.hpp"
 #include "../function.hpp"
 
+#include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
+
 extern "C" VK_ATTR int32 VK_CALL vkCreateRenderPass(
 	handle<vk::device>                 device,
 	const vk::render_pass_create_info* create_info,
@@ -64,9 +66,7 @@ namespace vk {
 				ci.attachments = attachment_descriptions.data();
 			}
 
-			auto device {
-				elements::decayed<handle<vk::device>>(args...)
-			};
+			auto device = elements::decayed<handle<vk::device>>(args...);
 
 			handle<vk::render_pass> render_pass;
 
@@ -84,6 +84,25 @@ namespace vk {
 			return render_pass;
 
 		} // operator ()
+
+		template<typename... Args>
+		requires types::are_exclusively_satisfying_predicates<
+			types::are_contain_one_decayed<handle<vk::device>>,
+			types::are_contain_one_decayed<vk::subpass_description>,
+			types::are_may_contain_range_of<vk::subpass_dependency>,
+			types::are_may_contain_range_of<vk::attachment_description>
+		>::for_types<Args...>
+		vk::expected<handle<vk::render_pass>>
+		operator () (Args&&... args) const {
+			auto subpass = elements::decayed<vk::subpass_description>(args...);
+
+			return elements::pass_not_satisfying_type_predicate<
+				type::is_decayed<vk::subpass_description>
+			>(
+				array{ subpass },
+				forward<Args>(args)...
+			)( create_t{} );
+		}
 
 	}; // create_t<render_pass>
 

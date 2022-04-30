@@ -13,19 +13,23 @@ namespace vk {
 	struct enable_blend { uint32 _; };
 
 	struct pipeline_color_blend_attachment_state {
-		vk::enable_blend enable_blend;
-		vk::src_color_blend_factor src_color_blend_factor;
-		vk::dst_color_blend_factor dst_color_blend_factor;
-		vk::color_blend_op color_blend_op;
-		vk::src_alpha_blend_factor src_alpha_blend_factor;
-		vk::dst_alpha_blend_factor dst_alpha_blend_factor;
-		vk::alpha_blend_op alpha_blend_op;
-		vk::color_components color_write_mask {
+		vk::enable_blend           enable_blend;
+		vk::src_color_blend_factor src_color_blend_factor{};
+		vk::dst_color_blend_factor dst_color_blend_factor{};
+		vk::color_blend_op         color_blend_op{};
+		vk::src_alpha_blend_factor src_alpha_blend_factor{};
+		vk::dst_alpha_blend_factor dst_alpha_blend_factor{};
+		vk::alpha_blend_op         alpha_blend_op{};
+		vk::color_components       color_write_mask {
 			vk::color_component::r,
 			vk::color_component::g,
 			vk::color_component::b,
 			vk::color_component::a,
 		};
+
+		pipeline_color_blend_attachment_state(vk::enable_blend enable) :
+			enable_blend{ enable }
+		{}
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<

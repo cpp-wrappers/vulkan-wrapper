@@ -28,8 +28,8 @@ namespace vk {
 	template<>
 	struct vk::create_t<vk::pipeline> {
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
+		template<nuint Order, typename... Args>
+		requires (Order == 0) && types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<handle<vk::device>>,
 			types::are_contain_one_decayed<handle<vk::pipeline_layout>>,
 			types::are_contain_one_decayed<handle<vk::render_pass>>,
@@ -222,8 +222,15 @@ namespace vk {
 			return handle<vk::pipeline>{ pipeline };
 		}
 
-		template<typename... Args>
-		requires types::are_contain_decayed<
+		template<nuint Order, typename... Args>
+		vk::expected<handle<vk::pipeline>>
+		operator () (Args&&... args) const {
+			static_assert(Order > 0);
+			return operator()<Order - 1, Args...> (forward<Args>(args)...);
+		}
+
+		template<nuint Order, typename... Args>
+		requires (Order == 1) && types::are_contain_one_decayed<
 			vk::primitive_topology
 		>::for_types<Args...>
 		vk::expected<handle<vk::pipeline>>
@@ -239,7 +246,37 @@ namespace vk {
 					.topology = topology
 				},
 				forward<Args>(args)...
-			)(vk::create_t<vk::pipeline>{});
+			)(
+				[&]<typename... A>(A&&... a) {
+					return operator () <Order - 1>(forward<A>(a)...);
+				}
+			);
+		}
+
+		template<nuint Order, typename... Args>
+		requires (Order == 2) && types::are_contain_range_of<
+			vk::dynamic_state
+		>::for_types<Args...>
+		vk::expected<handle<vk::pipeline>>
+		operator () (Args&&... args) const {
+			auto& dyn_states = elements::range_of<vk::dynamic_state>(args...);
+
+			return elements::pass_not_satisfying_type_predicate<
+				type::is_range_of<vk::dynamic_state>
+			>(
+				vk::pipeline_dynamic_state_create_info { dyn_states },
+				forward<Args>(args)...
+			)(
+				[&]<typename... A>(A&&... a) {
+					return operator () <Order - 1, A...> (forward<A>(a)...);
+				}
+			);
+		}
+
+		template<typename... Args>
+		vk::expected<handle<vk::pipeline>>
+		operator () (Args&&... args) const {
+			return operator()<2, Args...> (forward<Args>(args)...);
 		}
 
 	}; // create_t<pipeline>
