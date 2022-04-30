@@ -10,8 +10,8 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateDeferredOperationKHR(
-	handle<vk::device> device,
-	const void* allocator,
+	handle<vk::device>              device,
+	const void*                     allocator,
 	handle<vk::deferred_operation>* deferred_operation
 );
 

@@ -8,8 +8,8 @@
 #include "../device_address.hpp"
 
 extern "C" VK_ATTR vk::device_address VK_CALL vkGetBufferDeviceAddress(
-	handle<vk::device> device,
-	const vk::buffer_device_address_info* nfo
+	handle<vk::device>                    device,
+	const vk::buffer_device_address_info* info
 );
 
 namespace vk {

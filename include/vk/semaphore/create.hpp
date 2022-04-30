@@ -8,10 +8,10 @@
 #include "../function.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateSemaphore(
-	handle<vk::device> device,
+	handle<vk::device>               device,
 	const vk::semaphore_create_info* create_info,
-	const void* allocator,
-	handle<vk::semaphore>* semaphore
+	const void*                      allocator,
+	handle<vk::semaphore>*           semaphore
 );
 
 namespace vk {

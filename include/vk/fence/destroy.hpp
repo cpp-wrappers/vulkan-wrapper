@@ -9,8 +9,8 @@
 
 extern "C" VK_ATTR void VK_CALL vkDestroyFence(
 	handle<vk::device> device,
-	handle<vk::fence> fence,
-	const void* allocator
+	handle<vk::fence>  fence,
+	const void*        allocator
 );
 
 namespace vk {

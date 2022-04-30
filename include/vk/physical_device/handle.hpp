@@ -13,7 +13,7 @@
 #include "../result.hpp"
 #include "../queue_family_index.hpp"
 #include "../count.hpp"
-#include "../extension_name.hpp"
+#include "../extension.hpp"
 #include "../layer_name.hpp"
 #include "../extension_properties.hpp"
 #include "../memory_type_index.hpp"
@@ -21,7 +21,7 @@
 
 #include <core/forward.hpp>
 #include <core/span.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/elements/one_of.hpp>
 
 namespace vk {
@@ -35,15 +35,20 @@ namespace vk {
 template<>
 struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 
-	template<typename... Args>
+	template<typename ObjectType, typename... Args>
 	[[ nodiscard ]]
-	handle<vk::device>
-	create_device(Args&&... args) const;
+	auto create(Args&&... args) const {
+		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
+	}
 
 	template<typename... Args>
 	[[ nodiscard ]]
 	vk::physical_device_properties
-	get_properties(Args&&... args) const;
+	get_properties(Args&&...) const;
 
 	[[ nodiscard ]] inline
 	vk::physical_device_memory_properties
@@ -78,25 +83,23 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		vk::unexpected_handler();
 	}
 
-	template<range::of<vk::queue_family_properties> Range>
+	template<range_of<vk::queue_family_properties> Range>
 	[[ nodiscard ]]
-	vk::count
-	get_queue_family_properties(Range&& range) const;
+	vk::count get_queue_family_properties(Range&&) const;
 
 	[[ nodiscard ]] inline
-	vk::count
-	get_queue_family_properties_count() const;
+	vk::count get_queue_family_properties_count() const;
 
-	template<typename F>
-	void view_queue_family_properties(vk::count count, F&& f) const;
+	template<typename Handler>
+	void view_queue_family_properties(vk::count, Handler&&) const;
 
-	template<typename F>
-	void view_queue_family_properties(F&& f) const;
+	template<typename Handler>
+	void view_queue_family_properties(Handler&&) const;
 
 	template<typename... Args>
 	requires types::are_same::for_types<Args..., vk::queue_flag>
 	vk::queue_family_index
-	find_first_queue_family_index_with_capabilities(Args... args) const {
+	find_first_queue_family_with_capabilities(Args... args) const {
 		uint32 count = (uint32) get_queue_family_properties_count();
 		vk::queue_family_properties props[count];
 		count = get_queue_family_properties(span{ props, count });
@@ -109,84 +112,76 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 		return vk::queue_family_ignored;
 	}
 
-	template<typename F>
-	void for_each_queue_family_properties(F&& f) const;
+	vk::queue_family_index
+	find_first_graphics_queue_family() {
+		return find_first_queue_family_with_capabilities(
+			vk::queue_flag::graphics
+		);
+	}
+
+	template<typename Handler>
+	void for_each_queue_family_properties(Handler&&) const;
 
 	template<typename... Args>
 	[[ nodiscard ]]
 	vk::count enumerate_device_extension_properties(Args&&...) const;
 
 	[[ nodiscard ]] vk::count inline
-	get_device_extension_properties_count(vk::layer_name layer_name = {}) const;
+	get_device_extension_properties_count(vk::layer = {}) const;
 
-	template<typename F>
+	template<typename Handler>
 	void view_device_extension_properties(
-		vk::count count, F&& f, vk::layer_name layer_name = {}
+		vk::count, Handler&&, vk::layer = {}
 	) const;
 
-	template<typename F>
-	void view_device_extension_properties(
-		F&& f, vk::layer_name layer_name = {}
-	) const;
+	template<typename Handler>
+	void view_device_extension_properties(Handler&&, vk::layer = {}) const;
 
-	template<typename F>
-	void for_each_device_extension_properties(
-		F&& f, vk::layer_name layer_name = {}
-	) const;
+	template<typename Handler>
+	void for_each_device_extension_properties(Handler&&, vk::layer = {}) const;
 
 	template<typename... Args>
 	vk::surface_capabilities
-	get_surface_capabilities(Args&&... args) const;
+	get_surface_capabilities(Args&&...) const;
 
 	template<typename... Args>
 	[[ nodiscard ]]
-	vk::count
-	get_surface_formats(Args&&... args) const;
+	vk::count get_surface_formats(Args&&...) const;
 
 	[[ nodiscard ]] inline
-	vk::surface_format
-	get_first_surface_format(handle<vk::surface> surface) const;
+	vk::surface_format get_first_surface_format(handle<vk::surface>) const;
 
 	[[ nodiscard ]]
-	vk::count inline
-	get_surface_format_count(handle<vk::surface> surface) const;
+	vk::count inline get_surface_format_count(handle<vk::surface>) const;
 
-	template<typename F>
-	void view_surface_formats(
-		handle<vk::surface> surface, vk::count count, F&& f
-	) const;
+	template<typename Handler>
+	void view_surface_formats(handle<vk::surface>, vk::count, Handler&&) const;
 
-	template<typename F>
-	void view_surface_formats(handle<vk::surface> surface, F&& f) const;
+	template<typename Handler>
+	void view_surface_formats(handle<vk::surface>, Handler&&) const;
 
 	template<typename... Args>
-	vk::count
-	get_surface_present_modes(Args&&... args) const;
+	vk::count get_surface_present_modes(Args&&...) const;
 
 	[[ nodiscard ]] inline
-	vk::count get_surface_present_mode_count(handle<vk::surface> surface) const;
+	vk::count get_surface_present_mode_count(handle<vk::surface>) const;
 
-	template<typename F>
+	template<typename Handler>
 	void
-	view_surface_present_modes(
-		handle<vk::surface> surface, vk::count count, F&& f
-	) const;
+	view_surface_present_modes(handle<vk::surface>, vk::count, Handler&&) const;
 
-	template<typename F>
-	void view_surface_present_modes(handle<vk::surface> surface, F&& f) const;
+	template<typename Handler>
+	void view_surface_present_modes(handle<vk::surface>, Handler&&) const;
 
-	template<typename F>
-	void for_each_surface_presesnt_mode(
-		handle<vk::surface> surface, F&& f
-	) const;
+	template<typename Handler>
+	void for_each_surface_presesnt_mode(handle<vk::surface>, Handler&&) const;
 
 	template<typename... Args>
 	[[ nodiscard ]]
-	bool
-	get_surface_support(Args&&...) const;
+	bool get_surface_support(Args&&...) const;
 
 	template<typename... Args>
-	void get_features(Args&&... args) const;
+	void get_features(Args&&...) const;
 
 }; // handle<physical_device>
 
@@ -220,9 +215,3 @@ struct handle<vk::physical_device> : vk::handle_base<vk::dispatchable> {
 #include "device_extension_properties/for_each.hpp"
 
 #include "../device/create.hpp"
-
-template<typename... Args>
-handle<vk::device>
-handle<vk::physical_device>::create_device(Args&&... args) const {
-	return vk::create<vk::device>(*this, forward<Args>(args)...);
-}

@@ -18,14 +18,14 @@ namespace vk {
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkCmdBindDescriptorSets(
-	handle<vk::command_buffer> command_buffer,
-	vk::pipeline_bind_point pipeline_bind_point,
-	handle<vk::pipeline_layout> layout,
-	vk::first_set first_set,
-	uint32 descriptor_set_count,
+	handle<vk::command_buffer>        command_buffer,
+	vk::pipeline_bind_point           pipeline_bind_point,
+	handle<vk::pipeline_layout>       layout,
+	vk::first_set                     first_set,
+	uint32                            descriptor_set_count,
 	const handle<vk::descriptor_set>* descriptor_sets,
-	uint32 dynamic_offset_count,
-	const vk::dynamic_offset* dynamic_offsets
+	uint32                            dynamic_offset_count,
+	const vk::dynamic_offset*         dynamic_offsets
 );
 
 namespace vk {
@@ -78,7 +78,7 @@ namespace vk {
 			first,
 			(uint32) sets.size(),
 			sets.data(),
-			(uint32) dynamic_offset_count,
+			dynamic_offset_count,
 			dynamic_offsets
 		);
 	} // cmd_bind_descriptor_sets

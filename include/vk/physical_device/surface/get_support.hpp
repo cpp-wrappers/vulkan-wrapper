@@ -4,9 +4,9 @@
 
 extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceSupportKHR(
 	handle<vk::physical_device> physical_device,
-	vk::queue_family_index queue_family_index,
-	handle<vk::surface> surface,
-	uint32* supported
+	vk::queue_family_index      queue_family_index,
+	handle<vk::surface>         surface,
+	uint32*                     supported
 );
 
 namespace vk {

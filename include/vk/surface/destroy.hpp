@@ -8,8 +8,8 @@
 
 extern "C" VK_ATTR void VK_CALL vkDestroySurfaceKHR(
 	handle<vk::instance> instance,
-	handle<vk::surface> surface,
-	const void* allocator
+	handle<vk::surface>  surface,
+	const void*          allocator
 );
 
 namespace vk {

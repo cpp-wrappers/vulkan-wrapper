@@ -6,15 +6,15 @@
 #include "../../../result.hpp"
 #include "../../../device/handle.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorSetLayout(
-	handle<vk::device> device,
+	handle<vk::device>                           device,
 	const vk::descriptor_set_layout_create_info* create_info,
-	const void* allocator,
-	handle<vk::descriptor_set_layout>* set_layout
+	const void*                                  allocator,
+	handle<vk::descriptor_set_layout>*           set_layout
 );
 
 namespace vk {

@@ -8,8 +8,8 @@
 
 extern "C" VK_ATTR void VK_CALL vkDestroyImage(
 	handle<vk::device> device,
-	handle<vk::image> image,
-	const void* allocator
+	handle<vk::image>  image,
+	const void*        allocator
 );
 
 namespace vk {

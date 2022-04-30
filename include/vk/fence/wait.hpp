@@ -5,15 +5,15 @@
 #include "../device/handle.hpp"
 #include "../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkWaitForFences(
-	handle<vk::device> device,
-	uint32 fence_count,
+	handle<vk::device>       device,
+	uint32                   fence_count,
 	const handle<vk::fence>* fences,
-	uint32 wait_all,
-	vk::timeout timeout
+	uint32                   wait_all,
+	vk::timeout              timeout
 );
 
 namespace vk {

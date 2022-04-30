@@ -2,7 +2,7 @@
 
 #include "get_count.hpp"
 
-#include <core/range/view_on_stack.hpp>
+#include <core/view_on_stack.hpp>
 
 namespace vk {
 
@@ -10,7 +10,7 @@ namespace vk {
 	void view_instance_extension_properties(
 		vk::count count, Handler&& handler
 	) {
-		range::view_on_stack<vk::extension_properties>{ count }(
+		view_on_stack<vk::extension_properties>{ count }(
 			[&](span<vk::extension_properties> raw) {
 				count = vk::enumerate_instance_extension_properties(raw);
 				handler(raw.cut(count));

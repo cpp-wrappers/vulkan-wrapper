@@ -6,8 +6,8 @@
 #include "../device/handle.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkResetFences(
-	handle<vk::device> device,
-	uint32 fence_count,
+	handle<vk::device>       device,
+	uint32                   fence_count,
 	const handle<vk::fence>* fences
 );
 
@@ -20,9 +20,7 @@ namespace vk {
 	>::for_types<Args...>
 	vk::result try_reset_fences(Args&&... args) {
 		auto& fences = elements::range_of<handle<vk::fence>>(args...);
-
 		auto device = elements::decayed<handle<vk::device>>(args...);
-
 		return {
 			vkResetFences(
 				device,

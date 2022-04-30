@@ -8,16 +8,16 @@
 #include "../../image/layout.hpp"
 #include "../../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkCmdCopyBufferToImage(
-	handle<vk::command_buffer> command_buffer,
-	handle<vk::buffer> src_buffer,
-	handle<vk::image> dst_image,
-	vk::image_layout dst_image_layout,
-	uint32 region_count,
+	handle<vk::command_buffer>   command_buffer,
+	handle<vk::buffer>           src_buffer,
+	handle<vk::image>            dst_image,
+	vk::image_layout             dst_image_layout,
+	uint32                       region_count,
 	const vk::buffer_image_copy* regions
 );
 

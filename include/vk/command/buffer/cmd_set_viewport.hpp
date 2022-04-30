@@ -17,9 +17,9 @@ namespace vk {
 
 extern "C" VK_ATTR void VK_CALL vkCmdSetViewport(
 	handle<vk::command_buffer> command_buffer,
-	vk::first_viewport_index first_viewport,
-	uint32 viewport_count,
-	const vk::viewport* viewports
+	vk::first_viewport_index   first_viewport,
+	uint32                     viewport_count,
+	const vk::viewport*        viewports
 );
 
 namespace vk {

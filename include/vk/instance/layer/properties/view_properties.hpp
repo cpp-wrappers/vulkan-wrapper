@@ -2,13 +2,13 @@
 
 #include "get_count.hpp"
 
-#include <core/range/view_on_stack.hpp>
+#include <core/view_on_stack.hpp>
 
 namespace vk {
 
 	template<typename Handler>
 	void view_instance_layer_properties(vk::count count, Handler&& handler) {
-		range::view_on_stack<vk::layer_properties>{ count }(
+		view_on_stack<vk::layer_properties>{ count }(
 			[&](span<vk::layer_properties> raw) {
 				count = vk::enumerate_instance_layer_properties(raw);
 				handler(raw.cut(count));

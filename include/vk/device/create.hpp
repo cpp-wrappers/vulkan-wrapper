@@ -8,17 +8,17 @@
 #include "../physical_device/features_2.hpp"
 #include "../create_or_allocate.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/type/disjuncted_predicates.hpp>
 #include <core/meta/type/negated_predicate.hpp>
 #include <core/meta/elements/pass_satisfying_type_predicate.hpp>
 #include <core/meta/type/conjuncted_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateDevice(
-	handle<vk::physical_device> physical_device,
+	handle<vk::physical_device>   physical_device,
 	const vk::device_create_info* create_info,
-	const void* allocator,
-	handle<vk::device>* device
+	const void*                   allocator,
+	handle<vk::device>*           device
 );
 
 namespace vk {
@@ -30,7 +30,7 @@ namespace vk {
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_decayed<handle<vk::physical_device>>,
 			types::are_may_contain_range_of<vk::queue_create_info>,
-			types::are_may_contain_range_of<vk::extension_name>,
+			types::are_may_contain_range_of<vk::extension>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
 			types::are_may_contain_decayed_satisfying_predicate<
 				vk::is_physical_device_features
@@ -59,11 +59,11 @@ namespace vk {
 
 			if constexpr (
 				types::are_contain_range_of<
-					vk::extension_name
+					vk::extension
 				>::for_types<Args...>
 			) {
 				const auto& extensions = elements::range_of<
-					vk::extension_name
+					vk::extension
 				>(args...);
 
 				ci.enabled_extension_count = (uint32) extensions.size();
@@ -131,8 +131,8 @@ namespace vk {
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<handle<vk::physical_device>>,
 			types::are_contain_one_decayed<vk::queue_family_index>,
-			types::are_contain_one_decayed<vk::queue_priority>,
-			types::are_may_contain_decayed<vk::extension_name>,
+			types::are_may_contain_one_decayed<vk::queue_priority>,
+			types::are_may_contain_decayed<vk::extension>,
 			types::are_may_contain_one_decayed<vk::physical_device_features>,
 			types::are_may_contain_decayed_satisfying_predicate<
 				vk::is_physical_device_features
@@ -141,26 +141,27 @@ namespace vk {
 		vk::expected<handle<vk::device>>
 		operator () (Args&&... args) const {
 			nuint extensions_count = types::count_of_decayed<
-				vk::extension_name>
+				vk::extension>
 			::for_types<Args...>;
 
-			vk::extension_name extension_names[extensions_count];
+			vk::extension extension_names[extensions_count];
 
 			nuint extensions = 0;
 
-			elements::for_each_decayed<vk::extension_name>(args...)(
-				[&](vk::extension_name name) {
+			elements::for_each_decayed<vk::extension>(args...)(
+				[&](vk::extension name) {
 					extension_names[extensions++] = name;
 				}
 			);
 
-			vk::queue_family_index family_index = elements::decayed<
-				vk::queue_family_index
-			>(args...);
+			vk::queue_family_index family_index {
+				elements::decayed<vk::queue_family_index>(args...)
+			};
 
-			vk::queue_priority priority = elements::decayed<
-				vk::queue_priority
-			>(args...);
+			vk::queue_priority priority { 1.0F };
+			if constexpr (
+				types::are_contain_decayed<vk::queue_priority>::for_types<Args...>
+			) { priority = elements::decayed<vk::queue_priority>(args...); };
 
 			vk::queue_priorities priorities { &priority };
 
@@ -172,7 +173,7 @@ namespace vk {
 
 			return elements::pass_not_satisfying_type_predicate<
 				type::disjuncted_predicates<
-					type::is_decayed<vk::extension_name>,
+					type::is_decayed<vk::extension>,
 					type::is_decayed<vk::queue_family_index>,
 					type::is_decayed<vk::queue_priority>
 				>

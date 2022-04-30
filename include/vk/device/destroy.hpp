@@ -6,7 +6,7 @@
 
 extern "C" VK_ATTR void VK_CALL vkDestroyDevice(
 	handle<vk::device> device,
-	const void* allocator
+	const void*        allocator
 );
 
 namespace vk {
@@ -16,7 +16,7 @@ namespace vk {
 
 		void operator () (handle<vk::device> device) const {
 			vkDestroyDevice(
-				vk::get_handle(device),
+				device,
 				nullptr
 			);
 		}

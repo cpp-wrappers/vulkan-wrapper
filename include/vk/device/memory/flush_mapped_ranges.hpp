@@ -6,12 +6,12 @@
 #include "../../result.hpp"
 #include "../../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkFlushMappedMemoryRanges(
-	handle<vk::device> device,
-	uint32 memory_range_count,
+	handle<vk::device>             device,
+	uint32                         memory_range_count,
 	const vk::mapped_memory_range* memory_ranges
 );
 

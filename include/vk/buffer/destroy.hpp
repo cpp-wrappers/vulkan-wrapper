@@ -9,7 +9,7 @@
 extern "C" VK_ATTR void VK_CALL vkDestroyBuffer(
 	handle<vk::device> device,
 	handle<vk::buffer> buffer,
-	const void* allocator
+	const void*        allocator
 );
 
 namespace vk {

@@ -6,13 +6,15 @@
 extern "C" VK_ATTR PFN_vkVoidFunction VK_CALL
 vkGetInstanceProcAddr(
 	handle<vk::instance> instance,
-	const char* name
+	const char*          name
 );
 
 namespace vk {
 
-	PFN_vkVoidFunction
-	get_instance_proc_address(handle<vk::instance> instance, const char* name) {
+	PFN_vkVoidFunction inline
+	get_instance_proc_address(
+		handle<vk::instance> instance, const char* name
+	) {
 		return vkGetInstanceProcAddr(
 			instance,
 			name

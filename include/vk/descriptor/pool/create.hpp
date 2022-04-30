@@ -12,10 +12,10 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorPool(
-	handle<vk::device> device,
+	handle<vk::device>                     device,
 	const vk::descriptor_pool_create_info* create_info,
-	const void* allocator,
-	handle<vk::descriptor_pool>* descriptor_pool
+	const void*                            allocator,
+	handle<vk::descriptor_pool>*           descriptor_pool
 );
 
 namespace vk {

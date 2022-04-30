@@ -6,13 +6,13 @@
 #include "../unexpected_handler.hpp"
 #include "../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkGetSwapchainImagesKHR(
-	handle<vk::device> device,
+	handle<vk::device>    device,
 	handle<vk::swapchain> swapchain,
-	uint32* swapchain_image_count,
-	handle<vk::image>* swapchain_images
+	uint32*               swapchain_image_count,
+	handle<vk::image>*    swapchain_images
 );
 
 namespace vk {
@@ -62,6 +62,7 @@ namespace vk {
 } // vk
 
 template<typename... Args>
+[[ nodiscard ]]
 vk::count handle<vk::device>::get_swapchain_images(Args&&... args) const {
 	return vk::get_swapchain_images(*this, forward<Args>(args)...);
 }

@@ -7,7 +7,7 @@ namespace vk {
 	struct count {
 		uint32 _;
 
-		operator uint32 () const { return _; }
+		constexpr operator uint32 () const { return _; }
 	};
 
 } // vk

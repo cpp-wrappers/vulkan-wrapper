@@ -9,12 +9,12 @@
 #include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties(
-	handle<vk::physical_device> physical_device,
+	handle<vk::physical_device>     physical_device,
 	vk::physical_device_properties* properties
 );
 
 extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties2(
-	handle<vk::physical_device> physical_device,
+	handle<vk::physical_device>       physical_device,
 	vk::physical_device_properties_2* properties
 );
 

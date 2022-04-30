@@ -13,12 +13,12 @@
 #include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateGraphicsPipelines(
-	handle<vk::device> device,
-	void* pipeline_cache,
-	uint32 create_info_count,
+	handle<vk::device>                       device,
+	void*                                    pipeline_cache,
+	uint32                                   create_info_count,
 	const vk::graphics_pipeline_create_info* create_infos,
-	const void* allocator,
-	handle<vk::pipeline>* pipelines
+	const void*                              allocator,
+	handle<vk::pipeline>*                    pipelines
 );
 
 namespace vk {

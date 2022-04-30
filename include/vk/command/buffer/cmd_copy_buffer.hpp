@@ -7,7 +7,7 @@
 #include "../../buffer/handle.hpp"
 #include "../../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {
@@ -28,10 +28,10 @@ namespace vk {
 
 extern "C" VK_ATTR void VK_CALL vkCmdCopyBuffer(
 	handle<vk::command_buffer> command_buffer,
-	vk::src_buffer src_buffer,
-	vk::dst_buffer dst_buffer,
-	uint32 region_count,
-	const vk::buffer_copy* regions
+	vk::src_buffer             src_buffer,
+	vk::dst_buffer             dst_buffer,
+	uint32                     region_count,
+	const vk::buffer_copy*     regions
 );
 
 namespace vk {

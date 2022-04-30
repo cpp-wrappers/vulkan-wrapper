@@ -8,9 +8,9 @@
 #include "../device/handle.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyRenderPass(
-	handle<vk::device> device,
+	handle<vk::device>      device,
 	handle<vk::render_pass> render_pass,
-	const void* allocator
+	const void*             allocator
 );
 
 namespace vk {

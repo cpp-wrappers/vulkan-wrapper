@@ -8,9 +8,9 @@
 #include "../../device_child_destroy_base.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyCommandPool(
-	handle<vk::device> device,
+	handle<vk::device>       device,
 	handle<vk::command_pool> command_pool,
-	const void* allocator
+	const void*              allocator
 );
 
 namespace vk {

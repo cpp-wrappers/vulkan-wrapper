@@ -8,10 +8,10 @@
 #include "../../create_or_allocate.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateShaderModule(
-	handle<vk::device> device,
+	handle<vk::device>                   device,
 	const vk::shader_module_create_info* create_info,
-	const void* allocator,
-	handle<vk::shader_module>* shader_module
+	const void*                          allocator,
+	handle<vk::shader_module>*           shader_module
 );
 
 namespace vk {

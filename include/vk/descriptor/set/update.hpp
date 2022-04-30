@@ -9,11 +9,11 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkUpdateDescriptorSets(
-	handle<vk::device> device,
-	uint32 descriptor_write_count,
+	handle<vk::device>              device,
+	uint32                          descriptor_write_count,
 	const vk::write_descriptor_set* descriptor_writes,
-	uint32 descriptor_copy_count,
-	const vk::copy_descriptor_set* descriptor_copies
+	uint32                          descriptor_copy_count,
+	const vk::copy_descriptor_set*  descriptor_copies
 );
 
 namespace vk {

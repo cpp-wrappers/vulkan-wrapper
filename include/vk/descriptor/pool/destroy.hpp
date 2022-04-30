@@ -8,9 +8,9 @@
 #include "../../device/handle.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyDescriptorPool(
-	handle<vk::device> device,
+	handle<vk::device>          device,
 	handle<vk::descriptor_pool> descriptor_pool,
-	const void* allocator
+	const void*                 allocator
 );
 
 namespace vk {

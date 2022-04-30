@@ -9,10 +9,10 @@
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateSampler(
-	handle<vk::device> device,
+	handle<vk::device>             device,
 	const vk::sampler_create_info* create_info,
-	const void* allocator,
-	handle<vk::sampler>* sampler
+	const void*                    allocator,
+	handle<vk::sampler>*           sampler
 );
 
 namespace vk {

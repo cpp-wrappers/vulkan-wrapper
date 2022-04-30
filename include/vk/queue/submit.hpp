@@ -8,13 +8,13 @@
 #include "../fence/handle.hpp"
 #include "../command/buffer/handle.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkQueueSubmit(
-	handle<vk::queue> queue,
-	uint32 submit_count,
+	handle<vk::queue>      queue,
+	uint32                 submit_count,
 	const vk::submit_info* submits,
-	handle<vk::fence> fence
+	handle<vk::fence>      fence
 );
 
 namespace vk {

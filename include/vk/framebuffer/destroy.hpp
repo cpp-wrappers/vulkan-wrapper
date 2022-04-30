@@ -7,9 +7,9 @@
 #include "../device_child_destroy_base.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyFramebuffer(
-	handle<vk::device> device,
+	handle<vk::device>      device,
 	handle<vk::framebuffer> framebuffer,
-	const void* allocator
+	const void*             allocator
 );
 
 namespace vk {

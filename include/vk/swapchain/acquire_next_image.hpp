@@ -8,12 +8,12 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkAcquireNextImageKHR(
-	handle<vk::device> device,
+	handle<vk::device>    device,
 	handle<vk::swapchain> swapchain,
-	vk::timeout timeout,
+	vk::timeout           timeout,
 	handle<vk::semaphore> semaphore,
-	handle<vk::fence> fence,
-	uint32* image_index
+	handle<vk::fence>     fence,
+	uint32*               image_index
 );
 
 namespace vk {

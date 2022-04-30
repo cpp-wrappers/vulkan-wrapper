@@ -2,7 +2,7 @@
 
 #include "get.hpp"
 
-#include <core/range/view_on_stack.hpp>
+#include <core/view_on_stack.hpp>
 
 namespace vk {
 
@@ -13,7 +13,7 @@ namespace vk {
 		vk::count count,
 		Handler&& handler
 	) {
-		range::view_on_stack<vk::surface_format>{ count }(
+		view_on_stack<vk::surface_format>{ count }(
 			[&](span<vk::surface_format> raw) {
 				count = vk::get_physical_device_surface_formats(
 					physical_device, surface, raw

@@ -7,12 +7,12 @@
 #include "../swapchain/image_index.hpp"
 #include "../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkQueuePresentKHR(
-	handle<vk::queue> queue,
+	handle<vk::queue>       queue,
 	const vk::present_info* present_info
 );
 

@@ -44,21 +44,21 @@ namespace vk {
 	struct array_layers { uint32 _; };
 	
 	struct image_create_info {
-		uint32 structure_type = 14;
-		void * next;
-		vk::image_create_flags flags;
-		vk::image_type image_type;
-		vk::format format;
-		vk::extent<3> extent;
-		vk::mip_levels mip_levels{ 1 };
-		vk::array_layers array_layers{ 1 };
-		vk::sample_count samples{ 1 };
-		vk::image_tiling tiling;
-		vk::image_usages usages;
-		vk::sharing_mode sharing_mode{ vk::sharing_mode::exclusive };
-		uint32 queue_family_index_count;
-		vk::queue_family_index const * queue_family_indices;
-		vk::initial_layout initial_layout{ vk::image_layout::undefined };
+		uint32                        structure_type = 14;
+		void *                        next;
+		vk::image_create_flags        flags;
+		vk::image_type                image_type;
+		vk::format                    format;
+		vk::extent<3>                 extent;
+		vk::mip_levels                mip_levels{ 1 };
+		vk::array_layers              array_layers{ 1 };
+		vk::sample_count              samples{ 1 };
+		vk::image_tiling              tiling;
+		vk::image_usages              usages;
+		vk::sharing_mode              sharing_mode{ sharing_mode::exclusive };
+		uint32                        queue_family_index_count{};
+		const vk::queue_family_index* queue_family_indices{};
+		vk::initial_layout            initial_layout{ image_layout::undefined };
 
 	}; // image_create_info
 

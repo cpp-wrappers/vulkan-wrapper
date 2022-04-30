@@ -8,10 +8,10 @@
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkGetDeviceQueue(
-	handle<vk::device> device,
+	handle<vk::device>     device,
 	vk::queue_family_index queue_family_index,
-	vk::queue_index queue_index,
-	handle<vk::queue>* queue
+	vk::queue_index        queue_index,
+	handle<vk::queue>*     queue
 );
 
 namespace vk {

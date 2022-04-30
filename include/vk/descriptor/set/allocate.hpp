@@ -8,9 +8,9 @@
 #include "../../device/handle.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkAllocateDescriptorSets(
-	handle<vk::device> device,
+	handle<vk::device>                      device,
 	const vk::descriptor_set_allocate_info* allocate_info,
-	handle<vk::descriptor_set>* descriptor_sets
+	handle<vk::descriptor_set>*             descriptor_sets
 );
 
 namespace vk {

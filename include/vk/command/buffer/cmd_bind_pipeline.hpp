@@ -10,8 +10,8 @@
 
 extern "C" VK_ATTR void VK_CALL vkCmdBindPipeline(
 	handle<vk::command_buffer> command_buffer,
-	vk::pipeline_bind_point pipeline_bind_point,
-	handle<vk::pipeline> pipeline
+	vk::pipeline_bind_point    pipeline_bind_point,
+	handle<vk::pipeline>       pipeline
 );
 
 namespace vk {

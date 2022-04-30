@@ -10,9 +10,10 @@
 #include "../unexpected_handler.hpp"
 #include "../count.hpp"
 #include "../swapchain/image_index.hpp"
+#include "../memory_offset.hpp"
 
 #include <core/handle.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 namespace vk {
 
@@ -89,7 +90,9 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 
 	void inline
 	bind_memory(
-		handle<vk::buffer> buffer, handle<vk::device_memory> memory
+		handle<vk::buffer> buffer,
+		handle<vk::device_memory> memory,
+		vk::memory_offset offset = {}
 	) const;
 
 	void inline
@@ -134,7 +137,7 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 	void
 	for_each_swapchain_image(handle<vk::swapchain> swapchain, F&& f) const;
 
-	template<range::of<handle<vk::command_buffer>> CommandBuffers>
+	template<range_of<handle<vk::command_buffer>> CommandBuffers>
 	void free_command_buffers(
 		handle<vk::command_pool> command_pool, CommandBuffers&& command_buffers
 	) const;

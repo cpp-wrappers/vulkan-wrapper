@@ -4,7 +4,7 @@
 #include "../rect2d.hpp"
 
 #include <core/meta/decayed_same_as.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 namespace vk {

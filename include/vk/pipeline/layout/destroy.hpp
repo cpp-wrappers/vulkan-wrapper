@@ -5,9 +5,9 @@
 #include "../../device/handle.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyPipelineLayout(
-	handle<vk::device> device,
+	handle<vk::device>          device,
 	handle<vk::pipeline_layout> pipeline_layout,
-	const void* allocator
+	const void*                 allocator
 );
 
 namespace vk {

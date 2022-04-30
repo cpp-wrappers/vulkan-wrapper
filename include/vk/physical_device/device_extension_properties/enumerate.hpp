@@ -6,13 +6,13 @@
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 #include <core/meta/decayed_same_as.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkEnumerateDeviceExtensionProperties(
 	handle<vk::physical_device> physical_device,
-	vk::layer_name layer_name,
-	uint32* property_count,
-	vk::extension_properties* properties
+	vk::layer                   layer_name,
+	uint32*                     property_count,
+	vk::extension_properties*   properties
 );
 
 namespace vk {
@@ -21,7 +21,7 @@ namespace vk {
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::physical_device>>,
 		types::are_contain_range_of<vk::extension_properties>,
-		types::are_may_contain_one_decayed<vk::layer_name>
+		types::are_may_contain_one_decayed<vk::layer>
 	>::for_types<Args...>
 	vk::expected<vk::count>
 	try_enumerate_device_extension_properties(Args&&... args) {
@@ -32,11 +32,11 @@ namespace vk {
 		};
 
 		uint32 count = (uint32) range.size();
-		vk::layer_name layer{};
+		vk::layer layer{};
 
 		if constexpr (
-			types::are_contain_decayed<vk::layer_name>::for_types<Args...>
-		) { layer = elements::decayed<vk::layer_name>(args...); }
+			types::are_contain_decayed<vk::layer>::for_types<Args...>
+		) { layer = elements::decayed<vk::layer>(args...); }
 
 		vk::result result {
 			vkEnumerateDeviceExtensionProperties(

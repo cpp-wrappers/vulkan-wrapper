@@ -8,9 +8,9 @@
 #include "../../function.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyShaderModule(
-	handle<vk::device> device,
+	handle<vk::device>        device,
 	handle<vk::shader_module> shader_module,
-	const void* allocator
+	const void*               allocator
 );
 
 namespace vk {

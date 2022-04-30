@@ -5,9 +5,9 @@
 
 extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfacePresentModesKHR(
 	handle<vk::physical_device> physical_device,
-	handle<vk::surface> surface,
-	uint32* present_mode_count,
-	vk::present_mode* present_modes
+	handle<vk::surface>         surface,
+	uint32*                     present_mode_count,
+	vk::present_mode*           present_modes
 );
 
 namespace vk {

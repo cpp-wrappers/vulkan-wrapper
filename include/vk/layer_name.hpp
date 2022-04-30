@@ -4,6 +4,6 @@
 
 namespace vk {
 
-	struct layer_name : c_string {};
+	struct layer : c_string {};
 
 } // vk

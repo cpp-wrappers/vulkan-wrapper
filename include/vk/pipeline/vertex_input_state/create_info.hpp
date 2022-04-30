@@ -3,7 +3,7 @@
 #include "vertex_input_binding_description.hpp"
 #include "vertex_input_attribute_description.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 namespace vk {
 

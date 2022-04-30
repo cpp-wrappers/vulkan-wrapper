@@ -8,7 +8,7 @@
 #include "../../device/get_proc_address.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 typedef void (VK_PTR* PFN_vkCmdBuildAccelerationStructuresKHR)(
 	handle<vk::command_buffer> command_buffer,

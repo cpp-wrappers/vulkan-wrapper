@@ -4,14 +4,14 @@
 #include "../../function.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkEnumeratePhysicalDevices(
-	handle<vk::instance> instance,
-	uint32* physical_device_count,
+	handle<vk::instance>         instance,
+	uint32*                      physical_device_count,
 	handle<vk::physical_device>* physical_devices
 );
 
 namespace vk {
 
-	template<range::of<handle<vk::physical_device>> PhysicalDevices>
+	template<range_of<handle<vk::physical_device>> PhysicalDevices>
 	[[ nodiscard ]]
 	vk::expected<vk::count>
 	try_enumerate_physical_devices(
@@ -33,7 +33,7 @@ namespace vk {
 		return vk::count{ count };
 	}
 
-	template<range::of<handle<vk::physical_device>> PhysicalDevices>
+	template<range_of<handle<vk::physical_device>> PhysicalDevices>
 	[[ nodiscard ]]
 	vk::count
 	enumerate_physical_devices(
@@ -56,7 +56,7 @@ namespace vk {
 
 } // vk
 
-template<range::of<handle<vk::physical_device>> PhysicalDevices>
+template<range_of<handle<vk::physical_device>> PhysicalDevices>
 vk::count
 handle<vk::instance>::enumerate_physical_devices(
 	PhysicalDevices&& physical_devices

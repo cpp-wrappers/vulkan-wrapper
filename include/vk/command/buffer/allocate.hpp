@@ -10,9 +10,9 @@
 #include <core/span.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkAllocateCommandBuffers(
-	handle<vk::device> device,
+	handle<vk::device>                      device,
 	const vk::command_buffer_allocate_info* allocate_info,
-	handle<vk::command_buffer>* command_buffers
+	handle<vk::command_buffer>*             command_buffers
 );
 
 namespace vk {

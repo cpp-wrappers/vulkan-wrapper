@@ -17,7 +17,7 @@ namespace vk {
 	struct application_info {
 		uint32 structure_type = 0;
 		const void* next = nullptr;
-		vk::application_name app_name;
+		vk::application_name app_name{};
 		vk::application_version app_version{};
 		vk::engine_name engine_name{};
 		vk::engine_version engine_version{};

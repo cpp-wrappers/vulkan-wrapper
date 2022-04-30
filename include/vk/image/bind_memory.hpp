@@ -10,10 +10,10 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkBindImageMemory(
-	handle<vk::device> device,
-	handle<vk::image> image,
+	handle<vk::device>        device,
+	handle<vk::image>         image,
 	handle<vk::device_memory> memory,
-	vk::device_size memory_offset
+	vk::device_size           memory_offset
 );
 
 namespace vk {

@@ -31,6 +31,18 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<handle<vk::shader_module>>,
+			types::are_contain_one_decayed<vk::shader_stages>,
+			types::are_contain_one_decayed<vk::entrypoint_name>
+		>::for_types<Args...>
+		pipeline_shader_stage_create_info(Args&&... args) :
+			stages { elements::decayed<vk::shader_stages>(args...) },
+			module { elements::decayed<handle<vk::shader_module>>(args...) },
+			entrypoint_name { elements::decayed<vk::entrypoint_name>(args...) }
+		{}
+
+		template<typename... Args>
+		requires types::are_exclusively_satisfying_predicates<
+			types::are_contain_one_decayed<handle<vk::shader_module>>,
 			types::are_contain_one_decayed<vk::shader_stage>,
 			types::are_contain_one_decayed<vk::entrypoint_name>
 		>::for_types<Args...>

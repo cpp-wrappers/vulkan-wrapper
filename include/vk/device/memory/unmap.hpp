@@ -8,7 +8,7 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkUnmapMemory(
-	handle<vk::device> device,
+	handle<vk::device>        device,
 	handle<vk::device_memory> memory
 );
 

@@ -4,16 +4,16 @@
 
 namespace vk {
 
-	template<typename F>
+	template<typename Handler>
 	void for_each_device_extension_properties(
 		handle<vk::physical_device> physical_device,
-		F&& f,
-		vk::layer_name layer_name = {}
+		Handler&& handler,
+		vk::layer layer_name = {}
 	) {
 		vk::view_device_extension_properties(
 			physical_device,
 			[&](auto view) {
-				for(auto props : view) f(props);
+				for(auto props : view) handler(props);
 			},
 			layer_name
 		);
@@ -21,11 +21,11 @@ namespace vk {
 
 } // vk
 
-template<typename F>
+template<typename Handler>
 void handle<vk::physical_device>::for_each_device_extension_properties(
-	F&& f, vk::layer_name layer_name
+	Handler&& handler, vk::layer layer_name
 ) const {
 	vk::for_each_device_extension_properties(
-		*this, forward<F>(f), layer_name
+		*this, forward<Handler>(handler), layer_name
 	);
 }

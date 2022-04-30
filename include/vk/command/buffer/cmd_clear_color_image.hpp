@@ -8,16 +8,16 @@
 #include "../../image/subresource_range.hpp"
 #include "../../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkCmdClearColorImage(
-	handle<vk::command_buffer> command_buffer,
-	handle<vk::image> image,
-	vk::image_layout image_layout,
-	const vk::clear_color_value* color,
-	uint32 range_count,
+	handle<vk::command_buffer>         command_buffer,
+	handle<vk::image>                  image,
+	vk::image_layout                   image_layout,
+	const vk::clear_color_value*       color,
+	uint32                             range_count,
 	const vk::image_subresource_range* ranges
 );
 

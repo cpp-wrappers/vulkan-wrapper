@@ -7,9 +7,9 @@
 #include "../../destroy_or_free.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkFreeMemory(
-	handle<vk::device> device,
+	handle<vk::device>        device,
 	handle<vk::device_memory> memory,
-	const void* allocator
+	const void*               allocator
 );
 
 namespace vk {

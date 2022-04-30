@@ -14,9 +14,9 @@ namespace vk {
 
 extern "C" VK_ATTR void VK_CALL vkCmdSetScissor(
 	handle<vk::command_buffer> command_buffer,
-	vk::first_scissor_index first_scissor,
-	uint32 scissor_count,
-	const vk::rect2d* scissors
+	vk::first_scissor_index    first_scissor,
+	uint32                     scissor_count,
+	const vk::rect2d*          scissors
 );
 
 namespace vk {

@@ -10,9 +10,9 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkDestroyDescriptorSetLayout(
-	handle<vk::device> device,
+	handle<vk::device>                device,
 	handle<vk::descriptor_set_layout> descriptor_set_layout,
-	const void* allocator
+	const void*                       allocator
 );
 
 namespace vk {

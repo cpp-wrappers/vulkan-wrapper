@@ -4,7 +4,7 @@
 #include "../function.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceMemoryProperties(
-	handle<vk::physical_device> physical_device,
+	handle<vk::physical_device>            physical_device,
 	vk::physical_device_memory_properties* memory_properties
 );
 

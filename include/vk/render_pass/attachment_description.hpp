@@ -16,33 +16,36 @@ namespace vk {
 	enum class attachment_description_flag {
 		may_alias = 0x00000001
 	};
+	using attachment_description_flags = flag_enum<
+		vk::attachment_description_flag
+	>;
 	
-	struct load_op { vk::attachment_load_op _; };
+	struct load_op  { vk::attachment_load_op _; };
 	struct store_op { vk::attachment_store_op _; };
 	
-	struct stencil_load_op { vk::attachment_load_op _; };
+	struct stencil_load_op  { vk::attachment_load_op _; };
 	struct stencil_store_op { vk::attachment_store_op _; };
 	
 	struct attachment_description {
-		flag_enum<attachment_description_flag> flags;
-		vk::format format;
-		vk::sample_count samples{ 1 };
-		vk::load_op load_op {
+		vk::attachment_description_flags flags {};
+		vk::format                       format;
+		vk::sample_count                 samples { 1 };
+		vk::load_op                      load_op {
 			vk::attachment_load_op::dont_care
 		};
-		vk::store_op store_op {
+		vk::store_op                     store_op {
 			vk::attachment_store_op::dont_care
 		};
-		vk::stencil_load_op stencil_load_op {
+		vk::stencil_load_op              stencil_load_op {
 			vk::attachment_load_op::dont_care
 		};
-		vk::stencil_store_op stencil_store_op {
+		vk::stencil_store_op             stencil_store_op {
 			vk::attachment_store_op::dont_care
 		};
-		vk::initial_layout initial_layout {
+		vk::initial_layout               initial_layout {
 			vk::image_layout::undefined
 		};
-		vk::final_layout final_layout {
+		vk::final_layout                 final_layout {
 			vk::image_layout::undefined
 		};
 	

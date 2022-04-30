@@ -7,9 +7,9 @@
 #include "../../destroy_or_free.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroyImageView(
-	handle<vk::device> device,
+	handle<vk::device>     device,
 	handle<vk::image_view> image_view,
-	const void* allocator
+	const void*            allocator
 );
 
 namespace vk {

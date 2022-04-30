@@ -11,7 +11,7 @@
 #include <core/move.hpp>
 #include <core/array.hpp>
 #include <core/exchange.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/handle.hpp>
 
 namespace vk {
@@ -25,15 +25,15 @@ namespace vk {
 } // vk
 
 extern "C" VK_ATTR int32 VK_CALL vkEnumeratePhysicalDevices(
-	handle<vk::instance> instance,
-	uint32* physical_device_count,
+	handle<vk::instance>         instance,
+	uint32*                      physical_device_count,
 	handle<vk::physical_device>* physical_devices
 );
 
 template<>
 struct handle<vk::instance> : vk::handle_base<vk::dispatchable> {
 
-	template<range::of<handle<vk::physical_device>> PhysicalDevices>
+	template<range_of<handle<vk::physical_device>> PhysicalDevices>
 	[[ nodiscard ]] vk::count
 	enumerate_physical_devices(PhysicalDevices&& devices) const;
 

@@ -3,7 +3,7 @@
 #include "queue_create_info.hpp"
 
 #include "../physical_device/features.hpp"
-#include "../extension_name.hpp"
+#include "../extension.hpp"
 
 #include <core/c_string.hpp>
 
@@ -18,7 +18,7 @@ namespace vk {
 		uint32 enabled_layer_count = 0;
 		const c_string* enabled_layer_names = nullptr;
 		uint32 enabled_extension_count = 0;
-		const vk::extension_name* enabled_extension_names = nullptr;
+		const vk::extension* enabled_extension_names = nullptr;
 		const vk::physical_device_features* enabled_features = nullptr;
 	};
 

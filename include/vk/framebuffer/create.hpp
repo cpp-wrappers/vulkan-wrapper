@@ -9,10 +9,10 @@
 #include "../function.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateFramebuffer(
-	handle<vk::device> device,
+	handle<vk::device>                 device,
 	const vk::framebuffer_create_info* create_info,
-	const void* allocator,
-	handle<vk::framebuffer>* framebuffer
+	const void*                        allocator,
+	handle<vk::framebuffer>*           framebuffer
 );
 
 namespace vk {

@@ -6,9 +6,9 @@
 
 extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
 	handle<vk::physical_device> physical_device,
-	handle<vk::surface> surface,
-	uint32* surface_format_count,
-	vk::surface_format* surface_formats
+	handle<vk::surface>         surface,
+	uint32*                     surface_format_count,
+	vk::surface_format*         surface_formats
 );
 
 namespace vk {

@@ -12,7 +12,7 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkBeginCommandBuffer(
-	handle<vk::command_buffer> command_buffer,
+	handle<vk::command_buffer>           command_buffer,
 	const vk::command_buffer_begin_info* begin_info
 );
 

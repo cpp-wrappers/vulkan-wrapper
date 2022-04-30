@@ -2,21 +2,21 @@
 
 #include "properties/view.hpp"
 
-#include "../../extension_name.hpp"
+#include "../../extension.hpp"
 
-#include <core/range/contains.hpp>
-#include <core/range/transform.hpp>
+#include <core/contains.hpp>
+#include <core/transform.hpp>
 
 namespace vk {
 	
-	inline bool is_instance_extension_supported(vk::extension_name name) {
+	inline bool is_instance_extension_supported(vk::extension name) {
 		bool supported = false;
 
 		vk::view_instance_extension_properties(
 			[&](span<vk::extension_properties> props) {
-				supported = range::contains(name)(
-					range::transform(props)([](auto& extension_props) {
-						return vk::extension_name{ extension_props.name };
+				supported = contains(name).in(
+					transform_view(props,[](auto& extension_props) {
+						return vk::extension{ extension_props.name };
 					})
 				);
 			}

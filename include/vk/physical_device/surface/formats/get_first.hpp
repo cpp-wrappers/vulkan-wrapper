@@ -2,6 +2,8 @@
 
 #include "get.hpp"
 
+#include <core/span.hpp>
+
 namespace vk {
 
 	template<typename... Args>

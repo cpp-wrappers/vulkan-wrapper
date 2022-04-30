@@ -7,8 +7,8 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkGetBufferMemoryRequirements(
-	handle<vk::device> device,
-	handle<vk::buffer> buffer,
+	handle<vk::device>       device,
+	handle<vk::buffer>       buffer,
 	vk::memory_requirements* memory_requirements
 );
 

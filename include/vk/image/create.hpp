@@ -10,10 +10,10 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateImage(
-	handle<vk::device> device,
+	handle<vk::device>           device,
 	const vk::image_create_info* create_info,
-	const void* allocator,
-	handle<vk::image>* image
+	const void*                  allocator,
+	handle<vk::image>*           image
 );
 
 namespace vk {

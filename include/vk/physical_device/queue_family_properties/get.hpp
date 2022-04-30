@@ -4,12 +4,12 @@
 #include "../../function.hpp"
 
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceQueueFamilyProperties(
-	handle<vk::physical_device> physical_device,
-	uint32* queue_family_property_count,
+	handle<vk::physical_device>  physical_device,
+	uint32*                      queue_family_property_count,
 	vk::queue_family_properties* queue_family_properties
 );
 
@@ -40,7 +40,7 @@ namespace vk {
 
 } // vk
 
-template<range::of<vk::queue_family_properties> Range>
+template<range_of<vk::queue_family_properties> Range>
 vk::count
 handle<vk::physical_device>::get_queue_family_properties(Range&& range) const {
 	return vk::get_physical_device_queue_family_properties(

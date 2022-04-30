@@ -8,9 +8,9 @@
 #include "../device/handle.hpp"
 
 extern "C" VK_ATTR void VK_CALL vkDestroySemaphore(
-	handle<vk::device> device,
+	handle<vk::device>    device,
 	handle<vk::semaphore> semaphore,
-	const void* allocator
+	const void*           allocator
 );
 
 namespace vk {

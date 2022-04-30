@@ -4,19 +4,19 @@
 
 #include "../../layer_name.hpp"
 
-#include <core/range/contains.hpp>
-#include <core/range/transform.hpp>
+#include <core/contains.hpp>
+#include <core/transform.hpp>
 
 namespace vk {
 
-	inline bool is_instance_layer_supported(vk::layer_name name) {
+	inline bool is_instance_layer_supported(vk::layer name) {
 		bool supported = false;
 
 		vk::view_instance_layer_properties(
 			[&](span<vk::layer_properties> props) {
-				supported = range::contains(name)(
-					range::transform(props)([](auto& layer_props) {
-						return vk::layer_name{ layer_props.name };
+				supported = contains(name).in(
+					transform_view(props, [](auto& layer_props) {
+						return vk::layer{ layer_props.name };
 					})
 				);
 			}

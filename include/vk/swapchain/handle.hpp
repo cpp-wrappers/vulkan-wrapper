@@ -13,7 +13,7 @@
 #include <core/span.hpp>
 #include <core/forward.hpp>
 #include <core/exchange.hpp>
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 
 namespace vk {

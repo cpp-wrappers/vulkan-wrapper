@@ -13,12 +13,12 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkMapMemory(
-	handle<vk::device> device,
+	handle<vk::device>        device,
 	handle<vk::device_memory> memory,
-	vk::memory_offset offset,
-	vk::memory_size size,
-	int32 flags,
-	void** data
+	vk::memory_offset         offset,
+	vk::memory_size           size,
+	int32                     flags,
+	void**                    data
 );
 
 namespace vk {

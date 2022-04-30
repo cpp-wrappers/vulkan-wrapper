@@ -7,14 +7,14 @@
 #include "../device/handle.hpp"
 #include "../function.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateBuffer(
-	handle<vk::device> device,
+	handle<vk::device>            device,
 	const vk::buffer_create_info* create_info,
-	const void* allocator,
-	handle<vk::buffer>* buffer
+	const void*                   allocator,
+	handle<vk::buffer>*           buffer
 );
 
 namespace vk {

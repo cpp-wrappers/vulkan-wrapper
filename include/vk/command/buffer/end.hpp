@@ -10,7 +10,7 @@ extern "C" VK_ATTR int32 VK_CALL vkEndCommandBuffer(
 
 namespace vk {
 
-	vk::result try_end_command_buffer(
+	inline vk::result try_end_command_buffer(
 		handle<vk::command_buffer> command_buffer
 	) {
 		return {
@@ -18,7 +18,7 @@ namespace vk {
 		};
 	}
 
-	void end_command_buffer(
+	inline void end_command_buffer(
 		handle<vk::command_buffer> command_buffer
 	) {
 		vk::result result = vk::try_end_command_buffer(command_buffer);

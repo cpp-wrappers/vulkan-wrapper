@@ -8,8 +8,8 @@
 
 extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 	handle<vk::physical_device> physical_device,
-	handle<vk::surface> surface,
-	vk::surface_capabilities* surface_capabilities
+	handle<vk::surface>         surface,
+	vk::surface_capabilities*   surface_capabilities
 );
 
 namespace vk {

@@ -11,8 +11,8 @@
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateInstance(
 	const vk::instance_create_info* create_info,
-	const void* allocator,
-	handle<vk::instance>* instance
+	const void*                     allocator,
+	handle<vk::instance>*           instance
 );
 
 namespace vk {
@@ -23,8 +23,8 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_may_contain_one_decayed<vk::application_info>,
-			types::are_may_contain_range_of<vk::layer_name>,
-			types::are_may_contain_range_of<vk::extension_name>
+			types::are_may_contain_range_of<vk::layer>,
+			types::are_may_contain_range_of<vk::extension>
 		>::for_types<Args...>
 		vk::expected<handle<vk::instance>>
 		operator () (Args&&... args) const {
@@ -41,19 +41,17 @@ namespace vk {
 			}
 
 			if constexpr(
-				types::are_contain_range_of<
-					vk::extension_name
-				>::for_types<Args...>
+				types::are_contain_range_of<vk::extension>::for_types<Args...>
 			) {
-				auto& range = elements::range_of<vk::extension_name>(args...);
+				auto& range = elements::range_of<vk::extension>(args...);
 				ici.enabled_extension_count = (uint32) range.size();
 				ici.enabled_extension_names = range.data();
 			}
 
 			if constexpr(
-				types::are_contain_range_of<vk::layer_name>::for_types<Args...>
+				types::are_contain_range_of<vk::layer>::for_types<Args...>
 			) {
-				auto& range = elements::range_of<vk::layer_name>(args...);
+				auto& range = elements::range_of<vk::layer>(args...);
 				ici.enabled_layer_count = (uint32) range.size();
 				ici.enabled_layer_names = range.data();
 			}

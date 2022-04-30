@@ -4,40 +4,42 @@
 
 namespace vk {
 
-	template<typename F>
+	template<typename Handler>
 	void for_each_physical_device(
-		handle<vk::instance> instance, vk::count count, F&& f
+		handle<vk::instance> instance, vk::count count, Handler&& handler
 	) {
-		return vk::view_physical_devices(
-			instance,
-			count,
+		vk::view_physical_devices(
+			instance, count,
 			[&](auto view) {
-				for(handle<vk::physical_device> device : view) f(device);
+				for(handle<vk::physical_device> device : view)
+					handler(device);
 			}
 		);
 	}
 
-	template<typename F>
+	template<typename Handler>
 	void for_each_physical_device(
-		handle<vk::instance> instance, F&& f
+		handle<vk::instance> instance, Handler&& handler
 	) {
-		return vk::for_each_physical_device(
+		vk::for_each_physical_device(
 			instance,
 			vk::get_physical_device_count(instance),
-			forward<F>(f)
+			forward<Handler>(handler)
 		);
 	}
 
 } // vk
 
-template<typename F>
+template<typename Handler>
 void handle<vk::instance>::for_each_physical_device(
-	vk::count count, F&& f
+	vk::count count, Handler&& handler
 ) const {
-	return vk::for_each_physical_device(*this, count, forward<F>(f));
+	vk::for_each_physical_device(*this, count, forward<Handler>(handler));
 }
 
-template<typename F>
-void handle<vk::instance>::for_each_physical_device(F&& f) const {
-	return vk::for_each_physical_device(*this, forward<F>(f));
+template<typename Handler>
+void handle<vk::instance>::for_each_physical_device(
+	Handler&& handler
+) const {
+	vk::for_each_physical_device(*this, forward<Handler>(handler));
 }

@@ -8,19 +8,19 @@
 
 namespace vk {
 
-	struct vertex_count { uint32 _; };
+	struct vertex_count   { uint32 _; };
 	struct instance_count { uint32 _; };
-	struct first_vertex { uint32 _; };
+	struct first_vertex   { uint32 _; };
 	struct first_instance { uint32 _; };
 
 }
 
 extern "C" VK_ATTR void VK_CALL vkCmdDraw(
 	handle<vk::command_buffer> commandBuffer,
-	vk::vertex_count vertex_count,
-	vk::instance_count instance_count,
-	vk::first_vertex first_vertex,
-	vk::first_instance first_instance
+	vk::vertex_count           vertex_count,
+	vk::instance_count         instance_count,
+	vk::first_vertex           first_vertex,
+	vk::first_instance         first_instance
 );
 
 namespace vk {

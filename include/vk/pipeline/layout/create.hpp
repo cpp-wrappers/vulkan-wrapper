@@ -8,10 +8,10 @@
 #include "../../function.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkCreatePipelineLayout(
-	handle<vk::device> device,
+	handle<vk::device>                     device,
 	const vk::pipeline_layout_create_info* create_info,
-	const void* allocator,
-	handle<vk::pipeline_layout>* pipeline_layout
+	const void*                            allocator,
+	handle<vk::pipeline_layout>*           pipeline_layout
 );
 
 namespace vk {

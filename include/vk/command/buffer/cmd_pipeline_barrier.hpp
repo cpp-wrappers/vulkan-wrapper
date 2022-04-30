@@ -7,21 +7,21 @@
 #include "../../pipeline/stage.hpp"
 #include "../../dependency.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkCmdPipelineBarrier(
-	handle<vk::command_buffer> command_buffer,
-	vk::src_stages src_stage_mask,
-	vk::dst_stages dst_stage_mask,
-	vk::dependencies dependency_flags,
-	uint32 memory_barrier_count,
+	handle<vk::command_buffer>       command_buffer,
+	vk::src_stages                   src_stage_mask,
+	vk::dst_stages                   dst_stage_mask,
+	vk::dependencies                 dependency_flags,
+	uint32                           memory_barrier_count,
 	const void*                      mamory_barriers,
-	uint32 buffer_memory_barrier_count,
+	uint32                           buffer_memory_barrier_count,
 	const vk::buffer_memory_barrier* buffer_memory_barriers,
-	uint32 image_memory_barrier_count,
-	const vk::image_memory_barrier* image_memory_barriers
+	uint32                           image_memory_barrier_count,
+	const vk::image_memory_barrier*  image_memory_barriers
 );
 
 namespace vk {

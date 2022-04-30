@@ -6,17 +6,17 @@
 #include "../../../function.hpp"
 #include "../../../unexpected_handler.hpp"
 
-#include <core/range/of_value_type_same_as.hpp>
+#include <core/range_of_value_type_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkEnumerateInstanceExtensionProperties(
-	const char* layer_name,
-	uint32* property_count,
+	const char*               layer_name,
+	uint32*                   property_count,
 	vk::extension_properties* properties
 );
 
 namespace vk {
 
-	template<range::of<vk::extension_properties> InstanceExtensionsProperties>
+	template<range_of<vk::extension_properties> InstanceExtensionsProperties>
 	vk::expected<vk::count>
 	try_enumerate_instance_extension_properties(
 		InstanceExtensionsProperties&& instance_extensions_properties
@@ -36,7 +36,7 @@ namespace vk {
 		return vk::count{ count };
 	}
 
-	template<range::of<vk::extension_properties> InstanceExtensionsProperties>
+	template<range_of<vk::extension_properties> InstanceExtensionsProperties>
 	vk::count enumerate_instance_extension_properties(
 		InstanceExtensionsProperties&& instance_extensions_properties
 	) {

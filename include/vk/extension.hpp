@@ -4,6 +4,6 @@
 
 namespace vk {
 
-	struct extension_name : c_string {};
+	struct extension : c_string {};
 
 } // vk

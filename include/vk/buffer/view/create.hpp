@@ -11,10 +11,10 @@
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateBufferView(
-	handle<vk::device> device,
+	handle<vk::device>                 device,
 	const vk::buffer_view_create_info* create_info,
-	const void* allocator,
-	handle<vk::buffer_view>* view
+	const void*                        allocator,
+	handle<vk::buffer_view>*           view
 );
 
 namespace vk {

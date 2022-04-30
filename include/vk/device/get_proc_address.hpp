@@ -6,16 +6,17 @@
 extern "C" VK_ATTR PFN_vkVoidFunction VK_CALL
 vkGetDeviceProcAddr(
 	handle<vk::device> device,
-	const char* name
+	const char*        name
 );
 
 namespace vk {
 
 	PFN_vkVoidFunction
-	get_device_proc_address(handle<vk::device> device, const char* name) {
+	inline get_device_proc_address(
+		handle<vk::device> device, const char* name
+	) {
 		return vkGetDeviceProcAddr(
-			device,
-			name
+			device, name
 		);
 	}
 

@@ -2,7 +2,7 @@
 
 #include "get_count.hpp"
 
-#include <core/range/view_on_stack.hpp>
+#include <core/view_on_stack.hpp>
 
 namespace vk {
 
@@ -12,7 +12,7 @@ namespace vk {
 		vk::count count,
 		Handler&& handler
 	) {
-		range::view_on_stack<vk::queue_family_properties>{ count }(
+		view_on_stack<vk::queue_family_properties>{ count }(
 			[&](span<vk::queue_family_properties> raw) {
 				count = vk::get_physical_device_queue_family_properties(
 					physical_device, raw

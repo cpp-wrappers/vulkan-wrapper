@@ -8,7 +8,7 @@
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceFeatures2(
-	handle<vk::physical_device> physical_device,
+	handle<vk::physical_device>     physical_device,
 	vk::physical_device_features_2* features
 );
 

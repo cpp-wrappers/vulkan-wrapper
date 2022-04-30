@@ -10,7 +10,7 @@ extern "C" VK_ATTR void VK_CALL vkCmdEndRenderPass(
 
 namespace vk {
 
-	void cmd_end_render_pass(handle<vk::command_buffer> command_buffer) {
+	inline void cmd_end_render_pass(handle<vk::command_buffer> command_buffer) {
 		vkCmdEndRenderPass(
 			command_buffer
 		);

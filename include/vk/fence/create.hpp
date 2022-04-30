@@ -11,10 +11,10 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateFence(
-	handle<vk::device> device,
+	handle<vk::device>           device,
 	const vk::fence_create_info* create_info,
-	const void* allocator,
-	handle<vk::fence>* fence
+	const void*                  allocator,
+	handle<vk::fence>*           fence
 );
 
 namespace vk {

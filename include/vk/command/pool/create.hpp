@@ -11,10 +11,10 @@
 #include <core/meta/decayed_same_as.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkCreateCommandPool(
-	handle<vk::device> device,
+	handle<vk::device>                  device,
 	const vk::command_pool_create_info* create_info,
-	const void* allocator,
-	handle<vk::command_pool>* command_pool
+	const void*                         allocator,
+	handle<vk::command_pool>*           command_pool
 );
 
 namespace vk {

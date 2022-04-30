@@ -11,10 +11,10 @@
 #include <core/meta/types/are_contain_satisfying_predicate.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkAllocateMemory(
-	handle<vk::device> device,
+	handle<vk::device>              device,
 	const vk::memory_allocate_info* allocate_info,
-	const void* allocator,
-	handle<vk::device_memory>* memory
+	const void*                     allocator,
+	handle<vk::device_memory>*      memory
 );
 
 namespace vk {

@@ -2,7 +2,7 @@
 
 #include "get_count.hpp"
 
-#include <core/range/view_on_stack.hpp>
+#include <core/view_on_stack.hpp>
 
 namespace vk {
 
@@ -13,7 +13,7 @@ namespace vk {
 		vk::count count,
 		Handler&& handler
 	) {
-		range::view_on_stack<vk::present_mode>((uint32) count)(
+		view_on_stack<vk::present_mode>((uint32) count)(
 			[&](auto raw) {
 				count = vk::get_physical_device_surface_present_modes(
 					physical_device,

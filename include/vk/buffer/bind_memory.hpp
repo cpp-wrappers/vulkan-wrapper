@@ -10,10 +10,10 @@
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkBindBufferMemory(
-	handle<vk::device> device,
-	handle<vk::buffer> buffer,
+	handle<vk::device>        device,
+	handle<vk::buffer>        buffer,
 	handle<vk::device_memory> memory,
-	vk::memory_offset memory_offset
+	vk::memory_offset         memory_offset
 );
 
 namespace vk {
@@ -59,7 +59,9 @@ namespace vk {
 
 void inline
 handle<vk::device>::bind_memory(
-	handle<vk::buffer> buffer, handle<vk::device_memory> memory
+	handle<vk::buffer> buffer,
+	handle<vk::device_memory> memory,
+	vk::memory_offset offset
 ) const {
-	vk::bind_buffer_memory(*this, buffer, memory);
+	vk::bind_buffer_memory(*this, buffer, memory, offset);
 }
