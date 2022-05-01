@@ -15,13 +15,14 @@ namespace vk {
 	struct blend_constants : array<float, 4> {};
 
 	struct pipeline_color_blend_state_create_info {
-		uint32 structure_type = 26;
-		const void* next = nullptr;
-		const uint32 flags{};
+		uint32              structure_type = 26;
+		const void*         next = nullptr;
+		const uint32        flags{};
 		vk::enable_logic_op enable_logic_op{};
-		vk::logic_op logic_op{};
-		uint32 attachment_count{};
-		const pipeline_color_blend_attachment_state* attachments{};
+		vk::logic_op        logic_op{};
+		uint32              attachment_count{};
+		const pipeline_color_blend_attachment_state*
+		                    attachments{};
 		vk::blend_constants blend_constants{};
 
 		template<typename... Args>

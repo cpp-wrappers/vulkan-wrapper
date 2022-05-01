@@ -26,7 +26,7 @@ namespace vk {
 	void free_command_buffers(Args&&... args) {
 		auto device = elements::decayed<handle<vk::device>>(args...);
 		auto pool = elements::decayed<handle<vk::command_pool>>(args...);
-		auto buffers = elements::range_of<handle<vk::command_buffer>>(args...);
+		auto& buffers = elements::range_of<handle<vk::command_buffer>>(args...);
 
 		vkFreeCommandBuffers(
 			device,

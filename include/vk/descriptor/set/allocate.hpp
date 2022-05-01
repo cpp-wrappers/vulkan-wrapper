@@ -70,7 +70,7 @@ namespace vk {
 				device,
 				pool,
 				array{ layout },
-				span{ &set, 1 }
+				single_view{ set }
 			);
 
 			if(result.error()) return result;

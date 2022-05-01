@@ -10,18 +10,18 @@
 namespace vk {
 
 	struct viewport_count { uint32 _; };
-	struct scissor_count { uint32 _; };
+	struct scissor_count  { uint32 _; };
 
 	using scissor = vk::rect2d;
 
 	struct pipeline_viewport_state_create_info {
-		uint32 structure_type = 22;
-		const void* next = nullptr;
-		uint32 flags = 0;
-		vk::viewport_count viewport_count{ 0 };
+		uint32              structure_type = 22;
+		const void*         next = nullptr;
+		uint32              flags = 0;
+		vk::viewport_count  viewport_count{ 0 };
 		const vk::viewport* viewports = nullptr;
-		vk::scissor_count scissor_count{ 0 };
-		const vk::scissor* scissors = nullptr;
+		vk::scissor_count   scissor_count{ 0 };
+		const vk::scissor*  scissors = nullptr;
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<

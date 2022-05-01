@@ -8,10 +8,10 @@
 namespace vk {
 
 	struct pipeline_dynamic_state_create_info {
-		uint32 structure_type = 27;
-		const void* next = nullptr;
-		uint32 flags = 0;
-		uint32 dynamic_state_count = 0;
+		uint32               structure_type = 27;
+		const void*          next = nullptr;
+		uint32               flags = 0;
+		uint32               dynamic_state_count = 0;
 		const dynamic_state* dynamic_states = nullptr;
 
 		template<range_of<vk::dynamic_state> DynamicStates>

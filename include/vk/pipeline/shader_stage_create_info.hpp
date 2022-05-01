@@ -20,13 +20,13 @@ namespace vk {
 	struct entrypoint_name { c_string _; };
 
 	struct pipeline_shader_stage_create_info {
-		uint32 structure_type = 18;
-		const void* next = nullptr;
+		uint32                    structure_type = 18;
+		const void*               next = nullptr;
 		shader_stage_create_flags flags{};
-		vk::shader_stages stages;
+		vk::shader_stages         stages;
 		handle<vk::shader_module> module;
-		vk::entrypoint_name entrypoint_name;
-		const void* specialization_info = nullptr;
+		vk::entrypoint_name       entrypoint_name;
+		const void*               specialization_info = nullptr;
 
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<

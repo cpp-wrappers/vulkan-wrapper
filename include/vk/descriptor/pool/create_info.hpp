@@ -18,12 +18,12 @@ namespace vk {
 	struct max_sets { uint32 _; };
 
 	struct descriptor_pool_create_info {
-		uint32 structure_type = 33;
-		const void* next;
+		uint32                           structure_type = 33;
+		const void*                      next;
 		vk::descriptor_pool_create_flags flags;
-		vk::max_sets max_sets;
-		uint32 pool_size_count;
-		const vk::descriptor_pool_size* pool_sizes;
+		vk::max_sets                     max_sets;
+		uint32                           pool_size_count;
+		const vk::descriptor_pool_size*  pool_sizes;
 	};
 
 } // vk

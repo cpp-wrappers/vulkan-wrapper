@@ -3,6 +3,7 @@
 #include "get.hpp"
 
 #include <core/span.hpp>
+#include <core/single.hpp>
 
 namespace vk {
 
@@ -25,7 +26,7 @@ namespace vk {
 
 		vk::count count {
 			vk::get_physical_device_surface_formats(
-				physical_device, surface, span{ &surface_format, 1 }
+				physical_device, surface, single_view{ surface_format }
 			)
 		};
 

@@ -5,6 +5,7 @@
 
 #include "../../function.hpp"
 
+#include <core/meta/elements/pass_not_satisfying_type_predicate.hpp>
 #include <core/meta/decayed_same_as.hpp>
 #include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
 
@@ -37,8 +38,8 @@ namespace vk {
 		);
 	} // cmd_begin_render_pass
 
-	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
+	template<nuint Order, typename... Args>
+	requires (Order == 0) && types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::command_buffer>>,
 		types::are_contain_one_decayed<handle<vk::render_pass>>,
 		types::are_contain_one_decayed<handle<vk::framebuffer>>,
@@ -73,6 +74,35 @@ namespace vk {
 			}
 		);
 	} // cmd_begin_render_pass
+
+	template<nuint Order, typename... Args>
+	void cmd_begin_render_pass(Args&&... args) {
+		static_assert(Order > 0);
+		cmd_begin_render_pass<Order - 1>(forward<Args>(args)...);
+	}
+
+	template<nuint Order, typename... Args>
+	requires (Order == 1) && types::are_contain_one_decayed<
+		vk::clear_value
+	>::for_types<Args...>
+	void cmd_begin_render_pass(Args&&... args) {
+		auto clear = elements::decayed<vk::clear_value>(args...);
+		elements::pass_not_satisfying_type_predicate<
+			type::is_decayed<vk::clear_value>
+		>(forward<Args>(args)...)(
+			[&]<typename... A>(A&&... a) {
+				cmd_begin_render_pass<Order - 1>(
+					array{ clear },
+					forward<A>(a)...
+				);
+			}
+		);
+	}
+
+	template<typename... Args>
+	void cmd_begin_render_pass(Args&&... args) {
+		cmd_begin_render_pass<2>(forward<Args>(args)...);
+	}
 
 } // vk
 

@@ -57,7 +57,7 @@ namespace vk {
 		template<typename... Args>
 		requires types::are_exclusively_satisfying_predicates<
 			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_may_contain_decayed<vk::fence_create_flag>
+			types::are_contain_decayed<vk::fence_create_flag>
 		>::for_types<Args...>
 		vk::expected<handle<vk::fence>>
 		operator () (Args&&... args) const {

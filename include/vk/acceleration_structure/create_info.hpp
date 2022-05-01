@@ -19,14 +19,14 @@ namespace vk {
 		flag_enum<acceleration_structure_create_flag>;
 
 	struct acceleration_structure_create_info {
-		uint32 structure_type = 1000150017;
-		const void* next;
+		uint32                                  structure_type = 1000150017;
+		const void*                             next;
 		vk::acceleration_structure_create_flags flags;
-		handle<vk::buffer> buffer;
-		vk::memory_offset offset;
-		vk::memory_size size;
-		vk::acceleration_structure_type type;
-		vk::device_address device_address;
+		handle<vk::buffer>                      buffer;
+		vk::memory_offset                       offset;
+		vk::memory_size                         size;
+		vk::acceleration_structure_type         type;
+		vk::device_address                      device_address;
 	};
 
 	namespace as {

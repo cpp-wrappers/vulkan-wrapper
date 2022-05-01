@@ -2,6 +2,8 @@
 
 #include "enumerate.hpp"
 
+#include <core/single.hpp>
+
 namespace vk {
 
 	[[ nodiscard ]]
@@ -10,7 +12,7 @@ namespace vk {
 		handle<vk::physical_device> physical_device;
 
 		auto count {
-			instance.enumerate_physical_devices(span{ &physical_device, 1 })
+			instance.enumerate_physical_devices(single_view{ physical_device })
 		};
 
 		if((uint32)count == 0) {

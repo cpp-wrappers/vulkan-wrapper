@@ -69,8 +69,7 @@ namespace vk {
 		types::are_contain_one_decayed<handle<vk::queue>>,
 		types::are_contain_one_decayed<vk::wait_semaphore>,
 		types::are_contain_one_decayed<handle<vk::swapchain>>,
-		types::are_contain_one_decayed<vk::image_index>,
-		types::are_may_contain_one_decayed<vk::result&> // TODO
+		types::are_contain_one_decayed<vk::image_index>
 	>::for_types<Args...>
 	vk::result try_queue_present(Args&&... args) {
 		auto queue = elements::decayed<handle<vk::queue>>(args...);
@@ -90,10 +89,6 @@ namespace vk {
 			.image_indices = &image_index
 		};
 
-		if constexpr (
-			types::are_contain_decayed<vk::result&>::for_types<Args...>
-		) { present_info.results = & elements::decayed<vk::result&>(args...); }
-	
 		return vk::try_queue_present(queue, present_info);
 	}
 

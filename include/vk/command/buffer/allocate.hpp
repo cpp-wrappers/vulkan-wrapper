@@ -8,6 +8,7 @@
 #include "../../function.hpp"
 
 #include <core/span.hpp>
+#include <core/single.hpp>
 
 extern "C" VK_ATTR int32 VK_CALL vkAllocateCommandBuffers(
 	handle<vk::device>                      device,
@@ -69,7 +70,7 @@ namespace vk {
 			handle<vk::command_buffer> command_buffer;
 
 			vk::result result = vk::try_allocate_command_buffers(
-				span{ &command_buffer, 1 },
+				single_view{ command_buffer },
 				forward<Args>(args)...
 			);
 

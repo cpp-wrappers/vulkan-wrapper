@@ -23,13 +23,17 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<vk::command_buffer_usages>,
+		types::are_may_contain_one_decayed<vk::command_buffer_usages>,
 		types::are_may_contain_one_decayed<vk::command_buffer_inheritance_info>
 	>::for_types<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
-		vk::command_buffer_begin_info bi {
-			.usages = elements::decayed<vk::command_buffer_usages>(args...)
-		};
+		vk::command_buffer_begin_info bi {};
+
+		if constexpr (
+			types::are_contain_decayed<
+				vk::command_buffer_usages
+			>::for_types<Args...>
+		) { bi.usages = elements::decayed<vk::command_buffer_usages>(args...); }
 
 		if constexpr (
 			types::are_contain_decayed<
@@ -91,7 +95,7 @@ namespace vk {
 	template<typename... Args>
 	requires types::are_exclusively_satisfying_predicates<
 		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_may_contain_decayed<vk::command_buffer_usage>
+		types::are_contain_decayed<vk::command_buffer_usage>
 	>::for_types<Args...>
 	vk::result try_begin_command_buffer(Args&&... args) {
 		vk::command_buffer_usages usages{};

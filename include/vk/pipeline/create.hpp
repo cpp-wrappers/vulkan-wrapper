@@ -226,7 +226,7 @@ namespace vk {
 		vk::expected<handle<vk::pipeline>>
 		operator () (Args&&... args) const {
 			static_assert(Order > 0);
-			return operator()<Order - 1, Args...> (forward<Args>(args)...);
+			return operator()<Order - 1> (forward<Args>(args)...);
 		}
 
 		template<nuint Order, typename... Args>
@@ -241,14 +241,14 @@ namespace vk {
 
 			return elements::pass_not_satisfying_type_predicate<
 				type::is_same_as<vk::primitive_topology>
-			>(
-				vk::pipeline_input_assembly_state_create_info {
-					.topology = topology
-				},
-				forward<Args>(args)...
-			)(
+			>(forward<Args>(args)...)(
 				[&]<typename... A>(A&&... a) {
-					return operator () <Order - 1>(forward<A>(a)...);
+					return operator () <Order - 1>(
+						vk::pipeline_input_assembly_state_create_info {
+							.topology = topology
+						},
+						forward<A>(a)...
+					);
 				}
 			);
 		}
@@ -263,12 +263,12 @@ namespace vk {
 
 			return elements::pass_not_satisfying_type_predicate<
 				type::is_range_of<vk::dynamic_state>
-			>(
-				vk::pipeline_dynamic_state_create_info { dyn_states },
-				forward<Args>(args)...
-			)(
+			>(forward<Args>(args)...)(
 				[&]<typename... A>(A&&... a) {
-					return operator () <Order - 1, A...> (forward<A>(a)...);
+					return operator () <Order - 1> (
+						vk::pipeline_dynamic_state_create_info { dyn_states },
+						forward<A>(a)...
+					);
 				}
 			);
 		}

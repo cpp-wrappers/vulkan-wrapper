@@ -16,10 +16,10 @@ namespace vk {
 	using command_pool_create_flags = flag_enum<vk::command_pool_create_flag>;
 
 	struct command_pool_create_info {
-		uint32 structure_type = 39;
-		const void* next = nullptr;
+		uint32                        structure_type = 39;
+		const void*                   next = nullptr;
 		vk::command_pool_create_flags flags;
-		vk::queue_family_index queue_family_index;
+		vk::queue_family_index        queue_family_index;
 	};
 
 } // vk

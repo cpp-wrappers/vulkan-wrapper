@@ -130,7 +130,7 @@ namespace vk {
 		template<nuint Order, typename... Args>
 		auto operator () (Args&&... args) const {
 			static_assert(Order > 0);
-			return operator () <Order - 1, Args...>(forward<Args>(args)...);
+			return operator () <Order - 1>(forward<Args>(args)...);
 		}
 
 		template<nuint Order, typename... Args>
@@ -167,12 +167,12 @@ namespace vk {
 					type::is_decayed<vk::queue_family_index>,
 					type::is_decayed<vk::queue_priority>
 				>
-			>(
-				array{ ci },
-				forward<Args>(args)...
-			)(
+			>(forward<Args>(args)...)(
 				[&]<typename... A>(A&&... a) {
-					return operator () <Order - 1, A...>(forward<A>(a)...);
+					return operator () <Order - 1>(
+						array{ ci },
+						forward<A>(a)...
+					);
 				}
 			);
 		}
@@ -194,12 +194,12 @@ namespace vk {
 			);
 			return elements::pass_not_satisfying_type_predicate<
 				type::disjuncted_predicates<type::is_decayed<vk::extension>>
-			>(
-				span{ extension_storage, extension_count },
-				forward<Args>(args)...
-			)(
+			>(forward<Args>(args)...)(
 				[&]<typename... A>(A&&... a) {
-					return operator () <Order - 1, A...>(forward<A>(a)...);
+					return operator () <Order - 1>(
+						span{ extension_storage, extension_count },
+						forward<A>(a)...
+					);
 				}
 			);
 		}

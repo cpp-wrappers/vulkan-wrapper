@@ -24,31 +24,31 @@ namespace vk {
 		mutable_format              = 0x00000004
 	};
 
-	struct image_array_layers { uint32 _; };
+	struct image_array_layers       { uint32 _; };
 	struct queue_family_index_count { uint32 _; };
 	struct queue_family_indices { const vk::queue_family_index* _; };
 
 	struct clipped { uint32 _; };
 
 	struct swapchain_create_info {
-		uint32 structure_type = 1000001000;
-		const void* next = nullptr;
+		uint32                           structure_type = 1000001000;
+		const void*                      next = nullptr;
 		flag_enum<swapchain_create_flag> flags;
-		handle<vk::surface> surface;
-		vk::min_image_count min_image_count;
-		vk::format format;
-		vk::color_space color_space;
-		vk::extent<2> extent;
-		vk::image_array_layers image_array_layers{ 1 };
-		vk::image_usages usage;
-		vk::sharing_mode sharing_mode;
-		vk::queue_family_index_count queue_family_index_count;
-		vk::queue_family_indices queue_family_indices;
+		handle<vk::surface>              surface;
+		vk::min_image_count              min_image_count;
+		vk::format                       format;
+		vk::color_space                  color_space;
+		vk::extent<2>                    extent;
+		vk::image_array_layers           image_array_layers{ 1 };
+		vk::image_usages                 usage;
+		vk::sharing_mode                 sharing_mode;
+		vk::queue_family_index_count     queue_family_index_count;
+		vk::queue_family_indices         queue_family_indices;
 		flag_enum<vk::surface_transform> pre_transform;
-		flag_enum<vk::composite_alpha> composite_alpha;
-		vk::present_mode present_mode;
-		vk::clipped clipped;
-		handle<vk::swapchain> old_swapchain{};
+		flag_enum<vk::composite_alpha>  composite_alpha;
+		vk::present_mode                 present_mode;
+		vk::clipped                      clipped;
+		handle<vk::swapchain>            old_swapchain{};
 	};
 
 } // vk

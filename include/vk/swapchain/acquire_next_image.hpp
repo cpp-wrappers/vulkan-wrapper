@@ -26,6 +26,7 @@ namespace vk {
 		types::are_may_contain_one_decayed<handle<vk::fence>>,
 		types::are_may_contain_one_decayed<vk::timeout>
 	>::for_types<Args...>
+	[[ nodiscard ]]
 	vk::expected<vk::image_index>
 	try_acquire_next_image(Args&&... args) {
 		auto device {
@@ -79,6 +80,7 @@ namespace vk {
 } // vk
 
 template<typename... Args>
+[[ nodiscard ]]
 vk::expected<vk::image_index>
 handle<vk::device>::try_acquire_next_image(Args&&... args) const {
 	return vk::try_acquire_next_image(*this, forward<Args>(args)...);

@@ -2,6 +2,7 @@
 
 #include "../handle/base.hpp"
 #include "../create_or_allocate.hpp"
+#include "../destroy_or_free.hpp"
 #include "../queue_family_index.hpp"
 #include "../result.hpp"
 #include "../memory_requirements.hpp"
@@ -58,6 +59,11 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 		return result.get_expected();
 	}
 
+	template<typename ObjectType>
+	void destroy(handle<ObjectType> handle) const {
+		vk::destroy<ObjectType>(*this, handle);
+	}
+
 	template<typename ObjectType, typename... Args>
 	handle<ObjectType>
 	allocate(Args&&... args) const {
@@ -66,6 +72,16 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
+	}
+
+	template<typename ObjectType>
+	void free(handle<ObjectType> handle) const {
+		vk::free<ObjectType>(*this, handle);
+	}
+
+	template<typename ObjectType, typename... Args>
+	void free(Args&&... args) const {
+		vk::free<ObjectType>(*this, forward<Args>(args)...);
 	}
 
 	template<typename... Args>
@@ -145,26 +161,65 @@ struct handle<vk::device> : vk::handle_base<vk::dispatchable> {
 }; // handle<device>
 
 #include "memory/allocate.hpp"
+#include "memory/free.hpp"
+
 #include "../command/pool/create.hpp"
+#include "../command/pool/destroy.hpp"
+
 #include "../command/buffer/allocate.hpp"
+#include "../command/buffer/free.hpp"
+
 #include "../shader/module/create.hpp"
+#include "../shader/module/destroy.hpp"
+
 #include "../framebuffer/create.hpp"
+#include "../framebuffer/destroy.hpp"
+
 #include "../image/create.hpp"
+#include "../image/destroy.hpp"
+
 #include "../image/view/create.hpp"
+#include "../image/view/destroy.hpp"
+
 #include "../pipeline/layout/create.hpp"
+#include "../pipeline/layout/destroy.hpp"
+
 #include "../pipeline/create.hpp"
+#include "../pipeline/destroy.hpp"
+
 #include "../render_pass/create.hpp"
+#include "../render_pass/destroy.hpp"
+
 #include "../semaphore/create.hpp"
+#include "../semaphore/destroy.hpp"
+
 #include "../swapchain/create.hpp"
+#include "../swapchain/destroy.hpp"
+
 #include "../buffer/create.hpp"
+#include "../buffer/destroy.hpp"
+
 #include "../buffer/view/create.hpp"
+#include "../buffer/view/destroy.hpp"
+
 #include "../fence/create.hpp"
+#include "../fence/destroy.hpp"
+
 #include "../sampler/create.hpp"
+#include "../sampler/destroy.hpp"
+
 #include "../descriptor/set/allocate.hpp"
+
 #include "../descriptor/set/layout/create.hpp"
+#include "../descriptor/set/layout/destroy.hpp"
+
 #include "../descriptor/pool/create.hpp"
+#include "../descriptor/pool/destroy.hpp"
+
 #include "../deferred_operation/create.hpp"
+
 #include "../acceleration_structure/create.hpp"
+#include "../acceleration_structure/destroy.hpp"
 
 #include "get_queue.hpp"
 #include "wait_idle.hpp"

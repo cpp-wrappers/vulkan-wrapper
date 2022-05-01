@@ -12,8 +12,8 @@ namespace vk {
 	using fence_create_flags = flag_enum<vk::fence_create_flag>;
 
 	struct fence_create_info {
-		uint32 structure_type = 8;
-		const void* next;
+		uint32                 structure_type = 8;
+		const void*            next;
 		vk::fence_create_flags flags;
 	};
 
