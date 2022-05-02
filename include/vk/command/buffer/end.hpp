@@ -31,6 +31,6 @@ inline vk::result handle<vk::command_buffer>::try_end() const {
 	return vk::try_end_command_buffer(*this);
 }
 
-inline void handle<vk::command_buffer>::end() const {
-	vk::end_command_buffer(*this);
+inline auto& handle<vk::command_buffer>::end() const {
+	vk::end_command_buffer(*this); return *this;
 }

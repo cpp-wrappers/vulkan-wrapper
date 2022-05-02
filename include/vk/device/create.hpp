@@ -106,7 +106,7 @@ namespace vk {
 				ci.next = &features_2;
 			}
 			else if constexpr (contain_features) {
-				ci.enabled_features = elements::decayed<
+				ci.enabled_features = & elements::decayed<
 					vk::physical_device_features
 				>(args...);
 			}

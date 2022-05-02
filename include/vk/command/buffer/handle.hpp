@@ -22,7 +22,7 @@ struct handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 	template<typename... Args>      auto&     begin(Args&&...) const;
 
 	inline vk::result try_end() const;
-	inline       void     end() const;
+	inline      auto&     end() const;
 
 	template<typename... Args> auto& cmd_pipeline_barrier(Args&&...) const;
 	template<typename... Args> auto& cmd_copy_buffer(Args&&...) const;
@@ -33,6 +33,7 @@ struct handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 	template<typename... Args> auto& cmd_bind_pipeline(Args&&...) const;
 	template<typename... Args> auto& cmd_set_viewport(Args&&...) const;
 	template<typename... Args> auto& cmd_set_scissor(Args&&...) const;
+	template<typename... Args> auto& cmd_push_constants(Args&&...) const;
 	template<typename... Args> auto& cmd_draw(Args&&...) const;
 	template<typename... Args> auto& cmd_bind_vertex_buffers(Args&&...) const;
 	template<typename... Args> auto& cmd_bind_vertex_buffer(Args&&...) const;
@@ -52,6 +53,7 @@ struct handle<vk::command_buffer> : vk::handle_base<vk::dispatchable> {
 #include "cmd_bind_pipeline.hpp"
 #include "cmd_set_viewport.hpp"
 #include "cmd_set_scissor.hpp"
+#include "cmd_push_constants.hpp"
 #include "cmd_draw.hpp"
 #include "cmd_bind_vertex_buffers.hpp"
 #include "cmd_bind_vertex_buffer.hpp"

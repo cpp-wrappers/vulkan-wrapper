@@ -7,9 +7,9 @@
 namespace vk {
 
 	struct push_constant_range {
-		vk::shader_stage stage_flags;
-		uint32 offset;
-		uint32 size;
+		vk::shader_stages stages;
+		uint32            offset;
+		uint32            size;
 	};
 
 } // vk
