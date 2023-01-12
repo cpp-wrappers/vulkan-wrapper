@@ -1,16 +1,14 @@
 #pragma once
 
-#include <core/meta/type/is_base.hpp>
-#include <core/meta/decayed_satisfying_predicate.hpp>
-#include <core/integer.hpp>
+#include <integer.hpp>
+#include <type.hpp>
 
 namespace vk {
 
 	struct physical_device_features_marker {};
 
-	struct is_physical_device_features :
-		type::is_base<vk::physical_device_features_marker>
-	{};
+	static constexpr auto is_physical_device_features
+		= is_base_of<physical_device_features_marker>;
 
 	struct physical_device_features {
 		uint32

@@ -1,13 +1,14 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include <integer.hpp>
 
 namespace vk {
 
-	struct queue_family_index {
-		uint32 _;
-
-		operator uint32 () const { return _; }
+	class queue_family_index {
+		uint32 value_;
+	public:
+		constexpr queue_family_index(uint32 value) : value_{ value } {}
+		operator uint32() const { return value_; }
 	};
 
 	inline constexpr vk::queue_family_index queue_family_ignored{ ~0U };
