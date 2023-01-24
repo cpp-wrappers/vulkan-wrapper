@@ -1,7 +1,9 @@
 #pragma once
 
+#include "../__instance/handle.hpp"
 #include <integer.hpp>
 #include <handle.hpp>
+#include <body.hpp>
 
 namespace vk {
 
@@ -19,9 +21,15 @@ struct handle_underlying_t<vk::device> {
 };
 
 template<>
-struct handle_interface<vk::device> : handle_interface_base<vk::device> {
+struct body_base<vk::device> {
+private:
+	handle<vk::instance> instance_{};
+public:
+	handle<vk::instance>& get_instance_handle() { return instance_; }
+};
 
-	
+template<>
+struct handle_interface<vk::device> : handle_interface_base<vk::device> {
 
 	/*template<typename ObjectType, typename... Args>
 	handle<ObjectType>

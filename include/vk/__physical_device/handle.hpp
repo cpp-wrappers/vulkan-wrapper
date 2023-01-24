@@ -1,10 +1,14 @@
 #pragma once
 
+#include "./queue_family_properties.hpp"
+
 #include <handle.hpp>
 
 namespace vk {
 
 	struct physical_device;
+
+	struct instance;
 
 } // vk
 
@@ -66,13 +70,6 @@ struct handle_interface<vk::physical_device> :
 
 		vk::unexpected_handler();
 	} */
-
-	/* template<range_of<vk::queue_family_properties> Range>
-	[[ nodiscard ]]
-	vk::count get_queue_family_properties(Range&&) const; */
-
-	/* [[ nodiscard ]] inline
-	vk::count get_queue_family_properties_count() const; */
 
 	/* template<typename Handler>
 	void view_queue_family_properties(vk::count, Handler&&) const; */

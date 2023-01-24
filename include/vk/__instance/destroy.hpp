@@ -6,11 +6,6 @@
 
 #include <body.hpp>
 
-/*extern "C" VK_ATTR void VK_CALL vkDestroyInstance(
-	handle<vk::instance> instance,
-	const void*          allocator
-);*/
-
 namespace vk {
 
 	struct destroy_instance_function : vk::function<void(*)(

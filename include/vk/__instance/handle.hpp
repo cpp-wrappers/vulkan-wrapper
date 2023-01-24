@@ -44,9 +44,13 @@ struct handle_interface<vk::instance> : handle_interface_base<vk::instance> {
 		return (uint32) count;
 	}
 
-	/* [[ nodiscard ]]
-	handle<vk::physical_device> inline
-	get_first_physical_device() const; */
+	[[ nodiscard ]]
+	inline handle<vk::physical_device> get_first_physical_device() const {
+		handle<vk::physical_device> physical_device{};
+		[[maybe_unused]] auto _
+			= enumerate_physical_devices(span{ &physical_device});
+		return physical_device;
+	}
 
 	/* template<typename F>
 	void for_each_physical_device(vk::count count, F&& f) const; */

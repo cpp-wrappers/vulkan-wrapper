@@ -9,8 +9,15 @@
 namespace vk {
 
 	struct queue_count { uint32 _; };
-	struct queue_priority { float _; };
-	struct queue_priorities { const queue_priority* _; };
+	class queue_priority {
+		[[maybe_unused]] float value_;
+	public:
+		queue_priority(float value) : value_{ value } {}
+	};
+
+	struct queue_priorities {
+		const queue_priority* _;
+	};
 
 	enum queue_create_flag {
 		_protected

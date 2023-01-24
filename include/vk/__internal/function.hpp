@@ -44,6 +44,15 @@ namespace vk {
 	template<typename Function>
 	static constexpr get_instance_function_t<Function> get_instance_function{};
 
+	template<typename Function>
+	struct get_device_function_t {
+		typename Function::prototype operator () (
+			handle<vk::instance> instance, handle<vk::device>
+		) const;
+	};
+	template<typename Function>
+	static constexpr get_device_function_t<Function> get_device_function{};
+
 	/*template<typename Type>
 	Type get_device_function(handle<vk::device>, const char* name);*/
 
