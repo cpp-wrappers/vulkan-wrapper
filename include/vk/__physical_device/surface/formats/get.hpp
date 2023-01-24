@@ -1,43 +1,58 @@
 #pragma once
 
 #include "../../handle.hpp"
+#include "../../../__internal/function.hpp"
+#include "../../../__internal/unexpected_handler.hpp"
+#include "../../../__internal/result.hpp"
+#include "../../../__surface/handle.hpp"
+#include "../../../__surface/format.hpp"
 
-extern "C" VK_ATTR int32 VK_CALL vkGetPhysicalDeviceSurfaceFormatsKHR(
-	handle<vk::physical_device> physical_device,
-	handle<vk::surface>         surface,
-	uint32*                     surface_format_count,
-	vk::surface_format*         surface_formats
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct get_physical_device_surface_formats : vk::function<int32(*)(
+		handle<vk::physical_device>::underlying_type physical_device,
+		handle<vk::surface>::underlying_type surface,
+		uint32* surface_format_count,
+		vk::surface_format* surface_formats
+	)> {
+		static constexpr auto name = "vkGetPhysicalDeviceSurfaceFormatsKHR";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::surface>>,
-		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_range_of<vk::surface_format>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
+		count_of_decayed_same_as<handle<vk::surface>> == 1,
+		count_of_range_of_decayed<vk::surface_format> == 1
+	>
 	[[ nodiscard ]]
 	vk::expected<vk::count>
 	try_get_physical_device_surface_formats(Args&&... args) {
-		auto surface {
-			elements::decayed<handle<vk::surface>>(args...)
-		};
+		handle<vk::instance> instance = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		auto physical_device {
-			elements::decayed<handle<vk::physical_device>>(args...)
-		};
+		handle<vk::physical_device> physical_device = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::physical_device>>();
 
-		auto& range = elements::range_of<vk::surface_format>(args...);
+		handle<vk::surface> surface = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::surface>>();
+
+		auto& range = tuple{ args... }.template
+			get_range_of_decayed<vk::surface_format>();
 
 		uint32 count = (uint32) range.size();
 
 		vk::result result {
-			vkGetPhysicalDeviceSurfaceFormatsKHR(
-				physical_device,
-				surface,
+			vk::get_instance_function<vk::get_physical_device_surface_formats>(
+				instance
+			)(
+				physical_device.underlying(),
+				surface.underlying(),
 				&count,
-				range.data()
+				range.iterator()
 			)
 		};
 
@@ -50,9 +65,8 @@ namespace vk {
 	[[ nodiscard ]]
 	vk::count
 	get_physical_device_surface_formats(Args&&... args) {
-		auto result = vk::try_get_physical_device_surface_formats(
-			forward<Args>(args)...
-		);
+		vk::expected<vk::count> result =
+			vk::try_get_physical_device_surface_formats(forward<Args>(args)...);
 
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
@@ -62,11 +76,3 @@ namespace vk {
 	}
 
 } // vk
-
-template<typename... Args>
-vk::count
-handle<vk::physical_device>::get_surface_formats(Args&&... args) const {
-	return vk::get_physical_device_surface_formats(
-		*this, forward<Args>(args)...
-	);
-}

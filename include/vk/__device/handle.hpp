@@ -9,7 +9,6 @@ namespace vk {
 
 	struct device;
 
-	enum queue_index : uint32{};
 	enum wait_all : bool {};
 
 } // vk

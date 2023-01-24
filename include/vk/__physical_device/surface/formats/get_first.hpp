@@ -1,32 +1,22 @@
 #pragma once
 
-#include "get.hpp"
-
-#include <core/span.hpp>
-#include <core/single.hpp>
+#include "./get.hpp"
 
 namespace vk {
 
-	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_one_decayed<handle<vk::surface>>
-	>::for_types<Args...>
+	inline
 	vk::surface_format
-	get_first_physical_device_surface_format(Args&&... args) {
-		auto physical_device {
-			elements::decayed<handle<vk::physical_device>>(args...)
-		};
-
-		auto surface {
-			elements::decayed<handle<vk::surface>>(args...)
-		};
+	get_first_physical_device_surface_format(
+		handle<vk::instance> instance,
+		handle<vk::physical_device> physical_device,
+		handle<vk::surface> surface
+	) {
 
 		vk::surface_format surface_format;
 
 		vk::count count {
 			vk::get_physical_device_surface_formats(
-				physical_device, surface, single_view{ surface_format }
+				instance, physical_device, surface, span{ &surface_format }
 			)
 		};
 
@@ -38,10 +28,3 @@ namespace vk {
 	}
 
 } // vk
-
-vk::surface_format inline
-handle<vk::physical_device>::get_first_surface_format(
-	handle<vk::surface> surface
-) const {
-	return vk::get_first_physical_device_surface_format(*this, surface);
-}
