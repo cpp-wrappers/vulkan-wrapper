@@ -1,72 +1,87 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
-
+#include "./handle.hpp"
+#include "./create_info.hpp"
 #include "../__internal/result.hpp"
 #include "../__device/handle.hpp"
 #include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
 
-extern "C" VK_ATTR int32 VK_CALL vkCreateDescriptorSetLayout(
-	handle<vk::device>                           device,
-	const vk::descriptor_set_layout_create_info* create_info,
-	const void*                                  allocator,
-	handle<vk::descriptor_set_layout>*           set_layout
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::descriptor_set_layout> {
+	struct create_descriptor_set_layout_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type                 device,
+		const vk::descriptor_set_layout_create_info*        create_info,
+		const void*                                         allocator,
+		handle<vk::descriptor_set_layout>::underlying_type* set_layout
+	)> {
+		static constexpr auto name = "vkCreateDescriptorSetLayout";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_may_contain_one_decayed<
-				vk::descriptor_set_layout_create_flags
-			>,
-			types::are_contain_range_of<vk::descriptor_set_layout_binding>
-		>::for_types<Args...>
-		expected<handle<vk::descriptor_set_layout>>
-		operator () (Args&&... args) const {
-			auto& bindings {
-				elements::range_of<vk::descriptor_set_layout_binding>(args...)
-			};
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<
+			vk::descriptor_set_layout_create_flags
+		> <= 1,
+		count_of_range_of_decayed<vk::descriptor_set_layout_binding> <= 1
+	>
+	expected<handle<vk::descriptor_set_layout>>
+	try_create_descriptor_set_layout(Args&&... args) {
+		tuple a{ args... };
 
-			vk::descriptor_set_layout_create_info ci {
-				.binding_count = (uint32) bindings.size(),
-				.bindings = bindings.data()
-			};
-			
-			if constexpr (
-				types::are_contain_decayed<
-					vk::descriptor_set_layout_create_flags
-				>::for_types<Args...>
-			) {
-				ci.flags = elements::decayed<
-					vk::descriptor_set_layout_create_flags
-				>(args...);
-			}
+		auto& bindings = a.template
+			get_range_of_decayed<vk::descriptor_set_layout_binding>();
 
-			auto device = elements::decayed<handle<vk::device>>(args...);
+		vk::descriptor_set_layout_create_info ci {
+			.binding_count = (uint32) bindings.size(),
+			.bindings = bindings.iterator()
+		};
+		
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::descriptor_set_layout_create_flags>
+		) {
+			ci.flags = a.template
+				get_decayed_same_as<vk::descriptor_set_layout_create_flags>();
+		}
 
-			handle<vk::descriptor_set_layout> descriptor_set_layout;
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			vk::result result {
-				vkCreateDescriptorSetLayout(
-					device,
-					&ci,
-					nullptr,
-					&descriptor_set_layout
-				)
-			};
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-			if(result.error()) return result;
+		handle<vk::descriptor_set_layout> descriptor_set_layout;
 
-			return descriptor_set_layout;
+		vk::result result {
+			vk::get_device_function<vk::create_descriptor_set_layout_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ci,
+				nullptr,
+				&descriptor_set_layout.underlying()
+			)
+		};
 
-		} // constructor
+		if(result.error()) return result;
 
-	}; // create_t<descriptor_set_layout>
+		return descriptor_set_layout;
+	}
+
+	template<typename... Args>
+	handle<vk::descriptor_set_layout>
+	create_descriptor_set_layout(Args&&... args) {
+		vk::expected<handle<vk::descriptor_set_layout>> result
+			= vk::try_create_descriptor_set_layout(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
+	}
 
 } // vk
