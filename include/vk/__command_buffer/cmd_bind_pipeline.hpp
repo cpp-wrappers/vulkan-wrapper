@@ -1,49 +1,58 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+#include "../__pipeline/bind_point.hpp"
+#include "../__pipeline/handle.hpp"
 
-#include "../../pipeline/handle.hpp"
-#include "../../pipeline/bind_point.hpp"
-#include "../../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkCmdBindPipeline(
-	handle<vk::command_buffer> command_buffer,
-	vk::pipeline_bind_point    pipeline_bind_point,
-	handle<vk::pipeline>       pipeline
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct cmd_bind_pipeline_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type command_buffer,
+	vk::pipeline_bind_point pipeline_bind_point,
+	handle<vk::pipeline>::underlying_type pipeline
+	)> {
+		static constexpr auto name = "vkCmdBindPipeline";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<handle<vk::pipeline>>,
-		types::are_contain_one_decayed<vk::pipeline_bind_point>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<handle<vk::pipeline>> == 1,
+		count_of_decayed_same_as<vk::pipeline_bind_point> == 1
+	>
 	void cmd_bind_pipeline(Args&&... args) {
-		auto command_buffer {
-			elements::decayed<handle<vk::command_buffer>>(args...)
-		};
+		tuple a { args... };
 
-		vk::pipeline_bind_point bind_point {
-			elements::decayed<vk::pipeline_bind_point>(args...)
-		};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		auto pipeline = elements::decayed<handle<vk::pipeline>>(args...);
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-		vkCmdBindPipeline(
-			command_buffer,
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
+
+		handle<vk::pipeline> pipeline = a.template
+			get_decayed_same_as<handle<vk::pipeline>>();
+
+		vk::pipeline_bind_point bind_point = a.template
+			get_decayed_same_as<handle<vk::pipeline_bind_point>>();
+
+		vk::get_device_function<vk::cmd_bind_pipeline_function>(
+			instance, device
+		)(
+			command_buffer.underlying(),
 			bind_point,
-			pipeline
+			pipeline.underlying()
 		);
 	}
 
 } // vk
-
-template<typename... Args>
-auto& handle<vk::command_buffer>::cmd_bind_pipeline(Args&&... args) const {
-	vk::cmd_bind_pipeline(*this, forward<Args>(args)...);
-	return *this;
-}

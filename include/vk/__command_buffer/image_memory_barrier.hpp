@@ -1,15 +1,17 @@
 #pragma once
 
-#include "../../access.hpp"
-#include "../../queue_family_index.hpp"
-#include "../../image/layout.hpp"
-#include "../../image/handle.hpp"
-#include "../../image/subresource_range.hpp"
+#include "../__image/layout.hpp"
+#include "../__image/handle.hpp"
+#include "../__image/subresource_range.hpp"
+#include "../__internal/access.hpp"
+#include "../__internal/queue_family_index.hpp"
+
+#include <enum_flags.hpp>
 
 namespace vk {
 
-	struct old_layout : flag_enum<vk::image_layout> {};
-	struct new_layout : flag_enum<vk::image_layout> {};
+	struct old_layout : enum_flags<vk::image_layout> {};
+	struct new_layout : enum_flags<vk::image_layout> {};
 
 	struct image_memory_barrier {
 		uint32 structure_type = 45;

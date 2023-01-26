@@ -1,9 +1,9 @@
 #pragma once
 
-#include <core/integer.hpp>
+#include "../__internal/memory_size.hpp"
+#include "../__internal/memory_type_index.hpp"
 
-#include "../../memory_size.hpp"
-#include "../../memory_type_index.hpp"
+#include <integer.hpp>
 
 namespace vk {
 

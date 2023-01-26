@@ -1,36 +1,41 @@
 #pragma once
 
-#include "handle.hpp"
-
-#include "../handle.hpp"
-#include "../../function.hpp"
-#include "../../destroy_or_free.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkFreeMemory(
-	handle<vk::device>        device,
-	handle<vk::device_memory> memory,
-	const void*               allocator
-);
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
 
 namespace vk {
 
-	template<>
-	struct vk::free_t<vk::device_memory> {
-
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_contain_one_decayed<handle<vk::device_memory>>
-		>::for_types<Args...>
-		void operator () (Args&&... args) const {
-			auto device = elements::decayed<handle<vk::device>>(args...);
-			auto device_memory {
-				elements::decayed<handle<vk::device_memory>>(args...)
-			};
-
-			vkFreeMemory(device, device_memory, nullptr);
-		} 
-
+	struct free_memory_function : vk::function<void(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::device_memory>::underlying_type memory,
+		const void* allocator
+	)> {
+		static constexpr auto name = "vkFreeMemory";
 	};
+
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::device_memory>> == 1
+	>
+	void free_memory(Args&&... args) {
+		handle<vk::instance> instance = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::device_memory> device_memory = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::device_memory>>();
+
+		vk::get_device_function<vk::free_memory_function>(
+			instance, device
+		)(
+			device.underlying(), device_memory.underlying(), nullptr
+		);
+	}
 
 } // vk

@@ -1,72 +1,72 @@
 #pragma once
 
-#include "handle.hpp"
-#include "allocate_info.hpp"
-#include "allocate_flags_info.hpp"
-#include "../../device/handle.hpp"
-#include "../../create_or_allocate.hpp"
+#include "./handle.hpp"
+#include "./allocate_info.hpp"
+#include "./allocate_flags_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/result.hpp"
+#include "../__device/handle.hpp"
 
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/meta/types/are_contain_satisfying_predicate.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkAllocateMemory(
-	handle<vk::device>              device,
-	const vk::memory_allocate_info* allocate_info,
-	const void*                     allocator,
-	handle<vk::device_memory>*      memory
-);
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<>
-	struct vk::allocate_t<vk::device_memory> {
+	struct allocate_memory_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		const vk::memory_allocate_info* allocate_info,
+		const void* allocator,
+		handle<vk::device_memory>::underlying_type* memory
+	)> {
+		static constexpr auto name = "vkAllocateMemory";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_contain_one_decayed<vk::memory_size>,
-			types::are_contain_one_decayed<vk::memory_type_index>,
-			types::are_may_contain_decayed<vk::memory_allocate_flags_info>
-		>::for_types<Args...>
-		vk::expected<handle<vk::device_memory>>
-		operator () (Args&&... args) const {
-			vk::memory_allocate_info ai {
-				.size = elements::decayed<vk::memory_size>(args...),
-				.memory_type_index {
-					elements::decayed<vk::memory_type_index>(args...)
-				}
-			};
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::memory_size> == 1,
+		count_of_decayed_same_as<vk::memory_type_index> == 1,
+		count_of_decayed_same_as<vk::memory_allocate_flags_info> <= 1
+	>
+	vk::expected<handle<vk::device_memory>>
+	try_allocate_memory(Args&&... args) {
+		tuple a { args... };
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::memory_allocate_flags_info
-				>::for_types<Args...>
-			) {
-				ai.next = &elements::decayed<
-					vk::memory_allocate_flags_info
-				>(args...);
-			}
+		vk::memory_allocate_info ai {
+			.size = a.template get_decayed_same_as<vk::memory_size>(),
+			.memory_type_index = a.template
+				get_decayed_same_as<vk::memory_type_index>()
+		};
 
-			auto device = elements::decayed<handle<vk::device>>(args...);
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::memory_allocate_flags_info> > 0
+		) {
+			ai.next = & a.template
+				get_decayed_same_as<vk::memory_allocate_flags_info>();
+		}
 
-			handle<vk::device_memory> device_memory;
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			vk::result result {
-				vkAllocateMemory(
-					device,
-					&ai,
-					nullptr,
-					&device_memory
-				)
-			};
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-			if(result.error()) return result;
+		handle<vk::device_memory> device_memory;
 
-			return device_memory;
+		vk::result result {
+			vk::get_device_function<vk::allocate_memory_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ai,
+				nullptr,
+				&device_memory.underlying()
+			)
+		};
 
-		} // operator ()
+		if(result.error()) return result;
 
-	}; // allocate_t<device_memory>
+		return device_memory;
+	}
 
 } // vk

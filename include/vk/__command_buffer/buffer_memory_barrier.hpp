@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../buffer/handle.hpp"
-#include "../../queue_family_index.hpp"
-#include "../../access.hpp"
-#include "../../memory_offset.hpp"
-#include "../../memory_size.hpp"
+#include "../__internal/access.hpp"
+#include "../__internal/queue_family_index.hpp"
+#include "../__internal/memory_offset.hpp"
+#include "../__internal/memory_size.hpp"
+#include "../__buffer/handle.hpp"
 
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
@@ -22,52 +22,46 @@ namespace vk {
 		vk::dst_queue_family_index dst_queue_family_index {
 			vk::queue_family_ignored
 		};
-		handle<vk::buffer> buffer;
+		handle<vk::buffer>::underlying_type buffer;
 		vk::memory_offset offset{ 0 };
 		vk::memory_size size;
 
 		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<vk::src_access>,
-			types::are_contain_one_decayed<vk::dst_access>,
-			types::are_may_contain_one_decayed<vk::src_queue_family_index>,
-			types::are_may_contain_one_decayed<vk::dst_queue_family_index>,
-			// TODO
-			types::are_contain_one_decayed<handle<vk::buffer>>,
-			types::are_may_contain_one_decayed<vk::memory_offset>,
-			types::are_contain_one_decayed<vk::memory_size>
-		>::for_types<Args...>
-		buffer_memory_barrier(Args&&... args) :
-			src_acccess{ elements::decayed<vk::src_access>(args...) },
-			dst_acccess{ elements::decayed<vk::dst_access>(args...) },
-			buffer { elements::decayed<handle<vk::buffer>>(args...) },
-			size{ elements::decayed<vk::memory_size>(args...) }
-		{
-			if constexpr (
-				types::are_contain_decayed<
-					vk::src_queue_family_index
-				>::for_types<Args...>
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			count_of_decayed_same_as<vk::src_access> == 1,
+			count_of_decayed_same_as<vk::dst_access> == 1,
+			count_of_decayed_same_as<vk::src_queue_family_index> <= 1,
+			count_of_decayed_same_as<vk::dst_queue_family_index> <= 1,
+			count_of_decayed_same_as<handle<vk::buffer>> == 1,
+			count_of_decayed_same_as<vk::memory_offset> <= 1,
+			count_of_decayed_same_as<vk::memory_size> == 1
+		>
+		buffer_memory_barrier(Args&&... args) {
+			tuple a { args... };
+
+			src_acccess = a.template get_decayed_same_as<vk::src_access>();
+			dst_acccess = a.template get_decayed_same_as<vk::dst_access>();
+			buffer = a.template get_decayed_same_as<handle<vk::buffer>>();
+			size = a.template get_decayed_same_as<vk::memory_size>();
+
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::src_queue_family_index> > 0
 			) {
-				src_queue_family_index = elements::decayed<
-					vk::src_queue_family_index
-				>(args...);
+				src_queue_family_index = a.template
+					get_decayed_same_as<vk::src_queue_family_index>();
 			}
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::dst_queue_family_index
-				>::for_types<Args...>
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::dst_queue_family_index> > 0
 			) {
-				dst_queue_family_index = {
-					elements::decayed<vk::dst_queue_family_index>(args...)
-				};
+				dst_queue_family_index = a.template
+					get_decayed_same_as<vk::dst_queue_family_index>();
 			}
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::memory_offset
-				>::for_types<Args...>) {
-				offset = elements::decayed<vk::memory_offset>(args...);
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::memory_offset> > 0
+			) {
+				offset = a.template get_decayed_same_as<vk::memory_offset>();
 			}
 
 		} // constructor

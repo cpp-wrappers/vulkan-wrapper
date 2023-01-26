@@ -1,64 +1,71 @@
 #pragma once
 
-#include "handle.hpp"
-#include "clear.hpp"
-
-#include "../../image/handle.hpp"
-#include "../../image/layout.hpp"
-#include "../../image/subresource_range.hpp"
-#include "../../function.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkCmdClearColorImage(
-	handle<vk::command_buffer>         command_buffer,
-	handle<vk::image>                  image,
-	vk::image_layout                   image_layout,
-	const vk::clear_color_value*       color,
-	uint32                             range_count,
-	const vk::image_subresource_range* ranges
-);
+#include "./handle.hpp"
+#include "./clear.hpp"
+#include "../__internal/function.hpp"
+#include "../__image/handle.hpp"
+#include "../__image/layout.hpp"
+#include "../__image/subresource_range.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
 
 namespace vk {
 
+	struct cmd_clear_color_image_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type command_buffer,
+		handle<vk::image>::underlying_type image,
+		vk::image_layout image_layout,
+		const vk::clear_color_value* color,
+		uint32 range_count,
+		const vk::image_subresource_range* ranges
+	)> {
+		static constexpr auto name = "vkCmdClearColorImage";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<handle<vk::image>>,
-		types::are_contain_one_decayed<vk::image_layout>,
-		types::are_contain_one_decayed<vk::clear_color_value>,
-		types::are_contain_range_of<vk::image_subresource_range>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<handle<vk::image>> == 1,
+		count_of_decayed_same_as<vk::image_layout> == 1,
+		count_of_decayed_same_as<vk::clear_color_value> == 1,
+		count_of_range_of_decayed<vk::image_subresource_range> == 1
+	>
 	void cmd_clear_color_image(Args&&... args) {
-		auto command_buffer {
-			elements::decayed<handle<vk::command_buffer>>(args...)
-		};
+		tuple a { args... };
 
-		auto image = elements::decayed<handle<vk::image>>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		vk::image_layout layout = elements::decayed<vk::image_layout>(args...);
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-		vk::clear_color_value clear_color {
-			elements::decayed<vk::clear_color_value>(args...)
-		};
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
+
+		handle<vk::image> image = a.template
+			get_decayed_same_as<handle<vk::image>>();
+
+		vk::image_layout layout = a.template
+			get_decayed_same_as<vk::image_layout>();
+
+		vk::clear_color_value clear_color = a.template
+			get_decayed_same_as<vk::clear_color_value>();
 	
-		auto& ranges = elements::range_of<vk::image_subresource_range>(args...);
+		auto& ranges = a.template
+			get_range_of_decayed<vk::image_subresource_range>();
 
-		vkCmdClearColorImage(
-			command_buffer,
-			image,
+		vk::get_device_function<vk::cmd_clear_color_image_function>(
+			instance, device
+		)(
+			command_buffer.underlying(),
+			image.underlying(),
 			layout,
 			&clear_color,
 			(uint32) ranges.size(),
-			ranges.data()
+			ranges.iterator()
 		);
 	} // cmd_clear_color_image
 
 } // vk
-
-template<typename... Args>
-auto& handle<vk::command_buffer>::cmd_clear_color_image(Args&&... args) const {
-	vk::cmd_clear_color_image(*this, forward<Args>(args)...); return *this;
-}

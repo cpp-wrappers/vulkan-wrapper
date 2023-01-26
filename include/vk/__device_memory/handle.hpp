@@ -1,18 +1,23 @@
 #pragma once
 
-#include "../../handle/base.hpp"
-#include "../../create_or_allocate.hpp"
-
-#include <core/handle.hpp>
+#include <handle.hpp>
+#include <integer.hpp>
 
 namespace vk {
 
 	struct device_memory;
 
-	template<>
-	inline constexpr bool is_allocatable<vk::device_memory> = true;
-
 } // vk
 
 template<>
-struct handle<vk::device_memory> : vk::handle_base<vk::non_dispatchable> {};
+struct handle_underlying_t<vk::device_memory> {
+	using type = uint64;
+	static constexpr type invalid = 0;
+};
+
+template<>
+struct handle_interface<vk::device_memory> :
+	handle_interface_base<vk::device_memory>
+{
+
+};

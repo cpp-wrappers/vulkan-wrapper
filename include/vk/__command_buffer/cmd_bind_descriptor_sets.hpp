@@ -1,95 +1,100 @@
 #pragma once
 
-#include "../../descriptor/set/handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__pipeline/bind_point.hpp"
+#include "../__pipeline_layout/handle.hpp"
+#include "../__descriptor_set/handle.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
 	struct first_set { uint32 _; };
 	struct dynamic_offset { uint32 _; };
 
-}
-
-#include "handle.hpp"
-
-#include "../../pipeline/bind_point.hpp"
-#include "../../pipeline/layout/handle.hpp"
-#include "../../function.hpp"
-
-#include <core/meta/decayed_same_as.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkCmdBindDescriptorSets(
-	handle<vk::command_buffer>        command_buffer,
-	vk::pipeline_bind_point           pipeline_bind_point,
-	handle<vk::pipeline_layout>       layout,
-	vk::first_set                     first_set,
-	uint32                            descriptor_set_count,
-	const handle<vk::descriptor_set>* descriptor_sets,
-	uint32                            dynamic_offset_count,
-	const vk::dynamic_offset*         dynamic_offsets
-);
-
-namespace vk {
+	struct cmd_bind_descriptor_sets_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type command_buffer,
+		vk::pipeline_bind_point pipeline_bind_point,
+		handle<vk::pipeline_layout>::underlying_type layout,
+		vk::first_set first_set,
+		uint32 descriptor_set_count,
+		const handle<vk::descriptor_set>::underlying_type* descriptor_sets,
+		uint32 dynamic_offset_count,
+		const vk::dynamic_offset* dynamic_offsets
+	)> {
+		static constexpr auto name = "vkCmdBindDescriptorSets";
+	};
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<vk::pipeline_bind_point>,
-		types::are_contain_one_decayed<handle<vk::pipeline_layout>>,
-		types::are_may_contain_one_decayed<vk::first_set>,
-		types::are_contain_range_of<handle<vk::descriptor_set>>,
-		types::are_may_contain_range_of<vk::dynamic_offset>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<vk::pipeline_bind_point> == 1,
+		count_of_decayed_same_as<handle<vk::pipeline_layout>> == 1,
+		count_of_decayed_same_as<vk::first_set> <= 1,
+		count_of_range_of_decayed<handle<vk::descriptor_set>> == 1,
+		count_of_range_of_decayed<vk::dynamic_offset> <= 1
+	>
 	void cmd_bind_descriptor_sets(Args&&... args) {
-		auto command_buffer {
-			elements::decayed<handle<vk::command_buffer>>(args...)
-		};
+		tuple a { args... };
 
-		vk::pipeline_bind_point bind_point {
-			elements::decayed<vk::pipeline_bind_point>(args...)
-		};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		auto pipeline_layout {
-			elements::decayed<handle<vk::pipeline_layout>>(args...)
-		};
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
+
+		vk::pipeline_bind_point bind_point = a.template
+			get_decayed_same_as<vk::pipeline_bind_point>();
+
+		handle<vk::pipeline_layout> pipeline_layout = a.template
+			get_decayed_same_as<handle<vk::pipeline_layout>>();
 
 		vk::first_set first{};
 		
-		if constexpr (
-			types::are_contain_decayed<vk::first_set>::for_types<Args...>
-		) { first = elements::decayed<vk::first_set>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::first_set> > 0
+		) {
+			first = a.template
+				get_decayed_same_as<vk::first_set>();
+		}
 
-		auto& sets = elements::range_of<handle<vk::descriptor_set>>(args...);
+		auto& sets = a.template
+			get_range_of_decayed<handle<vk::descriptor_set>>();
 
 		uint32 dynamic_offset_count = 0;
 		const vk::dynamic_offset* dynamic_offsets = nullptr;
 
-		if constexpr (
-			types::are_contain_range_of<vk::dynamic_offset>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_range_of_decayed<vk::dynamic_offset> > 0
 		) {
-			auto& offsets = elements::range_of<vk::dynamic_offset>(args...);
+			auto& offsets = a.template
+				get_range_of_decayed<vk::dynamic_offset>();
 			dynamic_offset_count = (uint32) offsets.size();
 			dynamic_offsets = offsets.data();
 		}
 
-		vkCmdBindDescriptorSets(
-			command_buffer,
+		vk::get_device_function<vk::cmd_bind_descriptor_sets_function>(
+			instance, device
+		)(
+			command_buffer.underlying(),
 			bind_point,
-			pipeline_layout,
+			pipeline_layout.underlying(),
 			first,
 			(uint32) sets.size(),
-			sets.data(),
+			(const handle<vk::descriptor_set>::underlying_type*)
+				sets.iterator(),
 			dynamic_offset_count,
 			dynamic_offsets
 		);
 	} // cmd_bind_descriptor_sets
 
 } // vk
-
-template<typename... Args>
-auto&
-handle<vk::command_buffer>::cmd_bind_descriptor_sets(Args &&... args) const {
-	vk::cmd_bind_descriptor_sets(*this, forward<Args>(args)...);
-	return *this;
-}
-
-#include "cmd_bind_descriptor_set.hpp"

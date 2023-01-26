@@ -1,49 +1,63 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/memory_offset.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__device/handle.hpp"
+#include "../__device_memory/handle.hpp"
 
-#include "../device/handle.hpp"
-#include "../result.hpp"
-#include "../memory_offset.hpp"
-#include "../unexpected_handler.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkBindBufferMemory(
-	handle<vk::device>        device,
-	handle<vk::buffer>        buffer,
-	handle<vk::device_memory> memory,
-	vk::memory_offset         memory_offset
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::buffer>>,
-		types::are_contain_one_decayed<handle<vk::device_memory>>,
-		types::are_may_contain_one_decayed<vk::memory_offset>
-	>::for_types<Args...>
-	vk::result try_bind_buffer_memory(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
-		auto buffer = elements::decayed<handle<vk::buffer>>(args...);
+	struct bind_buffer_memory_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::buffer>::underlying_type buffer,
+		handle<vk::device_memory>::underlying_type memory,
+		vk::memory_offset memory_offset
+	)> {
+		static constexpr auto name = "vkBindBufferMemory";
+	};
 
-		auto device_memory {
-			elements::decayed<handle<vk::device_memory>>(args...)
-		};
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::buffer>> == 1,
+		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
+		count_of_decayed_same_as<vk::memory_offset> <= 1
+	>
+	vk::result try_bind_buffer_memory(Args&&... args) {
+		handle<vk::instance> instance = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::buffer> buffer = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::buffer>>();
+
+		handle<vk::device_memory> device_memory = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::device_memory>>();
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr (
-			types::are_contain_decayed<vk::memory_offset>::for_types<Args...>
-		) { offset = elements::decayed<vk::memory_offset>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::memory_offset> > 0
+		) {
+			offset = tuple{ args... }.template
+				get_decayed_same_as<vk::memory_offset>();
+		}
 
 		return {
-			vkBindBufferMemory(
-				device,
-				buffer,
-				device_memory,
+			vk::get_device_function<vk::bind_buffer_memory_function>(
+				instance, device
+			)(
+				device.underlying(),
+				buffer.underlying(),
+				device_memory.underlying(),
 				offset
 			)
 		};
@@ -56,12 +70,3 @@ namespace vk {
 	}
 
 } // vk
-
-void inline
-handle<vk::device>::bind_memory(
-	handle<vk::buffer> buffer,
-	handle<vk::device_memory> memory,
-	vk::memory_offset offset
-) const {
-	vk::bind_buffer_memory(*this, buffer, memory, offset);
-}

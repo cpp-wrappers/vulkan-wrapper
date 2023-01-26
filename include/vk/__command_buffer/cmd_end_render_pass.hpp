@@ -1,24 +1,28 @@
 #pragma once
 
-#include "handle.hpp"
-
-#include "../../function.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkCmdEndRenderPass(
-	handle<vk::command_buffer> command_buffer
-);
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
 
 namespace vk {
 
-	inline void cmd_end_render_pass(handle<vk::command_buffer> command_buffer) {
-		vkCmdEndRenderPass(
-			command_buffer
+	struct cmd_end_render_pass_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type command_buffer
+	)> {
+		static constexpr auto name = "vkCmdEndRenderPass";
+	};
+
+	inline void cmd_end_render_pass(
+		handle<vk::instance> instance,
+		handle<vk::device> device,
+		handle<vk::command_buffer> command_buffer
+	) {
+		vk::get_device_function<vk::cmd_end_render_pass_function>(
+			instance, device
+		)(
+			command_buffer.underlying()
 		);
 	}
 
 } // vk
-
-inline auto& handle<vk::command_buffer>::cmd_end_render_pass() const {
-	vk::cmd_end_render_pass(*this);
-	return *this;
-}

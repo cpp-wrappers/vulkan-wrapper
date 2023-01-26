@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -10,6 +10,6 @@ namespace vk {
 		address_capture_replay = 0x00000004
 	};
 
-	using memory_allocate_flags = flag_enum<vk::memory_allocate_flag>;
+	using memory_allocate_flags = enum_flags<vk::memory_allocate_flag>;
 
 } // vk

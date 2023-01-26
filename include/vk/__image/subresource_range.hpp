@@ -1,11 +1,9 @@
 #pragma once
 
-#include "aspect.hpp"
+#include "./aspect.hpp"
 
-#include <core/flag_enum.hpp>
-#include <core/integer.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/meta/decayed_same_as.hpp>
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
@@ -22,45 +20,49 @@ namespace vk {
 		vk::layer_count layer_count{ 1 };
 	
 		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_may_contain_one_decayed<vk::image_aspects>,
-			types::are_may_contain_one_decayed<vk::base_mip_level>,
-			types::are_may_contain_one_decayed<vk::level_count>,
-			types::are_may_contain_one_decayed<vk::base_array_layer>,
-			types::are_may_contain_one_decayed<vk::layer_count>
-		>::for_types<Args...>
-		image_subresource_range(Args... args) {
-			if constexpr (
-				types::are_contain_decayed<
-					vk::image_aspects
-				>::for_types<Args...>
-			) { aspect_mask = elements::decayed<vk::image_aspects>(args...); }
-	
-			if constexpr (
-				types::are_contain_decayed<
-					vk::base_mip_level
-				>::for_types<Args...>
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			count_of_decayed_same_as<vk::image_aspects> <= 1,
+			count_of_decayed_same_as<vk::base_mip_level> <= 1,
+			count_of_decayed_same_as<vk::level_count> <= 1,
+			count_of_decayed_same_as<vk::base_array_layer> <= 1,
+			count_of_decayed_same_as<vk::layer_count> <= 1
+		>
+		image_subresource_range(Args&&... args) {
+			tuple a { args... };
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::image_aspects> > 0
 			) {
-				base_mip_level = elements::decayed<vk::base_mip_level>(args...);
+				aspect_mask = a.template
+					get_decayed_same_as<vk::image_aspects>();
 			}
 	
-			if constexpr (
-				types::are_contain_decayed<vk::level_count>::for_types<Args...>
-			) { level_count = elements::decayed<vk::level_count>(args...); }
-	
-			if constexpr (
-				types::are_contain_decayed<
-					vk::base_array_layer
-				>::for_types<Args...>
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::base_mip_level> > 0
 			) {
-				base_array_layer = {
-					elements::decayed<vk::base_array_layer>(args...)
-				};
+				base_mip_level = a.template
+					get_decayed_same_as<vk::base_mip_level>();
 			}
 	
-			if constexpr (
-				types::are_contain_decayed<vk::layer_count>::for_types<Args...>
-			) { layer_count = elements::decayed<vk::layer_count>(args...); }
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::level_count> > 0
+			) {
+				level_count = a.template
+					get_decayed_same_as<vk::level_count>();
+			}
+	
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::base_array_layer> > 0
+			) {
+				base_array_layer = a.template
+					get_decayed_same_as<vk::base_array_layer>();
+			}
+	
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::layer_count> > 0
+			) {
+				layer_count = a.template
+					get_decayed_same_as<vk::layer_count>();
+			}
 
 		} // constructor
 	

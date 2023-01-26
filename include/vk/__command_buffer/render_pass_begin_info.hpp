@@ -1,12 +1,9 @@
 #pragma once
 
-#include "clear.hpp"
-
-#include "../../rect2d.hpp"
-#include "../../render_pass/handle.hpp"
-#include "../../framebuffer/handle.hpp"
-
-#include <core/integer.hpp>
+#include "./clear.hpp"
+#include "../__internal/rect2d.hpp"
+#include "../__render_pass/handle.hpp"
+#include "../__framebuffer/handle.hpp"
 
 namespace vk {
 
@@ -24,8 +21,8 @@ namespace vk {
 	struct render_pass_begin_info {
 		uint32 structure_type = 43;
 		const void* next = nullptr;
-		handle<vk::render_pass> render_pass;
-		handle<vk::framebuffer> framebuffer;
+		handle<vk::render_pass>::underlying_type render_pass;
+		handle<vk::framebuffer>::underlying_type framebuffer;
 		vk::render_area render_area;
 		uint32 clear_value_count = 0;
 		const vk::clear_value* clear_values = nullptr;

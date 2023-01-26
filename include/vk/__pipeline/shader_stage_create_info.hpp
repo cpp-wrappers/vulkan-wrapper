@@ -41,6 +41,29 @@ namespace vk {
 			module {
 				tuple{ args... }.template
 					get_decayed_same_as<handle<vk::shader_module>>()
+					.underlying()
+			},
+			entrypoint_name {
+				tuple{ args... }.template
+					get_decayed_same_as<vk::entrypoint_name>()
+			}
+		{}
+
+		template<typename... Args>
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			count_of_decayed_same_as<handle<vk::shader_module>> == 1,
+			count_of_decayed_same_as<vk::shader_stage> == 1,
+			count_of_decayed_same_as<vk::entrypoint_name> == 1
+		>
+		pipeline_shader_stage_create_info(Args&&... args) :
+			stages { vk::shader_stages {
+				tuple{ args... }.template
+					get_decayed_same_as<vk::shader_stage>()
+			}},
+			module {
+				tuple{ args... }.template
+					get_decayed_same_as<handle<vk::shader_module>>()
+					.underlying()
 			},
 			entrypoint_name {
 				tuple{ args... }.template

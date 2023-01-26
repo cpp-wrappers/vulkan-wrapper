@@ -1,10 +1,12 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
 
-#include "../../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
@@ -15,53 +17,74 @@ namespace vk {
 
 }
 
-extern "C" VK_ATTR void VK_CALL vkCmdDraw(
-	handle<vk::command_buffer> commandBuffer,
-	vk::vertex_count           vertex_count,
-	vk::instance_count         instance_count,
-	vk::first_vertex           first_vertex,
-	vk::first_instance         first_instance
-);
-
 namespace vk {
 
-	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<vk::vertex_count>,
-		types::are_may_contain_one_decayed<vk::instance_count>,
-		types::are_may_contain_one_decayed<vk::first_vertex>,
-		types::are_may_contain_one_decayed<vk::first_instance>
-	>::for_types<Args...>
-	void cmd_draw(Args&&... args) {
-		auto command_buffer {
-			elements::decayed<handle<vk::command_buffer>>(args...)
-		};
+	struct cmd_draw_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type commandBuffer,
+		vk::vertex_count vertex_count,
+		vk::instance_count instance_count,
+		vk::first_vertex first_vertex,
+		vk::first_instance first_instance
+	)> {
+		static constexpr auto name = "vkCmdDraw";
+	};
 
-		vk::vertex_count vertex_count {
-			elements::decayed<vk::vertex_count>(args...)
-		};
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<vk::vertex_count> == 1,
+		count_of_decayed_same_as<vk::instance_count> <= 1,
+		count_of_decayed_same_as<vk::first_vertex> <= 1,
+		count_of_decayed_same_as<vk::first_instance> <= 1
+	>
+	void cmd_draw(Args&&... args) {
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
+
+		vk::vertex_count vertex_count = a.template
+			get_decayed_same_as<handle<vk::vertex_count>>();
 
 		vk::instance_count instance_count{ 1 };
 
-		if constexpr (
-			types::are_contain_decayed<vk::instance_count>::for_types<Args...>
-		) { instance_count = elements::decayed<vk::instance_count>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::instance_count> > 0
+		) {
+			instance_count = a.template
+				get_decayed_same_as<vk::instance_count>();
+		}
 
 		vk::first_vertex first_vertex{ 0 };
 
-		if constexpr (
-			types::are_contain_decayed<vk::first_vertex>::for_types<Args...>
-		) { first_vertex = elements::decayed<vk::first_vertex>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::first_vertex> > 0
+		) {
+			first_vertex = a.template
+				get_decayed_same_as<handle<vk::first_vertex>>();
+		}
 
 		vk::first_instance first_instance{ 0 };
 
-		if constexpr (
-			types::are_contain_decayed<vk::first_instance>::for_types<Args...>
-		) { first_instance = elements::decayed<vk::first_instance>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::first_instance> > 0
+		) {
+			first_instance = a.template
+				get_decayed_same_as<handle<vk::first_instance>>();
+		}
 
-		vkCmdDraw(
-			command_buffer,
+		vk::get_device_function<vk::cmd_draw_function>(
+			instance, device
+		)(
+			command_buffer.underlying(),
 			vertex_count,
 			instance_count,
 			first_vertex,

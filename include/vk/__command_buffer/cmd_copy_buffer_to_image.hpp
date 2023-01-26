@@ -1,65 +1,71 @@
 #pragma once
 
-#include "handle.hpp"
-#include "buffer_image_copy.hpp"
-
-#include "../../buffer/handle.hpp"
-#include "../../image/handle.hpp"
-#include "../../image/layout.hpp"
-#include "../../function.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkCmdCopyBufferToImage(
-	handle<vk::command_buffer>   command_buffer,
-	handle<vk::buffer>           src_buffer,
-	handle<vk::image>            dst_image,
-	vk::image_layout             dst_image_layout,
-	uint32                       region_count,
-	const vk::buffer_image_copy* regions
-);
+#include "./handle.hpp"
+#include "./buffer_image_copy.hpp"
+#include "../__internal/function.hpp"
+#include "../__buffer/handle.hpp"
+#include "../__image/handle.hpp"
+#include "../__image/layout.hpp"
+#include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
 
 namespace vk {
 
+	struct cmd_copy_buffer_to_image_function : vk::function<void(*)(
+		handle<vk::command_buffer>::underlying_type command_buffer,
+		handle<vk::buffer>::underlying_type src_buffer,
+		handle<vk::image>::underlying_type dst_image,
+		vk::image_layout dst_image_layout,
+		uint32 region_count,
+		const vk::buffer_image_copy* regions
+	)> {
+		static constexpr auto name = "vkCmdCopyBufferToImage";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_contain_one_decayed<handle<vk::buffer>>,
-		types::are_contain_one_decayed<handle<vk::image>>,
-		types::are_contain_one_decayed<vk::image_layout>,
-		types::are_contain_range_of<vk::buffer_image_copy>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<handle<vk::buffer>> == 1,
+		count_of_decayed_same_as<handle<vk::image>> == 1,
+		count_of_decayed_same_as<vk::image_layout> == 1,
+		count_of_range_of_decayed<vk::buffer_image_copy> == 1
+	>
 	void cmd_copy_buffer_to_image(Args&&... args) {
-		auto command_buffer = elements::decayed<
-			handle<vk::command_buffer>
-		>(args...);
+		tuple a { args... };
 
-		auto buffer = elements::decayed<handle<vk::buffer>>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		auto image = elements::decayed<handle<vk::image>>(args...);
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-		vk::image_layout dst_layout = elements::decayed<
-			vk::image_layout
-		>(args...);
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
 
-		auto& regions = elements::range_of<vk::buffer_image_copy>(args...);
+		handle<vk::buffer> buffer = a.template
+			get_decayed_same_as<handle<vk::buffer>>();
 
-		vkCmdCopyBufferToImage(
-			command_buffer,
-			buffer,
-			image,
+		handle<vk::image> image = a.template
+			get_decayed_same_as<handle<vk::image>>();
+
+		vk::image_layout dst_layout = a.template
+			get_decayed_same_as<vk::image_layout>();
+
+		auto& regions = a.template
+			get_range_of_decayed<vk::buffer_image_copy>();
+
+		vk::get_device_function<vk::cmd_copy_buffer_to_image_function>(
+			instance, device
+		)(
+			command_buffer.underlying(),
+			buffer.underlying(),
+			image.underlying(),
 			dst_layout,
 			(uint32) regions.size(),
-			regions.data()
+			regions.iterator()
 		);
 	} // cmd_copy_buffer_to_image
 
 } // vk
-
-template<typename... Args>
-auto&
-handle<vk::command_buffer>::cmd_copy_buffer_to_image(Args&&... args) const {
-	vk::cmd_copy_buffer_to_image(*this, forward<Args>(args)...); return *this;
-}

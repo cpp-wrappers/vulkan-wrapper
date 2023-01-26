@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../render_pass/handle.hpp"
+#include "../__render_pass/handle.hpp"
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -15,15 +14,15 @@ namespace vk {
 	};
 
 	struct framebuffer_create_info {
-		uint32                                 structure_type = 37;
-		const void*                            next;
-		flag_enum<vk::framebuffer_create_flag> flags;
-		handle<vk::render_pass>                render_pass;
-		uint32                                 attachment_count;
-		const handle<vk::image_view>*          attachments;
-		uint32                                 width;
-		uint32                                 height;
-		uint32                                 layers;
+		uint32                                  structure_type = 37;
+		const void*                             next;
+		enum_flags<vk::framebuffer_create_flag> flags;
+		handle<vk::render_pass>                 render_pass;
+		uint32                                  attachment_count;
+		const handle<vk::image_view>*           attachments;
+		uint32                                  width;
+		uint32                                  height;
+		uint32                                  layers;
 	};
 
 } // vk

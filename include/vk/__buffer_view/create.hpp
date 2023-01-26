@@ -49,7 +49,7 @@ namespace vk {
 			get_decayed_same_as<vk::memory_size>();
 
 		vk::buffer_view_create_info ci {
-			.buffer = buffer,
+			.buffer = buffer.underlying(),
 			.format = format,
 			.offset = offset,
 			.size = size

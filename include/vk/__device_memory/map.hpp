@@ -69,9 +69,3 @@ namespace vk {
 	}
 
 } // vk
-
-template<typename... Args>
-void
-handle<vk::device>::map_memory(Args&&... args) const {
-	vk::map_memory(*this, forward<Args>(args)...);
-}

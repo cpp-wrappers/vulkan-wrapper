@@ -1,13 +1,10 @@
 #pragma once
 
-#include "mapped_range.hpp"
+#include "./mapped_range.hpp"
 
-#include "../handle.hpp"
-#include "../../result.hpp"
-#include "../../function.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+#include "../__device/handle.hpp"
+#include "../__internal/result.hpp"
+#include "../__internal/function.hpp"
 
 extern "C" VK_ATTR int32 VK_CALL vkFlushMappedMemoryRanges(
 	handle<vk::device>             device,

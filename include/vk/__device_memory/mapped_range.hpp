@@ -1,11 +1,9 @@
 #pragma once
 
-#include "handle.hpp"
-#include "../../device_size.hpp"
-#include "../../memory_offset.hpp"
-#include "../../memory_size.hpp"
-
-#include <core/integer.hpp>
+#include "./handle.hpp"
+#include "../__internal/device_size.hpp"
+#include "../__internal/memory_offset.hpp"
+#include "../__internal/memory_size.hpp"
 
 namespace vk {
 

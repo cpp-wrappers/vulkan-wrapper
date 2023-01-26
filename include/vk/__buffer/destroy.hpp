@@ -5,12 +5,6 @@
 #include "../__buffer/handle.hpp"
 #include "../__instance/handle.hpp"
 
-extern "C" VK_ATTR void VK_CALL vkDestroyBuffer(
-	handle<vk::device> device,
-	handle<vk::buffer> buffer,
-	const void*        allocator
-);
-
 namespace vk {
 
 	struct destroy_buffer_function : vk::function<void(*)(
