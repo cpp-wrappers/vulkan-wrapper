@@ -38,7 +38,7 @@ namespace vk {
 			get_decayed_same_as<handle<vk::command_pool>>();
 
 		auto& buffers = tuple{ args... }.template
-			get_range_of_decayed_same_as<handle<vk::command_buffer>>();
+			get_range_of_decayed<handle<vk::command_buffer>>();
 
 		vk::get_device_function<vk::free_command_buffers_function>(
 			instance, device

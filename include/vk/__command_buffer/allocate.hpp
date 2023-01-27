@@ -19,6 +19,7 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::command_pool>> == 1,
 		count_of_decayed_same_as<vk::command_buffer_level> == 1,
@@ -31,7 +32,7 @@ namespace vk {
 			get_range_of_decayed<handle<vk::command_buffer>>();
 
 		ai.command_pool = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::command_pool>>();
+			get_decayed_same_as<handle<vk::command_pool>>().underlying();
 
 		ai.level = tuple{ args... }.template
 			get_decayed_same_as<vk::command_buffer_level>();
@@ -51,7 +52,7 @@ namespace vk {
 				device.underlying(),
 				&ai,
 				(handle<vk::command_buffer>::underlying_type*)
-					command_buffers.data()
+					command_buffers.iterator()
 			)
 		};
 	} // try_allocate_command_buffers

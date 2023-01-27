@@ -1,122 +1,142 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
+#include "./handle.hpp"
+#include "./create_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__device/handle.hpp"
+#include "../__image/handle.hpp"
+#include "../__instance/handle.hpp"
+#include "../__internal/result.hpp"
 
-#include "../device/handle.hpp"
-#include "../create_or_allocate.hpp"
-#include "../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkCreateImage(
-	handle<vk::device>           device,
-	const vk::image_create_info* create_info,
-	const void*                  allocator,
-	handle<vk::image>*           image
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::image> {
+	struct create_image_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		const vk::image_create_info* create_info,
+		const void* allocator,
+		handle<vk::image>::underlying_type* image
+	)> {
+		static constexpr auto name = "vkCreateImage";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_may_contain_one_decayed<vk::image_create_flags>,
-			types::are_contain_one_decayed<vk::image_type>,
-			types::are_contain_one_decayed<vk::format>,
-			types::are_contain_one_decayed<vk::extent<3>>,
-			types::are_may_contain_one_decayed<vk::mip_levels>,
-			types::are_may_contain_one_decayed<vk::array_layers>,
-			types::are_may_contain_one_decayed<vk::sample_count>,
-			types::are_contain_one_decayed<vk::image_tiling>,
-			types::are_contain_one_decayed<vk::image_usages>,
-			types::are_may_contain_one_decayed<vk::sharing_mode>,
-			types::are_may_contain_range_of<vk::queue_family_index>,
-			types::are_may_contain_one_decayed<vk::initial_layout>
-		>::for_types<Args...>
-		vk::expected<handle<vk::image>>
-		operator () (Args&&... args) const {
-			vk::image_create_info ci{};
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::image_create_flags> <= 1,
+		count_of_decayed_same_as<vk::image_type> == 1,
+		count_of_decayed_same_as<vk::format> == 1,
+		count_of_decayed_same_as<vk::extent<3>> == 1,
+		count_of_decayed_same_as<vk::mip_levels> <= 1,
+		count_of_decayed_same_as<vk::array_layers> <= 1,
+		count_of_decayed_same_as<vk::sample_count> <= 1,
+		count_of_decayed_same_as<vk::image_tiling> == 1,
+		count_of_decayed_same_as<vk::image_usages> == 1,
+		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		count_of_range_of_decayed<vk::queue_family_index> == 1,
+		count_of_decayed_same_as<vk::initial_layout> <= 1
+	>
+	vk::expected<handle<vk::image>>
+	try_create_image(Args&&... args) {
+		tuple a { args... };
 
-			ci.image_type = elements::decayed<vk::image_type>(args...);
-			ci.format = elements::decayed<vk::format>(args...);
-			ci.extent = elements::decayed<vk::extent<3>>(args...);
-			ci.tiling = elements::decayed<vk::image_tiling>(args...);
-			ci.usages = elements::decayed<vk::image_usages>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::image_create_flags
-				>::for_types<Args...>
-			) { ci.flags = elements::decayed<vk::image_create_flags>(args...); }
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-			if constexpr (
-				types::are_contain_decayed<vk::mip_levels>::for_types<Args...>
-			) { ci.mip_levels = elements::decayed<vk::mip_levels>(args...); }
+		vk::image_create_info ci{};
 
-			if constexpr (
-				types::are_contain_decayed<vk::array_layers>::for_types<Args...>
-			) {
-				ci.array_layers = elements::decayed<vk::array_layers>(args...);
-			}
+		ci.image_type = a.template get_decayed_same_as<vk::image_type>();
+		ci.format = a.template get_decayed_same_as<vk::format>();
+		ci.extent = a.template get_decayed_same_as<vk::extent<3>>();
+		ci.tiling = a.template get_decayed_same_as<vk::image_tiling>();
+		ci.usages = a.template get_decayed_same_as<vk::image_usages>();
 
-			if constexpr (
-				types::are_contain_decayed<vk::sample_count>::for_types<Args...>
-			) { ci.samples = elements::decayed<vk::sample_count>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::image_create_flags>
+		) {
+			ci.flags = a.template
+				get_decayed_same_as<vk::image_create_flags>();
+		}
 
-			if constexpr (
-				types::are_contain_decayed<vk::sharing_mode>::for_types<Args...>
-			) {
-				ci.sharing_mode = elements::decayed<vk::sharing_mode>(args...);
-			}
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::mip_levels>
+		) {
+			ci.mip_levels = a.template
+				get_decayed_same_as<vk::mip_levels>();
+		}
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::initial_layout
-				>::for_types<Args...>
-			) {
-				ci.initial_layout = {
-					elements::decayed<vk::initial_layout>(args...)
-				};
-			}
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::array_layers>
+		) {
+			ci.array_layers = a.template
+				get_decayed_same_as<vk::array_layers>();
+		}
 
-			if constexpr (
-				types::are_contain_range_of<
-					vk::queue_family_index
-				>::for_types<Args...>
-			) {
-				auto& queues {
-					elements::range_of<vk::queue_family_index>(args...)
-				};
-				
-				ci.queue_family_index_count = (uint32) queues.size();
-				ci.queue_family_indices = queues.data();
-			}
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::sample_count>
+		) {
+			ci.samples = a.template
+				get_decayed_same_as<vk::sample_count>();
+		}
 
-			auto device {
-				elements::decayed<handle<vk::device>>(args...)
-			};
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::sharing_mode>
+		) {
+			ci.sharing_mode = a.template
+				get_decayed_same_as<vk::sharing_mode>();
+		}
 
-			handle<vk::image> image;
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::initial_layout>
+		) {
+			ci.initial_layout = a.template
+				get_decayed_same_as<vk::initial_layout>();
+		}
 
-			vk::result result {
-				vkCreateImage(
-					device,
-					&ci,
-					nullptr,
-					&image
-				)
-			};
+		if constexpr (types<Args...>::template
+			count_of_range_of_decayed<vk::queue_family_index>
+		) {
+			auto& queues = a.template
+				get_range_of_decayed<vk::queue_family_index>();
+			
+			ci.queue_family_index_count = (uint32) queues.size();
+			ci.queue_family_indices = queues.iterator();
+		}
 
-			if(result.error()) return result;
+		handle<vk::image> image;
 
-			return image;
+		vk::result result {
+			vk::get_device_function<vk::create_image_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ci,
+				nullptr,
+				&image.underlying()
+			)
+		};
 
-		}; // operator ()
+		if(result.error()) return result;
 
-	}; // create_t<image>
+		return image;
+
+	};
+
+	template<typename... Args>
+	handle<vk::image> create_image(Args&&... args) {
+		vk::expected<handle<vk::image>> result =
+			vk::try_create_image(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
+	}
 
 } // vk

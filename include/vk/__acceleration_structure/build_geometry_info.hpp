@@ -1,11 +1,11 @@
 #pragma once
 
-#include "handle.hpp"
-#include "geometry.hpp"
-#include "type.hpp"
-#include "build_mode.hpp"
+#include "./handle.hpp"
+#include "./geometry.hpp"
+#include "./type.hpp"
+#include "./build_mode.hpp"
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -17,7 +17,8 @@ namespace vk {
 		low_memory        = 0x00000010
 	};
 
-	using acceleration_structure_build_flags = flag_enum<vk::acceleration_structure_build_flag>;
+	using acceleration_structure_build_flags
+		= enum_flags<vk::acceleration_structure_build_flag>;
 
 	struct acceleration_structure_build_geometry_info {
 		uint32 structure_type = 1000150000;

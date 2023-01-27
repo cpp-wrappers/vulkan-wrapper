@@ -1,90 +1,151 @@
 #pragma once
 
-extern "C" VK_ATTR int32 VK_CALL vkQueuePresentKHR(
-	handle<vk::queue>       queue,
-	const vk::present_info* present_info
-);
+#include "./handle.hpp"
+#include "./present_info.hpp"
+#include "./wait_semaphore.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct queue_present_function : vk::function<int32(*)(
+		handle<vk::queue>::underlying_type queue,
+		const vk::present_info* present_info
+	)> {
+		static constexpr auto name = "vkQueuePresentKHR";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_contain_one_decayed<vk::present_info>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_decayed_same_as<vk::present_info> == 1
+	>
 	vk::result try_queue_present(Args&&... args) {
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
-		auto present_info = elements::decayed<vk::present_info>(args...);
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+
+		vk::present_info present_info = a.template
+			get_decayed_same_as<vk::present_info>();
 
 		return {
-			vkQueuePresentKHR(
-				queue,
+			vk::get_device_function<vk::queue_present_function>(
+				instance, device
+			)(
+				queue.underlying(),
 				&present_info
 			)
 		};
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_contain_range_of<vk::wait_semaphore>,
-		types::are_contain_range_of<handle<vk::swapchain>>,
-		types::are_contain_range_of<vk::image_index>,
-		types::are_may_contain_range_of<vk::result>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_range_of_decayed<vk::wait_semaphore> == 1,
+		count_of_range_of_decayed<handle<vk::swapchain>> == 1,
+		count_of_range_of_decayed<vk::image_index> == 1,
+		count_of_range_of_decayed<vk::result> <= 1
+	>
 	vk::result try_queue_present(Args&&... args) {
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
-		auto& wait_semaphores = elements::range_of<vk::wait_semaphore>(args...);
-		auto& swapchains = elements::range_of<handle<vk::swapchain>>(args...);
-		auto& image_indices = elements::range_of<vk::image_index>(args...);
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+
+		auto& wait_semaphores = a.template
+			get_range_of_decayed<vk::wait_semaphore>();
+		auto& swapchains = a.template
+			get_range_of_decayed<handle<vk::swapchain>>();
+		auto& image_indices = a.template
+			get_range_of_decayed<vk::image_index>();
 
 		vk::present_info present_info {
 			.wait_semaphore_count = (uint32) wait_semaphores.size(),
-			.wait_semaphores = wait_semaphores.data(),
+			.wait_semaphores = (const handle<vk::semaphore>::underlying_type*)
+				wait_semaphores.iterator(),
 			.swapchain_count = (uint32) swapchains.size(),
-			.swapchains = swapchains.data(),
-			.image_indices = image_indices.data()
+			.swapchains = (const handle<vk::swapchain>::underlying_type*)
+				swapchains.iterator(),
+			.image_indices = image_indices.iterator()
 		};
 
-		if constexpr (
-			types::are_contain_range_of<vk::result>::for_types<Args...>
-		) { present_info.results = elements::range_of<vk::result>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_range_of_decayed<vk::result> > 0
+		) {
+			present_info.results = a.template
+				get_range_of_decayed<vk::result>();
+		}
 	
-		return vk::try_queue_present(queue, present_info);
+		return vk::try_queue_present(instance, device, queue, present_info);
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_contain_one_decayed<vk::wait_semaphore>,
-		types::are_contain_one_decayed<handle<vk::swapchain>>,
-		types::are_contain_one_decayed<vk::image_index>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_decayed_same_as<vk::wait_semaphore> == 1,
+		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
+		count_of_decayed_same_as<vk::image_index> == 1
+	>
 	vk::result try_queue_present(Args&&... args) {
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
+		tuple a { args... };
 
-		auto wait_semaphore =
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+
+		handle<vk::semaphore> wait_semaphore =
 			(handle<vk::semaphore>)
-			elements::decayed<vk::wait_semaphore>(args...);
+			a.template get_decayed_same_as<handle<vk::queue>>();
 		
-		auto swapchain = elements::decayed<handle<vk::swapchain>>(args...);
-		vk::image_index image_index = elements::decayed<vk::image_index>(args...);
+		handle<vk::swapchain> swapchain = a.template
+			get_decayed_same_as<handle<vk::swapchain>>();
+		vk::image_index image_index = a.template
+			get_decayed_same_as<vk::image_index>();
 
 		vk::present_info present_info {
 			.wait_semaphore_count = 1,
-			.wait_semaphores = &wait_semaphore,
+			.wait_semaphores = &wait_semaphore.underlying(),
 			.swapchain_count = 1,
-			.swapchains = &swapchain,
+			.swapchains = &swapchain.underlying(),
 			.image_indices = &image_index
 		};
 
-		return vk::try_queue_present(queue, present_info);
+		return vk::try_queue_present(instance, device, queue, present_info);
 	}
 
 	template<typename... Args>
 	void queue_present(Args&&... args) {
 		vk::result result = vk::try_queue_present(forward<Args>(args)...);
-		if(result.error()) vk::unexpected_handler(result);
+		if(result.error()) {
+			vk::unexpected_handler(result);
+		}
 	}
 
 } // vk

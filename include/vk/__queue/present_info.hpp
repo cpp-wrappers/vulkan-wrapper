@@ -15,7 +15,7 @@ namespace vk {
 		uint32 swapchain_count = 0;
 		const handle<vk::swapchain>::underlying_type* swapchains = nullptr;
 		const vk::image_index* image_indices = nullptr;
-		const vk::result*            results = nullptr;
+		const vk::result* results = nullptr;
 	};
 
 } // vk

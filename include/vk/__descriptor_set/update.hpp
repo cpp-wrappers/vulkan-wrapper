@@ -1,66 +1,68 @@
 #pragma once
 
-#include "write.hpp"
-#include "copy.hpp"
-
-#include "../../device/handle.hpp"
-#include "../../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkUpdateDescriptorSets(
-	handle<vk::device>              device,
-	uint32                          descriptor_write_count,
-	const vk::write_descriptor_set* descriptor_writes,
-	uint32                          descriptor_copy_count,
-	const vk::copy_descriptor_set*  descriptor_copies
-);
+#include "./write.hpp"
+#include "./copy.hpp"
+#include "../__internal/function.hpp"
+#include "../__device/handle.hpp"
 
 namespace vk {
 
+	struct update_descriptor_sets_function : vk::function<void(*)(
+		handle<vk::device>::underlying_type device,
+		uint32 descriptor_write_count,
+		const vk::write_descriptor_set* descriptor_writes,
+		uint32 descriptor_copy_count,
+		const vk::copy_descriptor_set* descriptor_copies
+	)> {
+		static constexpr auto name = "vkUpdateDescriptorSets";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_may_contain_range_of<vk::write_descriptor_set>,
-		types::are_may_contain_range_of<vk::copy_descriptor_set>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_range_of_decayed<vk::write_descriptor_set> <= 1,
+		count_of_range_of_decayed<vk::copy_descriptor_set> <= 1
+	>
 	void update_descriptor_sets(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
 		uint32 write_count{};
 		const vk::write_descriptor_set* writes;
 
-		if constexpr (
-			types::are_contain_range_of<
-				vk::write_descriptor_set
-			>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_range_of_decayed<vk::write_descriptor_set>
 		) {
-			auto& writes0 {
-				elements::range_of<vk::write_descriptor_set>(args...)
-			};
+			auto& writes0 = a.template
+				get_range_of_decayed<vk::write_descriptor_set>();
 
 			write_count = (uint32) writes0.size();
-			writes = writes0.data();
+			writes = writes0.iterator();
 		}
 
 		uint32 copy_count{};
 		const vk::copy_descriptor_set* copies;
 
-		if constexpr (
-			types::are_contain_range_of<
-				vk::copy_descriptor_set
-			>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_range_of_decayed<vk::copy_descriptor_set>
 		) {
-			auto& copies0 {
-				elements::range_of<vk::copy_descriptor_set>(args...)
-			};
+			auto& copies0 = a.template
+				get_range_of_decayed<vk::copy_descriptor_set>();
 
 			copy_count = (uint32) copies0.size();
 			copies = copies0.data();
 		}
 
-		vkUpdateDescriptorSets(
-			device,
+		vk::get_device_function<vk::update_descriptor_sets_function>(
+			instance, device
+		)(
+			device.underlying(),
 			write_count,
 			writes,
 			copy_count,
@@ -69,41 +71,37 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_decayed<vk::write_descriptor_set>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::write_descriptor_set> == 1
+	>
 	void update_descriptor_set(Args&&... args) {
+		tuple a { args... };
 		return vk::update_descriptor_sets(
-			elements::decayed<handle<vk::device>>(args...),
+			a.template get_decayed_same_as<vk::instance>(),
+			a.template get_decayed_same_as<vk::device>(),
 			array {
-				elements::decayed<vk::write_descriptor_set>(args...)
+				a.template get_decayed_same_as<vk::write_descriptor_set>()
 			}
 		);
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_decayed<vk::copy_descriptor_set>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::copy_descriptor_set> == 1
+	>
 	void update_descriptor_set(Args&&... args) {
+		tuple a { args... };
 		return vk::update_descriptor_sets(
-			elements::decayed<handle<vk::device>>(args...),
+			a.template get_decayed_same_as<vk::instance>(),
+			a.template get_decayed_same_as<vk::device>(),
 			array {
-				elements::decayed<vk::copy_descriptor_set>(args...)
+				a.template get_decayed_same_as<vk::copy_descriptor_set>()
 			}
 		);
 	}
 
 } // vk
-
-template<typename... Args>
-void handle<vk::device>::update_descriptor_sets(Args&&... args) const {
-	vk::update_descriptor_sets(*this, forward<Args>(args)...);
-}
-
-template<typename... Args>
-void handle<vk::device>::update_descriptor_set(Args&&... args) const {
-	vk::update_descriptor_set(*this, forward<Args>(args)...);
-}

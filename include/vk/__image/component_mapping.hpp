@@ -1,9 +1,9 @@
 #pragma once
 
-#include "component_swizzle.hpp"
+#include "./component_swizzle.hpp"
 
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
@@ -19,26 +19,28 @@ namespace vk {
 		vk::a a{ vk::component_swizzle::identity };
 
 		template<typename... Args>
-		requires(
-			types::are_exclusively_satisfying_predicates<
-				types::are_may_contain_one_decayed<vk::r>,
-				types::are_may_contain_one_decayed<vk::g>,
-				types::are_may_contain_one_decayed<vk::b>,
-				types::are_may_contain_one_decayed<vk::a>
-			>::for_types<Args...>
-		)
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			count_of_decayed_same_as<vk::r> <= 1,
+			count_of_decayed_same_as<vk::g> <= 1,
+			count_of_decayed_same_as<vk::b> <= 1,
+			count_of_decayed_same_as<vk::a> <= 1
+		>
 		component_mapping(Args... args) {
-			if constexpr(types::are_contain_decayed<vk::r>::for_types<Args...>)
-				r = elements::decayed<vk::r>(args...);
+			if constexpr(types<Args...>::template count_of_same_as<vk::r> > 0) {
+				r = tuple{ args... }.template get_same_as<vk::r>();
+			}
 
-			if constexpr(types::are_contain_decayed<vk::g>::for_types<Args...>)
-				g = elements::decayed<vk::g>(args...);
+			if constexpr(types<Args...>::template count_of_same_as<vk::g> > 0) {
+				g = tuple{ args... }.template get_same_as<vk::g>();
+			}
 
-			if constexpr(types::are_contain_decayed<vk::b>::for_types<Args...>)
-				b = elements::decayed<vk::b>(args...);
+			if constexpr(types<Args...>::template count_of_same_as<vk::b> > 0) {
+				b = tuple{ args... }.template get_same_as<vk::b>();
+			}
 
-			if constexpr(types::are_contain_decayed<vk::a>::for_types<Args...>)
-				a = elements::decayed<vk::a>(args...);
+			if constexpr(types<Args...>::template count_of_same_as<vk::a> > 0) {
+				a = tuple{ args... }.template get_same_as<vk::a>();
+			}
 		}
 
 	}; // component_mapping

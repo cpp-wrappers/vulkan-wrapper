@@ -1,9 +1,7 @@
 #pragma once
 
 #include "image_index.hpp"
-#include "../result.hpp"
-
-#include <core/integer.hpp>
+#include "../__internal/result.hpp"
 
 namespace vk {
 

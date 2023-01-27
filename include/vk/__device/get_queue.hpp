@@ -22,7 +22,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::instance>> == 1,
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<vk::queue_family_index> == 1,
-		count_of_decayed_same_as<vk::queue_index>
+		count_of_decayed_same_as<vk::queue_index> == 1
 	>
 	handle<vk::queue>
 	get_device_queue(Args&&... args) {

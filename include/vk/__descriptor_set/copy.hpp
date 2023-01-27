@@ -2,9 +2,9 @@
 
 #include "handle.hpp"
 
-#include "../../descriptor/binding.hpp"
-#include "../../descriptor/array_element.hpp"
-#include "../../descriptor/count.hpp"
+#include "../__internal/descriptor_binding.hpp"
+#include "../__internal/descriptor_array_element.hpp"
+#include "../__internal/descriptor_count.hpp"
 
 namespace vk {
 

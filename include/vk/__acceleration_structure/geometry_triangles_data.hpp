@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../format.hpp"
-#include "../device_or_host_address.hpp"
-#include "../device_size.hpp"
-#include "../index_type.hpp"
+#include "../__internal/format.hpp"
+#include "../__internal/device_or_host_address.hpp"
+#include "../__internal/device_size.hpp"
+#include "../__internal/index_type.hpp"
 
 namespace vk {
 

@@ -1,17 +1,15 @@
 #pragma once
 
-#include "tiling.hpp"
-#include "usage.hpp"
-#include "layout.hpp"
+#include "./tiling.hpp"
+#include "./usage.hpp"
+#include "./layout.hpp"
+#include "../__internal/format.hpp"
+#include "../__internal/extent.hpp"
+#include "../__internal/sample_count.hpp"
+#include "../__internal/sharing_mode.hpp"
+#include "../__internal/queue_family_index.hpp"
 
-#include "../extent.hpp"
-#include "../sample_count.hpp"
-#include "../sharing_mode.hpp"
-#include "../queue_family_index.hpp"
-#include "../format.hpp"
-
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -38,7 +36,7 @@ namespace vk {
 		one_d, two_d, three_d
 	};
 
-	using image_create_flags = flag_enum<vk::image_create_flag>;
+	using image_create_flags = enum_flags<vk::image_create_flag>;
 
 	struct mip_levels   { uint32 _; };
 	struct array_layers { uint32 _; };

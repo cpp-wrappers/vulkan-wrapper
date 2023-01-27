@@ -1,73 +1,91 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "./image_index.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/timeout.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+#include "../__semaphore/handle.hpp"
+#include "../__fence/handle.hpp"
 
-#include "../device/handle.hpp"
-#include "../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkAcquireNextImageKHR(
-	handle<vk::device>    device,
-	handle<vk::swapchain> swapchain,
-	vk::timeout           timeout,
-	handle<vk::semaphore> semaphore,
-	handle<vk::fence>     fence,
-	uint32*               image_index
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct acquire_next_image_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::swapchain>::underlying_type swapchain,
+		vk::timeout timeout,
+		handle<vk::semaphore>::underlying_type semaphore,
+		handle<vk::fence>::underlying_type fence,
+		uint32* image_index
+	)> {
+		static constexpr auto name = "vkAcquireNextImageKHR";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::swapchain>>,
-		types::are_may_contain_one_decayed<handle<vk::semaphore>>,
-		types::are_may_contain_one_decayed<handle<vk::fence>>,
-		types::are_may_contain_one_decayed<vk::timeout>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
+		count_of_decayed_same_as<handle<vk::semaphore>> <= 1,
+		count_of_decayed_same_as<handle<vk::fence>> <= 1,
+		count_of_decayed_same_as<vk::timeout> <= 1
+	>
 	[[ nodiscard ]]
 	vk::expected<vk::image_index>
 	try_acquire_next_image(Args&&... args) {
-		auto device {
-			elements::decayed<handle<vk::device>>(args...)
-		};
+		tuple a { args... };
 
-		auto swapchain {
-			elements::decayed<handle<vk::swapchain>>(args...)
-		};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::swapchain> swapchain = a.template
+			get_decayed_same_as<handle<vk::swapchain>>();
 		
 		vk::timeout timeout{ ~uint64{ 0 } };
 
-		if constexpr (
-			types::are_contain_decayed<vk::timeout>::for_types<Args...>
-		) { timeout = elements::decayed<vk::timeout>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::timeout> > 0
+		) {
+			timeout = a.template
+				get_decayed_same_as<vk::timeout>();
+		}
 
 		handle<vk::semaphore> semaphore{};
 
-		if constexpr (
-			types::are_contain_decayed<
-				handle<vk::semaphore>
-			>::for_types<Args...>
-		) { semaphore = elements::decayed<handle<vk::semaphore>>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<handle<vk::semaphore>> > 0
+		) {
+			semaphore = a.template
+				get_decayed_same_as<handle<vk::semaphore>>();
+		}
 
 		handle<vk::fence> fence{};
 
-		if constexpr (
-			types::are_contain_decayed<
-				handle<vk::fence>
-			>::for_types<Args...>
-		) { fence = elements::decayed<handle<vk::fence>>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<handle<vk::fence>> > 0
+		) {
+			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+		}
 
 		uint32 index;
 
 		vk::result result {
-			vkAcquireNextImageKHR(
-				device,
-				swapchain,
+			vk::get_device_function<vk::acquire_next_image_function>(
+				instance, device
+			)(
+				device.underlying(),
+				swapchain.underlying(),
 				timeout,
-				semaphore,
-				fence,
+				semaphore.underlying(),
+				fence.underlying(),
 				&index
 			)
 		};
@@ -78,10 +96,3 @@ namespace vk {
 	}
 
 } // vk
-
-template<typename... Args>
-[[ nodiscard ]]
-vk::expected<vk::image_index>
-handle<vk::device>::try_acquire_next_image(Args&&... args) const {
-	return vk::try_acquire_next_image(*this, forward<Args>(args)...);
-}

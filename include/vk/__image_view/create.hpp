@@ -1,84 +1,95 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
+#include "./handle.hpp"
+#include "./create_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
 
-#include "../../create_or_allocate.hpp"
-#include "../../result.hpp"
-#include "../../device/handle.hpp"
-#include "../../image/component_mapping.hpp"
-#include "../../image/subresource_range.hpp"
-#include "../../function.hpp"
-
-extern "C" VK_ATTR int32 VK_CALL vkCreateImageView(
-	handle<vk::device>                device,
-	const vk::image_view_create_info* create_info,
-	const void*                       allocator,
-	handle<vk::image_view>*           view
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::image_view> {
+	struct create_image_view_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		const vk::image_view_create_info* create_info,
+		const void* allocator,
+		handle<vk::image_view>::underlying_type* view
+	)> {
+		static constexpr auto name = "vkCreateImageView";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_contain_one_decayed<handle<vk::image>>,
-			types::are_contain_one_decayed<vk::format>,
-			types::are_contain_one_decayed<vk::image_view_type>,
-			types::are_may_contain_one_decayed<vk::component_mapping>,
-			types::are_may_contain_one_decayed<vk::image_subresource_range>
-		>::for_types<Args...>
-		vk::expected<handle<vk::image_view>>
-		operator () (Args&&... args) const {
-			auto device = elements::decayed<handle<vk::device>>(args...);
-			auto image = elements::decayed<handle<vk::image>>(args...);
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::image>> == 1,
+		count_of_decayed_same_as<vk::format> == 1,
+		count_of_decayed_same_as<vk::image_view_type> == 1,
+		count_of_decayed_same_as<vk::component_mapping> <= 1,
+		count_of_decayed_same_as<vk::image_subresource_range> <= 1
+	>
+	vk::expected<handle<vk::image_view>>
+	try_create_image_view(Args&&... args) {
+		tuple a { args... };
 
-			vk::image_view_create_info ci {
-				.image = image,
-				.view_type = elements::decayed<vk::image_view_type>(args...),
-				.format = elements::decayed<vk::format>(args...)
-			};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::component_mapping
-				>::for_types<Args...>
-			) {
-				ci.components = elements::decayed<
-					vk::component_mapping
-				>(args...);
-			}
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-			if constexpr (
-				types::are_contain_decayed<
-					vk::image_subresource_range
-				>::for_types<Args...>
-			) {
-				ci.subresource_range = elements::decayed<
-					vk::image_subresource_range
-				>(args...);
-			}
+		handle<vk::image> image = a.template
+			get_decayed_same_as<handle<vk::image>>();
 
-			handle<vk::image_view> image_view;
+		vk::image_view_create_info ci {
+			.image = image.underlying(),
+			.view_type = a.template get_decayed_same_as<vk::image_view_type>(),
+			.format = a.template get_decayed_same_as<vk::format>()
+		};
 
-			vk::result result {
-				vkCreateImageView(
-					device,
-					&ci,
-					nullptr,
-					&image_view
-				)
-			};
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::component_mapping> > 0
+		) {
+			ci.components = a.template
+				get_decayed_same_as<vk::component_mapping>();
+		}
 
-			if(result.error()) return result;
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::image_subresource_range> > 0
+		) {
+			ci.subresource_range = a.template
+				get_decayed_same_as<vk::image_subresource_range>();
+		}
 
-			return image_view;
+		handle<vk::image_view> image_view;
 
-		} // operator ()
+		vk::result result {
+			vk::get_device_function<vk::create_image_view_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ci,
+				nullptr,
+				&image_view.underlying()
+			)
+		};
 
-	}; // create_t<image_view>
+		if(result.error()) return result;
+
+		return image_view;
+	}
+
+	template<typename... Args>
+	handle<vk::image_view> create_image_view(Args&&... args) {
+		vk::expected<handle<vk::image_view>> result
+			= vk::try_create_image_view(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
+	}
 
 } // vk

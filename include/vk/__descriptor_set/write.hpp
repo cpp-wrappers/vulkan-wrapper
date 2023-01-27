@@ -8,6 +8,9 @@
 #include "../__internal/descriptor_type.hpp"
 #include "../__internal/descriptor_image_info.hpp"
 #include "../__internal/descriptor_buffer_info.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+#include "../__command_buffer/handle.hpp"
 
 #include <types.hpp>
 #include <tuple.hpp>
@@ -27,71 +30,81 @@ namespace vk {
 		const handle<vk::buffer_view>::underlying_type* texel_buffer_view{};
 
 		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::descriptor_set>>,
-			types::are_contain_one_decayed<vk::dst_binding>,
-			types::are_contain_one_decayed<vk::dst_array_element>,
-			types::are_contain_one_decayed<vk::descriptor_type>,
-			types::are_may_contain_range_of<vk::descriptor_image_info>,
-			types::are_may_contain_range_of<vk::descriptor_buffer_info>,
-			types::are_may_contain_range_of<handle<vk::buffer_view>>
-		>::for_types<Args...> &&
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			count_of_decayed_same_as<handle<vk::descriptor_set>> == 1,
+			count_of_decayed_same_as<vk::dst_binding> == 1,
+			count_of_decayed_same_as<vk::dst_array_element> == 1,
+			count_of_decayed_same_as<vk::descriptor_type> == 1,
+			count_of_range_of_decayed<vk::descriptor_image_info> <= 1,
+			count_of_range_of_decayed<vk::descriptor_buffer_info> <= 1,
+			count_of_range_of_decayed<handle<vk::buffer_view>> <= 1
+		> &&
 		(
-			types::count_of_ranges_of<
+			types<Args...>::template count_of_range_of_decayed<
 				vk::descriptor_image_info
-			>::for_types<Args...> +
-			types::count_of_ranges_of<
+			> +
+			types<Args...>::template count_of_range_of_decayed<
 				vk::descriptor_buffer_info
-			>::for_types<Args...> +
-			types::count_of_ranges_of<
+			> +
+			types<Args...>::template count_of_range_of_decayed<
 				handle<vk::buffer_view>
-			>::for_types<Args...>
+			>
 			== 1
 		)
-		write_descriptor_set(Args&&... args) :
-			dst_set {
-				elements::decayed<handle<vk::descriptor_set>>(args...)
-			},
-			dst_binding { elements::decayed<vk::dst_binding>(args...) },
-			dst_array_element {
-				elements::decayed<vk::dst_array_element>(args...)
-			},
-			descriptor_type { elements::decayed<vk::descriptor_type>(args...) }
-		{
-			if constexpr (
-				types::are_contain_range_of<
-					vk::descriptor_image_info
-				>::for_types<Args...>
+		write_descriptor_set(Args&&... args) {
+			tuple a { args... };
+
+			handle<vk::instance> instance = a.template
+				get_decayed_same_as<handle<vk::instance>>();
+
+			handle<vk::device> device = a.template
+				get_decayed_same_as<handle<vk::device>>();
+
+			handle<vk::command_buffer> command_buffer = a.template
+				get_decayed_same_as<handle<vk::command_buffer>>();
+			
+			dst_set = a.template
+				get_decayed_same_as<handle<vk::descriptor_set>>();
+
+			dst_binding = a.template
+				get_dacayed_same_as<vk::dst_binding>();
+
+			dst_array_element = a.template
+				get_decayed_same_as<vk::dst_array_element>();
+
+			descriptor_type = a.template
+				get_decayed_same_as<vk::descriptor_type>();
+
+			if constexpr (types<Args...>::template
+				count_of_range_of_decayed<vk::descriptor_image_info> > 0
 			) {
-				auto& r {
-					elements::range_of<vk::descriptor_image_info>(args...)
-				};
+				auto& r = a.template
+					get_range_of_decayed<vk::descriptor_image_info>();
 
 				count = vk::count{ (uint32) r.size() };
-				image_info = r.data();
+				image_info = r.iterator();
 			}
 
-			if constexpr (
-				types::are_contain_range_of<
-					vk::descriptor_buffer_info
-				>::for_types<Args...>
+			if constexpr (types<Args...>::template
+				count_of_range_of_decayed<vk::descriptor_buffer_info>
 			) {
-				auto& r {
-					elements::range_of<vk::descriptor_buffer_info>(args...)
-				};
+				auto& r = a.template
+					get_range_of_decayed<vk::descriptor_buffer_info>();
 
 				count = vk::count{ (uint32) r.size() };
-				buffer_info = r.data();
+				buffer_info = r.iterator();
 			}
 
-			if constexpr (
-				types::are_contain_range_of<
-					handle<vk::buffer_view>
-				>::for_types<Args...>
+			if constexpr (types<Args...>::template
+				count_of_range_of_decayed<handle<vk::buffer_view>> > 0
 			) {
-				auto& r = elements::range_of<handle<vk::buffer_view>>(args...);
+				auto& r = a.template
+					get_range_of_decayed<handle<vk::buffer_view>>();
+
 				count = vk::count{ (uint32) r.size() };
-				texel_buffer_view = r.data();
+				texel_buffer_view =
+					(const handle<vk::buffer_view>::underlying_type*)
+					r.iterator();
 			}
 
 		} // constructor

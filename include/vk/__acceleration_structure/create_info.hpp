@@ -1,13 +1,13 @@
 #pragma once
 
-#include "type.hpp"
+#include "./type.hpp"
 
-#include "../buffer/handle.hpp"
-#include "../memory_size.hpp"
-#include "../memory_offset.hpp"
-#include "../device_address.hpp"
+#include "../__buffer/handle.hpp"
+#include "../__internal/memory_size.hpp"
+#include "../__internal/memory_offset.hpp"
+#include "../__internal/device_address.hpp"
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -16,7 +16,7 @@ namespace vk {
 	};
 
 	using acceleration_structure_create_flags =
-		flag_enum<acceleration_structure_create_flag>;
+		enum_flags<acceleration_structure_create_flag>;
 
 	struct acceleration_structure_create_info {
 		uint32                                  structure_type = 1000150017;

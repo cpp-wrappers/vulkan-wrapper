@@ -1,8 +1,8 @@
 #pragma once
 
-#include "geometry_type.hpp"
-#include "geometry_data.hpp"
-#include "geometry_flags.hpp"
+#include "./geometry_type.hpp"
+#include "./geometry_data.hpp"
+#include "./geometry_flags.hpp"
 
 namespace vk {
 

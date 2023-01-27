@@ -4,7 +4,7 @@
 #include "transform_matrix.hpp"
 #include "geometry_instance_flags.hpp"
 
-#include "../device_address.hpp"
+#include "../__internal/device_address.hpp"
 
 namespace vk {
 

@@ -1,67 +1,104 @@
 #pragma once
 
-#include "handle.hpp"
-#include "wait_semaphore.hpp"
-#include "signal_semaphore.hpp"
-#include "submit_info.hpp"
+#include "./handle.hpp"
+#include "./submit_info.hpp"
+#include "./wait_semaphore.hpp"
+#include "./signal_semaphore.hpp"
+#include "../__internal/function.hpp"
+#include "../__instance/handle.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__fence/handle.hpp"
+#include "../__device/handle.hpp"
 
-#include "../fence/handle.hpp"
-#include "../command/buffer/handle.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkQueueSubmit(
-	handle<vk::queue>      queue,
-	uint32                 submit_count,
-	const vk::submit_info* submits,
-	handle<vk::fence>      fence
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct queue_submit_function : vk::function<int32(*)(
+		handle<vk::queue>::underlying_type queue,
+		uint32 submit_count,
+		const vk::submit_info* submits,
+		handle<vk::fence>::underlying_type fence
+	)> {
+		static constexpr auto name = "vkQueueSubmit";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_contain_range_of<vk::submit_info>,
-		types::are_may_contain_one_decayed<handle<vk::fence>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_range_of_decayed<vk::submit_info> == 1,
+		count_of_decayed_same_as<handle<vk::fence>> <= 1
+	>
 	vk::result try_queue_submit(Args&&... args) {
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
 		handle<vk::fence> fence{};
 
-		if constexpr (
-			types::are_contain_decayed<handle<vk::fence>>::for_types<Args...>
-		) { fence = elements::decayed<handle<vk::fence>>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<handle<vk::fence>> > 0
+		) {
+			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+		}
 
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
-		auto& submit_infos = elements::range_of<vk::submit_info>(args...);
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+		auto& submit_infos = a.template get_range_of_decayed<vk::submit_info>();
 
 		return vk::result {
-			vkQueueSubmit(
-				queue,
+			vk::get_device_function<vk::queue_submit_function>(
+				instance, device
+			)(
+				queue.underlying(),
 				(uint32) submit_infos.size(),
 				submit_infos.data(),
-				fence
+				fence.underlying()
 			)
 		};
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_contain_one_decayed<vk::submit_info>,
-		types::are_may_contain_one_decayed<handle<vk::fence>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_decayed_same_as<vk::submit_info> == 1,
+		count_of_decayed_same_as<handle<vk::fence>> <= 1
+	>
 	vk::result try_queue_submit(Args&&... args) {
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
 		handle<vk::fence> fence{};
 
-		if constexpr (
-			types::are_contain_decayed<handle<vk::fence>>::for_types<Args...>
-		) { fence = elements::decayed<handle<vk::fence>>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<handle<vk::fence>> > 0
+		) {
+			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+		}
 
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
-		auto& submit_info = elements::decayed<vk::submit_info>(args...);
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+
+		vk::submit_info& submit_info = a.template
+			get_decayed_same_as<vk::submit_info>();
 
 		return vk::try_queue_submit(
+			instance,
+			device,
 			queue,
 			array{ submit_info },
 			fence
@@ -69,58 +106,69 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::queue>>,
-		types::are_may_contain_one_decayed<vk::wait_semaphore>,
-		types::are_may_contain_one_decayed<vk::pipeline_stages>,
-		types::are_contain_one_decayed<handle<vk::command_buffer>>,
-		types::are_may_contain_one_decayed<vk::signal_semaphore>,
-		types::are_may_contain_one_decayed<handle<vk::fence>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_decayed_same_as<vk::wait_semaphore> <= 1,
+		count_of_decayed_same_as<vk::pipeline_stages> <= 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
+		count_of_decayed_same_as<vk::signal_semaphore> <= 1,
+		count_of_decayed_same_as<handle<vk::fence>> <= 1
+	>
 	vk::result try_queue_submit(Args&&... args) {
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
 		handle<vk::fence> fence{};
 
-		if constexpr (
-			types::are_contain_decayed<handle<vk::fence>>::for_types<Args...>
-		) { fence = elements::decayed<handle<vk::fence>>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<handle<vk::fence>> > 0
+		) {
+			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+		}
 
-		auto queue = elements::decayed<handle<vk::queue>>(args...);
-		auto command_buffer {
-			elements::decayed<handle<vk::command_buffer>>(args...)
-		};
+		handle<vk::queue> queue = a.template
+			get_decayed_same_as<handle<vk::queue>>();
+		
+		handle<vk::command_buffer> command_buffer = a.template
+			get_decayed_same_as<handle<vk::command_buffer>>();
 
 		vk::submit_info si {
 			.command_buffer_count = 1,
-			.command_buffers = &command_buffer,
+			.command_buffers = &command_buffer.underlying(),
 		};
 
-		if constexpr (
-			types::are_contain_decayed<vk::wait_semaphore>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::wait_semaphore> > 0
 		) {
 			si.wait_semaphore_count = 1,
-			si.wait_semaphores =
-				(handle<vk::semaphore>*)
-				& elements::decayed<vk::wait_semaphore>(args...);
+			si.wait_semaphores = & a.template
+				get_decayed_same_as<vk::wait_semaphore>().underlying();
 		}
 
-		if constexpr (
-			types::are_contain_decayed<vk::signal_semaphore>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::signal_semaphore> > 0
 		) {
 			si.signal_semaphore_count = 1,
-			si.signal_semaphores =
-				(handle<vk::semaphore>*)
-				& elements::decayed<vk::signal_semaphore>(args...);
+			si.signal_semaphores = & a.template
+				get_decayed_same_as<vk::signal_semaphore>().underlying();
 		}
 
-		if constexpr (
-			types::are_contain_decayed<vk::pipeline_stages>::for_types<Args...>
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::pipeline_stages> > 0
 		) {
-			si.wait_dst_stage_mask =
-				& elements::decayed<vk::pipeline_stages>(args...);
+			si.wait_dst_stage_mask = & a.template
+				get_decayed_same_as<vk::pipeline_stages>().underlying();
 		}
 
 		return vk::try_queue_submit(
-			queue, fence, si
+			instance, device, queue, fence, si
 		);
 	}
 

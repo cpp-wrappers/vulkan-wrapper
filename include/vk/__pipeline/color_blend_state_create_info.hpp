@@ -55,10 +55,14 @@ namespace vk {
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::enable_logic_op> > 0
+				count_of_range_of_decayed<
+					vk::pipeline_color_blend_attachment_state
+				> > 0
 			) {
 				auto& attachments0 = tuple{ args... }.template
-					get_range_of_decayed<vk::enable_logic_op>();
+					get_range_of_decayed<
+						vk::pipeline_color_blend_attachment_state
+					>();
 				attachment_count = (uint32) attachments0.size();
 				attachments = attachments0.iterator();
 			}

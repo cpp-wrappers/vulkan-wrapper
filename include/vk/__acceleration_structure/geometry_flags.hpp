@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -9,6 +9,6 @@ namespace vk {
 		no_duplicate_any_hit_invocation = 0x00000002
 	};
 
-	using geometry_flags = flag_enum<vk::geometry_flag>;
+	using geometry_flags = enum_flags<vk::geometry_flag>;
 
 } // vk

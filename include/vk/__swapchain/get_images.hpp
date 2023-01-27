@@ -1,46 +1,59 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__instance/handle.hpp"
+#include "../__device/handle.hpp"
+#include "../__image/handle.hpp"
+#include "../__swapchain/handle.hpp"
 
-#include "../device/handle.hpp"
-#include "../unexpected_handler.hpp"
-#include "../function.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkGetSwapchainImagesKHR(
-	handle<vk::device>    device,
-	handle<vk::swapchain> swapchain,
-	uint32*               swapchain_image_count,
-	handle<vk::image>*    swapchain_images
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct get_swapchain_images_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::swapchain>::underlying_type swapchain,
+		uint32* swapchain_image_count,
+		handle<vk::image>::underlying_type* swapchain_images
+	)> {
+		static constexpr auto name = "vkGetSwapchainImagesKHR";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::swapchain>>,
-		types::are_contain_range_of<handle<vk::image>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
+		count_of_range_of_decayed<handle<vk::image>> <= 1
+	>
 	vk::expected<vk::count>
 	try_get_swapchain_images(Args&&... args) {
-		auto device {
-			elements::decayed<handle<vk::device>>(args...)
-		};
+		tuple a { args... };
 
-		auto swapchain = elements::decayed<handle<vk::swapchain>>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		auto& images = elements::range_of<handle<vk::image>>(args...);
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::swapchain> swapchain = a.template
+			get_decayed_same_as<handle<vk::swapchain>>();
+
+		auto& images = a.template get_range_of_decayed<handle<vk::image>>();
 
 		uint32 count = images.size();
 
 		vk::result result {
-			vkGetSwapchainImagesKHR(
-				device,
-				swapchain,
+			vk::get_device_function<vk::get_swapchain_images_function>(
+				instance, device
+			)(
+				device.underlying(),
+				swapchain.underlying(),
 				&count,
-				images.data()
+				(handle<vk::image>::underlying_type*) images.iterator()
 			)
 		};
 
@@ -60,9 +73,3 @@ namespace vk {
 	}
 
 } // vk
-
-template<typename... Args>
-[[ nodiscard ]]
-vk::count handle<vk::device>::get_swapchain_images(Args&&... args) const {
-	return vk::get_swapchain_images(*this, forward<Args>(args)...);
-}

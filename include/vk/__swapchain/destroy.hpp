@@ -1,25 +1,30 @@
 #pragma once
 
-#include "handle.hpp"
-
-#include "../function.hpp"
-#include "../destroy_or_free.hpp"
-#include "../device_child_destroy_base.hpp"
-#include "../device/handle.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkDestroySwapchainKHR(
-	handle<vk::device>    device,
-	handle<vk::swapchain> swapchain,
-	const void*           allocator
-);
+#include "../__internal/function.hpp"
+#include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
+#include "../__swapchain/handle.hpp"
 
 namespace vk {
 
-	template<>
-	struct vk::destroy_t<vk::swapchain> :
-		vk::device_child_destroy_base<
-			vk::swapchain, vkDestroySwapchainKHR
-		>
-	{};
+	struct destroy_swapchain_function : vk::function<void(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::swapchain>::underlying_type swapchain,
+		const void* allocator
+	)> {
+		static constexpr auto name = "vkDestroySwapchainKHR";
+	};
+
+	inline void destroy_swapchain(
+		handle<vk::instance> instance,
+		handle<vk::device> device,
+		handle<vk::swapchain> swapchain
+	) {
+		vk::get_device_function<vk::destroy_swapchain_function>(
+			instance, device
+		)(
+			device.underlying(), swapchain.underlying(), nullptr
+		);
+	}
 
 } // vk

@@ -1,20 +1,23 @@
 #pragma once
 
-#include "../../../handle/base.hpp"
-#include "../../../create_or_allocate.hpp"
-
-#include <core/handle.hpp>
+#include <handle.hpp>
+#include <integer.hpp>
 
 namespace vk {
 
 	struct debug_report_callback;
 
-	template<>
-	inline constexpr bool is_creatable<vk::debug_report_callback> = true;
-
 } // vk
 
 template<>
-struct handle<vk::debug_report_callback> :
-	vk::handle_base<vk::non_dispatchable>
-{};
+struct handle_underlying_t<vk::debug_report_callback> {
+	using type = uint64;
+	static constexpr type invalid = 0;
+};
+
+template<>
+struct handle_interface<vk::debug_report_callback> :
+	handle_interface_base<vk::debug_report_callback>
+{
+
+};

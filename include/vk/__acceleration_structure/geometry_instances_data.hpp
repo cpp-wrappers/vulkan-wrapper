@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../device_or_host_address.hpp"
+#include "../__internal/device_or_host_address.hpp"
 
 namespace vk {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -13,6 +13,6 @@ namespace vk {
 	};
 
 	using debug_report = debug_report_flag;
-	using debug_report_flags = flag_enum<vk::debug_report_flag>;
+	using debug_report_flags = enum_flags<vk::debug_report_flag>;
 
 } // vk

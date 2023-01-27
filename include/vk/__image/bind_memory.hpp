@@ -1,46 +1,67 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__internal/result.hpp"
+#include "../__internal/device_size.hpp"
+#include "../__internal/memory_offset.hpp"
+#include "../__device/handle.hpp"
+#include "../__device_memory/handle.hpp"
 
-#include "../device/handle.hpp"
-#include "../result.hpp"
-#include "../memory_offset.hpp"
-#include "../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkBindImageMemory(
-	handle<vk::device>        device,
-	handle<vk::image>         image,
-	handle<vk::device_memory> memory,
-	vk::device_size           memory_offset
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct bind_image_memory_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::image>::underlying_type image,
+		handle<vk::device_memory>::underlying_type memory,
+		vk::device_size memory_offset
+	)> {
+		static constexpr auto name = "vkBindImageMemory";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::image>>,
-		types::are_contain_one_decayed<handle<vk::device_memory>>,
-		types::are_may_contain_one_decayed<vk::memory_offset>
-	>::for_types<Args...> [[nodiscard]]
-	vk::result try_bind_image_memory(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
-		auto image = elements::decayed<handle<vk::image>>(args...);
-		auto device_memory {
-			elements::decayed<handle<vk::device_memory>>(args...)
-		};
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::image>> == 1,
+		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
+		count_of_decayed_same_as<vk::memory_offset> <= 1
+	>
+	[[nodiscard]] vk::result try_bind_image_memory(Args&&... args) {
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::image> image = a.template
+			get_decayed_same_as<handle<vk::image>>();
+
+		handle<vk::device_memory> device_memory = a.template
+			get_decayed_same_as<handle<vk::device_memory>>();
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr (
-			types::are_contain_decayed<vk::memory_offset>::for_types<Args...>
-		) { offset = elements::decayed<vk::memory_offset>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::memory_offset> > 0
+		) {
+			offset = a.template get_decayed_same_as<vk::memory_offset>();
+		}
 
 		return {
-			vkBindImageMemory(
-				device, image, device_memory, offset
+			vk::get_device_function<vk::bind_image_memory_function>(
+				instance, device
+			)(
+				device.underlying(),
+				image.underlying(),
+				device_memory.underlying(),
+				offset
 			)
 		};
 	} // try_bind_image_memory
@@ -52,10 +73,3 @@ namespace vk {
 	}
 
 } // vk
-
-void inline
-handle<vk::device>::bind_memory(
-	handle<vk::image> image, handle<vk::device_memory> memory
-) const {
-	vk::bind_image_memory(*this, image, memory);
-}

@@ -74,7 +74,7 @@ namespace vk {
 	template<typename... Args>
 	handle<vk::instance> create_instance(Args&&... args) {
 		vk::expected<handle<vk::instance>> result
-			= try_create_instance(forward<Args>(args)...);
+			= vk::try_create_instance(::forward<Args>(args)...);
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}

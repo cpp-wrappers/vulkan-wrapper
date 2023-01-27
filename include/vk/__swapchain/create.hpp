@@ -3,6 +3,7 @@
 #include "./handle.hpp"
 #include "./create_info.hpp"
 #include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
 #include "../__internal/function.hpp"
 #include "../__internal/result.hpp"
 #include "../__internal/unexpected_handler.hpp"
@@ -44,11 +45,17 @@ namespace vk {
 	try_create_swapchain(Args&&... args) {
 		tuple a{ args... };
 
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
 		handle<vk::surface> surface = a.template
 			get_decayed_same_as<handle<vk::surface>>();
 
 		vk::swapchain_create_info ci {
-			.surface = surface,
+			.surface = surface.underlying(),
 			.min_image_count = a.template
 				get_decayed_same_as<vk::min_image_count>(),
 			.format = a.template get_decayed_same_as<vk::format>(),
@@ -109,14 +116,8 @@ namespace vk {
 			count_of_decayed_same_as<handle<vk::swapchain>> > 0
 		) {
 			ci.old_swapchain = a.template
-				get_decayed_same_as<handle<vk::swapchain>>();
+				get_decayed_same_as<handle<vk::swapchain>>().underlying();
 		}
-
-		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
-
-		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
 
 		handle<vk::swapchain> swapchain;
 
@@ -139,7 +140,7 @@ namespace vk {
 
 	template<typename... Args>
 	handle<vk::swapchain> create_swapchain(Args&&... args) {
-		expected<handle<vk::swapchain>> result
+		vk::expected<handle<vk::swapchain>> result
 			= vk::try_create_swapchain(forward<Args>(args)...);
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());

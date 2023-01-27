@@ -1,14 +1,15 @@
 #pragma once
 
-#include "get_images.hpp"
+#include "./get_images.hpp"
 
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::swapchain>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::swapchain>> == 1
+	>
 	vk::count get_swapchain_image_count(Args&&... args) {
 		return vk::get_swapchain_images(
 			span<handle<vk::image>>{ nullptr, 0 },
@@ -17,10 +18,3 @@ namespace vk {
 	}
 
 } // vk
-
-vk::count inline
-handle<vk::device>::get_swapchain_image_count(
-	handle<vk::swapchain> swapchain
-) const {
-	return vk::get_swapchain_image_count(*this, swapchain);
-}

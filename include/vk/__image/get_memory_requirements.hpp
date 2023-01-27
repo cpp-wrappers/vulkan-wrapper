@@ -1,33 +1,48 @@
 #pragma once
 
-#include "../device/handle.hpp"
-#include "../memory_requirements.hpp"
-#include "../function.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/memory_requirements.hpp"
+#include "../__device/handle.hpp"
 
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkGetImageMemoryRequirements(
-	handle<vk::device>       device,
-	handle<vk::image>        image,
-	vk::memory_requirements* memory_requirements
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct get_image_memory_requirements_function : vk::function<void(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::image>::underlying_type image,
+		vk::memory_requirements* memory_requirements
+	)> {
+		static constexpr auto name = "vkGetImageMemoryRequirements";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::image>>
-	>::for_types<Args...> [[nodiscard]]
-	vk::memory_requirements
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::image>> == 1
+	>
+	[[nodiscard]] vk::memory_requirements
 	get_image_memory_requirements(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
-		auto image = elements::decayed<handle<vk::image>>(args...);
+		tuple a { args... };
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::image> image = a.template
+			get_decayed_same_as<handle<vk::image>>();
 
 		vk::memory_requirements memory_requirements;
 
-		vkGetImageMemoryRequirements(
-			device, image, &memory_requirements
+		vk::get_device_function<vk::get_image_memory_requirements_function>(
+			instance, device
+		)(
+			device.underlying(), image.underlying(), &memory_requirements
 		);
 
 		return memory_requirements;
@@ -35,8 +50,3 @@ namespace vk {
 	} // get_image_memory_requirements
 
 } // vk
-
-vk::memory_requirements inline
-handle<vk::device>::get_memory_requirements(handle<vk::image> image) const {
-	return vk::get_image_memory_requirements(*this, image);
-}

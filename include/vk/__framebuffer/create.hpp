@@ -1,74 +1,86 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
-
-#include "../device/handle.hpp"
-#include "../create_or_allocate.hpp"
-#include "../extent.hpp"
-#include "../function.hpp"
-
-extern "C" VK_ATTR int32 VK_CALL vkCreateFramebuffer(
-	handle<vk::device>                 device,
-	const vk::framebuffer_create_info* create_info,
-	const void*                        allocator,
-	handle<vk::framebuffer>*           framebuffer
-);
+#include "./create_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__framebuffer/handle.hpp"
+#include "../__device/handle.hpp"
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::framebuffer> {
+	struct create_framebuffer_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		const vk::framebuffer_create_info* create_info,
+		const void* allocator,
+		handle<vk::framebuffer>::underlying_type* framebuffer
+	)> {
+		static constexpr auto name = "vkCreateFramebuffer";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::device>>,
-			types::are_contain_one_decayed<handle<vk::render_pass>>,
-			types::are_contain_range_of<handle<vk::image_view>>,
-			types::are_contain_one_decayed<vk::extent<3>>
-		>::for_types<Args...>
-		vk::expected<handle<vk::framebuffer>>
-		operator () (const Args&... args) const {
-			auto& attachments = elements::range_of<
-				handle<vk::image_view>
-			>(args...);
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
+		count_of_range_of_decayed<handle<vk::image_view>> == 1,
+		count_of_decayed_same_as<vk::extent<3>> == 1
+	>
+	vk::expected<handle<vk::framebuffer>>
+	try_create_framebuffer(Args&&... args) {
+		tuple a { args... };
 
-			auto render_pass {
-				elements::decayed<handle<vk::render_pass>>(args...)
-			};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			vk::framebuffer_create_info ci {
-				.render_pass = render_pass,
-				.attachment_count = (uint32) attachments.size(),
-				.attachments = attachments.data()
-			};
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
-			vk::extent<3> extent = elements::decayed<vk::extent<3>>(args...);
+		handle<vk::render_pass> render_pass = a.template
+			get_decayed_same_as<handle<vk::render_pass>>();
 
-			ci.width = extent.width();
-			ci.height = extent.height();
-			ci.layers = extent.depth();
+		auto& attachments = a.template
+			get_range_of_decayed<handle<vk::image_view>>();
 
-			auto device {
-				elements::decayed<handle<vk::device>>(args...)
-			};
+		vk::framebuffer_create_info ci {
+			.render_pass = (handle<vk::render_pass>::underlying_type)
+				render_pass.underlying(),
+			.attachment_count = (uint32) attachments.size(),
+			.attachments = (const handle<vk::image_view>::underlying_type*)
+				attachments.iterator()
+		};
 
-			handle<vk::framebuffer> framebuffer;
+		vk::extent<3> extent = a.template get_decayed_same_as<vk::extent<3>>();
 
-			vk::result result {
-				vkCreateFramebuffer(
-					device,
-					&ci,
-					nullptr,
-					&framebuffer
-				)
-			};
+		ci.width = extent.width();
+		ci.height = extent.height();
+		ci.layers = extent.depth();
 
-			if(result.error()) return result;
+		handle<vk::framebuffer> framebuffer;
 
-			return framebuffer;
+		vk::result result {
+			vk::get_device_function<vk::create_framebuffer_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ci,
+				nullptr,
+				&framebuffer.underlying()
+			)
+		};
+
+		if(result.error()) return result;
+
+		return framebuffer;
+	}
+
+	template<typename... Args>
+	handle<vk::framebuffer> create_framebuffer(Args&&... args) {
+		vk::expected<handle<vk::framebuffer>> result
+			= vk::try_create_framebuffer(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
 		}
-
-	}; // create_t<framebuffer>
+		return result.get_expected();
+	}
 
 } // vk

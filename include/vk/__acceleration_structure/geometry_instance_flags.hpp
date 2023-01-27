@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -11,6 +11,6 @@ namespace vk {
 		force_no_opaque              = 0x00000008
 	};
 
-	using geometry_instance_flags = flag_enum<geometry_instance_flag>;
+	using geometry_instance_flags = enum_flags<geometry_instance_flag>;
 
 } // vk

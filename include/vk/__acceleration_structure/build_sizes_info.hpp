@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../memory_size.hpp"
+#include "../__internal/memory_size.hpp"
 
 namespace vk {
 

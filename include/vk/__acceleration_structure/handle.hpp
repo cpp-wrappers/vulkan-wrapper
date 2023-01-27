@@ -1,18 +1,23 @@
 #pragma once
 
-#include "../handle/base.hpp"
-#include "../create_or_allocate.hpp"
-
-#include <core/handle.hpp>
+#include <handle.hpp>
+#include <integer.hpp>
 
 namespace vk {
 
 	struct acceleration_structure;
 
-	template<>
-	inline constexpr bool is_creatable<vk::acceleration_structure> = true;
-
 } // vk
 
 template<>
-struct handle<vk::acceleration_structure> : vk::handle_base<vk::non_dispatchable> {};
+struct handle_underlying_t<vk::acceleration_structure> {
+	using type = uint64;
+	static constexpr type invalid = 0;
+};
+
+template<>
+struct handle_interface<vk::acceleration_structure> :
+	handle_interface_base<vk::acceleration_structure>
+{
+
+};

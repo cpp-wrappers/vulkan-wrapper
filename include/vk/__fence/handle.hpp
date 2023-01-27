@@ -1,18 +1,21 @@
 #pragma once
 
-#include "../handle/base.hpp"
-#include "../create_or_allocate.hpp"
-
-#include <core/handle.hpp>
+#include <handle.hpp>
+#include <integer.hpp>
 
 namespace vk {
 
 	struct fence;
 
-	template<>
-	inline constexpr bool is_creatable<vk::fence> = true;
-
 } // vk
 
 template<>
-struct handle<vk::fence> : vk::handle_base<vk::non_dispatchable> {};
+struct handle_underlying_t<vk::fence> {
+	using type = uint64;
+	static constexpr type invalid = 0;
+};
+
+template<>
+struct handle_interface<vk::fence> : handle_interface_base<vk::fence> {
+	
+};

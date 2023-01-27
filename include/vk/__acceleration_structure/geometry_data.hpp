@@ -1,8 +1,8 @@
 #pragma once
 
-#include "geometry_triangles_data.hpp"
-#include "geometry_aabbs_data.hpp"
-#include "geometry_instances_data.hpp"
+#include "./geometry_triangles_data.hpp"
+#include "./geometry_aabbs_data.hpp"
+#include "./geometry_instances_data.hpp"
 
 namespace vk {
 

@@ -1,97 +1,105 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
+#include "./handle.hpp"
+#include "./create_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__instance/handle.hpp"
 
-#include "../../../instance/handle.hpp"
-#include "../../../create_or_allocate.hpp"
-#include "../../../unexpected_handler.hpp"
-#include "../../../instance/get_proc_address.hpp"
-
-#include <core/meta/decayed_same_as.hpp>
-
-typedef int32 (VK_PTR* PFN_vkCreateDebugReportCallbackEXT)(
-	handle<vk::instance> instance,
-	const vk::debug_report_callback_create_info* create_info,
-	const void* allocator,
-	handle<vk::debug_report_callback>* callback
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::debug_report_callback> {
+	struct create_debug_report_callback_function : vk::function<int32(*)(
+		handle<vk::instance>::underlying_type instance,
+		const vk::debug_report_callback_create_info* create_info,
+		const void* allocator,
+		handle<vk::debug_report_callback>::underlying_type* callback
+	)> {
+		static constexpr auto name = "vkCreateDebugReportCallbackEXT";
+	};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::instance>>,
-			types::are_contain_one_decayed<vk::debug_report_flags>,
-			types::are_contain_one_decayed<vk::debug_report_callback_type>
-		>::for_types<Args...>
-		vk::expected<handle<vk::debug_report_callback>>
-		operator () (Args&&... args) const {
-			auto instance = elements::decayed<handle<vk::instance>>(args...);
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<vk::debug_report_flags> == 1,
+		count_of_decayed_same_as<vk::debug_report_callback_type> == 1
+	>
+	vk::expected<handle<vk::debug_report_callback>>
+	try_create_debug_report_callback(Args&&... args) {
+		handle<vk::instance> instance = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-			auto flags = elements::decayed<vk::debug_report_flags>(args...);
+		auto flags = tuple{ args... }.template
+			get_decayed_same_as<vk::debug_report_flags>();
 
-			auto callback {
-				elements::decayed<vk::debug_report_callback_type>(args...)
-			};
+		auto callback = tuple{ args... }.template
+			get_decayed_same_as<vk::debug_report_callback_type>();
 
-			debug_report_callback_create_info ci {
-				.flags = flags,
-				.callback = callback
-			};
-
-			handle<vk::debug_report_callback> debug_report_callback;
-
-			auto fn =
-				(PFN_vkCreateDebugReportCallbackEXT)
-				vk::get_instance_proc_address(
-					instance,
-					"vkCreateDebugReportCallbackEXT"
-				);
-
-			if(fn == nullptr) vk::unexpected_handler();
-
-			vk::result result {
-				fn(
-					instance,
-					&ci,
-					nullptr,
-					&debug_report_callback
-				)
-			};
-
-			if(result.error()) return result;
-
-			return debug_report_callback;
+		debug_report_callback_create_info ci {
+			.flags = flags,
+			.callback = callback
 		};
 
-		template<typename... Args>
-		requires types::are_exclusively_satisfying_predicates<
-			types::are_contain_one_decayed<handle<vk::instance>>,
-			types::are_may_contain_decayed<vk::debug_report_flag>,
-			types::are_contain_one_decayed<vk::debug_report_callback_type>
-		>::for_types<Args...>
-		vk::expected<handle<vk::debug_report_callback>>
-		operator () (Args&&... args) const {
-			vk::debug_report_flags flags{};
+		handle<vk::debug_report_callback> debug_report_callback;
 
-			elements::for_each_decayed<vk::debug_report_flag>(args...)(
-				[&](auto flag) {
-					flags.set(flag);
-				}
-			);
+		vk::result result {
+			vk::get_instance_function<
+				vk::create_debug_report_callback_function
+			>(instance)(
+				instance.underlying(),
+				&ci,
+				nullptr,
+				&debug_report_callback.underlying()
+			)
+		};
 
-			auto instance = elements::decayed<handle<vk::instance>>(args...);
-			auto& callback {
-				elements::decayed<vk::debug_report_callback_type>(args...)
-			};
+		if(result.error()) return result;
 
-			return this->operator () (flags, instance, callback);
-		}
-
+		return debug_report_callback;
 	};
+
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<vk::debug_report_flag> >= 0,
+		count_of_decayed_same_as<vk::debug_report_callback_type> == 1
+	>
+	vk::expected<handle<vk::debug_report_callback>>
+	try_create_debug_report_callback(Args&&... args) {
+		tuple a { args... };
+
+		vk::debug_report_flags flags{};
+
+		a.template for_each([&]<typename Arg>(Arg& arg) {
+			if constexpr(same_as<decay<Arg>, vk::debug_report_flag>) {
+				flags.set(arg);
+			}
+		});
+
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		decltype(auto) callback = a.template
+			get_decayed_same_as<vk::debug_report_callback_type>();
+
+		return vk::try_create_debug_report_callback(
+			instance,
+			flags,
+			callback
+		);
+	}
+
+	template<typename... Args>
+	handle<vk::debug_report_callback>
+	create_debug_report_callback(Args&&... args) {
+		vk::expected<handle<vk::debug_report_callback>> result
+			= vk::try_create_debug_report_callback(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
+	}
 
 } // vk

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../device_or_host_address.hpp"
-#include "../device_size.hpp"
+#include "../__internal/device_or_host_address.hpp"
+#include "../__internal/device_size.hpp"
 
 namespace vk {
 

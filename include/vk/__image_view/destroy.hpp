@@ -15,7 +15,12 @@ namespace vk {
 	};
 
 	template<typename... Args>
-	void destroy_pipeline_layout(Args&&... args) {
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::image_view>> == 1
+	>
+	void destroy_image_view(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
 			get_decayed_same_as<handle<vk::instance>>();
 

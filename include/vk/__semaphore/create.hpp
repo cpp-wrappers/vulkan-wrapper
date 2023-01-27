@@ -1,44 +1,54 @@
 #pragma once
 
-#include "handle.hpp"
-#include "create_info.hpp"
-
-#include "../create_or_allocate.hpp"
-#include "../device/handle.hpp"
-#include "../function.hpp"
-
-extern "C" VK_ATTR int32 VK_CALL vkCreateSemaphore(
-	handle<vk::device>               device,
-	const vk::semaphore_create_info* create_info,
-	const void*                      allocator,
-	handle<vk::semaphore>*           semaphore
-);
+#include "./handle.hpp"
+#include "./create_info.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__device/handle.hpp"
 
 namespace vk {
 
-	template<>
-	struct vk::create_t<vk::semaphore> {
+	struct create_semaphore_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		const vk::semaphore_create_info* create_info,
+		const void* allocator,
+		handle<vk::semaphore>::underlying_type* semaphore
+	)> {
+		static constexpr auto name = "vkCreateSemaphore";
+	};
 
-		vk::expected<handle<vk::semaphore>>
-		operator () (handle<vk::device> device) const {
-			vk::semaphore_create_info ci{};
+	inline vk::expected<handle<vk::semaphore>> try_create_semaphore(
+		handle<vk::instance> instance,
+		handle<vk::device> device
+	) {
+		vk::semaphore_create_info ci{};
 
-			handle<vk::semaphore> semaphore;
+		handle<vk::semaphore> semaphore;
 
-			vk::result result {
-				vkCreateSemaphore(
-					device,
-					&ci,
-					nullptr,
-					&semaphore
-				)
-			};
+		vk::result result {
+			vk::get_device_function<vk::create_semaphore_function>(
+				instance, device
+			)(
+				device.underlying(),
+				&ci,
+				nullptr,
+				&semaphore.underlying()
+			)
+		};
 
-			if(result.error()) return result;
+		if(result.error()) return result;
 
-			return semaphore;
+		return semaphore;
+	}
+
+	template<typename... Args>
+	handle<vk::semaphore> create_semaphore(Args&&... args) {
+		vk::expected<handle<vk::semaphore>> result
+			= vk::try_create_semaphore(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
 		}
-
-	}; // create_t<semaphore>
+		return result.get_expected();
+	}
 
 } // vk

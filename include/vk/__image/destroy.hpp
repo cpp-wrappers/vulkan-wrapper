@@ -1,22 +1,30 @@
 #pragma once
 
-#include "handle.hpp"
-
-#include "../function.hpp"
-#include "../destroy_or_free.hpp"
-#include "../device_child_destroy_base.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkDestroyImage(
-	handle<vk::device> device,
-	handle<vk::image>  image,
-	const void*        allocator
-);
+#include "./handle.hpp"
+#include "../__device/handle.hpp"
+#include "../__instance/handle.hpp"
+#include "../__internal/function.hpp"
 
 namespace vk {
 
-	template<>
-	struct vk::destroy_t<vk::image> :
-		vk::device_child_destroy_base<vk::image, vkDestroyImage>
-	{};
+	struct destroy_image_function : vk::function<void(*)(
+		handle<vk::device> device,
+		handle<vk::image>  image,
+		const void*        allocator
+	)> {
+		static constexpr auto name = "vkDestroyImage";
+	};
+
+	inline void destroy_image(
+		handle<vk::instance> instance,
+		handle<vk::device> device,
+		handle<vk::image> image
+	) {
+		vk::get_device_function<vk::destroy_image_function>(
+			instance, device
+		)(
+			device, image, nullptr
+		);
+	}
 
 } // vk

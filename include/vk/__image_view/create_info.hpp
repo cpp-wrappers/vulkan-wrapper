@@ -1,12 +1,11 @@
 #pragma once
 
-#include "../../format.hpp"
-#include "../../image/component_mapping.hpp"
-#include "../../image/subresource_range.hpp"
-#include "../../image/handle.hpp"
+#include "../__internal/format.hpp"
+#include "../__image/handle.hpp"
+#include "../__image/component_mapping.hpp"
+#include "../__image/subresource_range.hpp"
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -28,12 +27,12 @@ namespace vk {
 	struct image_view_create_info {
 		uint32 structure_type = 15;
 		const void* next;
-		flag_enum<image_view_create_flag> flags;
-		handle<vk::image>                 image;
-		vk::image_view_type               view_type;
-		vk::format                        format;
-		vk::component_mapping             components;
-		vk::image_subresource_range       subresource_range;
+		enum_flags<image_view_create_flag> flags;
+		handle<vk::image>::underlying_type image;
+		vk::image_view_type view_type;
+		vk::format format;
+		vk::component_mapping components;
+		vk::image_subresource_range subresource_range;
 	};
 
 } // vk
