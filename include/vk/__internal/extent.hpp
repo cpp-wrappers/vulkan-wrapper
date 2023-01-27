@@ -16,6 +16,12 @@ namespace vk {
 
 	template<>
 	struct extent<2> : array<uint32, 2> {
+		extent() = default;
+
+		extent(uint32 w, uint32 h) :
+			array<uint32, 2>{ w, h}
+		{}
+
 		uint32& width() { return (*this)[0]; }
 		uint32& height() { return (*this)[1]; }
 	};
