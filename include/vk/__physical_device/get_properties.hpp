@@ -1,69 +1,86 @@
 #pragma once
 
-#include "handle.hpp"
-#include "properties_2.hpp"
-#include "extension_properties.hpp"
+#include "./handle.hpp"
+#include "./properties.hpp"
+#include "./properties_2.hpp"
+#include "./extension_properties.hpp"
+#include "../__internal/function.hpp"
+#include "../__instance/handle.hpp"
 
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-#include <core/meta/decayed_same_as.hpp>
-#include <core/meta/elements/for_each_satisfying_type_predicate.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties(
-	handle<vk::physical_device>     physical_device,
-	vk::physical_device_properties* properties
-);
-
-extern "C" VK_ATTR void VK_CALL vkGetPhysicalDeviceProperties2(
-	handle<vk::physical_device>       physical_device,
-	vk::physical_device_properties_2* properties
-);
+#include "./extension_properties/acceleration_structure.hpp"
+#include "./extension_properties/ray_tracing_pipeline.hpp"
 
 namespace vk {
 
+	struct get_physical_device_properties_function : vk::function<void(*)(
+		handle<vk::physical_device>::underlying_type physical_device,
+		vk::physical_device_properties* properties
+	)> {
+		static constexpr auto name = "vkGetPhysicalDeviceProperties";
+	};
+
 	[[ nodiscard ]]
-	vk::physical_device_properties inline
-	get_physical_device_properties(
+	vk::physical_device_properties inline get_physical_device_properties(
+		handle<vk::instance> instance,
 		handle<vk::physical_device> physical_device
 	) {
 		vk::physical_device_properties props;
 
-		vkGetPhysicalDeviceProperties(
-			physical_device,
+		vk::get_instance_function<vk::get_physical_device_properties_function>(
+			instance
+		)(
+			physical_device.underlying(),
 			&props
 		);
 
 		return props;
 	}
 
+	struct get_physical_device_properties_2_function : vk::function<void(*)(
+		handle<vk::physical_device>::underlying_type physical_device,
+		vk::physical_device_properties_2* properties
+	)> {
+		static constexpr auto name = "vkGetPhysicalDeviceProperties2";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::physical_device>>,
-		types::are_contain_satisfying_predicate<
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
+		(count_of_satisfying_predicate<
 			vk::is_extension_properties_reference
-		>
-	>::for_types<Args...>
+		> > 0)
+	>
 	[[ nodiscard ]]
 	vk::physical_device_properties
-	get_physical_device_properties(Args&&... args) {
-		vk::physical_device_properties_2 props{};
+	get_physical_device_properties_2(Args&&... args) {
+		tuple a { args... };
 
-		auto physical_device = elements::decayed<
-			handle<vk::physical_device>
-		>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::physical_device> physical_device = a.template
+			get_decayed_same_as<handle<vk::physical_device>>();
+
+		vk::physical_device_properties_2 props{};
 
 		const void** next = &props.next;
 
-		elements::for_each_satisfying_type_predicate<
-			vk::is_extension_properties_reference
-		>(args...)(
-			[&](auto& extension_properties) {
-				*next = &extension_properties;
-				next = &extension_properties.next;
+		a.for_each([&]<typename Arg>(Arg& arg) {
+			if constexpr(
+				vk::is_extension_properties_reference.for_type<Arg>()
+			) {
+				*next = &arg;
+				next = &arg.next;
 			}
-		);
+		});
 
-		vkGetPhysicalDeviceProperties2(
-			physical_device,
+		vk::get_instance_function<
+			vk::get_physical_device_properties_2_function
+		> (
+			instance
+		)(
+			physical_device.underlying(),
 			&props
 		);
 
@@ -72,11 +89,3 @@ namespace vk {
 	} // get_properties
 
 } // vk
-
-template<typename... Args>
-vk::physical_device_properties
-handle<vk::physical_device>::get_properties(Args&&... args) const {
-	return vk::get_physical_device_properties(
-		*this, forward<Args>(args)...
-	);
-}

@@ -6,7 +6,9 @@ namespace vk {
 
 	struct extension_properties_marker {};
 
-	struct is_extension_properties_reference_t : type_predicate_marker {
+	struct is_extension_properties_reference_t :
+		type_predicate_extension<is_extension_properties_reference_t>
+	{
 
 		template<typename Type>
 		constexpr bool for_type() {

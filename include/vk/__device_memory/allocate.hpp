@@ -4,6 +4,7 @@
 #include "./allocate_info.hpp"
 #include "./allocate_flags_info.hpp"
 #include "../__internal/function.hpp"
+#include "../__internal/unexpected_handler.hpp"
 #include "../__internal/result.hpp"
 #include "../__device/handle.hpp"
 
@@ -67,6 +68,16 @@ namespace vk {
 		if(result.error()) return result;
 
 		return device_memory;
+	}
+
+	template<typename... Args>
+	handle<vk::device_memory> allocate_memory(Args&&... args) {
+		vk::expected<handle<vk::device_memory>> result
+			= vk::try_allocate_memory(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
 	}
 
 } // vk

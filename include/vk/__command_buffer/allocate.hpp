@@ -66,4 +66,19 @@ namespace vk {
 		if(result.error()) vk::unexpected_handler(result);
 	}
 
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::command_pool>> == 1,
+		count_of_decayed_same_as<vk::command_buffer_level> == 1
+	>
+	handle<vk::command_buffer> allocate_command_buffer(Args&&... args) {
+		handle<vk::command_buffer> command_buffer;
+		vk::allocate_command_buffers(
+			forward<Args>(args)..., span{ &command_buffer }
+		);
+		return command_buffer;
+	}
+
 } // vk

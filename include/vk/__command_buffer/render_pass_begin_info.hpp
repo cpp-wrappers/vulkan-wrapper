@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./clear.hpp"
+#include "./clear_value.hpp"
 #include "../__internal/rect2d.hpp"
 #include "../__render_pass/handle.hpp"
 #include "../__framebuffer/handle.hpp"

@@ -11,7 +11,7 @@
 #include "../__image/usage.hpp"
 #include "../__surface/transform.hpp"
 #include "../__surface/composite_alpha.hpp"
-#include "../__surface/min_image_count.hpp"
+#include "../__surface/min_max_image_count.hpp"
 #include "../__surface/handle.hpp"
 
 #include <enum_flags.hpp>

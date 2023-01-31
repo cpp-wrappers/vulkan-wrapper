@@ -46,7 +46,7 @@ namespace vk {
 
 			ci.push_constant_range_count =
 				(uint32) push_constant_ranges.size();
-			ci.push_constant_ranges = push_constant_ranges.data();
+			ci.push_constant_ranges = push_constant_ranges.iterator();
 		}
 
 		handle<vk::instance> instance = tuple{ args... }.template

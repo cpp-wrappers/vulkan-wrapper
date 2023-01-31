@@ -1,37 +1,46 @@
 #pragma once
 
-#include "flush_mapped_ranges.hpp"
-
-#include "../../unexpected_handler.hpp"
+#include "./handle.hpp"
+#include "./flush_mapped_ranges.hpp"
 
 namespace vk {
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::device_memory>>,
-		types::are_may_contain_one_decayed<vk::memory_offset>,
-		types::are_contain_one_decayed<vk::memory_size>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
+		count_of_decayed_same_as<vk::memory_offset> <= 1,
+		count_of_decayed_same_as<vk::memory_size> == 1
+	>
 	vk::result try_flush_mapped_memory_range(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
+		tuple a { args... };
 
-		auto device_memory {
-			elements::decayed<handle<vk::device_memory>>(args...)
-		};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::device_memory> device_memory = a.template
+			get_decayed_same_as<handle<vk::device_memory>>();
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr (
-			types::are_contain_decayed<vk::memory_offset>::for_types<Args...>
-		) { offset = elements::decayed<vk::memory_offset>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::memory_offset> > 0
+		) {
+			offset = a.template get_decayed_same_as<vk::memory_offset>();
+		}
 
-		vk::memory_size size = elements::decayed<vk::memory_size>(args...);
+		vk::memory_size size = a.template
+			get_decayed_same_as<vk::memory_size>();
 
 		return vk::try_flush_mapped_memory_ranges(
+			instance,
 			device,
 			array{ vk::mapped_memory_range {
-				.memory = device_memory,
+				.memory = device_memory.underlying(),
 				.offset = offset,
 				.size = size
 			} }
@@ -43,14 +52,7 @@ namespace vk {
 		vk::result result = vk::try_flush_mapped_memory_range(
 			forward<Args>(args)...
 		);
-
 		if(result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk
-
-template<typename... Args>
-void
-handle<vk::device>::flush_mapped_memory_range(Args&&... args) const {
-	vk::flush_mapped_memory_range(*this, forward<Args>(args)...);
-}

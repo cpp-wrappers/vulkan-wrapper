@@ -37,6 +37,10 @@ namespace vk {
 			array<uint32, 3>{ w, h, d }
 		{}
 
+		extent(uint32 w, uint32 h) :
+			array<uint32, 3>{ w, h, uint32{ 1 } }
+		{}
+
 		extent(extent<2> two_d, uint32 d) :
 			array<uint32, 3>{ two_d[0], two_d[1], d }
 		{}

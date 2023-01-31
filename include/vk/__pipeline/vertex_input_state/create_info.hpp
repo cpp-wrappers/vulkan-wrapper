@@ -54,9 +54,10 @@ namespace vk {
 						vk::vertex_input_attribute_description
 					>();
 
-				vertex_attribute_description_count =
-					(uint32) attribute_descriptions.size();
-				vertex_attribute_descriptions = attribute_descriptions.data();
+				vertex_attribute_description_count
+					= (uint32) attribute_descriptions.size();
+				vertex_attribute_descriptions
+					= attribute_descriptions.iterator();
 			}
 		}
 

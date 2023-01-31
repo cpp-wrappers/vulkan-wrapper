@@ -1,42 +1,46 @@
 #pragma once
 
-#include "handle.hpp"
+#include "./handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/result.hpp"
+#include "../__device/handle.hpp"
 
-#include "../handle.hpp"
-#include "../../function.hpp"
-
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR void VK_CALL vkUnmapMemory(
-	handle<vk::device>        device,
-	handle<vk::device_memory> memory
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct unmap_memory_function : vk::function<void(*)(
+		handle<vk::device>::underlying_type device,
+		handle<vk::device_memory>::underlying_type memory
+	)> {
+		static constexpr auto name = "vkUnmapMemory";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::device_memory>>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::device_memory>> == 1
+	>
 	void unmap_memory(Args&&... args) {
-		auto device = elements::decayed<handle<vk::device>>(args...);
+		tuple a { args... };
 
-		auto device_memory {
-			elements::decayed<handle<vk::device_memory>>(args...)
-		};
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
 
-		vkUnmapMemory(
-			device,
-			device_memory
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
+
+		handle<vk::device_memory> device_memory = a.template
+			get_decayed_same_as<handle<vk::device_memory>>();
+
+		vk::get_device_function<vk::unmap_memory_function>(
+			instance, device
+		)(
+			device.underlying(),
+			device_memory.underlying()
 		);
 	}
 
 } // vk
-
-void inline
-handle<vk::device>::unmap_memory(
-	handle<vk::device_memory> device_memory
-) const {
-	vk::unmap_memory(*this, device_memory);
-}

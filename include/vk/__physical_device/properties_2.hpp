@@ -1,6 +1,6 @@
 #pragma once
 
-#include "properties.hpp"
+#include "./properties.hpp"
 
 namespace vk {
 

@@ -9,7 +9,7 @@ namespace vk {
 
 	struct destroy_semaphore_function : vk::function<void(*)(
 		handle<vk::device>::underlying_type device,
-		handle<vk::semaphore> semaphore,
+		handle<vk::semaphore>::underlying_type semaphore,
 		const void* allocator
 	)> {
 		static constexpr auto name = "vkDestroySemaphore";

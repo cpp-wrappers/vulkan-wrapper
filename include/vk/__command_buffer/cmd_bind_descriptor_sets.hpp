@@ -79,7 +79,7 @@ namespace vk {
 			auto& offsets = a.template
 				get_range_of_decayed<vk::dynamic_offset>();
 			dynamic_offset_count = (uint32) offsets.size();
-			dynamic_offsets = offsets.data();
+			dynamic_offsets = offsets.iterator();
 		}
 
 		vk::get_device_function<vk::cmd_bind_descriptor_sets_function>(

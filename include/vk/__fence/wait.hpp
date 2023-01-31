@@ -1,52 +1,63 @@
 #pragma once
 
-#include "handle.hpp"
+#include "../__internal/function.hpp"
+#include "../__internal/timeout.hpp"
+#include "../__internal/unexpected_handler.hpp"
+#include "../__device/handle.hpp"
+#include "../__fence/handle.hpp"
 
-#include "../device/handle.hpp"
-#include "../function.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-#include <core/meta/types/are_exclusively_satisfying_predicates.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkWaitForFences(
-	handle<vk::device>       device,
-	uint32                   fence_count,
-	const handle<vk::fence>* fences,
-	uint32                   wait_all,
-	vk::timeout              timeout
-);
+#include <types.hpp>
+#include <tuple.hpp>
 
 namespace vk {
 
+	struct wait_for_fences_function : vk::function<int32(*)(
+		handle<vk::device>::underlying_type device,
+		uint32 fence_count,
+		const handle<vk::fence>::underlying_type* fences,
+		uint32 wait_all,
+		vk::timeout timeout
+	)> {
+		static constexpr auto name = "vkWaitForFences";
+	};
+
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_range_of<handle<vk::fence>>,
-		types::are_may_contain_one_decayed<vk::wait_all>,
-		types::are_may_contain_one_decayed<vk::timeout>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_range_of_decayed<handle<vk::fence>> == 1,
+		count_of_decayed_same_as<vk::wait_all> <= 1,
+		count_of_decayed_same_as<vk::timeout> <= 1
+	>
 	vk::result try_wait_for_fences(Args&&... args) {
-		auto& fences = elements::range_of<handle<vk::fence>>(args...);
+		tuple a { args... };
+		auto& fences = a.template get_range_of_decayed<handle<vk::fence>>();
 
 		bool wait_all = true;
 
-		if constexpr (
-			types::are_contain_decayed<vk::wait_all>::for_types<Args...>
-		) { wait_all = (bool) elements::decayed<vk::wait_all>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::wait_all> > 0
+		) { wait_all = (bool) a.template get_decayed_same_as<vk::wait_all>(); }
 
 		vk::timeout timeout{ ~uint64{ 0 } };
 
-		if constexpr (
-			types::are_contain_decayed<vk::timeout>::for_types<Args...>
-		) { timeout = elements::decayed<vk::timeout>(args...); }
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::timeout> > 0
+		) { timeout = a.template get_decayed_same_as<vk::timeout>(); }
 
-		auto device = elements::decayed<handle<vk::device>>(args...);
+		handle<vk::instance> instance = a.template
+			get_decayed_same_as<handle<vk::instance>>();
+
+		handle<vk::device> device = a.template
+			get_decayed_same_as<handle<vk::device>>();
 
 		return {
-			vkWaitForFences(
-				device,
+			vk::get_device_function<vk::wait_for_fences_function>(
+				instance, device
+			)(
+				device.underlying(),
 				(uint32) fences.size(),
-				fences.data(),
+				(const handle<vk::fence>::underlying_type*) fences.iterator(),
 				uint32{ wait_all },
 				timeout
 			)
@@ -60,27 +71,24 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types::are_exclusively_satisfying_predicates<
-		types::are_contain_one_decayed<handle<vk::device>>,
-		types::are_contain_one_decayed<handle<vk::fence>>,
-		types::are_may_contain_one_decayed<vk::wait_all>,
-		types::are_may_contain_one_decayed<vk::timeout>
-	>::for_types<Args...>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<handle<vk::fence>> == 1,
+		count_of_decayed_same_as<vk::wait_all> <= 1,
+		count_of_decayed_same_as<vk::timeout> <= 1
+	>
 	vk::result try_wait_for_fence(Args&&... args) {
-		auto fence = elements::decayed<handle<vk::fence>>(args...);
+		handle<vk::fence> fence = tuple{ args... }.template
+			get_decayed_same_as<handle<vk::fence>>();
 
-		return elements::pass_not_satisfying_type_predicate<
-			type::is_decayed<handle<vk::fence>>
-		>(
-			array{ handle<vk::fence>{ fence } },
-			forward<Args>(args)...
-		)(
-			[&]<typename... Others>(Others&&... others) {
-				return vk::try_wait_for_fences(
-					forward<Others>(others)...
-				);
-			}
-		);
+		return tuple{ args... }.template pass_satisfying_predicate<
+			!is_same_as<handle<vk::fence>>.while_decayed
+		>([&]<typename... Args0>(Args0&&... args0) {
+			return vk::try_wait_for_fences(
+				forward<Args0>(args0)..., array{ fence }
+			);
+		});
 	} // try_wait_for_fence
 
 	template<typename... Args>
@@ -90,9 +98,3 @@ namespace vk {
 	}
 
 } // vk
-
-template<typename... Args>
-void
-handle<vk::device>::wait_for_fence(Args&&... args) const {
-	vk::wait_for_fence(*this, forward<Args>(args)...);
-}

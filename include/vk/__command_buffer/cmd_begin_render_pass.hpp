@@ -50,16 +50,12 @@ namespace vk {
 		);
 	} // cmd_begin_render_pass
 
-	template<nuint Order, typename... Args>
-	void cmd_begin_render_pass(Args&&... args) {
-		static_assert(Order > 0);
-		cmd_begin_render_pass<Order - 1>(forward<Args>(args)...);
-	}
-
-	template<nuint Order, typename... Args>
+	template<typename... Args>
 	requires
-	(Order == 0) &&
+	//(Order == 1) &&
 	types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
 		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
 		count_of_decayed_same_as<handle<vk::framebuffer>> == 1,
@@ -104,9 +100,9 @@ namespace vk {
 		);
 	} // cmd_begin_render_pass
 
-	template<nuint Order, typename... Args>
+	template<typename... Args>
 	requires
-	(Order == 1) &&
+	//(Order == 2) &&
 	(types<Args...>::template count_of_decayed_same_as<vk::clear_value> == 1)
 	void cmd_begin_render_pass(Args&&... args) {
 		vk::clear_value clear_value = tuple{ args... }.template
@@ -115,17 +111,23 @@ namespace vk {
 		tuple{ args... }.template
 		pass_satisfying_predicate<
 			!is_same_as<vk::clear_value>.while_decayed
-		>([]<typename... Args0>(Args0&&... args0) {
-			cmd_begin_render_pass<Order - 1>(
+		>([&]<typename... Args0>(Args0&&... args0) {
+			cmd_begin_render_pass(
 				::array{ clear_value },
 				::forward<Args0>(args0)...
 			);
 		});
 	}
 
-	template<typename... Args>
-	void cmd_begin_render_pass(Args&&... args) {
-		cmd_begin_render_pass<2>(forward<Args>(args)...);
-	}
+	//template<typename... Args>
+	//requires (Order > 0)
+	//void cmd_begin_render_pass(Args&&... args) {
+	//	cmd_begin_render_pass<Order - 1>(forward<Args>(args)...);
+	//}
+
+	//template<typename... Args>
+	//void cmd_begin_render_pass(Args&&... args) {
+	//	cmd_begin_render_pass<2>(forward<Args>(args)...);
+	//}
 
 } // vk

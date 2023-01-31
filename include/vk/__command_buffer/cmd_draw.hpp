@@ -52,7 +52,7 @@ namespace vk {
 			get_decayed_same_as<handle<vk::command_buffer>>();
 
 		vk::vertex_count vertex_count = a.template
-			get_decayed_same_as<handle<vk::vertex_count>>();
+			get_decayed_same_as<vk::vertex_count>();
 
 		vk::instance_count instance_count{ 1 };
 

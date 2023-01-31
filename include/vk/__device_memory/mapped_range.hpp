@@ -10,7 +10,7 @@ namespace vk {
 	struct mapped_memory_range {
 		uint32 structure_type = 6;
 		const void* next = nullptr;
-		handle<vk::device_memory> memory;
+		handle<vk::device_memory>::underlying_type memory;
 		vk::memory_offset offset;
 		vk::memory_size size;
 	};

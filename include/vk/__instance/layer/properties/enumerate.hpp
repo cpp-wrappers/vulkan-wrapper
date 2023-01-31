@@ -23,7 +23,7 @@ namespace vk {
 
 		vk::result result {
 			vkEnumerateInstanceLayerProperties(
-				&count, layer_properties.data()
+				&count, layer_properties.iterator()
 			)
 		};
 

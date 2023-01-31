@@ -7,8 +7,16 @@ namespace vk {
 
 	struct physical_device_features_marker {};
 
-	static constexpr auto is_physical_device_features
-		= is_base_of<physical_device_features_marker>;
+	struct is_physical_device_features_t :
+		type_predicate_extension<is_physical_device_features_t>
+	{
+		template<typename Type>
+		constexpr bool for_type() const {
+			return base_of<vk::physical_device_features_marker, Type>;
+		}
+	};
+
+	static constexpr is_physical_device_features_t is_physical_device_features;
 
 	struct physical_device_features {
 		uint32

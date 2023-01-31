@@ -60,8 +60,8 @@ namespace vk {
 		f(
 			command_buffer,
 			infos.size(),
-			infos.data(),
-			ranges.data()
+			infos.iterator(),
+			ranges.iterator()
 		);
 	}
 

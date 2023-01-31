@@ -4,6 +4,7 @@
 #include "./submit_info.hpp"
 #include "./wait_semaphore.hpp"
 #include "./signal_semaphore.hpp"
+#include "./signal_fence.hpp"
 #include "../__internal/function.hpp"
 #include "../__instance/handle.hpp"
 #include "../__internal/unexpected_handler.hpp"
@@ -30,7 +31,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::queue>> == 1,
 		count_of_range_of_decayed<vk::submit_info> == 1,
-		count_of_decayed_same_as<handle<vk::fence>> <= 1
+		count_of_decayed_same_as<vk::signal_fence> <= 1
 	>
 	vk::result try_queue_submit(Args&&... args) {
 		tuple a { args... };
@@ -41,12 +42,12 @@ namespace vk {
 		handle<vk::device> device = a.template
 			get_decayed_same_as<handle<vk::device>>();
 
-		handle<vk::fence> fence{};
+		vk::signal_fence fence{};
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::fence>> > 0
+			count_of_decayed_same_as<vk::signal_fence> > 0
 		) {
-			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+			fence = a.template get_decayed_same_as<vk::signal_fence>();
 		}
 
 		handle<vk::queue> queue = a.template
@@ -59,7 +60,7 @@ namespace vk {
 			)(
 				queue.underlying(),
 				(uint32) submit_infos.size(),
-				submit_infos.data(),
+				submit_infos.iterator(),
 				fence.underlying()
 			)
 		};
@@ -71,7 +72,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::queue>> == 1,
 		count_of_decayed_same_as<vk::submit_info> == 1,
-		count_of_decayed_same_as<handle<vk::fence>> <= 1
+		count_of_decayed_same_as<vk::signal_fence> <= 1
 	>
 	vk::result try_queue_submit(Args&&... args) {
 		tuple a { args... };
@@ -82,12 +83,12 @@ namespace vk {
 		handle<vk::device> device = a.template
 			get_decayed_same_as<handle<vk::device>>();
 
-		handle<vk::fence> fence{};
+		vk::signal_fence fence{};
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::fence>> > 0
+			count_of_decayed_same_as<vk::signal_fence> > 0
 		) {
-			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+			fence = a.template get_decayed_same_as<vk::signal_fence>();
 		}
 
 		handle<vk::queue> queue = a.template
@@ -110,11 +111,11 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::instance>> == 1,
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::queue>> == 1,
+		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
 		count_of_decayed_same_as<vk::wait_semaphore> <= 1,
 		count_of_decayed_same_as<vk::pipeline_stages> <= 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
 		count_of_decayed_same_as<vk::signal_semaphore> <= 1,
-		count_of_decayed_same_as<handle<vk::fence>> <= 1
+		count_of_decayed_same_as<vk::signal_fence> <= 1
 	>
 	vk::result try_queue_submit(Args&&... args) {
 		tuple a { args... };
@@ -125,19 +126,19 @@ namespace vk {
 		handle<vk::device> device = a.template
 			get_decayed_same_as<handle<vk::device>>();
 
-		handle<vk::fence> fence{};
-
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::fence>> > 0
-		) {
-			fence = a.template get_decayed_same_as<handle<vk::fence>>();
-		}
-
 		handle<vk::queue> queue = a.template
 			get_decayed_same_as<handle<vk::queue>>();
 		
 		handle<vk::command_buffer> command_buffer = a.template
 			get_decayed_same_as<handle<vk::command_buffer>>();
+
+		vk::signal_fence fence{};
+
+		if constexpr (types<Args...>::template
+			count_of_decayed_same_as<vk::signal_fence> > 0
+		) {
+			fence = a.template get_decayed_same_as<vk::signal_fence>();
+		}
 
 		vk::submit_info si {
 			.command_buffer_count = 1,
@@ -156,8 +157,11 @@ namespace vk {
 			count_of_decayed_same_as<vk::signal_semaphore> > 0
 		) {
 			si.signal_semaphore_count = 1,
-			si.signal_semaphores = & a.template
-				get_decayed_same_as<vk::signal_semaphore>().underlying();
+			si.signal_semaphores =
+				(const handle<vk::semaphore>::underlying_type*)
+				& a.template get_decayed_same_as<
+					vk::signal_semaphore
+				>().underlying();
 		}
 
 		if constexpr (types<Args...>::template

@@ -53,7 +53,7 @@ namespace vk {
 			command_buffer.underlying(),
 			first,
 			(uint32) scissors.size(),
-			scissors.data()
+			scissors.iterator()
 		);
 	} // cmd_set_scissor
 

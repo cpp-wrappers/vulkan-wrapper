@@ -27,7 +27,7 @@ namespace vk {
 			vkEnumerateInstanceExtensionProperties(
 				nullptr,
 				&count,
-				instance_extensions_properties.data()
+				instance_extensions_properties.iterator()
 			)
 		};
 

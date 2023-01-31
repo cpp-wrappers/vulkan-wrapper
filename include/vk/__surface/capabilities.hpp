@@ -2,8 +2,7 @@
 
 #include "./transform.hpp"
 #include "./composite_alpha.hpp"
-#include "./min_image_count.hpp"
-
+#include "./min_max_image_count.hpp"
 #include "../__internal/extent.hpp"
 #include "../__image/usage.hpp"
  
@@ -13,7 +12,7 @@ namespace vk {
 
 	struct surface_capabilities {
 		vk::min_image_count min_image_count;
-		uint32 max_image_count;
+		vk::max_image_count max_image_count;
 		vk::extent<2> current_extent;
 		vk::extent<2> min_image_extent;
 		vk::extent<2> max_image_extent;

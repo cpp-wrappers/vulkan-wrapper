@@ -103,12 +103,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::queue>> == 1,
 		count_of_decayed_same_as<vk::wait_semaphore> == 1,
 		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
 		count_of_decayed_same_as<vk::image_index> == 1
 	>
-	vk::result try_queue_present(Args&&... args) {
+	[[nodiscard]] vk::result try_queue_present(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
@@ -122,7 +124,7 @@ namespace vk {
 
 		handle<vk::semaphore> wait_semaphore =
 			(handle<vk::semaphore>)
-			a.template get_decayed_same_as<handle<vk::queue>>();
+			a.template get_decayed_same_as<vk::wait_semaphore>();
 		
 		handle<vk::swapchain> swapchain = a.template
 			get_decayed_same_as<handle<vk::swapchain>>();

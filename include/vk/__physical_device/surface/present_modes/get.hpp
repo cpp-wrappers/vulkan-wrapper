@@ -36,7 +36,7 @@ namespace vk {
 				physical_device,
 				surface,
 				&count,
-				range.data()
+				range.iterator()
 			)
 		};
 

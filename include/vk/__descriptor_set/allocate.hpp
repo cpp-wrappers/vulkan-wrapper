@@ -43,9 +43,11 @@ namespace vk {
 			get_range_of_decayed<handle<vk::descriptor_set_layout>>();
 
 		vk::descriptor_set_allocate_info ai {
-			.descriptor_pool = pool,
+			.descriptor_pool = pool.underlying(),
 			.descriptor_set_count{ (uint32) layouts.size() },
-			.descriptor_set_layouts = layouts.iterator()
+			.descriptor_set_layouts =
+				(const handle<vk::descriptor_set_layout>::underlying_type*)
+				layouts.iterator()
 		};
 
 		return {
@@ -101,7 +103,7 @@ namespace vk {
 	template<typename... Args>
 	handle<vk::descriptor_set> allocate_descriptor_set(Args&&... args) {
 		vk::expected<handle<vk::descriptor_set>> result
-			= vk::allocate_descriptor_set(forward<Args>(args)...);
+			= vk::try_allocate_descriptor_set(forward<Args>(args)...);
 		if(result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}

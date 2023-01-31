@@ -19,7 +19,7 @@ namespace vk {
 		const handle<vk::command_buffer>::underlying_type*
 			command_buffers = nullptr;
 		uint32 signal_semaphore_count = 0;
-		const handle<vk::semaphore>* signal_semaphores = nullptr;
+		const handle<vk::semaphore>::underlying_type* signal_semaphores = nullptr;
 	};
 
 } // vk

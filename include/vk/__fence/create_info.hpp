@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/integer.hpp>
-#include <core/flag_enum.hpp>
+#include <integer.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -9,7 +9,7 @@ namespace vk {
 		signaled = 0x00000001
 	};
 
-	using fence_create_flags = flag_enum<vk::fence_create_flag>;
+	using fence_create_flags = enum_flags<vk::fence_create_flag>;
 
 	struct fence_create_info {
 		uint32                 structure_type = 8;

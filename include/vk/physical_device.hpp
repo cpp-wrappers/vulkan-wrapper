@@ -1,5 +1,8 @@
 #pragma once
 
+#include "./__physical_device/find_first_memory_type_index.hpp"
+#include "./__physical_device/get_memory_properties.hpp"
+
 #include "./__physical_device/queue_family_properties/get.hpp"
 #include "./__physical_device/queue_family_properties/for_each.hpp"
 #include "./__physical_device/queue_family_properties/get_count.hpp"

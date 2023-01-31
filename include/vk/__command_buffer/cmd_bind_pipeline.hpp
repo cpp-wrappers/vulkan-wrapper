@@ -44,7 +44,7 @@ namespace vk {
 			get_decayed_same_as<handle<vk::pipeline>>();
 
 		vk::pipeline_bind_point bind_point = a.template
-			get_decayed_same_as<handle<vk::pipeline_bind_point>>();
+			get_decayed_same_as<vk::pipeline_bind_point>();
 
 		vk::get_device_function<vk::cmd_bind_pipeline_function>(
 			instance, device

@@ -9,7 +9,7 @@
 namespace vk {
 
 	struct destroy_instance_function : vk::function<void(*)(
-		handle<vk::instance> instance,
+		handle<vk::instance>::underlying_type instance,
 		const void* allocator
 	)> {
 		static constexpr auto name = "vkDestroyInstance";
@@ -19,7 +19,7 @@ namespace vk {
 		vk::get_instance_function<vk::destroy_instance_function>(
 			instance
 		)(
-			instance,
+			instance.underlying(),
 			nullptr
 		);	
 	}

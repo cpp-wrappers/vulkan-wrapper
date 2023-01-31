@@ -43,7 +43,7 @@ namespace vk {
 				physical_device,
 				layer,
 				&count,
-				range.data()
+				range.iterator()
 			)
 		};
 

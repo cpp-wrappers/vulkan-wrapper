@@ -22,8 +22,8 @@ namespace vk {
 		vk::new_layout new_layout{ vk::image_layout::undefined };
 		vk::src_queue_family_index src_queue_family_index;
 		vk::dst_queue_family_index dst_queue_family_index;
-		handle<vk::image> image;
-		vk::image_subresource_range subresource_range;
+		handle<vk::image>::underlying_type image;
+		vk::image_subresource_range subresource_range{};
 	};
 
 } // vk

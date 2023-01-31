@@ -2,7 +2,7 @@
 
 #include "../extension_properties.hpp"
 
-#include <core/integer.hpp>
+#include <integer.hpp>
 
 namespace vk {
 

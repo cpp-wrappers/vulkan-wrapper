@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./handle.hpp"
-#include "./clear.hpp"
+#include "./clear_value.hpp"
 #include "../__internal/function.hpp"
 #include "../__image/handle.hpp"
 #include "../__image/layout.hpp"

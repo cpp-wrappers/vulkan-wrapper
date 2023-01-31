@@ -8,9 +8,9 @@
 namespace vk {
 
 	struct destroy_image_function : vk::function<void(*)(
-		handle<vk::device> device,
-		handle<vk::image>  image,
-		const void*        allocator
+		handle<vk::device>::underlying_type device,
+		handle<vk::image>::underlying_type image,
+		const void* allocator
 	)> {
 		static constexpr auto name = "vkDestroyImage";
 	};
@@ -23,7 +23,7 @@ namespace vk {
 		vk::get_device_function<vk::destroy_image_function>(
 			instance, device
 		)(
-			device, image, nullptr
+			device.underlying(), image.underlying(), nullptr
 		);
 	}
 

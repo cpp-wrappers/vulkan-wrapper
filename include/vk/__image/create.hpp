@@ -59,28 +59,28 @@ namespace vk {
 		ci.usages = a.template get_decayed_same_as<vk::image_usages>();
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::image_create_flags>
+			count_of_decayed_same_as<vk::image_create_flags> > 0
 		) {
 			ci.flags = a.template
 				get_decayed_same_as<vk::image_create_flags>();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::mip_levels>
+			count_of_decayed_same_as<vk::mip_levels> > 0
 		) {
 			ci.mip_levels = a.template
 				get_decayed_same_as<vk::mip_levels>();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::array_layers>
+			count_of_decayed_same_as<vk::array_layers> > 0
 		) {
 			ci.array_layers = a.template
 				get_decayed_same_as<vk::array_layers>();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::sample_count>
+			count_of_decayed_same_as<vk::sample_count> > 0
 		) {
 			ci.samples = a.template
 				get_decayed_same_as<vk::sample_count>();
@@ -94,14 +94,14 @@ namespace vk {
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::initial_layout>
+			count_of_decayed_same_as<vk::initial_layout> > 0
 		) {
 			ci.initial_layout = a.template
 				get_decayed_same_as<vk::initial_layout>();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::queue_family_index>
+			count_of_range_of_decayed<vk::queue_family_index> > 0
 		) {
 			auto& queues = a.template
 				get_range_of_decayed<vk::queue_family_index>();

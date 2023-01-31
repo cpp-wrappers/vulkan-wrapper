@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../memory_type.hpp"
-#include "../memory_heap.hpp"
+#include "../__internal/memory_type.hpp"
+#include "../__internal/memory_heap.hpp"
 
 namespace vk {
 

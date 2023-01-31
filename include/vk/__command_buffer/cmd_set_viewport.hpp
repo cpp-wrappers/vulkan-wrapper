@@ -2,19 +2,24 @@
 
 #include "./handle.hpp"
 #include "../__internal/function.hpp"
-#include "../__internal/rect2d.hpp"
+#include "../__internal/viewport.hpp"
 #include "../__instance/handle.hpp"
 #include "../__device/handle.hpp"
 
 namespace vk {
 
-	struct first_viewport_index { uint32 _; };
+	class first_viewport_index {
+		uint32 value_;
+	public:
+		first_viewport_index(uint32 value) : value_{ value } {}
+		operator uint32 () { return value_; }
+	};
 
 	struct cmd_set_viewport_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-		vk::first_viewport_index first_viewport,
+		uint32 first_viewport_index,
 		uint32 viewport_count,
-		const vk::rect2d* viewports
+		const vk::viewport* viewports
 	)> {
 		static constexpr auto name = "vkCmdSetViewport";
 	};
@@ -25,7 +30,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
 		count_of_decayed_same_as<vk::first_viewport_index> <= 1,
-		count_of_range_of_decayed<vk::rect2d> == 1
+		count_of_range_of_decayed<vk::viewport> == 1
 	>
 	void cmd_set_viewport(Args&&... args) {
 		tuple a { args... };
@@ -43,19 +48,21 @@ namespace vk {
 		
 		if constexpr (types<Args...>::template
 			count_of_decayed_same_as<vk::first_viewport_index> > 0
-		) { first = a.template get_decayed_same_as<vk::first_viewport_index>(); }
+		) {
+			first = a.template get_decayed_same_as<vk::first_viewport_index>();
+		}
 
-		auto& scissors = a.template get_range_of_decayed<vk::rect2d>();
+		auto& viewports = a.template get_range_of_decayed<vk::viewport>();
 
 		vk::get_device_function<vk::cmd_set_viewport_function>(
 			instance, device
 		)(
 			command_buffer.underlying(),
 			first,
-			(uint32) scissors.size(),
-			scissors.data()
+			(uint32) viewports.size(),
+			viewports.iterator()
 		);
-	} // cmd_set_scissor
+	} // cmd_set_viewport
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
@@ -63,7 +70,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
 		count_of_decayed_same_as<vk::first_viewport_index> <= 1,
-		count_of_decayed_same_as<vk::rect2d> == 1
+		count_of_decayed_same_as<vk::viewport> == 1
 	>
 	void cmd_set_viewport(Args&&... args) {
 		tuple a { args... };
@@ -81,14 +88,16 @@ namespace vk {
 		
 		if constexpr (types<Args...>::template
 			count_of_decayed_same_as<vk::first_viewport_index> > 0
-		) { first = a.template get_decayed_same_as<vk::first_viewport_index>(); }
+		) {
+			first = a.template get_decayed_same_as<vk::first_viewport_index>();
+		}
 
-		vk::rect2d scissor = a.template get_decayed_same_as<vk::rect2d>();
+		vk::viewport viewport = a.template get_decayed_same_as<vk::viewport>();
 
 		vk::cmd_set_viewport(
-			instance, device, command_buffer, first, array{ scissor }
+			instance, device, command_buffer, first, array{ viewport }
 		);
-	} // cmd_set_scissor
+	} // cmd_set_viewport
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
@@ -125,8 +134,11 @@ namespace vk {
 			device,
 			command_buffer,
 			first,
-			vk::rect2d{ .extent{ extent } }
+			vk::viewport {
+				.width = (float) extent.width(),
+				.height = (float) extent.height()
+			}
 		);
-	} // cmd_set_scissor
+	} // cmd_set_viewport
 
 } // vk

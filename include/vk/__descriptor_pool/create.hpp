@@ -23,7 +23,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::instance>> == 1,
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<vk::descriptor_pool_create_flags> <= 1,
-		count_of_decayed_same_as<vk::max_sets> <= 1,
+		count_of_decayed_same_as<vk::max_sets> == 1,
 		count_of_range_of_decayed<vk::descriptor_pool_size> == 1
 	>
 	vk::expected<handle<vk::descriptor_pool>>

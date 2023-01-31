@@ -56,7 +56,7 @@ namespace vk {
 				get_range_of_decayed<vk::copy_descriptor_set>();
 
 			copy_count = (uint32) copies0.size();
-			copies = copies0.data();
+			copies = copies0.iterator();
 		}
 
 		vk::get_device_function<vk::update_descriptor_sets_function>(
@@ -79,8 +79,8 @@ namespace vk {
 	void update_descriptor_set(Args&&... args) {
 		tuple a { args... };
 		return vk::update_descriptor_sets(
-			a.template get_decayed_same_as<vk::instance>(),
-			a.template get_decayed_same_as<vk::device>(),
+			a.template get_decayed_same_as<handle<vk::instance>>(),
+			a.template get_decayed_same_as<handle<vk::device>>(),
 			array {
 				a.template get_decayed_same_as<vk::write_descriptor_set>()
 			}
@@ -96,8 +96,8 @@ namespace vk {
 	void update_descriptor_set(Args&&... args) {
 		tuple a { args... };
 		return vk::update_descriptor_sets(
-			a.template get_decayed_same_as<vk::instance>(),
-			a.template get_decayed_same_as<vk::device>(),
+			a.template get_decayed_same_as<handle<vk::instance>>(),
+			a.template get_decayed_same_as<handle<vk::device>>(),
 			array {
 				a.template get_decayed_same_as<vk::copy_descriptor_set>()
 			}

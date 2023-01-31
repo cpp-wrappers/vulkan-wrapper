@@ -22,7 +22,7 @@ namespace vk {
 		const void* next = nullptr;
 		handle<vk::descriptor_set>::underlying_type dst_set;
 		vk::dst_binding dst_binding;
-		vk::dst_array_element dst_array_element{ 1 };
+		vk::dst_array_element dst_array_element{ 0 };
 		vk::count count;
 		vk::descriptor_type descriptor_type;
 		const vk::descriptor_image_info* image_info{};
@@ -33,7 +33,7 @@ namespace vk {
 		requires types<Args...>::template exclusively_satisfy_predicates<
 			count_of_decayed_same_as<handle<vk::descriptor_set>> == 1,
 			count_of_decayed_same_as<vk::dst_binding> == 1,
-			count_of_decayed_same_as<vk::dst_array_element> == 1,
+			count_of_decayed_same_as<vk::dst_array_element> <= 1,
 			count_of_decayed_same_as<vk::descriptor_type> == 1,
 			count_of_range_of_decayed<vk::descriptor_image_info> <= 1,
 			count_of_range_of_decayed<vk::descriptor_buffer_info> <= 1,
@@ -53,27 +53,22 @@ namespace vk {
 		)
 		write_descriptor_set(Args&&... args) {
 			tuple a { args... };
-
-			handle<vk::instance> instance = a.template
-				get_decayed_same_as<handle<vk::instance>>();
-
-			handle<vk::device> device = a.template
-				get_decayed_same_as<handle<vk::device>>();
-
-			handle<vk::command_buffer> command_buffer = a.template
-				get_decayed_same_as<handle<vk::command_buffer>>();
 			
 			dst_set = a.template
-				get_decayed_same_as<handle<vk::descriptor_set>>();
+				get_decayed_same_as<handle<vk::descriptor_set>>().underlying();
 
 			dst_binding = a.template
-				get_dacayed_same_as<vk::dst_binding>();
-
-			dst_array_element = a.template
-				get_decayed_same_as<vk::dst_array_element>();
+				get_decayed_same_as<vk::dst_binding>();
 
 			descriptor_type = a.template
 				get_decayed_same_as<vk::descriptor_type>();
+
+			if constexpr (types<Args...>::template
+				count_of_decayed_same_as<vk::dst_array_element> > 0
+			) {
+				dst_array_element = a.template
+					get_decayed_same_as<vk::dst_array_element>();
+			}
 
 			if constexpr (types<Args...>::template
 				count_of_range_of_decayed<vk::descriptor_image_info> > 0

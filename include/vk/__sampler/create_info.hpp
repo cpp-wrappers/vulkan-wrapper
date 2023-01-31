@@ -1,12 +1,12 @@
 #pragma once
 
-#include "border_color.hpp"
-#include "filter.hpp"
-#include "mipmap_mode.hpp"
-#include "address_mode.hpp"
-#include "../compare_op.hpp"
+#include "./border_color.hpp"
+#include "./filter.hpp"
+#include "./mipmap_mode.hpp"
+#include "./address_mode.hpp"
+#include "../__internal/compare_op.hpp"
 
-#include <core/flag_enum.hpp>
+#include <enum_flags.hpp>
 
 namespace vk {
 
@@ -15,7 +15,7 @@ namespace vk {
 		subsampled_coarse_reconstruction = 0x00000002,
 	};
 
-	using sampler_create_flags = flag_enum<vk::sampler_create_flag>;
+	using sampler_create_flags = enum_flags<vk::sampler_create_flag>;
 
 	struct mip_lod_bias             { float  _; };
 	struct anisotropy_enable        { uint32 _; };
