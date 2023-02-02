@@ -19,4 +19,5 @@
 #include "./__command_buffer/cmd_push_constants.hpp"
 #include "./__command_buffer/cmd_set_scissor.hpp"
 #include "./__command_buffer/cmd_set_viewport.hpp"
+#include "./__command_buffer/cmd_update_buffer.hpp"
 

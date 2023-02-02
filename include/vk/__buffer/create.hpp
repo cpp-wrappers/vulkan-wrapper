@@ -3,7 +3,7 @@
 #include "./handle.hpp"
 #include "./create_info.hpp"
 #include "../__internal/function.hpp"
-#include "../__internal/result.hpp"
+#include "../__internal/unexpected_handler.hpp"
 #include "../__device/handle.hpp"
 
 #include <types.hpp>
@@ -85,7 +85,16 @@ namespace vk {
 		if(result.error()) return result;
 
 		return handle<vk::buffer>{ buffer };
+	}
 
+	template<typename... Args>
+	handle<vk::buffer> create_buffer(Args&&... args) {
+		vk::expected<handle<vk::buffer>> result
+			= vk::try_create_buffer(forward<Args>(args)...);
+		if(result.is_unexpected()) {
+			vk::unexpected_handler(result.get_unexpected());
+		}
+		return result.get_expected();
 	}
 
 } // vk

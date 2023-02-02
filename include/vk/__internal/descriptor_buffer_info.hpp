@@ -22,9 +22,11 @@ namespace vk {
 		>
 		descriptor_buffer_info(Args&&... args) {
 			tuple a { args... };
-			buffer = a.template get_decayed_same_as<handle<vk::buffer>>();
 
-			buffer = a.template get_decayed_same_as<vk::memory_size>();
+			buffer = a.template
+				get_decayed_same_as<handle<vk::buffer>>().underlying();
+
+			size = a.template get_decayed_same_as<vk::memory_size>();
 
 			if constexpr (types<Args...>::template
 				count_of_decayed_same_as<vk::memory_offset> > 0

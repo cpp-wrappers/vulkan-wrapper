@@ -38,4 +38,25 @@ namespace vk {
 		vk::unexpected_handler();
 	}
 
+	inline vk::memory_type_index find_first_memory_type_index(
+		handle<vk::instance> instance,
+		handle<vk::physical_device> physical_device,
+		vk::memory_properties required_properties
+	) {
+		vk::physical_device_memory_properties props
+			= vk::get_physical_device_memory_properties(
+				instance, physical_device
+			);
+
+		vk::memory_type_indices indices;
+
+		for(uint32 i = 0; i < props.memory_type_count; ++i) {
+			indices.set(vk::memory_type_index{ i });
+		}
+
+		return vk::find_first_memory_type_index(
+			instance, physical_device, required_properties, indices
+		);
+	}
+
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./vk/buffer.hpp"
 #include "./vk/command_buffer.hpp"
 #include "./vk/command_pool.hpp"
 #include "./vk/debug_report_callback.hpp"
