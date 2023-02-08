@@ -60,8 +60,8 @@ namespace vk {
 			command_buffer.underlying(),
 			pipeline_layout.underlying(),
 			range.stages,
-			range.offset,
-			range.size,
+			(uint32) range.offset,
+			(uint32) range.size,
 			values
 		);
 	}

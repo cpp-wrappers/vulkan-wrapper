@@ -13,6 +13,7 @@
 #include "./__command_buffer/cmd_clear_color_image.hpp"
 #include "./__command_buffer/cmd_copy_buffer_to_image.hpp"
 #include "./__command_buffer/cmd_copy_buffer.hpp"
+#include "./__command_buffer/cmd_draw_indirect.hpp"
 #include "./__command_buffer/cmd_draw.hpp"
 #include "./__command_buffer/cmd_end_render_pass.hpp"
 #include "./__command_buffer/cmd_pipeline_barrier.hpp"

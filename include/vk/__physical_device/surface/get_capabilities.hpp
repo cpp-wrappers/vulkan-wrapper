@@ -25,18 +25,18 @@ namespace vk {
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
 		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::surface>> == 1,
-		count_of_decayed_same_as<handle<vk::physical_device>> == 1
+		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
+		count_of_decayed_same_as<handle<vk::surface>> == 1
 	>
 	vk::expected<vk::surface_capabilities>
 	try_get_physical_device_surface_capabilities(Args&&... args) {
-		handle<vk::instance> instance = tuple{ args... }.template
+		handle<vk::instance> instance = tuple { args... }.template
 			get_decayed_same_as<handle<vk::instance>>();
 
-		handle<vk::physical_device> physical_device = tuple{ args... }.template
+		handle<vk::physical_device> physical_device = tuple { args... }.template
 			get_decayed_same_as<handle<vk::physical_device>>();
 
-		handle<vk::surface> surface = tuple{ args... }.template
+		handle<vk::surface> surface = tuple { args... }.template
 			get_decayed_same_as<handle<vk::surface>>();
 
 		vk::surface_capabilities caps;
@@ -52,6 +52,10 @@ namespace vk {
 				&caps
 			)
 		};
+
+		if(caps.max_image_count == 0) { // attention, please.
+			caps.max_image_count = uint32(0) - uint32(1);
+		}
 
 		if(result.error()) return result;
 

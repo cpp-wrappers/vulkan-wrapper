@@ -36,16 +36,16 @@ namespace vk {
 	try_create_device(Args&&... args) {
 		vk::device_create_info ci{};
 
-		handle<vk::instance>& instance = tuple{ args... }.template
+		handle<vk::instance> instance = tuple { args... }.template
 			get_decayed_same_as<handle<vk::instance>>();
 
-		handle<vk::physical_device>& physical_device = tuple{ args... }.template
+		handle<vk::physical_device> physical_device = tuple { args... }.template
 			get_decayed_same_as<handle<vk::physical_device>>();
 
 		if constexpr (types<Args...>::template
 			count_of_range_of_decayed<vk::queue_create_info> > 0
 		) {
-			const auto& queue_create_infos = tuple{ args... }.template
+			const auto& queue_create_infos = tuple { args... }.template
 				get_range_of_decayed<vk::queue_create_info>();
 
 			ci.queue_create_info_count = (uint32) queue_create_infos.size();
@@ -55,7 +55,7 @@ namespace vk {
 		if constexpr (types<Args...>::template
 			count_of_range_of_decayed<vk::extension_name> > 0
 		) {
-			const auto& extensions = tuple{ args... }.template
+			const auto& extensions = tuple { args... }.template
 				get_range_of_decayed<vk::extension_name>();
 
 			ci.enabled_extension_count = (uint32) extensions.size();

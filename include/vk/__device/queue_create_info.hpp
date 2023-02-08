@@ -5,6 +5,7 @@
 #include <enum_flags.hpp>
 #include <types.hpp>
 #include <tuple.hpp>
+#include <range.hpp>
 
 namespace vk {
 
@@ -12,11 +13,7 @@ namespace vk {
 	class queue_priority {
 		[[maybe_unused]] float value_;
 	public:
-		queue_priority(float value) : value_{ value } {}
-	};
-
-	struct queue_priorities {
-		const queue_priority* _;
+		queue_priority(float value) : value_ { value } {}
 	};
 
 	enum queue_create_flag {
@@ -29,28 +26,26 @@ namespace vk {
 		enum_flags<queue_create_flag> flags{};
 		vk::queue_family_index        queue_family_index;
 		vk::queue_count               queue_count;
-		vk::queue_priorities          queue_priorities;
+		const vk::queue_priority*     queue_priorities;
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
 			count_of_decayed_same_as<vk::queue_family_index> == 1,
 			count_of_decayed_same_as<vk::queue_count> == 1,
-			count_of_decayed_same_as<vk::queue_priorities> == 1
+			count_of_satisfying_predicate<
+				is_borrowed_range && is_range_of_decayed<vk::queue_priority>
+			> == 1
 		>
-		queue_create_info(Args... args) :
-			queue_family_index {
-				tuple{ args... }.template
-					get_decayed_same_as<vk::queue_family_index>()
-			},
-			queue_count {
-				tuple{ args... }.template
-					get_decayed_same_as<vk::queue_count>()
-			},
-			queue_priorities {
-				tuple{ args... }.template
-					get_decayed_same_as<vk::queue_priorities>()
-			}
-		{}
+		queue_create_info(Args&&... args) {
+			queue_family_index = tuple { args... }.template
+				get_decayed_same_as<vk::queue_family_index>();
+
+			queue_count = tuple { args... }.template
+				get_decayed_same_as<vk::queue_count>();
+
+			queue_priorities = tuple { args... }.template
+				get_range_of_decayed<vk::queue_priority>().iterator();
+		}
 
 	}; // device_queue_create_info
 	

@@ -4,11 +4,17 @@
 
 namespace vk {
 
-	template<nuint Dim>
+	template<nuint Dim = 1>
 	struct offset;
 
 	template<>
-	struct offset<1> { int32 _; };
+	struct offset<1> {
+		int32 value_;
+		offset() = default;
+		offset(int32 value) : value_{ value } {}
+		operator int32() const { return value_; }
+		operator uint32() const { return value_; }
+	};
 
 	offset(int32) -> offset<1>;
 

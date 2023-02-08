@@ -1,13 +1,12 @@
 #pragma once
 
 #include "../../__internal/binding.hpp"
+#include "../../__internal/stride.hpp"
 
 #include <types.hpp>
 #include <tuple.hpp>
 
 namespace vk {
-
-	struct stride { uint32 _; };
 	
 	enum class vertex_input_rate {
 		vertex   = 0,
