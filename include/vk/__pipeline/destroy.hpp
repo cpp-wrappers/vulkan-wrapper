@@ -5,12 +5,6 @@
 #include "../__pipeline/handle.hpp"
 #include "../__instance/handle.hpp"
 
-extern "C" VK_ATTR void VK_CALL vkDestroyPipeline(
-	handle<vk::device>   device,
-	handle<vk::pipeline> pipeline,
-	const void*          allocator
-);
-
 namespace vk {
 
 	struct destroy_pipeline_function : vk::function<void(*)(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./handle.hpp"
+#include "./memory_barrier.hpp"
 #include "./buffer_memory_barrier.hpp"
 #include "./image_memory_barrier.hpp"
 #include "../__internal/function.hpp"
@@ -8,19 +9,6 @@
 #include "../__pipeline/stage.hpp"
 #include "../__instance/handle.hpp"
 #include "../__device/handle.hpp"
-
-extern "C" VK_ATTR void VK_CALL vkCmdPipelineBarrier(
-	handle<vk::command_buffer>       command_buffer,
-	vk::src_stages                   src_stage_mask,
-	vk::dst_stages                   dst_stage_mask,
-	vk::dependencies                 dependency_flags,
-	uint32                           memory_barrier_count,
-	const void*                      mamory_barriers,
-	uint32                           buffer_memory_barrier_count,
-	const vk::buffer_memory_barrier* buffer_memory_barriers,
-	uint32                           image_memory_barrier_count,
-	const vk::image_memory_barrier*  image_memory_barriers
-);
 
 namespace vk {
 
@@ -30,7 +18,7 @@ namespace vk {
 		vk::dst_stages dst_stage_mask,
 		vk::dependencies dependency_flags,
 		uint32 memory_barrier_count,
-		const void* mamory_barriers,
+		const vk::memory_barrier* memory_barriers,
 		uint32 buffer_memory_barrier_count,
 		const vk::buffer_memory_barrier* buffer_memory_barriers,
 		uint32 image_memory_barrier_count,
@@ -47,6 +35,7 @@ namespace vk {
 		count_of_decayed_same_as<vk::src_stages> == 1,
 		count_of_decayed_same_as<vk::dst_stages> == 1,
 		count_of_decayed_same_as<vk::dependencies> <= 1,
+		count_of_range_of_decayed<vk::memory_barrier> <= 1,
 		count_of_range_of_decayed<vk::buffer_memory_barrier> <= 1,
 		count_of_range_of_decayed<vk::image_memory_barrier> <= 1
 	>
@@ -75,6 +64,18 @@ namespace vk {
 		) {
 			dependencies = a.template
 				get_decayed_same_as<vk::dependencies>();
+		}
+
+		uint32 memory_barrier_count{};
+		const vk::memory_barrier* memory_barriers{};
+
+		if constexpr(types<Args...>::template
+			count_of_range_of_decayed<vk::memory_barrier> > 0
+		) {
+			auto& memory_barriers0 = a.template
+				get_range_of_decayed<vk::memory_barrier>();
+			memory_barrier_count = (uint32) memory_barriers0.size();
+			memory_barriers = memory_barriers0.iterator();
 		}
 
 		uint32 buffer_barrier_count{};
@@ -108,13 +109,13 @@ namespace vk {
 			src_stages,
 			dst_stages,
 			dependencies,
-			0,
-			nullptr,
+			memory_barrier_count,
+			memory_barriers,
 			buffer_barrier_count,
 			buffer_barriers,
 			image_barrier_count,
 			image_barriers
 		);
-	}
+	} // cmd_pipeline_barrier
 
 } // vk

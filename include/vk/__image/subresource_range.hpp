@@ -13,11 +13,11 @@ namespace vk {
 	struct layer_count { uint32 _; };
 	
 	struct image_subresource_range {
-		vk::image_aspects aspect_mask{ vk::image_aspect::color };
-		vk::base_mip_level base_mip_level{ 0 };
-		vk::level_count level_count{ 1 };
-		vk::base_array_layer base_array_layer{ 0 };
-		vk::layer_count layer_count{ 1 };
+		vk::image_aspects aspect_mask { vk::image_aspect::color };
+		vk::base_mip_level base_mip_level { 0 };
+		vk::level_count level_count { 1 };
+		vk::base_array_layer base_array_layer { 0 };
+		vk::layer_count layer_count { 1 };
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<

@@ -9,6 +9,11 @@ namespace vk {
 
 	struct device;
 
+	template<>
+	struct object_type_t<vk::device> {
+		static constexpr auto value = vk::object_type::device;
+	};
+
 	enum wait_all : bool {};
 
 } // vk

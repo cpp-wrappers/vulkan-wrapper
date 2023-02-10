@@ -1,11 +1,18 @@
 #pragma once
 
+#include "../__internal/object_type.hpp"
+
 #include <handle.hpp>
 #include <integer.hpp>
 
 namespace vk {
 
 	struct render_pass;
+
+	template<>
+	struct object_type_t<vk::render_pass> {
+		static constexpr auto value = vk::object_type::render_pass;
+	};
 
 } // vk
 

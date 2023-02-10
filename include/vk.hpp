@@ -4,6 +4,7 @@
 #include "./vk/command_buffer.hpp"
 #include "./vk/command_pool.hpp"
 #include "./vk/debug_report_callback.hpp"
+#include "./vk/debug_utils.hpp"
 #include "./vk/descriptor_pool.hpp"
 #include "./vk/descriptor_set.hpp"
 #include "./vk/descriptor_set_layout.hpp"

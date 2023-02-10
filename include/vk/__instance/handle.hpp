@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../__internal/count.hpp"
+#include "../__internal/object_type.hpp"
 #include "../__physical_device/handle.hpp"
 
 #include <integer.hpp>
@@ -11,6 +12,11 @@
 namespace vk {
 
 	struct instance;
+
+	template<>
+	struct object_type_t<vk::instance> {
+		static constexpr auto value = vk::object_type::instance;
+	};
 
 } // vk
 

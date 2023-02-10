@@ -1,12 +1,18 @@
 #pragma once
 
 #include "./queue_family_properties.hpp"
+#include "../__internal/object_type.hpp"
 
 #include <handle.hpp>
 
 namespace vk {
 
 	struct physical_device;
+
+	template<>
+	struct object_type_t<vk::physical_device> {
+		static constexpr auto value = vk::object_type::physical_device;
+	};
 
 	struct instance;
 

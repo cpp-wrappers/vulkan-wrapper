@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./__physical_device/find_first_memory_type_index.hpp"
+#include "./__physical_device/get_format_properties.hpp"
 #include "./__physical_device/get_memory_properties.hpp"
 #include "./__physical_device/get_properties.hpp"
 

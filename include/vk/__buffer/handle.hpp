@@ -1,11 +1,18 @@
 #pragma once
 
+#include "../__internal/object_type.hpp"
+
 #include <handle.hpp>
 #include <integer.hpp>
 
 namespace vk {
 
 	struct buffer;
+
+	template<>
+	struct object_type_t<vk::buffer> {
+		static constexpr auto value = vk::object_type::buffer;
+	};
 
 } // vk
 

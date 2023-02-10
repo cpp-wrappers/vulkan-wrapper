@@ -5,12 +5,6 @@
 #include "../__device/handle.hpp"
 #include "../__descriptor_set_layout/handle.hpp"
 
-extern "C" VK_ATTR void VK_CALL vkDestroyDescriptorSetLayout(
-	handle<vk::device>                device,
-	handle<vk::descriptor_set_layout> descriptor_set_layout,
-	const void*                       allocator
-);
-
 namespace vk {
 
 	struct destroy_descriptor_set_layout_function : vk::function<void(*)(

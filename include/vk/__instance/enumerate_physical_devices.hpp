@@ -5,17 +5,11 @@
 #include "../__internal/function.hpp"
 #include "../__internal/unexpected_handler.hpp"
 
-/*extern "C" VK_ATTR int32 VK_CALL vkEnumeratePhysicalDevices(
-	handle<vk::instance>         instance,
-	uint32*                      physical_device_count,
-	handle<vk::physical_device>* physical_devices
-);*/
-
 namespace vk {
 	struct enumerate_physical_devices_function : vk::function<int32(VK_PTR*)(
-		vk::instance*                instance,
-		uint32*                      physical_device_count,
-		vk::physical_device**        physical_devices
+		handle<vk::instance>::underlying_type instance,
+		uint32* physical_device_count,
+		handle<vk::physical_device>::underlying_type* physical_devices
 	)> {
 		static constexpr auto name = "vkEnumeratePhysicalDevices";
 	};

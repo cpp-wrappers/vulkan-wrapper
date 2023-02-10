@@ -14,8 +14,8 @@ namespace vk {
 
 	struct cmd_bind_pipeline_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-	vk::pipeline_bind_point pipeline_bind_point,
-	handle<vk::pipeline>::underlying_type pipeline
+		vk::pipeline_bind_point pipeline_bind_point,
+		handle<vk::pipeline>::underlying_type pipeline
 	)> {
 		static constexpr auto name = "vkCmdBindPipeline";
 	};

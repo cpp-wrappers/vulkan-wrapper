@@ -37,7 +37,7 @@ namespace vk {
 		count_of_decayed_same_as<vk::image_tiling> == 1,
 		count_of_decayed_same_as<vk::image_usages> == 1,
 		count_of_decayed_same_as<vk::sharing_mode> <= 1,
-		count_of_range_of_decayed<vk::queue_family_index> == 1,
+		count_of_range_of_decayed<vk::queue_family_index> <= 1,
 		count_of_decayed_same_as<vk::initial_layout> <= 1
 	>
 	vk::expected<handle<vk::image>>

@@ -9,7 +9,8 @@ namespace vk {
 
 	template<>
 	struct offset<1> {
-		int32 value_;
+		int32 value_ = 0;
+
 		offset() = default;
 		offset(int32 value) : value_{ value } {}
 		operator int32() const { return value_; }

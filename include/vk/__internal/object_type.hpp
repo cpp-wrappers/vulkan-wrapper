@@ -1,0 +1,62 @@
+#pragma once
+
+namespace vk {
+
+	template<typename>
+	struct object_type_t;
+
+	enum class object_type {
+		unknown = 0,
+		instance = 1,
+		physical_device = 2,
+		device = 3,
+		queue = 4,
+		semaphore = 5,
+		command_buffer = 6,
+		fence = 7,
+		device_memory = 8,
+		buffer = 9,
+		image = 10,
+		event = 11,
+		query_pool = 12,
+		buffer_view = 13,
+		image_view = 14,
+		shader_module = 15,
+		pipeline_cache = 16,
+		pipeline_layout = 17,
+		render_pass = 18,
+		pipeline = 19,
+		descriptor_set_layout = 20,
+		sampler = 21,
+		descriptor_pool = 22,
+		descriptor_set = 23,
+		framebuffer = 24,
+		command_pool = 25,
+		sampler_ycbcr_conversion = 1000156000,
+		descriptor_update_template = 1000085000,
+		private_data_slot = 1000295000,
+		surface_khr = 1000000000,
+		swapchain_khr = 1000001000,
+		display_khr = 1000002000,
+		display_mode_khr = 1000002001,
+		debug_report_callback_ext = 1000011000,
+		video_session_khr = 1000023000,
+		video_session_parameters_khr = 1000023001,
+		cu_module_nvx = 1000029000,
+		cu_function_nvx = 1000029001,
+		debug_utils_messenger_ext = 1000128000,
+		acceleration_structure_khr = 1000150000,
+		validation_cache_ext = 1000160000,
+		acceleration_structure_nv = 1000165000,
+		performance_configuration_intel = 1000210000,
+		deferred_operation_khr = 1000268000,
+		indirect_commands_layout_nv = 1000277000,
+		buffer_collection_fuchsia = 1000366000,
+		micromap_ext = 1000396000,
+		optical_flow_session_nv = 1000464000,
+		descriptor_update_template_khr = descriptor_update_template,
+		sampler_ycbcr_conversion_khr = sampler_ycbcr_conversion,
+		private_data_slot_ext = private_data_slot,
+	};
+
+}

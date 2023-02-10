@@ -13,10 +13,10 @@ namespace vk {
 	struct a { vk::component_swizzle _; };
 
 	struct component_mapping {
-		vk::r r{ vk::component_swizzle::identity };
-		vk::g g{ vk::component_swizzle::identity };
-		vk::b b{ vk::component_swizzle::identity };
-		vk::a a{ vk::component_swizzle::identity };
+		vk::r r { vk::component_swizzle::identity };
+		vk::g g { vk::component_swizzle::identity };
+		vk::b b { vk::component_swizzle::identity };
+		vk::a a { vk::component_swizzle::identity };
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<

@@ -60,7 +60,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
 		count_of_decayed_same_as<handle<vk::framebuffer>> == 1,
 		count_of_decayed_same_as<vk::render_area> == 1,
-		count_of_range_of_decayed<vk::clear_value> == 1
+		count_of_range_of_decayed<vk::clear_value> <= 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
@@ -80,8 +80,17 @@ namespace vk {
 		handle<vk::framebuffer> framebuffer = a.template
 			get_decayed_same_as<handle<vk::framebuffer>>();
 
-		auto& clear_values = a.template
-			get_range_of_decayed<vk::clear_value>();
+		vk::clear_value* clear_values = nullptr;
+		uint32 clear_values_count = 0;
+
+		if constexpr(types<Args...>::template
+			count_of_range_of_decayed<vk::clear_value> > 0
+		) {
+			auto& clear_values0 = a.template
+				get_range_of_decayed<vk::clear_value>();
+			clear_values = clear_values0.iterator();
+			clear_values_count = clear_values0.size();
+		}
 
 		vk::render_area render_area = a.template
 			get_decayed_same_as<vk::render_area>();
@@ -94,8 +103,8 @@ namespace vk {
 				.render_pass = render_pass.underlying(),
 				.framebuffer = framebuffer.underlying(),
 				.render_area = render_area,
-				.clear_value_count = (uint32) clear_values.size(),
-				.clear_values = clear_values.iterator()
+				.clear_value_count = clear_values_count,
+				.clear_values = clear_values
 			}
 		);
 	} // cmd_begin_render_pass
