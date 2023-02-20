@@ -13,14 +13,20 @@
 
 namespace vk {
 
-	struct first_set { uint32 _; };
+	class first_set {
+		uint32 value_;
+	public:
+		first_set() = default;
+		first_set(uint32 value) : value_ { value } {}
+		operator uint32 () const { return value_; }
+	};
 	struct dynamic_offset { uint32 _; };
 
 	struct cmd_bind_descriptor_sets_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
 		vk::pipeline_bind_point pipeline_bind_point,
 		handle<vk::pipeline_layout>::underlying_type layout,
-		vk::first_set first_set,
+		uint32 first_set,
 		uint32 descriptor_set_count,
 		const handle<vk::descriptor_set>::underlying_type* descriptor_sets,
 		uint32 dynamic_offset_count,
@@ -88,7 +94,7 @@ namespace vk {
 			command_buffer.underlying(),
 			bind_point,
 			pipeline_layout.underlying(),
-			first,
+			(uint32) first,
 			(uint32) sets.size(),
 			(const handle<vk::descriptor_set>::underlying_type*)
 				sets.iterator(),

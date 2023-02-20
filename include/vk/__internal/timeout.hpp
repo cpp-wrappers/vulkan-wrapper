@@ -4,6 +4,11 @@
 
 namespace vk {
 
-	struct timeout { uint64 _; };
+	class timeout {
+		uint64 value_;
+	public:
+		timeout(uint64 value) : value_ { value } {}
+		operator uint64 () const { return value_; }
+	};
 
 } // vk

@@ -15,7 +15,7 @@ namespace vk {
 
 	struct cmd_bind_vertex_buffers_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-		vk::first_binding first_binding,
+		uint32 first_binding,
 		uint32 binding_count,
 		const handle<vk::buffer>::underlying_type* buffers,
 		const vk::memory_offset* offsets

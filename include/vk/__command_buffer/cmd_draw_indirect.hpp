@@ -23,9 +23,9 @@ namespace vk {
 	struct cmd_draw_indirect_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
 		handle<vk::buffer>::underlying_type buffer,
-		vk::memory_offset offset,
-		vk::draw_count draw_count,
-		vk::stride stride
+		uint64 /*vk::memory_offset*/ offset,
+		uint32 /*vk::draw_count*/ draw_count,
+		uint32 /*vk::stride*/ stride
 	)> {
 		static constexpr auto name = "vkCmdDrawIndirect";
 	};

@@ -18,7 +18,7 @@ namespace vk {
 	struct acquire_next_image_function : vk::function<int32(*)(
 		handle<vk::device>::underlying_type device,
 		handle<vk::swapchain>::underlying_type swapchain,
-		vk::timeout timeout,
+		uint64 /*vk::timeout*/ timeout,
 		handle<vk::semaphore>::underlying_type semaphore,
 		handle<vk::fence>::underlying_type fence,
 		uint32* image_index

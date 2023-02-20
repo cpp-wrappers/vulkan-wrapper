@@ -8,7 +8,7 @@
 namespace vk {
 
 	struct buffer_image_copy {
-		vk::memory_offset buffer_offset;
+		uint64 /*vk::memory_offset*/ buffer_offset;
 		uint32 buffer_row_length;
 		uint32 buffer_image_height;
 		vk::image_subresource_layers image_subresource;

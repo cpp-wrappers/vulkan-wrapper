@@ -18,7 +18,7 @@ namespace vk {
 		handle<vk::device>::underlying_type device,
 		handle<vk::image>::underlying_type image,
 		handle<vk::device_memory>::underlying_type memory,
-		vk::device_size memory_offset
+		uint64 /*vk::device_size*/ memory_offset
 	)> {
 		static constexpr auto name = "vkBindImageMemory";
 	};

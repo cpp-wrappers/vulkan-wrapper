@@ -16,7 +16,7 @@ namespace vk {
 	struct cmd_push_constants_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
 		handle<vk::pipeline_layout>::underlying_type layout,
-		vk::shader_stages stages,
+		int /*vk::shader_stages*/ stages,
 		uint32 offset,
 		uint32 size,
 		const void* values

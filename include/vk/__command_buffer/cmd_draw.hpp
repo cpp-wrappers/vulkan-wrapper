@@ -10,10 +10,22 @@
 
 namespace vk {
 
-	struct vertex_count   { uint32 _; };
-	struct instance_count { uint32 _; };
-	struct first_vertex   { uint32 _; };
-	struct first_instance { uint32 _; };
+	struct vertex_count   {
+		uint32 value_;
+		operator uint32 () const { return value_; }
+	};
+	struct instance_count {
+		uint32 value_;
+		operator uint32 () const { return value_; }
+	};
+	struct first_vertex   {
+		uint32 value_;
+		operator uint32 () const { return value_; }
+	};
+	struct first_instance {
+		uint32 value_;
+		operator uint32 () const { return value_; }
+	};
 
 }
 
@@ -21,10 +33,10 @@ namespace vk {
 
 	struct cmd_draw_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type commandBuffer,
-		vk::vertex_count vertex_count,
-		vk::instance_count instance_count,
-		vk::first_vertex first_vertex,
-		vk::first_instance first_instance
+		uint32 /*vk::vertex_count*/ vertex_count,
+		uint32 /*vk::instance_count*/ instance_count,
+		uint32 /*vk::first_vertex*/ first_vertex,
+		uint32 /*vk::first_instance*/ first_instance
 	)> {
 		static constexpr auto name = "vkCmdDraw";
 	};

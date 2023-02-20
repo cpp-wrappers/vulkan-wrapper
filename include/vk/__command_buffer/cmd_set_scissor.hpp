@@ -8,11 +8,16 @@
 
 namespace vk {
 
-	struct first_scissor_index { uint32 _; };
+	class first_scissor_index {
+		uint32 value_;
+	public:
+		first_scissor_index(uint32 value) : value_ { value } {}
+		operator uint32 () const { return value_; }
+	};
 
 	struct cmd_set_scissor_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-		vk::first_scissor_index first_scissor,
+		uint32 /*vk::first_scissor_index*/ first_scissor,
 		uint32 scissor_count,
 		const vk::rect2d* scissors
 	)> {

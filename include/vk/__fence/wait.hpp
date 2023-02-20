@@ -16,7 +16,7 @@ namespace vk {
 		uint32 fence_count,
 		const handle<vk::fence>::underlying_type* fences,
 		uint32 wait_all,
-		vk::timeout timeout
+		uint64 /*vk::timeout*/ timeout
 	)> {
 		static constexpr auto name = "vkWaitForFences";
 	};

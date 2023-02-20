@@ -14,9 +14,9 @@ namespace vk {
 
 	struct cmd_pipeline_barrier_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-		vk::src_stages src_stage_mask,
-		vk::dst_stages dst_stage_mask,
-		vk::dependencies dependency_flags,
+		int /*vk::src_stages*/ src_stage_mask,
+		int /*vk::dst_stages*/ dst_stage_mask,
+		int /*vk::dependencies*/ dependency_flags,
 		uint32 memory_barrier_count,
 		const vk::memory_barrier* memory_barriers,
 		uint32 buffer_memory_barrier_count,
