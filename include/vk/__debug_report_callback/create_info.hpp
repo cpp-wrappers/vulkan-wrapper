@@ -5,6 +5,7 @@
 
 #include <enum_flags.hpp>
 #include <c_string.hpp>
+#include <unicode/utf8.hpp>
 
 namespace vk {
 
@@ -14,8 +15,8 @@ namespace vk {
 		uint64 object,
 		nuint location,
 		int32 message_code,
-		c_string_of_unknown_size layer_prefix,
-		c_string_of_unknown_size message,
+		c_string_of_unknown_size<utf8::unit> layer_prefix,
+		c_string_of_unknown_size<utf8::unit> message,
 		void* user_data
 	);
 
@@ -25,8 +26,8 @@ namespace vk {
 		uint64 object,
 		nuint location,
 		int32 message_code,
-		c_string_of_unknown_size layer_prefix,
-		c_string_of_unknown_size message,
+		c_string_of_unknown_size<utf8::unit> layer_prefix,
+		c_string_of_unknown_size<utf8::unit> message,
 		void* user_data
 	);
 

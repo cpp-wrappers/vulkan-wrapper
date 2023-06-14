@@ -11,4 +11,6 @@
 
 -Iinclude
 -I../core/include
--Xclang -fimplicit-module-maps
+-I../encoding/include
+-I../math/include
+-fimplicit-module-maps

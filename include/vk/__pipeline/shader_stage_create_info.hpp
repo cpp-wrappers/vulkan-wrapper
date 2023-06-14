@@ -7,6 +7,8 @@
 #include <c_string.hpp>
 #include <types.hpp>
 
+#include <unicode/utf8.hpp>
+
 namespace vk {
 
 	enum class shader_stage_create_flag {
@@ -16,7 +18,7 @@ namespace vk {
 
 	using shader_stage_create_flags = enum_flags<shader_stage_create_flag>;
 
-	struct entrypoint_name { c_string_of_unknown_size _; };
+	struct entrypoint_name { c_string_of_unknown_size<utf8::unit> _; };
 
 	struct pipeline_shader_stage_create_info {
 		uint32 structure_type = 18;

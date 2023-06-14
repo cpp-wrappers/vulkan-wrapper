@@ -6,6 +6,8 @@
 
 #include <c_string.hpp>
 
+#include <unicode/utf8.hpp>
+
 namespace vk {
 
 	struct device_create_info {
@@ -15,7 +17,8 @@ namespace vk {
 		uint32                              queue_create_info_count = 0;
 		const vk::queue_create_info*        queue_create_infos = nullptr;
 		uint32                              enabled_layer_count = 0;
-		const c_string_of_unknown_size*     enabled_layer_names = nullptr;
+		const c_string_of_unknown_size<utf8::unit>*
+		                                    enabled_layer_names = nullptr;
 		uint32                              enabled_extension_count = 0;
 		const vk::extension_name*           enabled_extension_names = nullptr;
 		const vk::physical_device_features* enabled_features = nullptr;
