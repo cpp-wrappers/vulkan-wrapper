@@ -16,3 +16,4 @@
 #include "./__physical_device/surface/formats/get_count.hpp"
 #include "./__physical_device/surface/formats/get_first.hpp"
 #include "./__physical_device/surface/formats/view.hpp"
+#include "./__physical_device/surface/formats/choose.hpp"
