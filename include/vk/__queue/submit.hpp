@@ -168,7 +168,7 @@ namespace vk {
 			count_of_decayed_same_as<vk::pipeline_stages> > 0
 		) {
 			si.wait_dst_stage_mask = & a.template
-				get_decayed_same_as<vk::pipeline_stages>().underlying();
+				get_decayed_same_as<vk::pipeline_stages>();
 		}
 
 		return vk::try_queue_submit(
