@@ -30,7 +30,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
 		count_of_decayed_same_as<vk::memory_offset> <= 1,
 		count_of_decayed_same_as<vk::memory_size> == 1,
-		count_of_decayed_same_as<void**> == 1
+		count_of_satisfying_predicate<is_same_as<uint8*&>> == 1
 	>
 	vk::result try_map_memory(Args&&... args) {
 		tuple a { args... };
@@ -55,7 +55,7 @@ namespace vk {
 		vk::memory_size size = a.template
 			get_decayed_same_as<vk::memory_size>();
 
-		void** data = a.template get_decayed_same_as<void**>();
+		uint8*& data = a.template get_same_as<uint8*&>();
 
 		return {
 			vk::get_device_function<vk::map_memory_function>(
@@ -66,7 +66,7 @@ namespace vk {
 				offset,
 				size,
 				0,
-				data
+				(void**) &data
 			)
 		};
 	} // try_map_device_memory
