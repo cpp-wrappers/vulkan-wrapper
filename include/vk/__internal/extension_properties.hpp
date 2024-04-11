@@ -1,11 +1,12 @@
 #pragma once
 
 #include <integer.hpp>
+#include <unicode/utf8.hpp>
 
 namespace vk {
 
 	struct extension_properties {
-		char name[256];
+		utf8::unit name[256];
 		uint32 spec_version;
 	};
 

@@ -32,11 +32,11 @@ namespace vk {
 	);
 
 	struct debug_report_callback_create_info {
-		uint32                           structure_type = 1000011000;
-		const void*                      next;
-		enum_flags<vk::debug_report_flag> flags;
-		debug_report_callback_type       callback;
-		void*                            user_data;
+		uint32                            structure_type = 1000011000;
+		const void*                       next = nullptr;
+		enum_flags<vk::debug_report_flag> flags{};
+		debug_report_callback_type        callback{};
+		void*                             user_data = nullptr;
 	};
 
 } // vk

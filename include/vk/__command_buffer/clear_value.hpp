@@ -13,8 +13,8 @@ namespace vk {
 	};
 
 	struct clear_depth_stencil_value {
-		float depth;
-		uint32 stencil;
+		float depth{};
+		uint32 stencil{};
 	};
 
 	union clear_value {

@@ -28,7 +28,7 @@ namespace vk {
 	struct sampler_create_info {
 		uint32                       structure_type = 31;
 		const void *                 next = nullptr;
-		vk::sampler_create_flags     flags;
+		vk::sampler_create_flags     flags{};
 		vk::mag_filter               mag_filter;
 		vk::min_filter               min_filter;
 		vk::mipmap_mode              mipmap_mode;

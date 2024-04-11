@@ -2,7 +2,7 @@
 
 #include "enumerate.hpp"
 
-#include <core/span.hpp>
+#include <span.hpp>
 
 namespace vk {
 

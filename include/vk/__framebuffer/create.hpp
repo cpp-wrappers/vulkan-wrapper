@@ -41,19 +41,18 @@ namespace vk {
 		auto& attachments = a.template
 			get_range_of_decayed<handle<vk::image_view>>();
 
+		vk::extent<3> extent = a.template get_decayed_same_as<vk::extent<3>>();
+
 		vk::framebuffer_create_info ci {
 			.render_pass = (handle<vk::render_pass>::underlying_type)
 				render_pass.underlying(),
 			.attachment_count = (uint32) attachments.size(),
 			.attachments = (const handle<vk::image_view>::underlying_type*)
-				attachments.iterator()
+				attachments.iterator(),
+			.width = extent.width(),
+			.height = extent.height(),
+			.layers = extent.depth()
 		};
-
-		vk::extent<3> extent = a.template get_decayed_same_as<vk::extent<3>>();
-
-		ci.width = extent.width();
-		ci.height = extent.height();
-		ci.layers = extent.depth();
 
 		handle<vk::framebuffer> framebuffer;
 

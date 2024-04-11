@@ -26,13 +26,13 @@ namespace vk {
 
 	struct image_view_create_info {
 		uint32 structure_type = 15;
-		const void* next;
-		enum_flags<image_view_create_flag> flags;
-		handle<vk::image>::underlying_type image;
-		vk::image_view_type view_type;
-		vk::format format;
-		vk::component_mapping components;
-		vk::image_subresource_range subresource_range;
+		const void* next = nullptr;
+		enum_flags<image_view_create_flag> flags{};
+		handle<vk::image>::underlying_type image{};
+		vk::image_view_type view_type{};
+		vk::format format{};
+		vk::component_mapping components{};
+		vk::image_subresource_range subresource_range{};
 	};
 
 } // vk

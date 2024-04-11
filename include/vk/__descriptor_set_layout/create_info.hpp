@@ -19,7 +19,7 @@ namespace vk {
 	struct descriptor_set_layout_create_info {
 		uint32                                   structure_type = 32;
 		const void*                              next = nullptr;
-		vk::descriptor_set_layout_create_flags   flags;
+		vk::descriptor_set_layout_create_flags   flags{};
 		uint32                                   binding_count = 0;
 		const vk::descriptor_set_layout_binding* bindings = nullptr;
 	};

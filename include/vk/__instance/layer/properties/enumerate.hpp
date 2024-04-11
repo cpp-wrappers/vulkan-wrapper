@@ -1,38 +1,42 @@
 #pragma once
 
-#include "../../../layer_properties.hpp"
-#include "../../../result.hpp"
-#include "../../../count.hpp"
-#include "../../../function.hpp"
-#include "../../../unexpected_handler.hpp"
-
-#include <core/range_of_value_type_same_as.hpp>
-
-extern "C" VK_ATTR int32 VK_CALL vkEnumerateInstanceLayerProperties(
-	uint32*               property_count,
-	vk::layer_properties* properties
-);
+#include "../../../__internal/result.hpp"
+#include "../../../__internal/count.hpp"
+#include "../../../__internal/unexpected_handler.hpp"
+#include "../../../__internal/function.hpp"
+#include "../../../__internal/layer_properties.hpp"
 
 namespace vk {
 
-	template<range_of<vk::layer_properties> Range>
+	struct enumerate_instance_layer_properties_function : vk::function<int32(*)(
+		uint32*,
+		vk::layer_properties* properties
+	)> {
+		static constexpr auto name = "vkEnumerateInstanceLayerProperties";
+	};
+
+	template<range_of_decayed<vk::layer_properties> Range>
 	[[ nodiscard ]]
 	vk::expected<vk::count>
-	try_enumerate_instance_layer_properties(Range&& layer_properties) {
+	try_enumerate_instance_layer_properties(
+		Range&& layer_properties
+	) {
 		uint32 count = layer_properties.size();
 
 		vk::result result {
-			vkEnumerateInstanceLayerProperties(
-				&count, layer_properties.iterator()
-			)
+			vk::get_global_function<
+				enumerate_instance_layer_properties_function
+			>()(&count, (vk::layer_properties*) layer_properties.iterator())
 		};
 
-		if(result.error()) return result;
+		if (result.error()) {
+			return result;
+		}
 
 		return vk::count{ count };
 	}
 
-	template<range_of<vk::layer_properties> InstanceLayersProperties>
+	template<range_of_decayed<vk::layer_properties> InstanceLayersProperties>
 	[[ nodiscard ]]
 	vk::count enumerate_instance_layer_properties(
 		InstanceLayersProperties&& instance_layers_properties

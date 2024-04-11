@@ -1,14 +1,15 @@
 #pragma once
 
 #include <integer.hpp>
+#include <unicode/utf8.hpp>
 
 namespace vk {
 
 	struct layer_properties {
-		char name[256];
+		utf8::unit name[256];
 		uint32 spec_version;
 		uint32 implementation_version;
-		char description[256];
+		utf8::unit description[256];
 	};
 
 } // vk

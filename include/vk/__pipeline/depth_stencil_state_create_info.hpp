@@ -16,10 +16,10 @@ namespace vk {
 		vk::compare_op       depth_compare_op;
 		uint32               enable_depth_bounds_test { false };
 		uint32               enable_stencil_test { false };
-		vk::stencil_op_state front;
-		vk::stencil_op_state back;
-		float                min_depth_bounds;
-		float                max_depth_bounds;
+		vk::stencil_op_state front{};
+		vk::stencil_op_state back{};
+		float                min_depth_bounds = 0.0F;
+		float                max_depth_bounds = 0.0F;
 	};
 
 } // vk

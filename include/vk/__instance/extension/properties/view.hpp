@@ -2,7 +2,7 @@
 
 #include "get_count.hpp"
 
-#include <core/view_on_stack.hpp>
+#include <view_on_stack.hpp>
 
 namespace vk {
 
@@ -13,7 +13,7 @@ namespace vk {
 		view_on_stack<vk::extension_properties>{ count }(
 			[&](span<vk::extension_properties> raw) {
 				count = vk::enumerate_instance_extension_properties(raw);
-				handler(raw.cut(count));
+				handler(raw.shrink(count));
 			}
 		);
 	}

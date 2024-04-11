@@ -42,10 +42,10 @@ namespace vk {
 	struct buffer_create_info {
 		uint32                        structure_type = 12;
 		const void*                   next = nullptr;
-		vk::buffer_create_flags       flags;
-		vk::buffer_size               size;
-		vk::buffer_usages             usage;
-		vk::sharing_mode              sharing_mode;
+		vk::buffer_create_flags       flags{};
+		vk::buffer_size               size{};
+		vk::buffer_usages             usage{};
+		vk::sharing_mode              sharing_mode{};
 		uint32                        queue_family_index_count = 0;
 		const vk::queue_family_index* queue_fanily_indices = nullptr;
 	};

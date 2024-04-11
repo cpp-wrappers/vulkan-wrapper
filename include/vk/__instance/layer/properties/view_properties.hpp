@@ -1,8 +1,7 @@
 #pragma once
 
 #include "get_count.hpp"
-
-#include <core/view_on_stack.hpp>
+#include <view_on_stack.hpp>
 
 namespace vk {
 
@@ -11,7 +10,7 @@ namespace vk {
 		view_on_stack<vk::layer_properties>{ count }(
 			[&](span<vk::layer_properties> raw) {
 				count = vk::enumerate_instance_layer_properties(raw);
-				handler(raw.cut(count));
+				handler(raw.shrink(count));
 			}
 		);
 	}

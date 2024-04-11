@@ -20,10 +20,10 @@ namespace vk {
 
 	struct pipeline_input_assembly_state_create_info {
 		uint32                 structure_type = 20;
-		const void*            next;
-		uint32                 flags;
+		const void*            next = nullptr;
+		uint32                 flags = 0;
 		vk::primitive_topology topology;
-		uint32                 enable_primitive_restart;
+		uint32                 enable_primitive_restart = false;
 	};
 
 } // vk
