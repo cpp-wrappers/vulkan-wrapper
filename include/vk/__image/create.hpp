@@ -130,6 +130,66 @@ namespace vk {
 	};
 
 	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::image_create_flags> <= 1,
+		count_of_decayed_same_as<vk::format> == 1,
+		count_of_decayed_same_as<vk::extent<3>> == 1,
+		count_of_decayed_same_as<vk::mip_levels> <= 1,
+		count_of_decayed_same_as<vk::array_layers> <= 1,
+		count_of_decayed_same_as<vk::sample_count> <= 1,
+		count_of_decayed_same_as<vk::image_tiling> == 1,
+		count_of_decayed_same_as<vk::image_usages> == 1,
+		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		count_of_range_of_decayed<vk::queue_family_index> <= 1,
+		count_of_decayed_same_as<vk::initial_layout> <= 1
+	>
+	vk::expected<handle<vk::image>>
+	try_create_image(Args&&... args) {
+		return try_create_image(
+			vk::image_type::three_d,
+			forward<Args>(args)...
+		);
+	}
+
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		count_of_decayed_same_as<handle<vk::instance>> == 1,
+		count_of_decayed_same_as<handle<vk::device>> == 1,
+		count_of_decayed_same_as<vk::image_create_flags> <= 1,
+		count_of_decayed_same_as<vk::format> == 1,
+		count_of_decayed_same_as<vk::extent<2>> == 1,
+		count_of_decayed_same_as<vk::mip_levels> <= 1,
+		count_of_decayed_same_as<vk::array_layers> <= 1,
+		count_of_decayed_same_as<vk::sample_count> <= 1,
+		count_of_decayed_same_as<vk::image_tiling> == 1,
+		count_of_decayed_same_as<vk::image_usages> == 1,
+		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		count_of_range_of_decayed<vk::queue_family_index> <= 1,
+		count_of_decayed_same_as<vk::initial_layout> <= 1
+	>
+	vk::expected<handle<vk::image>>
+	try_create_image(Args&&... args) {
+		tuple _args{ args... };
+
+		vk::extent<2> extent_2
+			= _args.template get_satisfying_predicate<
+				is_same_as<vk::extent<2>>.while_decayed
+			>();
+
+		return _args.template pass_satisfying_predicate<
+			!is_same_as<vk::extent<2>>.while_decayed
+		>([&]<typename... _Args>(_Args&&... _args) {
+			return try_create_image(
+				vk::image_type::two_d,
+				vk::extent<3>{ extent_2, 1 },
+				forward<_Args>(_args)...
+			);
+		});
+	}
+
+	template<typename... Args>
 	handle<vk::image> create_image(Args&&... args) {
 		vk::expected<handle<vk::image>> result =
 			vk::try_create_image(forward<Args>(args)...);

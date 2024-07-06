@@ -58,8 +58,8 @@ namespace vk {
 		count_of_decayed_same_as<
 			vk::pipeline_depth_stencil_state_create_info
 		> <= 1,
-		count_of_decayed_same_as<
-			vk::pipeline_color_blend_state_create_info
+		count_of_satisfying_predicate<
+			is_derived_from<vk::_pipeline_color_blend_state_create_info_mark>.while_decayed
 		> <= 1,
 		count_of_decayed_same_as<
 			vk::pipeline_dynamic_state_create_info
@@ -172,15 +172,18 @@ namespace vk {
 				>();
 		}
 
+		vk::_pipeline_color_blend_state_create_info cbs_ci{};
+
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<
-				vk::pipeline_color_blend_state_create_info
+			count_of_satisfying_predicate<
+				is_derived_from<vk::_pipeline_color_blend_state_create_info_mark>.while_decayed
 			> > 0
 		) {
-			ci.color_blend_state = & a.template
-				get_decayed_same_as<
-					vk::pipeline_color_blend_state_create_info
+			cbs_ci = a.template
+				get_satisfying_predicate<
+					is_derived_from<vk::_pipeline_color_blend_state_create_info_mark>.while_decayed
 				>();
+			ci.color_blend_state = &cbs_ci;
 		}
 
 		if constexpr (types<Args...>::template

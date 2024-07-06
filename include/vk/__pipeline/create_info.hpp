@@ -39,7 +39,7 @@ namespace vk {
 			multisample_state = nullptr;
 		const vk::pipeline_depth_stencil_state_create_info*
 			depth_stencil_state = nullptr;
-		const vk::pipeline_color_blend_state_create_info*
+		const vk::_pipeline_color_blend_state_create_info*
 			color_blend_state = nullptr;
 		const vk::pipeline_dynamic_state_create_info*
 			dynamic_state = nullptr;

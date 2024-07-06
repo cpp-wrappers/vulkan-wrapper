@@ -6,6 +6,8 @@
 #include "../__internal/timeout.hpp"
 #include "../__internal/unexpected_handler.hpp"
 #include "../__instance/handle.hpp"
+#include "../__queue/signal_fence.hpp"
+#include "../__queue/signal_semaphore.hpp"
 #include "../__device/handle.hpp"
 #include "../__semaphore/handle.hpp"
 #include "../__fence/handle.hpp"
@@ -31,8 +33,8 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::instance>> == 1,
 		count_of_decayed_same_as<handle<vk::device>> == 1,
 		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
-		count_of_decayed_same_as<handle<vk::semaphore>> <= 1,
-		count_of_decayed_same_as<handle<vk::fence>> <= 1,
+		count_of_decayed_same_as<vk::signal_semaphore> <= 1,
+		count_of_decayed_same_as<vk::signal_fence> <= 1,
 		count_of_decayed_same_as<vk::timeout> <= 1
 	>
 	[[ nodiscard ]]
@@ -61,18 +63,18 @@ namespace vk {
 		handle<vk::semaphore> semaphore{};
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::semaphore>> > 0
+			count_of_decayed_same_as<vk::signal_semaphore> > 0
 		) {
 			semaphore = a.template
-				get_decayed_same_as<handle<vk::semaphore>>();
+				get_decayed_same_as<vk::signal_semaphore>();
 		}
 
 		handle<vk::fence> fence{};
 
 		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::fence>> > 0
+			count_of_decayed_same_as<vk::signal_fence> > 0
 		) {
-			fence = a.template get_decayed_same_as<handle<vk::fence>>();
+			fence = a.template get_decayed_same_as<vk::signal_fence>();
 		}
 
 		uint32 index;
