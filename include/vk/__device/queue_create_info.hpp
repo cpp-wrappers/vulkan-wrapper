@@ -31,7 +31,7 @@ namespace vk {
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
 			count_of_decayed_same_as<vk::queue_family_index> == 1,
-			count_of_decayed_same_as<vk::queue_count> == 1,
+			count_of_decayed_same_as<vk::queue_count> <= 1,
 			count_of_satisfying_predicate<
 				is_borrowed_range && is_range_of_decayed<vk::queue_priority>
 			> == 1
@@ -40,11 +40,23 @@ namespace vk {
 			queue_family_index = tuple { args... }.template
 				get_decayed_same_as<vk::queue_family_index>();
 
-			queue_count = tuple { args... }.template
-				get_decayed_same_as<vk::queue_count>();
-
 			queue_priorities = tuple { args... }.template
 				get_range_of_decayed<vk::queue_priority>().iterator();
+
+			if constexpr (
+				types<Args...>::template count_of_decayed_same_as<
+					vk::queue_count
+				> > 0
+			) {
+				queue_count = tuple { args... }.template
+					get_decayed_same_as<vk::queue_count>();
+			}
+			else {
+				queue_count = vk::queue_count {
+					(uint32) tuple { args... }.template
+						get_range_of_decayed<vk::queue_priority>().size()
+				};
+			}
 		}
 
 	}; // device_queue_create_info

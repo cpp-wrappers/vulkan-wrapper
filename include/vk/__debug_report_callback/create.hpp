@@ -55,7 +55,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return debug_report_callback;
 	};
@@ -96,7 +96,7 @@ namespace vk {
 	create_debug_report_callback(Args&&... args) {
 		vk::expected<handle<vk::debug_report_callback>> result
 			= vk::try_create_debug_report_callback(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

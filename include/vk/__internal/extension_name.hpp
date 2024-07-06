@@ -6,9 +6,9 @@
 
 namespace vk {
 
-	struct extension_name : c_string_of_unknown_size<utf8::unit> {
-		extension_name() : c_string_of_unknown_size<utf8::unit>(nullptr) {};
-		using c_string_of_unknown_size<utf8::unit>::c_string;
+	struct extension_name : c_string<utf8::unit> {
+		extension_name() : c_string<utf8::unit>(nullptr) {};
+		using c_string<utf8::unit>::c_string;
 	};
 
 } // vk

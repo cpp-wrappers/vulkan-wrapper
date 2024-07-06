@@ -72,9 +72,14 @@ namespace vk {
 	} // try_map_device_memory
 
 	template<typename... Args>
-	void map_memory(Args&&... args) {
-		vk::result result = vk::try_map_memory(forward<Args>(args)...);
+	uint8* map_memory(Args&&... args) {
+		uint8* mem_ptr;
+		vk::result result = vk::try_map_memory(
+			forward<Args>(args)...,
+			mem_ptr
+		);
 		if(result.error()) vk::unexpected_handler(result);
+		return mem_ptr;
 	}
 
 } // vk

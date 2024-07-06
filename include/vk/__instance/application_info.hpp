@@ -4,14 +4,15 @@
 
 #include <c_string.hpp>
 #include <types.hpp>
+#include <tuple.hpp>
 
 #include <unicode/utf8.hpp>
 
 namespace vk {
 
-	struct application_name : c_string_of_unknown_size<utf8::unit> {};
+	struct application_name : c_string<utf8::unit> {};
 	enum application_version : uint32 {};
-	struct engine_name : c_string_of_unknown_size<utf8::unit> {};
+	struct engine_name : c_string<utf8::unit> {};
 	enum engine_version : uint32 {};
 
 	struct application_info {

@@ -50,6 +50,14 @@ struct handle_interface<vk::instance> : handle_interface_base<vk::instance> {
 		return (uint32) count;
 	}
 
+	template<typename Handler>
+	uint32 view_physical_devices(Handler&& handler) const {
+		return view_physical_devices(
+			get_physical_device_count(),
+			forward<Handler>(handler)
+		);
+	}
+
 	[[ nodiscard ]]
 	inline handle<vk::physical_device> get_first_physical_device() const {
 		handle<vk::physical_device> physical_device{};

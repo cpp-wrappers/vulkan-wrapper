@@ -15,8 +15,8 @@ namespace vk {
 		uint64 object,
 		nuint location,
 		int32 message_code,
-		c_string_of_unknown_size<utf8::unit> layer_prefix,
-		c_string_of_unknown_size<utf8::unit> message,
+		c_string<utf8::unit> layer_prefix,
+		c_string<utf8::unit> message,
 		void* user_data
 	);
 
@@ -26,8 +26,8 @@ namespace vk {
 		uint64 object,
 		nuint location,
 		int32 message_code,
-		c_string_of_unknown_size<utf8::unit> layer_prefix,
-		c_string_of_unknown_size<utf8::unit> message,
+		c_string<utf8::unit> layer_prefix,
+		c_string<utf8::unit> message,
 		void* user_data
 	);
 
