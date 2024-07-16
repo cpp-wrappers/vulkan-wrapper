@@ -10,9 +10,13 @@
 
 namespace vk {
 
-	struct application_name : c_string<utf8::unit> {};
+	struct application_name : c_string<utf8::unit> {
+		using c_string::c_string;
+	};
 	enum application_version : uint32 {};
-	struct engine_name : c_string<utf8::unit> {};
+	struct engine_name : c_string<utf8::unit> {
+		using c_string::c_string;
+	};
 	enum engine_version : uint32 {};
 
 	struct application_info {

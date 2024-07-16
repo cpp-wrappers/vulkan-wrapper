@@ -25,7 +25,7 @@ namespace vk {
 		count_of_decayed_same_as<handle<vk::image>> == 1
 	>
 	[[nodiscard]] vk::memory_requirements
-	get_image_memory_requirements(Args&&... args) {
+	get_memory_requirements(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
