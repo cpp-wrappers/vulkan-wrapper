@@ -23,11 +23,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
-		count_of_decayed_same_as<vk::memory_offset> <= 1
+		is_same_as<handle<vk::instance>>.while_decayed == 1,
+		is_same_as<handle<vk::device>>.while_decayed == 1,
+		is_same_as<handle<vk::buffer>>.while_decayed == 1,
+		is_same_as<handle<vk::device_memory>>.while_decayed == 1,
+		is_same_as<vk::memory_offset>.while_decayed <= 1
 	>
 	vk::result try_bind_buffer_memory(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
@@ -44,8 +44,8 @@ namespace vk {
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::memory_offset> > 0
+		if constexpr (
+			(is_same_as<vk::memory_offset> > 0).for_types<Args...>()
 		) {
 			offset = tuple{ args... }.template
 				get_decayed_same_as<vk::memory_offset>();

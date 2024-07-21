@@ -64,56 +64,6 @@ namespace vk {
 	}
 
 	template<typename... Args>
-	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::command_buffer_usages> == 1,
-		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
-		count_of_decayed_same_as<handle<vk::framebuffer>> == 1,
-		count_of_decayed_same_as<vk::subpass> == 1,
-		count_of_decayed_same_as<vk::occlusion_query_enable> <= 1,
-		count_of_decayed_same_as<vk::query_control_flags> == 1,
-		count_of_decayed_same_as<vk::query_pipeline_statistic_flags> == 1
-	>
-	vk::result try_begin_command_buffer(Args&&... args) {
-		tuple a { args... };
-		vk::command_buffer_inheritance_info ii {
-			.render_pass = a.template
-				get_decayed_same_as<vk::command_buffer>(),
-			.subpass = a.template get_decayed_same_as<vk::subpass>(),
-			.framebuffer = a.template get_decayed_same_as<vk::framebuffer>(),
-			.query_flags = a.template
-				get_decayed_same_as<vk::query_control_flags>(),
-			.pipeline_statistics_flags = a.template
-				get_decayed_same_as<vk::query_pipeline_statistic_flags>()
-		};
-
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::occlusion_query_enable> > 0
-		) {
-			ii.occlusion_query_enable = a.template
-				get_decayed_same_as<vk::occlusion_query_enable>();
-		}
-
-		vk::command_buffer_usages usages = a.template
-			get_decayed_same_as<vk::command_buffer_usages>();
-
-		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
-
-		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
-
-		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
-
-		return vk::try_begin_command_buffer(
-			instance, device, command_buffer, usages, ii
-		);
-	}
-
-	template<typename... Args>
 	void begin_command_buffer(Args&&... args) {
 		vk::result result {
 			vk::try_begin_command_buffer(forward<Args>(args)...)

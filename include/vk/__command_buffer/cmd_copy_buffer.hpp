@@ -19,22 +19,22 @@ namespace vk {
 		vk::memory_size size;
 	};
 
-	struct src_buffer : handle<vk::buffer> {};
-	struct dst_buffer : handle<vk::buffer> {};
-
 } // vk
 
 namespace vk {
 
 	struct cmd_copy_buffer_function : vk::function<void(*)(
 		handle<vk::command_buffer>::underlying_type command_buffer,
-		vk::src_buffer::underlying_type src_buffer,
-		vk::dst_buffer::underlying_type dst_buffer,
+		handle<vk::buffer>::underlying_type src_buffer,
+		handle<vk::buffer>::underlying_type dst_buffer,
 		uint32 region_count,
 		const vk::buffer_copy* regions
 	)> {
 		static constexpr auto name = "vkCmdCopyBuffer";
 	};
+
+	struct src_buffer : handle<vk::buffer> {};
+	struct dst_buffer : handle<vk::buffer> {};
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<

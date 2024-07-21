@@ -29,4 +29,7 @@ namespace vk {
 	struct initial_layout { vk::image_layout _; };
 	struct final_layout { vk::image_layout _; };
 
+	struct src_image_layout{ vk::image_layout _; };
+	struct dst_image_layout{ vk::image_layout _; };
+
 } // vk
