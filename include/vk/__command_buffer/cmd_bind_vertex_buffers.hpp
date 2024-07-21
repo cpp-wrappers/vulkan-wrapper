@@ -25,12 +25,16 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::first_binding> <= 1,
-		count_of_range_of_decayed<handle<vk::buffer>> == 1,
-		count_of_range_of_decayed<vk::memory_offset> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::first_binding>.decayed <= 1,
+		is_range_of_element_type_satisfying_predicate<
+			is_same_as<handle<vk::buffer>>.decayed
+		> == 1,
+		is_range_of_element_type_satisfying_predicate<
+			is_same_as<vk::memory_offset>.decayed
+		> == 1
 	>
 	void cmd_bind_vertex_buffers(Args&&... args) {
 		tuple a { args... };
@@ -46,8 +50,9 @@ namespace vk {
 		
 		vk::first_binding first_binding{ 0 };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_binding> > 0
+		if constexpr (
+			(is_same_as<vk::first_binding>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			first_binding = a.template
 				get_decayed_same_as<vk::first_binding>();

@@ -25,20 +25,20 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::image_create_flags> <= 1,
-		count_of_decayed_same_as<vk::image_type> == 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::extent<3>> == 1,
-		count_of_decayed_same_as<vk::mip_levels> <= 1,
-		count_of_decayed_same_as<vk::array_layers> <= 1,
-		count_of_decayed_same_as<vk::sample_count> <= 1,
-		count_of_decayed_same_as<vk::image_tiling> == 1,
-		count_of_decayed_same_as<vk::image_usages> == 1,
-		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::image_create_flags>.decayed <= 1,
+		is_same_as<vk::image_type>.decayed == 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::extent<3>>.decayed == 1,
+		is_same_as<vk::mip_levels>.decayed <= 1,
+		is_same_as<vk::array_layers>.decayed <= 1,
+		is_same_as<vk::sample_count>.decayed <= 1,
+		is_same_as<vk::image_tiling>.decayed == 1,
+		is_same_as<vk::image_usages>.decayed == 1,
+		is_same_as<vk::sharing_mode>.decayed <= 1,
 		count_of_range_of_decayed<vk::queue_family_index> <= 1,
-		count_of_decayed_same_as<vk::initial_layout> <= 1
+		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
 	try_create_image(Args&&... args) {
@@ -58,43 +58,48 @@ namespace vk {
 		ci.tiling = a.template get_decayed_same_as<vk::image_tiling>();
 		ci.usages = a.template get_decayed_same_as<vk::image_usages>();
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::image_create_flags> > 0
+		if constexpr (
+			(is_same_as<vk::image_create_flags>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.flags = a.template
 				get_decayed_same_as<vk::image_create_flags>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::mip_levels> > 0
+		if constexpr (
+			(is_same_as<vk::mip_levels>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.mip_levels = a.template
 				get_decayed_same_as<vk::mip_levels>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::array_layers> > 0
+		if constexpr (
+			(is_same_as<vk::array_layers>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.array_layers = a.template
 				get_decayed_same_as<vk::array_layers>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::sample_count> > 0
+		if constexpr (
+			(is_same_as<vk::sample_count>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.samples = a.template
 				get_decayed_same_as<vk::sample_count>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::sharing_mode>
+		if constexpr (
+			(is_same_as<vk::sharing_mode>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.sharing_mode = a.template
 				get_decayed_same_as<vk::sharing_mode>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::initial_layout> > 0
+		if constexpr (
+			(is_same_as<vk::initial_layout>.decayed > 0).for_types<Args...>()
 		) {
 			ci.initial_layout = a.template
 				get_decayed_same_as<vk::initial_layout>();
@@ -131,19 +136,19 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::image_create_flags> <= 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::extent<3>> == 1,
-		count_of_decayed_same_as<vk::mip_levels> <= 1,
-		count_of_decayed_same_as<vk::array_layers> <= 1,
-		count_of_decayed_same_as<vk::sample_count> <= 1,
-		count_of_decayed_same_as<vk::image_tiling> == 1,
-		count_of_decayed_same_as<vk::image_usages> == 1,
-		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::image_create_flags>.decayed <= 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::extent<3>>.decayed == 1,
+		is_same_as<vk::mip_levels>.decayed <= 1,
+		is_same_as<vk::array_layers>.decayed <= 1,
+		is_same_as<vk::sample_count>.decayed <= 1,
+		is_same_as<vk::image_tiling>.decayed == 1,
+		is_same_as<vk::image_usages>.decayed == 1,
+		is_same_as<vk::sharing_mode>.decayed <= 1,
 		count_of_range_of_decayed<vk::queue_family_index> <= 1,
-		count_of_decayed_same_as<vk::initial_layout> <= 1
+		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
 	try_create_image(Args&&... args) {
@@ -155,19 +160,19 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::image_create_flags> <= 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::extent<2>> == 1,
-		count_of_decayed_same_as<vk::mip_levels> <= 1,
-		count_of_decayed_same_as<vk::array_layers> <= 1,
-		count_of_decayed_same_as<vk::sample_count> <= 1,
-		count_of_decayed_same_as<vk::image_tiling> == 1,
-		count_of_decayed_same_as<vk::image_usages> == 1,
-		count_of_decayed_same_as<vk::sharing_mode> <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::image_create_flags>.decayed <= 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::extent<2>>.decayed == 1,
+		is_same_as<vk::mip_levels>.decayed <= 1,
+		is_same_as<vk::array_layers>.decayed <= 1,
+		is_same_as<vk::sample_count>.decayed <= 1,
+		is_same_as<vk::image_tiling>.decayed == 1,
+		is_same_as<vk::image_usages>.decayed == 1,
+		is_same_as<vk::sharing_mode>.decayed <= 1,
 		count_of_range_of_decayed<vk::queue_family_index> <= 1,
-		count_of_decayed_same_as<vk::initial_layout> <= 1
+		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
 	try_create_image(Args&&... args) {
@@ -175,11 +180,11 @@ namespace vk {
 
 		vk::extent<2> extent_2
 			= _args.template get_satisfying_predicate<
-				is_same_as<vk::extent<2>>.while_decayed
+				is_same_as<vk::extent<2>>.decayed
 			>();
 
 		return _args.template pass_satisfying_predicate<
-			!is_same_as<vk::extent<2>>.while_decayed
+			!is_same_as<vk::extent<2>>.decayed
 		>([&]<typename... _Args>(_Args&&... _args) {
 			return try_create_image(
 				vk::image_type::two_d,

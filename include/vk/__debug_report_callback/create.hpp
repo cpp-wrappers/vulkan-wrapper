@@ -22,9 +22,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<vk::debug_report_flags> == 1,
-		count_of_decayed_same_as<vk::debug_report_callback_type> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<vk::debug_report_flags>.decayed == 1,
+		is_same_as<vk::debug_report_callback_type>.decayed == 1
 	>
 	vk::expected<handle<vk::debug_report_callback>>
 	try_create_debug_report_callback(Args&&... args) {
@@ -62,9 +62,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<vk::debug_report_flag> >= 0,
-		count_of_decayed_same_as<vk::debug_report_callback_type> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<vk::debug_report_flag>.decayed >= 0,
+		is_same_as<vk::debug_report_callback_type>.decayed == 1
 	>
 	vk::expected<handle<vk::debug_report_callback>>
 	try_create_debug_report_callback(Args&&... args) {

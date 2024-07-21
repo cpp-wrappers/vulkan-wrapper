@@ -7,11 +7,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::device_memory>> == 1,
-		count_of_decayed_same_as<vk::memory_offset> <= 1,
-		count_of_decayed_same_as<vk::memory_size> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::device_memory>>.decayed == 1,
+		is_same_as<vk::memory_offset>.decayed <= 1,
+		is_same_as<vk::memory_size>.decayed == 1
 	>
 	vk::result try_flush_mapped_memory_range(Args&&... args) {
 		tuple a { args... };
@@ -27,8 +27,8 @@ namespace vk {
 
 		vk::memory_offset offset{ 0 };
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::memory_offset> > 0
+		if constexpr (
+			(is_same_as<vk::memory_offset>.decayed > 0).for_types<Args...>()
 		) {
 			offset = a.template get_decayed_same_as<vk::memory_offset>();
 		}

@@ -21,11 +21,11 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::image_aspects> <= 1,
-			count_of_decayed_same_as<vk::base_mip_level> <= 1,
-			count_of_decayed_same_as<vk::level_count> <= 1,
-			count_of_decayed_same_as<vk::base_array_layer> <= 1,
-			count_of_decayed_same_as<vk::layer_count> <= 1
+			is_same_as<vk::image_aspects>.decayed <= 1,
+			is_same_as<vk::base_mip_level>.decayed <= 1,
+			is_same_as<vk::level_count>.decayed <= 1,
+			is_same_as<vk::base_array_layer>.decayed <= 1,
+			is_same_as<vk::layer_count>.decayed <= 1
 		>
 		image_subresource_range(Args&&... args) {
 			tuple a { args... };

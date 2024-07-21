@@ -21,25 +21,27 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::command_buffer_usages> <= 1,
-		count_of_decayed_same_as<vk::command_buffer_inheritance_info> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::command_buffer_usages>.decayed <= 1,
+		is_same_as<vk::command_buffer_inheritance_info>.decayed <= 1
 	>
 	vk::result try_begin_command_buffer(Args&&... args) {
 		tuple a { args... };
 		vk::command_buffer_begin_info bi {};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::command_buffer_usages> > 0
+		if constexpr (
+			(is_same_as<vk::command_buffer_usages>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			bi.usages = a.template
 				get_decayed_same_as<vk::command_buffer_usages>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::command_buffer_inheritance_info> > 0
+		if constexpr (
+			(is_same_as<vk::command_buffer_inheritance_info>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			bi.inheritance_info = a.template
 				get_decayed_same_as<vk::command_buffer_inheritance_info>();

@@ -36,18 +36,18 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of<is_same_as<handle<vk::instance>>.while_decayed> == 1,
-		count_of<is_same_as<handle<vk::device>>.while_decayed> == 1,
-		count_of<is_same_as<handle<vk::command_buffer>>.while_decayed> == 1,
+		count_of<is_same_as<handle<vk::instance>>.decayed> == 1,
+		count_of<is_same_as<handle<vk::device>>.decayed> == 1,
+		count_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1,
 
-		count_of<is_same_as<vk::src_image>.while_decayed> == 1,
-		count_of<is_same_as<vk::src_image_layout>.while_decayed> == 1,
+		count_of<is_same_as<vk::src_image>.decayed> == 1,
+		count_of<is_same_as<vk::src_image_layout>.decayed> == 1,
 
-		count_of<is_same_as<vk::dst_image>.while_decayed> == 1,
-		count_of<is_same_as<vk::dst_image_layout>.while_decayed> == 1,
+		count_of<is_same_as<vk::dst_image>.decayed> == 1,
+		count_of<is_same_as<vk::dst_image_layout>.decayed> == 1,
 
 		count_of<is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::image_blit>.while_decayed
+			is_same_as<vk::image_blit>.decayed
 		>> == 1,
 
 		count_of<is_same_as<vk::filter>> == 1
@@ -56,31 +56,31 @@ namespace vk {
 		tuple a{ forward<Args>(args)... };
 
 		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.while_decayed>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.while_decayed>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.while_decayed>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::src_image src_image = a.template
-			get<is_same_as<vk::src_image>.while_decayed>();
+			get<is_same_as<vk::src_image>.decayed>();
 		vk::src_image_layout src_image_layout = a.template
-			get<is_same_as<vk::src_image_layout>.while_decayed>();
+			get<is_same_as<vk::src_image_layout>.decayed>();
 
 		vk::dst_image dst_image = a.template
-			get<is_same_as<vk::dst_image>.while_decayed>();
+			get<is_same_as<vk::dst_image>.decayed>();
 		vk::dst_image_layout dst_image_layout = a.template
-			get<is_same_as<vk::dst_image_layout>.while_decayed>();
+			get<is_same_as<vk::dst_image_layout>.decayed>();
 
 		auto& regions = a.template
 			get<is_range_of_element_type_satisfying_predicate<
-				is_same_as<vk::image_blit>.while_decayed
+				is_same_as<vk::image_blit>.decayed
 			>>();
 
 		vk::filter filter = a.template
-			get<is_same_as<vk::filter>.while_decayed>();
+			get<is_same_as<vk::filter>.decayed>();
 
 		vk::get_device_function<cmd_blit_image_function>(instance, device)(
 			command_buffer.underlying(),

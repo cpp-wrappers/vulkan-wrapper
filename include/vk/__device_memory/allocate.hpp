@@ -23,11 +23,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::memory_size> == 1,
-		count_of_decayed_same_as<vk::memory_type_index> == 1,
-		count_of_decayed_same_as<vk::memory_allocate_flags_info> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::memory_size>.decayed == 1,
+		is_same_as<vk::memory_type_index>.decayed == 1,
+		is_same_as<vk::memory_allocate_flags_info>.decayed <= 1
 	>
 	vk::expected<handle<vk::device_memory>>
 	try_allocate_memory(Args&&... args) {
@@ -39,8 +39,9 @@ namespace vk {
 				get_decayed_same_as<vk::memory_type_index>()
 		};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::memory_allocate_flags_info> > 0
+		if constexpr (
+			(is_same_as<vk::memory_allocate_flags_info>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ai.next = & a.template
 				get_decayed_same_as<vk::memory_allocate_flags_info>();

@@ -18,9 +18,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::descriptor_set_layout>> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::descriptor_set_layout>>.decayed == 1
 	>
 	void destroy_descriptor_set_layout(Args&&... args) {
 		tuple a{ args... };

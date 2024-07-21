@@ -31,10 +31,10 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<handle<vk::descriptor_set>> == 1,
-			count_of_decayed_same_as<vk::dst_binding> == 1,
-			count_of_decayed_same_as<vk::dst_array_element> <= 1,
-			count_of_decayed_same_as<vk::descriptor_type> == 1,
+			is_same_as<handle<vk::descriptor_set>>.decayed == 1,
+			is_same_as<vk::dst_binding>.decayed == 1,
+			is_same_as<vk::dst_array_element>.decayed <= 1,
+			is_same_as<vk::descriptor_type>.decayed == 1,
 			count_of_range_of_decayed<vk::descriptor_image_info> <= 1,
 			count_of_range_of_decayed<vk::descriptor_buffer_info> <= 1,
 			count_of_range_of_decayed<handle<vk::buffer_view>> <= 1
@@ -63,8 +63,9 @@ namespace vk {
 			descriptor_type = a.template
 				get_decayed_same_as<vk::descriptor_type>();
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::dst_array_element> > 0
+			if constexpr (
+				(is_same_as<vk::dst_array_element>.while_decayed > 0)
+				.for_types<Args...>()
 			) {
 				dst_array_element = a.template
 					get_decayed_same_as<vk::dst_array_element>();

@@ -83,7 +83,7 @@ namespace vk {
 			get_decayed_same_as<handle<vk::fence>>();
 
 		return tuple{ args... }.template pass_satisfying_predicate<
-			!is_same_as<handle<vk::fence>>.while_decayed
+			!is_same_as<handle<vk::fence>>.decayed
 		>([&]<typename... Args0>(Args0&&... args0) {
 			return vk::try_wait_for_fences(
 				forward<Args0>(args0)..., array{ fence }

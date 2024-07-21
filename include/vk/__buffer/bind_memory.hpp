@@ -23,11 +23,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.while_decayed == 1,
-		is_same_as<handle<vk::device>>.while_decayed == 1,
-		is_same_as<handle<vk::buffer>>.while_decayed == 1,
-		is_same_as<handle<vk::device_memory>>.while_decayed == 1,
-		is_same_as<vk::memory_offset>.while_decayed <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::buffer>>.decayed == 1,
+		is_same_as<handle<vk::device_memory>>.decayed == 1,
+		is_same_as<vk::memory_offset>.decayed <= 1
 	>
 	vk::result try_bind_buffer_memory(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template

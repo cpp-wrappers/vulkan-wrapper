@@ -22,14 +22,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.while_decayed == 1,
-		is_same_as<handle<vk::device>>.while_decayed == 1,
-		is_same_as<vk::buffer_create_flags>.while_decayed <= 1,
-		is_same_as<vk::buffer_size>.while_decayed == 1,
-		is_same_as<vk::buffer_usages>.while_decayed == 1,
-		is_same_as<vk::sharing_mode>.while_decayed <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::buffer_create_flags>.decayed <= 1,
+		is_same_as<vk::buffer_size>.decayed == 1,
+		is_same_as<vk::buffer_usages>.decayed == 1,
+		is_same_as<vk::sharing_mode>.decayed <= 1,
 		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::queue_family_index>.while_decayed
+			is_same_as<vk::queue_family_index>.decayed
 		> <= 1
 	>
 	vk::expected<handle<vk::buffer>>
@@ -48,7 +48,7 @@ namespace vk {
 		};
 
 		if constexpr (
-			(is_same_as<vk::sharing_mode>.while_decayed > 0).for_types<Args...>()
+			(is_same_as<vk::sharing_mode>.decayed > 0).for_types<Args...>()
 		) {
 			ci.sharing_mode = a.template
 				get_decayed_same_as<vk::sharing_mode>();

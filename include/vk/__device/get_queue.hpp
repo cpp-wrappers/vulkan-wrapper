@@ -19,10 +19,10 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::queue_family_index> == 1,
-		count_of_decayed_same_as<vk::queue_index> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::queue_family_index>.decayed == 1,
+		is_same_as<vk::queue_index>.decayed == 1
 	>
 	handle<vk::queue>
 	get_device_queue(Args&&... args) {

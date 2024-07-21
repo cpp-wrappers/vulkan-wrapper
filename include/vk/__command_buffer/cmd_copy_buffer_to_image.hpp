@@ -24,13 +24,15 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::image>> == 1,
-		count_of_decayed_same_as<vk::image_layout> == 1,
-		count_of_range_of_decayed<vk::buffer_image_copy> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<handle<vk::buffer>>.decayed == 1,
+		is_same_as<handle<vk::image>>.decayed == 1,
+		is_same_as<vk::image_layout>.decayed == 1,
+		is_range_of_element_type_satisfying_predicate<
+			is_same_as<vk::buffer_image_copy>.decayed
+		> == 1
 	>
 	void cmd_copy_buffer_to_image(Args&&... args) {
 		tuple a { args... };

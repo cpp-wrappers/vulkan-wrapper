@@ -25,11 +25,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::physical_device>>.decayed == 1,
 		count_of_range_of_decayed<vk::queue_create_info> <= 1,
 		count_of_range_of_decayed<vk::extension_name> <= 1,
-		count_of_decayed_same_as<vk::physical_device_features> >= 0,
+		is_same_as<vk::physical_device_features>.decayed >= 0,
 		count_of_satisfying_predicate<vk::is_physical_device_features> >= 0
 	>
 	vk::expected<handle<vk::device>>
@@ -62,8 +62,9 @@ namespace vk {
 			ci.enabled_extension_names = extensions.iterator();
 		}
 
-		constexpr bool contain_features = types<Args...>::template
-			count_of_decayed_same_as<vk::physical_device_features> > 0;
+		constexpr bool contain_features
+			= (is_same_as<vk::physical_device_features>.decayed > 0)
+				.for_types<Args...>();
 
 		constexpr bool contain_aditional_features = types<Args...>::template
 			count_of_satisfying_predicate<vk::is_physical_device_features> > 0;

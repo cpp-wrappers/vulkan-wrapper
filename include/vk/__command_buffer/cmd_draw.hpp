@@ -43,13 +43,13 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::vertex_count> == 1,
-		count_of_decayed_same_as<vk::instance_count> <= 1,
-		count_of_decayed_same_as<vk::first_vertex> <= 1,
-		count_of_decayed_same_as<vk::first_instance> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::vertex_count>.decayed == 1,
+		is_same_as<vk::instance_count>.decayed <= 1,
+		is_same_as<vk::first_vertex>.decayed <= 1,
+		is_same_as<vk::first_instance>.decayed <= 1
 	>
 	void cmd_draw(Args&&... args) {
 		tuple a { args... };
@@ -68,8 +68,9 @@ namespace vk {
 
 		vk::instance_count instance_count{ 1 };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::instance_count> > 0
+		if constexpr (
+			(is_same_as<vk::instance_count>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			instance_count = a.template
 				get_decayed_same_as<vk::instance_count>();
@@ -77,8 +78,9 @@ namespace vk {
 
 		vk::first_vertex first_vertex{ 0 };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_vertex> > 0
+		if constexpr (
+			(is_same_as<vk::first_vertex>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			first_vertex = a.template
 				get_decayed_same_as<handle<vk::first_vertex>>();
@@ -86,8 +88,9 @@ namespace vk {
 
 		vk::first_instance first_instance{ 0 };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_instance> > 0
+		if constexpr (
+			(is_same_as<vk::first_instance>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			first_instance = a.template
 				get_decayed_same_as<handle<vk::first_instance>>();

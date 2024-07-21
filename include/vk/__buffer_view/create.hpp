@@ -22,12 +22,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::buffer>> == 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::memory_offset> == 1,
-		count_of_decayed_same_as<vk::memory_size> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::buffer>>.decayed == 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::memory_offset>.decayed == 1,
+		is_same_as<vk::memory_size>.decayed == 1
 	>
 	vk::expected<handle<vk::buffer_view>>
 	try_create_buffer_view(Args&&... args) {

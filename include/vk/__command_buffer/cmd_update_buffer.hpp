@@ -25,13 +25,13 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::buffer>> == 1,
-		count_of_decayed_same_as<vk::memory_offset> <= 1,
-		count_of_decayed_same_as<vk::memory_size> == 1,
-		count_of_decayed_same_as<void*> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<handle<vk::buffer>>.decayed == 1,
+		is_same_as<vk::memory_offset>.decayed <= 1,
+		is_same_as<vk::memory_size>.decayed == 1,
+		is_same_as<void*>.decayed == 1
 	>
 	void cmd_update_buffer(Args&&... args) {
 		tuple a { args... };
@@ -55,8 +55,8 @@ namespace vk {
 
 		vk::memory_offset offset{};
 
-		if constexpr(types<Args...>::template
-			count_of_decayed_same_as<vk::memory_offset> > 0
+		if constexpr(
+			(is_same_as<vk::memory_offset>.decayed > 0).for_types<Args...>()
 		) {
 			offset = a.template get_decayed_same_as<vk::memory_offset>();
 		}

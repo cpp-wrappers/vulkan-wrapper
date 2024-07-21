@@ -19,10 +19,10 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::descriptor_binding> == 1,
-			count_of_decayed_same_as<vk::descriptor_type> == 1,
-			count_of_decayed_same_as<vk::descriptor_count> <= 1,
-			count_of_decayed_same_as<vk::shader_stages> == 1
+			is_same_as<vk::descriptor_binding>.decayed == 1,
+			is_same_as<vk::descriptor_type>.decayed == 1,
+			is_same_as<vk::descriptor_count>.decayed <= 1,
+			is_same_as<vk::shader_stages>.decayed == 1
 		>
 		descriptor_set_layout_binding(Args&&... args) {
 			tuple a{ args... };
@@ -34,8 +34,8 @@ namespace vk {
 			stage_flags = a.template
 				get_decayed_same_as<vk::shader_stages>();
 			
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::descriptor_count> > 0
+			if constexpr(
+				(is_same_as<vk::descriptor_count> > 0).for_types<Args...>()
 			) {
 				descriptor_count = a.template
 					get_decayed_same_as<vk::descriptor_count>();

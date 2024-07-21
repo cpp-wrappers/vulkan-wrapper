@@ -23,11 +23,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<
-			vk::descriptor_set_layout_create_flags
-		> <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::descriptor_set_layout_create_flags>.decayed <= 1,
 		count_of_range_of_decayed<vk::descriptor_set_layout_binding> <= 1
 	>
 	expected<handle<vk::descriptor_set_layout>>
@@ -42,8 +40,9 @@ namespace vk {
 			.bindings = bindings.iterator()
 		};
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::descriptor_set_layout_create_flags>
+		if constexpr (
+			(is_same_as<vk::descriptor_set_layout_create_flags>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.flags = a.template
 				get_decayed_same_as<vk::descriptor_set_layout_create_flags>();

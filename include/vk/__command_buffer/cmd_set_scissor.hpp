@@ -26,11 +26,13 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::first_scissor_index> <= 1,
-		count_of_range_of_decayed<vk::rect2d> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::first_scissor_index>.decayed <= 1,
+		is_range_of_element_type_satisfying_predicate<
+			is_same_as<vk::rect2d>.while_decayed
+		> == 1
 	>
 	void cmd_set_scissor(Args&&... args) {
 		tuple a { args... };
@@ -46,8 +48,9 @@ namespace vk {
 
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_scissor_index> > 0
+		if constexpr (
+			(is_same_as<vk::first_scissor_index>.decayed > 0)
+			.for_types<Args...>()
 		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
 
 		auto& scissors = a.template get_range_of_decayed<vk::rect2d>();
@@ -64,11 +67,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::first_scissor_index> <= 1,
-		count_of_decayed_same_as<vk::rect2d> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::first_scissor_index>.decayed <= 1,
+		is_same_as<vk::rect2d>.decayed == 1
 	>
 	void cmd_set_scissor(Args&&... args) {
 		tuple a { args... };
@@ -84,8 +87,9 @@ namespace vk {
 
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_scissor_index> > 0
+		if constexpr (
+			(is_same_as<vk::first_scissor_index>.decayed > 0)
+			.for_types<Args...>()
 		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
 
 		vk::rect2d scissor = a.template get_decayed_same_as<vk::rect2d>();
@@ -97,11 +101,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::first_scissor_index> <= 1,
-		count_of_decayed_same_as<vk::extent<2>> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::first_scissor_index>.decayed <= 1,
+		is_same_as<vk::extent<2>>.decayed == 1
 	>
 	void cmd_set_scissor(Args&&... args) {
 		tuple a { args... };
@@ -117,8 +121,9 @@ namespace vk {
 
 		vk::first_scissor_index first{ 0 };
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::first_scissor_index> > 0
+		if constexpr (
+			(is_same_as<vk::first_scissor_index>.decayed > 0)
+			.for_types<Args...>()
 		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
 
 		vk::extent<2> extent = a.template get_decayed_same_as<vk::extent<2>>();

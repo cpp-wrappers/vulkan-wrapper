@@ -28,13 +28,13 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::src_access> == 1,
-			count_of_decayed_same_as<vk::dst_access> == 1,
-			count_of_decayed_same_as<vk::src_queue_family_index> <= 1,
-			count_of_decayed_same_as<vk::dst_queue_family_index> <= 1,
-			count_of_decayed_same_as<handle<vk::buffer>> == 1,
-			count_of_decayed_same_as<vk::memory_offset> <= 1,
-			count_of_decayed_same_as<vk::memory_size> == 1
+			is_same_as<vk::src_access>.decayed == 1,
+			is_same_as<vk::dst_access>.decayed == 1,
+			is_same_as<vk::src_queue_family_index>.decayed <= 1,
+			is_same_as<vk::dst_queue_family_index>.decayed <= 1,
+			is_same_as<handle<vk::buffer>>.decayed == 1,
+			is_same_as<vk::memory_offset>.decayed <= 1,
+			is_same_as<vk::memory_size>.decayed == 1
 		>
 		buffer_memory_barrier(Args&&... args) {
 			tuple a { args... };
@@ -44,22 +44,25 @@ namespace vk {
 			buffer = a.template get_decayed_same_as<handle<vk::buffer>>();
 			size = a.template get_decayed_same_as<vk::memory_size>();
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::src_queue_family_index> > 0
+			if constexpr (
+				(is_same_as<vk::src_queue_family_index>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				src_queue_family_index = a.template
 					get_decayed_same_as<vk::src_queue_family_index>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::dst_queue_family_index> > 0
+			if constexpr (
+				(is_same_as<vk::dst_queue_family_index>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				dst_queue_family_index = a.template
 					get_decayed_same_as<vk::dst_queue_family_index>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::memory_offset> > 0
+			if constexpr (
+				(is_same_as<vk::memory_offset>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				offset = a.template get_decayed_same_as<vk::memory_offset>();
 			}

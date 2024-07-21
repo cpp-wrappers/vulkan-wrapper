@@ -21,10 +21,10 @@ namespace vk {
 	
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::render_pass_begin_info> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::render_pass_begin_info>.decayed == 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
@@ -54,13 +54,15 @@ namespace vk {
 	requires
 	//(Order == 1) &&
 	types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
-		count_of_decayed_same_as<handle<vk::framebuffer>> == 1,
-		count_of_decayed_same_as<vk::render_area> == 1,
-		count_of_range_of_decayed<vk::clear_value> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<handle<vk::render_pass>>.decayed == 1,
+		is_same_as<handle<vk::framebuffer>>.decayed == 1,
+		is_same_as<vk::render_area>.decayed == 1,
+		is_range_of_element_type_satisfying_predicate<
+			is_same_as<vk::clear_value>.decayed
+		> <= 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
@@ -112,14 +114,14 @@ namespace vk {
 	template<typename... Args>
 	requires
 	//(Order == 2) &&
-	(types<Args...>::template count_of_decayed_same_as<vk::clear_value> == 1)
+	((is_same_as<vk::clear_value>.decayed == 1).for_types<Args...>())
 	void cmd_begin_render_pass(Args&&... args) {
 		vk::clear_value clear_value = tuple{ args... }.template
 			get_decayed_same_as<vk::clear_value>();
 
 		tuple{ args... }.template
 		pass_satisfying_predicate<
-			!is_same_as<vk::clear_value>.while_decayed
+			!is_same_as<vk::clear_value>.decayed
 		>([&]<typename... Args0>(Args0&&... args0) {
 			cmd_begin_render_pass(
 				::array{ clear_value },

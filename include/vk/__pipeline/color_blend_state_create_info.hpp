@@ -50,7 +50,7 @@ namespace vk {
 			attachments{
 				tuple{forward<Args>(args)...}
 				.template get_satisfying_predicate<
-					is_same_as<AttachementsRange>.while_decayed
+					is_same_as<AttachementsRange>.decayed
 				>()
 			}
 		{

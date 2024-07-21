@@ -29,12 +29,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<vk::src_stages> == 1,
-		count_of_decayed_same_as<vk::dst_stages> == 1,
-		count_of_decayed_same_as<vk::dependencies> <= 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::src_stages>.decayed == 1,
+		is_same_as<vk::dst_stages>.decayed == 1,
+		is_same_as<vk::dependencies>.decayed <= 1,
 		count_of_range_of_decayed<vk::memory_barrier> <= 1,
 		count_of_range_of_decayed<vk::buffer_memory_barrier> <= 1,
 		count_of_range_of_decayed<vk::image_memory_barrier> <= 1
@@ -59,8 +59,8 @@ namespace vk {
 
 		vk::dependencies dependencies{};
 		
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::dependencies> > 0
+		if constexpr (
+			(is_same_as<vk::dependencies>.decayed > 0).for_types<Args...>()
 		) {
 			dependencies = a.template
 				get_decayed_same_as<vk::dependencies>();

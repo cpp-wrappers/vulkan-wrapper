@@ -16,8 +16,8 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::src_access> == 1,
-			count_of_decayed_same_as<vk::dst_access> == 1
+			is_same_as<vk::src_access>.decayed == 1,
+			is_same_as<vk::dst_access>.decayed == 1
 		>
 		memory_barrier(Args&&... args) {
 			src_access_mask = tuple { args... }.template

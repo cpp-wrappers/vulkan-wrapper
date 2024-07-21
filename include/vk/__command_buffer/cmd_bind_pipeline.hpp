@@ -22,11 +22,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::command_buffer>> == 1,
-		count_of_decayed_same_as<handle<vk::pipeline>> == 1,
-		count_of_decayed_same_as<vk::pipeline_bind_point> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<handle<vk::pipeline>>.decayed == 1,
+		is_same_as<vk::pipeline_bind_point>.decayed == 1
 	>
 	void cmd_bind_pipeline(Args&&... args) {
 		tuple a { args... };
