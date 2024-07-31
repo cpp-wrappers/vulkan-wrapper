@@ -16,19 +16,19 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::image_view>> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::image_view>>.decayed == 1
 	>
 	void destroy_image_view(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::image_view> image_view = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::image_view>>();
+			get<is_same_as<handle<vk::image_view>>.decayed>();
 
 		vk::get_device_function<vk::destroy_image_view_function>(
 			instance, device

@@ -32,19 +32,20 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		uint32 write_count{};
 		const vk::write_descriptor_set* writes;
 
-		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::write_descriptor_set>
+		if constexpr (
+			(is_range_of<is_same_as<vk::write_descriptor_set>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& writes0 = a.template
-				get_range_of_decayed<vk::write_descriptor_set>();
+				get<is_range_of<is_same_as<vk::write_descriptor_set>.decayed>>();
 
 			write_count = (uint32) writes0.size();
 			writes = writes0.iterator();
@@ -53,11 +54,12 @@ namespace vk {
 		uint32 copy_count{};
 		const vk::copy_descriptor_set* copies;
 
-		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::copy_descriptor_set>
+		if constexpr (
+			(is_range_of<is_same_as<vk::copy_descriptor_set>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& copies0 = a.template
-				get_range_of_decayed<vk::copy_descriptor_set>();
+				get<is_range_of<is_same_as<vk::copy_descriptor_set>.decayed>>();
 
 			copy_count = (uint32) copies0.size();
 			copies = copies0.iterator();
@@ -83,10 +85,10 @@ namespace vk {
 	void update_descriptor_set(Args&&... args) {
 		tuple a { args... };
 		return vk::update_descriptor_sets(
-			a.template get_decayed_same_as<handle<vk::instance>>(),
-			a.template get_decayed_same_as<handle<vk::device>>(),
+			a.template get<is_same_as<handle<vk::instance>>.decayed>(),
+			a.template get<is_same_as<handle<vk::device>>.decayed>(),
 			array {
-				a.template get_decayed_same_as<vk::write_descriptor_set>()
+				a.template get<is_same_as<vk::write_descriptor_set>.decayed>()
 			}
 		);
 	}
@@ -100,10 +102,10 @@ namespace vk {
 	void update_descriptor_set(Args&&... args) {
 		tuple a { args... };
 		return vk::update_descriptor_sets(
-			a.template get_decayed_same_as<handle<vk::instance>>(),
-			a.template get_decayed_same_as<handle<vk::device>>(),
+			a.template get<is_same_as<handle<vk::instance>>.decayed>(),
+			a.template get<is_same_as<handle<vk::device>>.decayed>(),
 			array {
-				a.template get_decayed_same_as<vk::copy_descriptor_set>()
+				a.template get<is_same_as<vk::copy_descriptor_set>.decayed>()
 			}
 		);
 	}

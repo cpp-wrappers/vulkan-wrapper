@@ -7,7 +7,7 @@
 namespace vk {
 
 	struct physical_device_acceleration_structure_properties :
-		vk::extension_properties_marker
+		vk::extension_properties_mark
 	{
 		uint32 structure_type = 1000150014;
 		const void* next;

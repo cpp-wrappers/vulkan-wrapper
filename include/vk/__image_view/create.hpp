@@ -23,45 +23,46 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::image>> == 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::image_view_type> == 1,
-		count_of_decayed_same_as<vk::component_mapping> <= 1,
-		count_of_decayed_same_as<vk::image_subresource_range> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::image>>.decayed == 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::image_view_type>.decayed == 1,
+		is_same_as<vk::component_mapping>.decayed <= 1,
+		is_same_as<vk::image_subresource_range>.decayed <= 1
 	>
 	vk::expected<handle<vk::image_view>>
 	try_create_image_view(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::image> image = a.template
-			get_decayed_same_as<handle<vk::image>>();
+			get<is_same_as<handle<vk::image>>.decayed>();
 
 		vk::image_view_create_info ci {
 			.image = image.underlying(),
-			.view_type = a.template get_decayed_same_as<vk::image_view_type>(),
-			.format = a.template get_decayed_same_as<vk::format>()
+			.view_type = a.template get<is_same_as<vk::image_view_type>.decayed>(),
+			.format = a.template get<is_same_as<vk::format>.decayed>()
 		};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::component_mapping> > 0
+		if constexpr (
+			(is_same_as<vk::component_mapping>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.components = a.template
-				get_decayed_same_as<vk::component_mapping>();
+				get<is_same_as<vk::component_mapping>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::image_subresource_range> > 0
+		if constexpr (
+			(is_same_as<vk::image_subresource_range> > 0).for_types<Args...>()
 		) {
 			ci.subresource_range = a.template
-				get_decayed_same_as<vk::image_subresource_range>();
+				get<is_same_as<vk::image_subresource_range>.decayed>();
 		}
 
 		handle<vk::image_view> image_view;

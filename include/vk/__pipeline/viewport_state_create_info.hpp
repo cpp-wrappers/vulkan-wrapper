@@ -24,54 +24,62 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::viewport_count> <= 1,
-			count_of_decayed_same_as<vk::scissor_count> <= 1,
-			count_of_range_of_decayed<vk::viewport> <= 1,
-			count_of_range_of_decayed<vk::scissor> <= 1
+			is_same_as<vk::viewport_count>.decayed <= 1,
+			is_same_as<vk::scissor_count>.decayed <= 1,
+			is_range_of<is_same_as<vk::viewport>.decayed> <= 1,
+			is_range_of<is_same_as<vk::scissor>.decayed> <= 1
 		> &&
 		(
 			(
 				types<Args...>::template
-					count_of_range_of_decayed<vk::viewport> == 0 ||
+				count_of<is_range_of<is_same_as<vk::viewport>.decayed>> == 0
+				||
 				types<Args...>::template
-					count_of_decayed_same_as<vk::viewport_count> == 0
+				count_of<is_same_as<vk::viewport_count>.decayed> == 0
 			) && (
 				types<Args...>::template
-					count_of_range_of_decayed<vk::scissor> == 0 ||
+				count_of<is_range_of<is_same_as<vk::scissor>.decayed>> == 0
+				||
 				types<Args...>::template
-					count_of_decayed_same_as<vk::scissor_count> == 0
+				count_of<is_same_as<vk::scissor_count>.decayed> == 0
 			)
 		)
 		pipeline_viewport_state_create_info(Args&&... args) {
 			tuple a{ args... };
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::viewport_count> > 0
+			if constexpr (
+				(is_same_as<vk::viewport_count>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				viewport_count = a.template
-					get_decayed_same_as<vk::viewport_count>();
+					get<is_same_as<vk::viewport_count>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::scissor_count> > 0
+			if constexpr (
+				(is_same_as<vk::scissor_count>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				scissor_count = a.template
-					get_decayed_same_as<vk::scissor_count>();
+					get<is_same_as<vk::scissor_count>.decayed>();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::viewport> > 0
+				count_of<is_range_of<
+					is_same_as<vk::viewport>.decayed
+				>> > 0
 			) {
 				auto& viewports0 = a.template
-					get_range_of_decayed<vk::viewport>();
+					get<is_range_of<is_same_as<vk::viewport>.decayed>>();
 				viewport_count = { (uint32) viewports0.size() };
 				viewports = viewports0.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::scissor> > 0
+				count_of<is_range_of<
+					is_same_as<vk::scissor>.decayed
+				>> > 0
 			) {
 				auto& viewports0 = a.template
-					get_range_of_decayed<vk::scissor>();
+					get<is_range_of<is_same_as<vk::scissor>.decayed>>();
 				scissor_count = { (uint32) viewports0.size() };
 				scissors = viewports0.iterator();
 			}

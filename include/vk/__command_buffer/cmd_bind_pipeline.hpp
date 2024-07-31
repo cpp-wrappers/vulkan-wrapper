@@ -32,19 +32,19 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::pipeline> pipeline = a.template
-			get_decayed_same_as<handle<vk::pipeline>>();
+			get<is_same_as<handle<vk::pipeline>>.decayed>();
 
 		vk::pipeline_bind_point bind_point = a.template
-			get_decayed_same_as<vk::pipeline_bind_point>();
+			get<is_same_as<vk::pipeline_bind_point>.decayed>();
 
 		vk::get_device_function<vk::cmd_bind_pipeline_function>(
 			instance, device

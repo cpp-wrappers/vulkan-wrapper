@@ -23,25 +23,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
-		count_of_decayed_same_as<handle<vk::surface>> == 1,
-		count_of_range_of_decayed<vk::surface_format> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::physical_device>>.decayed == 1,
+		is_same_as<handle<vk::surface>>.decayed == 1,
+		is_range_of<is_same_as<vk::surface_format>.decayed> == 1
 	>
 	[[ nodiscard ]]
 	vk::expected<vk::count>
 	try_get_physical_device_surface_formats(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::physical_device> physical_device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::physical_device>>();
+			get<is_same_as<handle<vk::physical_device>>.decayed>();
 
 		handle<vk::surface> surface = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::surface>>();
+			get<is_same_as<handle<vk::surface>>.decayed>();
 
 		auto& range = tuple{ args... }.template
-			get_range_of_decayed<vk::surface_format>();
+			get<is_range_of<is_same_as<vk::surface_format>.decayed>>();
 
 		uint32 count = (uint32) range.size();
 

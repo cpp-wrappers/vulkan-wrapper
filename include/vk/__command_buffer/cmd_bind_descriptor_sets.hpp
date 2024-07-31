@@ -43,30 +43,26 @@ namespace vk {
 		is_same_as<vk::pipeline_bind_point>.decayed == 1,
 		is_same_as<handle<vk::pipeline_layout>>.decayed == 1,
 		is_same_as<vk::first_set>.decayed <= 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::descriptor_set>>.decayed
-		> == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::dynamic_offset>.decayed
-		> <= 1
+		is_range_of<is_same_as<handle<vk::descriptor_set>>.decayed> == 1,
+		is_range_of<is_same_as<vk::dynamic_offset>.decayed> <= 1
 	>
 	void cmd_bind_descriptor_sets(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::pipeline_bind_point bind_point = a.template
-			get_decayed_same_as<vk::pipeline_bind_point>();
+			get<is_same_as<vk::pipeline_bind_point>.decayed>();
 
 		handle<vk::pipeline_layout> pipeline_layout = a.template
-			get_decayed_same_as<handle<vk::pipeline_layout>>();
+			get<is_same_as<handle<vk::pipeline_layout>>.decayed>();
 
 		vk::first_set first{};
 		
@@ -74,20 +70,23 @@ namespace vk {
 			(is_same_as<vk::first_set>.decayed > 0).for_types<Args...>()
 		) {
 			first = a.template
-				get_decayed_same_as<vk::first_set>();
+				get<is_same_as<vk::first_set>.decayed>();
 		}
 
 		auto& sets = a.template
-			get_range_of_decayed<handle<vk::descriptor_set>>();
+			get<is_range_of<
+				is_same_as<handle<vk::descriptor_set>>.decayed
+			>>();
 
 		uint32 dynamic_offset_count = 0;
 		const vk::dynamic_offset* dynamic_offsets = nullptr;
 
-		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::dynamic_offset> > 0
+		if constexpr (
+			(is_range_of<is_same_as<vk::dynamic_offset>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& offsets = a.template
-				get_range_of_decayed<vk::dynamic_offset>();
+				get<is_range_of<is_same_as<vk::dynamic_offset>.decayed>>();
 			dynamic_offset_count = (uint32) offsets.size();
 			dynamic_offsets = offsets.iterator();
 		}

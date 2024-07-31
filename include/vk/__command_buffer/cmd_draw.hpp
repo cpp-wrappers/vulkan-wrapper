@@ -55,16 +55,16 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::vertex_count vertex_count = a.template
-			get_decayed_same_as<vk::vertex_count>();
+			get<is_same_as<vk::vertex_count>.decayed>();
 
 		vk::instance_count instance_count{ 1 };
 
@@ -73,7 +73,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			instance_count = a.template
-				get_decayed_same_as<vk::instance_count>();
+				get<is_same_as<vk::instance_count>.decayed>();
 		}
 
 		vk::first_vertex first_vertex{ 0 };
@@ -83,7 +83,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			first_vertex = a.template
-				get_decayed_same_as<handle<vk::first_vertex>>();
+				get<is_same_as<handle<vk::first_vertex>>.decayed>();
 		}
 
 		vk::first_instance first_instance{ 0 };
@@ -93,7 +93,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			first_instance = a.template
-				get_decayed_same_as<handle<vk::first_instance>>();
+				get<is_same_as<handle<vk::first_instance>>.decayed>();
 		}
 
 		vk::get_device_function<vk::cmd_draw_function>(

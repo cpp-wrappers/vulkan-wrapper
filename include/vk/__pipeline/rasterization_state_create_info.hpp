@@ -36,70 +36,77 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::enable_depth_clamp> <= 1,
-			count_of_decayed_same_as<vk::enable_rasterizer_discard> <= 1,
-			count_of_decayed_same_as<vk::polygon_mode> == 1,
-			count_of_decayed_same_as<vk::cull_mode> == 1,
-			count_of_decayed_same_as<vk::front_face> == 1,
-			count_of_decayed_same_as<vk::enable_depth_bias> <= 1,
-			count_of_decayed_same_as<vk::depth_bias_constant_factor> <= 1,
-			count_of_decayed_same_as<vk::depth_bias_clamp> <= 1,
-			count_of_decayed_same_as<vk::depth_bias_slope_factor> <= 1,
-			count_of_decayed_same_as<vk::line_width> <= 1
+			is_same_as<vk::enable_depth_clamp>.decayed <= 1,
+			is_same_as<vk::enable_rasterizer_discard>.decayed <= 1,
+			is_same_as<vk::polygon_mode>.decayed == 1,
+			is_same_as<vk::cull_mode>.decayed == 1,
+			is_same_as<vk::front_face>.decayed == 1,
+			is_same_as<vk::enable_depth_bias>.decayed <= 1,
+			is_same_as<vk::depth_bias_constant_factor>.decayed <= 1,
+			is_same_as<vk::depth_bias_clamp>.decayed <= 1,
+			is_same_as<vk::depth_bias_slope_factor>.decayed <= 1,
+			is_same_as<vk::line_width>.decayed <= 1
 		>
 		pipeline_rasterization_state_create_info(Args&&... args) {
 			tuple a{ args... };
 
-			polygon_mode = a.template get_decayed_same_as<vk::polygon_mode>();
-			cull_mode = a.template get_decayed_same_as<vk::cull_mode>();
-			front_face = a.template get_decayed_same_as<vk::front_face>();
+			polygon_mode = a.template get<is_same_as<vk::polygon_mode>.decayed>();
+			cull_mode = a.template get<is_same_as<vk::cull_mode>.decayed>();
+			front_face = a.template get<is_same_as<vk::front_face>.decayed>();
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::enable_depth_clamp> > 0
+			if constexpr (
+				(is_same_as<vk::enable_depth_clamp>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				enable_depth_clamp = a.template
-					get_decayed_same_as<vk::enable_depth_clamp>();
+					get<is_same_as<vk::enable_depth_clamp>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::enable_rasterizer_discard> > 0
+			if constexpr (
+				(is_same_as<vk::enable_rasterizer_discard>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				enable_rasterizer_discard = a.template
-					get_decayed_same_as<vk::enable_rasterizer_discard>();
+					get<is_same_as<vk::enable_rasterizer_discard>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::enable_rasterizer_discard> > 0
+			if constexpr (
+				(is_same_as<vk::enable_rasterizer_discard>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				enable_rasterizer_discard = a.template
-					get_decayed_same_as<vk::enable_rasterizer_discard>();
+					get<is_same_as<vk::enable_rasterizer_discard>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::depth_bias_constant_factor> > 0
+			if constexpr (
+				(is_same_as<vk::depth_bias_constant_factor>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				enable_depth_clamp = a.template
-					get_decayed_same_as<vk::depth_bias_constant_factor>();
+					get<is_same_as<vk::depth_bias_constant_factor>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::depth_bias_clamp> > 0
+			if constexpr (
+				(is_same_as<vk::depth_bias_clamp>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				depth_bias_clamp = a.template
-					get_decayed_same_as<vk::depth_bias_clamp>();
+					get<is_same_as<vk::depth_bias_clamp>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::depth_bias_slope_factor> > 0
+			if constexpr (
+				(is_same_as<vk::depth_bias_slope_factor>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				depth_bias_slope_factor = a.template
-					get_decayed_same_as<vk::depth_bias_slope_factor>();
+					get<is_same_as<vk::depth_bias_slope_factor>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::line_width> > 0
+			if constexpr (
+				(is_same_as<vk::line_width>.decayed > 0)
+				.for_types<Args...>()
 			) {
-				line_width = a.template get_decayed_same_as<vk::line_width>();
+				line_width = a.template get<is_same_as<vk::line_width>.decayed>();
 			}
 
 		} // constructor

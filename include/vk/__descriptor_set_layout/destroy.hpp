@@ -26,13 +26,13 @@ namespace vk {
 		tuple a{ args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::descriptor_set_layout> set_layout = a.template
-			get_decayed_same_as<handle<vk::descriptor_set_layout>>();
+			get<is_same_as<handle<vk::descriptor_set_layout>>.decayed>();
 
 		vk::get_device_function<vk::destroy_descriptor_set_layout_function>(
 			instance, device

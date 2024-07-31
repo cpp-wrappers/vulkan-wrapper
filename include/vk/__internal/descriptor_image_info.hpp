@@ -16,28 +16,30 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<handle<vk::sampler>> <= 1,
-			count_of_decayed_same_as<handle<vk::image_view>> == 1,
-			count_of_decayed_same_as<vk::image_layout> <= 1
+			is_same_as<handle<vk::sampler>>.decayed <= 1,
+			is_same_as<handle<vk::image_view>>.decayed == 1,
+			is_same_as<vk::image_layout>.decayed <= 1
 		>
 		descriptor_image_info(Args&&... args) {
 			tuple a { args... };
 
 			image_view = a.template
-				get_decayed_same_as<handle<vk::image_view>>().underlying();
+				get<is_same_as<handle<vk::image_view>>.decayed>().underlying();
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<handle<vk::sampler>> > 0
+			if constexpr (
+				(is_same_as<handle<vk::sampler>>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				sampler = a.template
-					get_decayed_same_as<handle<vk::sampler>>().underlying();
+					get<is_same_as<handle<vk::sampler>>.decayed>().underlying();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::image_layout> > 0
+			if constexpr (
+				(is_same_as<vk::image_layout>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				image_layout = a.template
-					get_decayed_same_as<vk::image_layout>();
+					get<is_same_as<vk::image_layout>.decayed>();
 			}
 
 		} // constructor

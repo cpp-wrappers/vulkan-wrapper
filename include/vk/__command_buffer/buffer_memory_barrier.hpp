@@ -39,17 +39,17 @@ namespace vk {
 		buffer_memory_barrier(Args&&... args) {
 			tuple a { args... };
 
-			src_acccess = a.template get_decayed_same_as<vk::src_access>();
-			dst_acccess = a.template get_decayed_same_as<vk::dst_access>();
-			buffer = a.template get_decayed_same_as<handle<vk::buffer>>();
-			size = a.template get_decayed_same_as<vk::memory_size>();
+			src_acccess = a.template get<is_same_as<vk::src_access>.decayed>();
+			dst_acccess = a.template get<is_same_as<vk::dst_access>.decayed>();
+			buffer = a.template get<is_same_as<handle<vk::buffer>>.decayed>();
+			size = a.template get<is_same_as<vk::memory_size>.decayed>();
 
 			if constexpr (
 				(is_same_as<vk::src_queue_family_index>.decayed > 0)
 				.for_types<Args...>()
 			) {
 				src_queue_family_index = a.template
-					get_decayed_same_as<vk::src_queue_family_index>();
+					get<is_same_as<vk::src_queue_family_index>.decayed>();
 			}
 
 			if constexpr (
@@ -57,14 +57,15 @@ namespace vk {
 				.for_types<Args...>()
 			) {
 				dst_queue_family_index = a.template
-					get_decayed_same_as<vk::dst_queue_family_index>();
+					get<is_same_as<vk::dst_queue_family_index>.decayed>();
 			}
 
 			if constexpr (
 				(is_same_as<vk::memory_offset>.decayed > 0)
 				.for_types<Args...>()
 			) {
-				offset = a.template get_decayed_same_as<vk::memory_offset>();
+				offset = a.template
+					get<is_same_as<vk::memory_offset>.decayed>();
 			}
 
 		} // constructor

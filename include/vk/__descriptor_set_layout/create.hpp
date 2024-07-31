@@ -26,14 +26,14 @@ namespace vk {
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<vk::descriptor_set_layout_create_flags>.decayed <= 1,
-		count_of_range_of_decayed<vk::descriptor_set_layout_binding> <= 1
+		is_range_of<is_same_as<vk::descriptor_set_layout_binding>.decayed> <= 1
 	>
 	expected<handle<vk::descriptor_set_layout>>
 	try_create_descriptor_set_layout(Args&&... args) {
 		tuple a{ args... };
 
 		auto& bindings = a.template
-			get_range_of_decayed<vk::descriptor_set_layout_binding>();
+			get<is_range_of<is_same_as<vk::descriptor_set_layout_binding>.decayed>>();
 
 		vk::descriptor_set_layout_create_info ci {
 			.binding_count = (uint32) bindings.size(),
@@ -45,14 +45,14 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.flags = a.template
-				get_decayed_same_as<vk::descriptor_set_layout_create_flags>();
+				get<is_same_as<vk::descriptor_set_layout_create_flags>.decayed>();
 		}
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::descriptor_set_layout> descriptor_set_layout;
 

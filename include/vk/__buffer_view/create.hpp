@@ -34,19 +34,19 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::buffer> buffer = a.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
-		vk::format format = a.template get_decayed_same_as<vk::format>();
+		vk::format format = a.template get<is_same_as<vk::format>.decayed>();
 		vk::memory_offset offset = a.template
-			get_decayed_same_as<vk::memory_offset>();
+			get<is_same_as<vk::memory_offset>.decayed>();
 		vk::memory_size size = a.template
-			get_decayed_same_as<vk::memory_size>();
+			get<is_same_as<vk::memory_size>.decayed>();
 
 		vk::buffer_view_create_info ci {
 			.buffer = buffer.underlying(),

@@ -5,7 +5,7 @@
 namespace vk {
 
 	struct physical_device_vulkan_1_2_features :
-		vk::physical_device_features_marker
+		vk::physical_device_features_mark
 	{
 		uint32 structure_type = 51;
 		const void* next;

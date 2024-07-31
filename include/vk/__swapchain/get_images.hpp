@@ -24,25 +24,26 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
-		count_of_range_of_decayed<handle<vk::image>> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::swapchain>>.decayed == 1,
+		is_range_of<is_same_as<handle<vk::image>>.decayed> <= 1
 	>
 	vk::expected<vk::count>
 	try_get_swapchain_images(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::swapchain> swapchain = a.template
-			get_decayed_same_as<handle<vk::swapchain>>();
+			get<is_same_as<handle<vk::swapchain>>.decayed>();
 
-		auto& images = a.template get_range_of_decayed<handle<vk::image>>();
+		auto& images = a.template
+			get<is_range_of<is_same_as<handle<vk::image>>.decayed>>();
 
 		uint32 count = images.size();
 

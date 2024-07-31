@@ -24,47 +24,47 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::surface>> == 1,
-		count_of_decayed_same_as<handle<vk::swapchain>> <= 1,
-		count_of_decayed_same_as<vk::swapchain_create_flag> >= 0,
-		count_of_decayed_same_as<vk::min_image_count> == 1,
-		count_of_decayed_same_as<vk::format> == 1,
-		count_of_decayed_same_as<vk::color_space> == 1,
-		count_of_decayed_same_as<vk::extent<2>> == 1,
-		count_of_decayed_same_as<vk::image_usages> == 1,
-		count_of_decayed_same_as<vk::sharing_mode> == 1,
-		count_of_range_of_decayed<vk::queue_family_index> <= 1,
-		count_of_decayed_same_as<vk::surface_transform> >= 0,
-		count_of_decayed_same_as<vk::composite_alpha> >= 0,
-		count_of_decayed_same_as<vk::present_mode> == 1,
-		count_of_decayed_same_as<vk::clipped> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::surface>>.decayed == 1,
+		is_same_as<handle<vk::swapchain>>.decayed <= 1,
+		is_same_as<vk::swapchain_create_flag>.decayed >= 0,
+		is_same_as<vk::min_image_count>.decayed == 1,
+		is_same_as<vk::format>.decayed == 1,
+		is_same_as<vk::color_space>.decayed == 1,
+		is_same_as<vk::extent<2>>.decayed == 1,
+		is_same_as<vk::image_usages>.decayed == 1,
+		is_same_as<vk::sharing_mode>.decayed == 1,
+		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
+		is_same_as<vk::surface_transform>.decayed >= 0,
+		is_same_as<vk::composite_alpha>.decayed >= 0,
+		is_same_as<vk::present_mode>.decayed == 1,
+		is_same_as<vk::clipped>.decayed == 1
 	>
 	vk::expected<handle<vk::swapchain>>
 	try_create_swapchain(Args&&... args) {
 		tuple a{ args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::surface> surface = a.template
-			get_decayed_same_as<handle<vk::surface>>();
+			get<is_same_as<handle<vk::surface>>.decayed>();
 
 		vk::swapchain_create_info ci {
 			.surface = surface.underlying(),
 			.min_image_count = a.template
-				get_decayed_same_as<vk::min_image_count>(),
-			.format = a.template get_decayed_same_as<vk::format>(),
-			.color_space = a.template get_decayed_same_as<vk::color_space>(),
-			.extent = a.template get_decayed_same_as<vk::extent<2>>(),
-			.usage = a.template get_decayed_same_as<vk::image_usages>(),
-			.sharing_mode = a.template get_decayed_same_as<vk::sharing_mode>(),
-			.present_mode = a.template get_decayed_same_as<vk::present_mode>(),
-			.clipped = a.template get_decayed_same_as<vk::clipped>()
+				get<is_same_as<vk::min_image_count>.decayed>(),
+			.format = a.template get<is_same_as<vk::format>.decayed>(),
+			.color_space = a.template get<is_same_as<vk::color_space>.decayed>(),
+			.extent = a.template get<is_same_as<vk::extent<2>>.decayed>(),
+			.usage = a.template get<is_same_as<vk::image_usages>.decayed>(),
+			.sharing_mode = a.template get<is_same_as<vk::sharing_mode>.decayed>(),
+			.present_mode = a.template get<is_same_as<vk::present_mode>.decayed>(),
+			.clipped = a.template get<is_same_as<vk::clipped>.decayed>()
 		};
 
 		a.template for_each([&]<typename Type>(Type& arg) {
@@ -98,10 +98,12 @@ namespace vk {
 		});
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::queue_family_index> > 0
+			count_of<is_range_of<
+				is_same_as<vk::queue_family_index>.decayed
+			>> > 0
 		) {
 			auto& family_indices = a.template
-				get_range_of_decayed<vk::queue_family_index>();
+				get<is_range_of<is_same_as<vk::queue_family_index>.decayed>>();
 
 			ci.queue_family_index_count =
 				vk::queue_family_index_count {
@@ -112,11 +114,12 @@ namespace vk {
 				vk::queue_family_indices{ family_indices.iterator() };
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<handle<vk::swapchain>> > 0
+		if constexpr (
+			(is_same_as<handle<vk::swapchain>>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.old_swapchain = a.template
-				get_decayed_same_as<handle<vk::swapchain>>().underlying();
+				get<is_same_as<handle<vk::swapchain>>.decayed>().underlying();
 		}
 
 		handle<vk::swapchain> swapchain;

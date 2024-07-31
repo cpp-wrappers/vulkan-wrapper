@@ -32,27 +32,29 @@ namespace vk {
 		requires types<Args...>::template exclusively_satisfy_predicates<
 			is_same_as<vk::queue_family_index>.decayed == 1,
 			is_same_as<vk::queue_count>.decayed <= 1,
-			count_of_satisfying_predicate<
-				is_borrowed_range && is_range_of_decayed<vk::queue_priority>
-			> == 1
+			(
+				is_borrowed_range &&
+				is_range_of<is_same_as<vk::queue_priority>.decayed>
+			)  == 1
 		>
 		queue_create_info(Args&&... args) {
 			queue_family_index = tuple { args... }.template
-				get_decayed_same_as<vk::queue_family_index>();
+				get<is_same_as<vk::queue_family_index>.decayed>();
 
-			queue_priorities = tuple { args... }.template
-				get_range_of_decayed<vk::queue_priority>().iterator();
+			auto& queues = tuple { args... }.template
+				get<is_range_of<is_same_as<vk::queue_priority>.decayed>>();
+
+			queue_priorities = queues.iterator();
 
 			if constexpr (
 				(is_same_as<vk::queue_count>.decayed > 0).for_types<Args...>()
 			) {
 				queue_count = tuple { args... }.template
-					get_decayed_same_as<vk::queue_count>();
+					get<is_same_as<vk::queue_count>.decayed>();
 			}
 			else {
 				queue_count = vk::queue_count {
-					(uint32) tuple { args... }.template
-						get_range_of_decayed<vk::queue_priority>().size()
+					(uint32) queues.size()
 				};
 			}
 		}

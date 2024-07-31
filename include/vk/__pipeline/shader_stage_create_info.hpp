@@ -32,45 +32,45 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<handle<vk::shader_module>> == 1,
-			count_of_decayed_same_as<vk::shader_stages> == 1,
-			count_of_decayed_same_as<vk::entrypoint_name> == 1
+			is_same_as<handle<vk::shader_module>>.decayed == 1,
+			is_same_as<vk::shader_stages>.decayed == 1,
+			is_same_as<vk::entrypoint_name>.decayed == 1
 		>
 		pipeline_shader_stage_create_info(Args&&... args) :
 			stages {
 				tuple{ args... }.template
-					get_decayed_same_as<vk::shader_stages>()
+					get<is_same_as<vk::shader_stages>.decayed>()
 			},
 			module {
 				tuple{ args... }.template
-					get_decayed_same_as<handle<vk::shader_module>>()
+					get<is_same_as<handle<vk::shader_module>>.decayed>()
 					.underlying()
 			},
 			entrypoint_name {
 				tuple{ args... }.template
-					get_decayed_same_as<vk::entrypoint_name>()
+					get<is_same_as<vk::entrypoint_name>.decayed>()
 			}
 		{}
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<handle<vk::shader_module>> == 1,
-			count_of_decayed_same_as<vk::shader_stage> == 1,
-			count_of_decayed_same_as<vk::entrypoint_name> == 1
+			is_same_as<handle<vk::shader_module>>.decayed == 1,
+			is_same_as<vk::shader_stage>.decayed == 1,
+			is_same_as<vk::entrypoint_name>.decayed == 1
 		>
 		pipeline_shader_stage_create_info(Args&&... args) :
 			stages { vk::shader_stages {
 				tuple{ args... }.template
-					get_decayed_same_as<vk::shader_stage>()
+					get<is_same_as<vk::shader_stage>.decayed>()
 			}},
 			module {
 				tuple{ args... }.template
-					get_decayed_same_as<handle<vk::shader_module>>()
+					get<is_same_as<handle<vk::shader_module>>.decayed>()
 					.underlying()
 			},
 			entrypoint_name {
 				tuple{ args... }.template
-					get_decayed_same_as<vk::entrypoint_name>()
+					get<is_same_as<vk::entrypoint_name>.decayed>()
 			}
 		{}
 

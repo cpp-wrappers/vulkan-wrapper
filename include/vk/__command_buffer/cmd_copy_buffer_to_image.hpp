@@ -38,25 +38,25 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::buffer> buffer = a.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
 		handle<vk::image> image = a.template
-			get_decayed_same_as<handle<vk::image>>();
+			get<is_same_as<handle<vk::image>>.decayed>();
 
 		vk::image_layout dst_layout = a.template
-			get_decayed_same_as<vk::image_layout>();
+			get<is_same_as<vk::image_layout>.decayed>();
 
 		auto& regions = a.template
-			get_range_of_decayed<vk::buffer_image_copy>();
+			get<is_range_of<is_same_as<vk::buffer_image_copy>.decayed>>();
 
 		vk::get_device_function<vk::cmd_copy_buffer_to_image_function>(
 			instance, device

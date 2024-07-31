@@ -32,10 +32,11 @@ namespace vk {
 	try_create_descriptor_pool(Args&&... args) {
 		tuple a{ args... };
 
-		vk::max_sets max_sets = a.template get_decayed_same_as<vk::max_sets>();
+		vk::max_sets max_sets = a.template
+			get<is_same_as<vk::max_sets>.decayed>();
 
 		auto& sizes = a.template
-			get_range_of_decayed<vk::descriptor_pool_size>();
+			get<is_range_of<is_same_as<vk::descriptor_pool_size>.decayed>>();
 
 		vk::descriptor_pool_create_info ci {
 			.max_sets = max_sets,
@@ -48,14 +49,14 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.flags = a.template
-				get_decayed_same_as<vk::descriptor_pool_create_flags>();
+				get<is_same_as<vk::descriptor_pool_create_flags>.decayed>();
 		}
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::descriptor_pool> descriptor_pool;
 

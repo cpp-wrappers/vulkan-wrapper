@@ -38,25 +38,25 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::image> image = a.template
-			get_decayed_same_as<handle<vk::image>>();
+			get<is_same_as<handle<vk::image>>.decayed>();
 
 		vk::image_layout layout = a.template
-			get_decayed_same_as<vk::image_layout>();
+			get<is_same_as<vk::image_layout>.decayed>();
 
 		vk::clear_color_value clear_color = a.template
-			get_decayed_same_as<vk::clear_color_value>();
+			get<is_same_as<vk::clear_color_value>.decayed>();
 	
 		auto& ranges = a.template
-			get_range_of_decayed<vk::image_subresource_range>();
+			get<is_range_of<is_same_as<vk::image_subresource_range>.decayed>>();
 
 		vk::get_device_function<vk::cmd_clear_color_image_function>(
 			instance, device

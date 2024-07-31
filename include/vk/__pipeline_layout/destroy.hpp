@@ -17,13 +17,13 @@ namespace vk {
 	template<typename... Args>
 	void destroy_pipeline_layout(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::pipeline_layout> layout = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::pipeline_layout>>();
+			get<is_same_as<handle<vk::pipeline_layout>>.decayed>();
 
 		vk::get_device_function<vk::destroy_pipeline_layout_function>(
 			instance, device

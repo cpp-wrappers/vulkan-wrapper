@@ -4,7 +4,7 @@
 
 namespace vk {
 
-	struct extension_properties_marker {};
+	struct extension_properties_mark {};
 
 	struct is_extension_properties_reference_t :
 		type_predicate_extension<is_extension_properties_reference_t>
@@ -15,7 +15,7 @@ namespace vk {
 			return
 				type_is_reference<Type> &&
 				base_of<
-					vk::extension_properties_marker,
+					vk::extension_properties_mark,
 					remove_reference<Type>
 				>;
 		}

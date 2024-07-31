@@ -33,43 +33,44 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::enable_blend> == 1,
-			count_of_decayed_same_as<vk::src_color_blend_factor> == 1,
-			count_of_decayed_same_as<vk::dst_color_blend_factor> == 1,
-			count_of_decayed_same_as<vk::color_blend_op> == 1,
-			count_of_decayed_same_as<vk::src_alpha_blend_factor> == 1,
-			count_of_decayed_same_as<vk::dst_alpha_blend_factor> == 1,
-			count_of_decayed_same_as<vk::alpha_blend_op> == 1,
-			count_of_decayed_same_as<vk::color_components> <= 1
+			is_same_as<vk::enable_blend>.decayed == 1,
+			is_same_as<vk::src_color_blend_factor>.decayed == 1,
+			is_same_as<vk::dst_color_blend_factor>.decayed == 1,
+			is_same_as<vk::color_blend_op>.decayed == 1,
+			is_same_as<vk::src_alpha_blend_factor>.decayed == 1,
+			is_same_as<vk::dst_alpha_blend_factor>.decayed == 1,
+			is_same_as<vk::alpha_blend_op>.decayed == 1,
+			is_same_as<vk::color_components>.decayed <= 1
 		>
 		pipeline_color_blend_attachment_state(Args&&... args) :
 			enable_blend { tuple{ args... }.template
-				get_decayed_same_as<vk::enable_blend>()
+				get<is_same_as<vk::enable_blend>.decayed>()
 			},
 			src_color_blend_factor { tuple{ args... }.template
-				get_decayed_same_as<vk::src_color_blend_factor>()
+				get<is_same_as<vk::src_color_blend_factor>.decayed>()
 			},
 			dst_color_blend_factor { tuple{ args... }.template
-				get_decayed_same_as<vk::dst_color_blend_factor>()
+				get<is_same_as<vk::dst_color_blend_factor>.decayed>()
 			},
 			color_blend_op { tuple{ args... }.template
-				get_decayed_same_as<vk::color_blend_op>()
+				get<is_same_as<vk::color_blend_op>.decayed>()
 			},
 			src_alpha_blend_factor { tuple{ args... }.template
-				get_decayed_same_as<vk::src_alpha_blend_factor>()
+				get<is_same_as<vk::src_alpha_blend_factor>.decayed>()
 			},
 			dst_alpha_blend_factor { tuple{ args... }.template
-				get_decayed_same_as<vk::dst_alpha_blend_factor>()
+				get<is_same_as<vk::dst_alpha_blend_factor>.decayed>()
 			},
 			alpha_blend_op { tuple{ args... }.template
-				get_decayed_same_as<vk::alpha_blend_op>()
+				get<is_same_as<vk::alpha_blend_op>.decayed>()
 			}
 		{
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::color_components> > 0
+			if constexpr (
+				(is_same_as<vk::color_components>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				color_write_mask = tuple{ args... }.template
-					get_decayed_same_as<vk::color_components>();
+					get<is_same_as<vk::color_components>.decayed>();
 			}
 		} // constructor
 

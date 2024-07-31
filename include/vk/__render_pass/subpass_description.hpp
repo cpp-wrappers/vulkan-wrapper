@@ -1,11 +1,12 @@
 #pragma once
 
-#include "./attachment_reference.hpp"
-#include "../__pipeline/bind_point.hpp"
-
 #include <enum_flags.hpp>
 #include <types.hpp>
 #include <tuple.hpp>
+#include <range.hpp>
+
+#include "./attachment_reference.hpp"
+#include "../__pipeline/bind_point.hpp"
 
 namespace vk {
 
@@ -39,58 +40,76 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_range_of_decayed<vk::input_attachment_reference> <= 1,
-			count_of_range_of_decayed<vk::color_attachment_reference> <= 1,
-			count_of_range_of_decayed<vk::resolve_attachment_reference> <= 1,
-			count_of_range_of_decayed<
-				vk::depth_stencil_attachment_reference
+			is_range_of<
+				is_same_as<vk::input_attachment_reference>.decayed
 			> <= 1,
-			count_of_range_of_decayed<vk::preserve_attachment_reference> <= 1
+			is_range_of<
+				is_same_as<vk::color_attachment_reference>.decayed
+			> <= 1,
+			is_range_of<
+				is_same_as<vk::resolve_attachment_reference>.decayed
+			> <= 1,
+			is_range_of<
+				is_same_as<vk::depth_stencil_attachment_reference>.decayed
+			> <= 1,
+			is_range_of<
+				is_same_as<vk::preserve_attachment_reference>.decayed
+			> <= 1
 		>
 		subpass_description(Args&... args) {
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::input_attachment_reference> > 0
+				count_of<is_range_of<
+					is_same_as<vk::input_attachment_reference>.decayed
+				>> > 0
 			) {
 				auto& input = tuple{ args... }.template
-					get_range_of_decayed<vk::input_attachment_reference>();
+					get<is_range_of<is_same_as<vk::input_attachment_reference>.decayed>>();
 				input_attachment_count = (uint32) input.size();
 				input_attachments = input.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::color_attachment_reference> > 0
+				count_of<is_range_of<
+					is_same_as<vk::color_attachment_reference>.decayed
+				>> > 0
 			) {
 				auto& color = tuple{ args... }.template
-					get_range_of_decayed<vk::color_attachment_reference>();
+					get<is_range_of<is_same_as<vk::color_attachment_reference>.decayed>>();
 				color_attachment_count = (uint32) color.size();
 				color_attachments = color.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::resolve_attachment_reference> > 0
+				count_of<is_range_of<
+					is_same_as<vk::resolve_attachment_reference>
+				>> > 0
 			) {
 				auto& resolve = tuple{ args... }.template
-					get_range_of_decayed<vk::resolve_attachment_reference>();
+					get<is_range_of<is_same_as<vk::resolve_attachment_reference>.decayed>>();
 				input_attachments = resolve.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<
-					vk::depth_stencil_attachment_reference
-				> > 0
+				count_of<is_range_of<
+					is_same_as<vk::depth_stencil_attachment_reference>.decayed
+				>> > 0
 			) {
 				auto& depth = tuple{ args... }.template
-					get_range_of_decayed<
-						vk::depth_stencil_attachment_reference
-					>();
+					get<is_range_of<
+						is_same_as<vk::depth_stencil_attachment_reference>.decayed
+					>>();
 				depth_stencil_attachments = depth.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::preserve_attachment_reference> > 0
+				count_of<is_range_of<
+					is_same_as<vk::preserve_attachment_reference>.decayed
+				>> > 0
 			) {
 				auto& preserve = tuple{ args... }.template
-					get_range_of_decayed<vk::preserve_attachment_reference>();
+					get<is_range_of<
+						is_same_as<vk::preserve_attachment_reference>.decayed
+					>>();
 				preserve_attachment_count = (uint32) preserve.size();
 				preserve_attachments = preserve.iterator();
 			}

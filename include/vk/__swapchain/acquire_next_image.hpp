@@ -30,12 +30,12 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
-		count_of_decayed_same_as<vk::signal_semaphore> <= 1,
-		count_of_decayed_same_as<vk::signal_fence> <= 1,
-		count_of_decayed_same_as<vk::timeout> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::swapchain>>.decayed == 1,
+		is_same_as<vk::signal_semaphore>.decayed <= 1,
+		is_same_as<vk::signal_fence>.decayed <= 1,
+		is_same_as<vk::timeout>.decayed <= 1
 	>
 	[[ nodiscard ]]
 	vk::expected<vk::image_index>
@@ -43,38 +43,41 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::swapchain> swapchain = a.template
-			get_decayed_same_as<handle<vk::swapchain>>();
+			get<is_same_as<handle<vk::swapchain>>.decayed>();
 		
 		vk::timeout timeout{ ~uint64{ 0 } };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::timeout> > 0
+		if constexpr (
+			(is_same_as<vk::timeout>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			timeout = a.template
-				get_decayed_same_as<vk::timeout>();
+				get<is_same_as<vk::timeout>.decayed>();
 		}
 
 		handle<vk::semaphore> semaphore{};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::signal_semaphore> > 0
+		if constexpr (
+			(is_same_as<vk::signal_semaphore>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			semaphore = a.template
-				get_decayed_same_as<vk::signal_semaphore>();
+				get<is_same_as<vk::signal_semaphore>.decayed>();
 		}
 
 		handle<vk::fence> fence{};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::signal_fence> > 0
+		if constexpr (
+			(is_same_as<vk::signal_fence>.decayed > 0)
+			.for_types<Args...>()
 		) {
-			fence = a.template get_decayed_same_as<vk::signal_fence>();
+			fence = a.template get<is_same_as<vk::signal_fence>.decayed>();
 		}
 
 		uint32 index;

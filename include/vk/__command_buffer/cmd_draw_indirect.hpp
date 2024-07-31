@@ -44,16 +44,16 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::buffer> buffer = a.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
 		vk::memory_offset offset{};
 
@@ -61,13 +61,13 @@ namespace vk {
 			(is_same_as<vk::memory_offset>.decayed > 0)
 			.for_types<Args...>()
 		) {
-			offset = a.template get_decayed_same_as<vk::memory_offset>();
+			offset = a.template ge<is_same_as<vk::memory_offset>.decayed>();
 		}
 
 		vk::draw_count draw_count = a.template
-			get_decayed_same_as<vk::draw_count>();
+			get<is_same_as<vk::draw_count>.decayed>();
 
-		vk::stride stride = a.template get_decayed_same_as<vk::stride>();
+		vk::stride stride = a.template get<is_same_as<vk::stride>.decayed>();
 
 		vk::get_device_function<vk::cmd_draw_indirect_function>(
 			instance, device

@@ -31,16 +31,16 @@ namespace vk {
 	>
 	void free_command_buffers(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_pool> pool = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::command_pool>>();
+			get<is_same_as<handle<vk::command_pool>>.decayed>();
 
 		auto& buffers = tuple{ args... }.template
-			get_range_of_decayed<handle<vk::command_buffer>>();
+			get<is_range_of<is_same_as<handle<vk::command_buffer>>.decayed>>();
 
 		vk::get_device_function<vk::free_command_buffers_function>(
 			instance, device

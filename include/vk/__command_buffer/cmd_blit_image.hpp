@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tuple.hpp>
+#include <array.hpp>
 
 #include "../__instance/handle.hpp"
 #include "../__device/handle.hpp"
@@ -14,11 +15,53 @@
 
 namespace vk {
 
+	struct bounds : array<vk::offset<3>, 2> {
+		using array::array;
+	};
+
+	struct src_bounds : vk::bounds{
+		using vk::bounds::bounds;
+	};
+	struct dst_bounds : vk::bounds{
+		using vk::bounds::bounds;
+	};
+
+	struct src_subresource : vk::image_subresource_layers{};
+	struct dst_subresource : vk::image_subresource_layers{};
+
 	struct image_blit {
-		vk::image_subresource_layers src_subresource;
-		vk::offset<3> src_offset[2];
-		vk::image_subresource_layers dst_subresource;
-		vk::offset<3> dst_offset[2];
+		vk::src_subresource src_subresource{};
+		vk::src_bounds src_bounds;
+		vk::dst_subresource dst_subresource{};
+		vk::dst_bounds dst_bounds;
+
+		template<typename... Args>
+		requires types<Args...>::template exclusively_satisfy_predicates<
+			is_same_as<vk::src_subresource> <= 1,
+			is_same_as<vk::dst_subresource> <= 1,
+			is_same_as<vk::src_bounds> == 1,
+			is_same_as<vk::dst_bounds> == 1
+		>
+		image_blit(Args... args) {
+			tuple<Args...> a{ args... };
+
+			src_bounds = a.template get<is_same_as<vk::src_bounds>>();
+			dst_bounds = a.template get<is_same_as<vk::dst_bounds>>();
+
+			if constexpr (
+				(is_same_as<vk::src_subresource> > 0).for_types<Args...>()
+			) {
+				src_subresource
+					= a.template get<is_same_as<vk::src_subresource>>();
+			}
+
+			if constexpr (
+				(is_same_as<vk::dst_subresource> > 0).for_types<Args...>()
+			) {
+				dst_subresource
+					= a.template get<is_same_as<vk::dst_subresource>>();
+			}
+		}
 	};
 
 	struct cmd_blit_image_function : vk::function<void(*)(
@@ -36,21 +79,21 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of<is_same_as<handle<vk::instance>>.decayed> == 1,
-		count_of<is_same_as<handle<vk::device>>.decayed> == 1,
-		count_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1,
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
 
-		count_of<is_same_as<vk::src_image>.decayed> == 1,
-		count_of<is_same_as<vk::src_image_layout>.decayed> == 1,
+		is_same_as<vk::src_image>.decayed == 1,
+		is_same_as<vk::src_image_layout>.decayed == 1,
 
-		count_of<is_same_as<vk::dst_image>.decayed> == 1,
-		count_of<is_same_as<vk::dst_image_layout>.decayed> == 1,
+		is_same_as<vk::dst_image>.decayed == 1,
+		is_same_as<vk::dst_image_layout>.decayed == 1,
 
-		count_of<is_range_of_element_type_satisfying_predicate<
+		is_range_of_element_type_satisfying_predicate<
 			is_same_as<vk::image_blit>.decayed
-		>> == 1,
+		> == 1,
 
-		count_of<is_same_as<vk::filter>> == 1
+		is_same_as<vk::filter> == 1
 	>
 	void cmd_blit_image(Args&&... args) {
 		tuple a{ forward<Args>(args)... };

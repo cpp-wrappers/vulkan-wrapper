@@ -23,25 +23,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::code_size> == 1,
-		count_of_decayed_same_as<vk::code> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::code_size>.decayed == 1,
+		is_same_as<vk::code>.decayed == 1
 	>
 	vk::expected<handle<vk::shader_module>>
 	try_create_shader_module(Args&&... args) {
 		vk::shader_module_create_info ci{};
 
 		ci.code_size = tuple{ args... }.template
-			get_decayed_same_as<vk::code_size>();
+			get<is_same_as<vk::code_size>.decayed>();
 		ci.code = tuple{ args... }.template
-			get_decayed_same_as<vk::code>();
+			get<is_same_as<vk::code>.decayed>();
 
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::shader_module> shader_module;
 

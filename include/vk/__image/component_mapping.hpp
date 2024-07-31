@@ -20,26 +20,28 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::r> <= 1,
-			count_of_decayed_same_as<vk::g> <= 1,
-			count_of_decayed_same_as<vk::b> <= 1,
-			count_of_decayed_same_as<vk::a> <= 1
+			is_same_as<vk::r>.decayed <= 1,
+			is_same_as<vk::g>.decayed <= 1,
+			is_same_as<vk::b>.decayed <= 1,
+			is_same_as<vk::a>.decayed <= 1
 		>
 		component_mapping(Args... args) {
-			if constexpr(types<Args...>::template count_of_same_as<vk::r> > 0) {
-				r = tuple{ args... }.template get_same_as<vk::r>();
+			tuple a { args... };
+
+			if constexpr((is_same_as<vk::r> > 0).for_types<Args...>()) {
+				r = a.template get<is_same_as<vk::r>>();
 			}
 
-			if constexpr(types<Args...>::template count_of_same_as<vk::g> > 0) {
-				g = tuple{ args... }.template get_same_as<vk::g>();
+			if constexpr((is_same_as<vk::g> > 0).for_types<Args...>()) {
+				g = tuple{ args... }.template get<is_same_as<vk::g>>();
 			}
 
-			if constexpr(types<Args...>::template count_of_same_as<vk::b> > 0) {
-				b = tuple{ args... }.template get_same_as<vk::b>();
+			if constexpr((is_same_as<vk::b> > 0).for_types<Args...>()) {
+				b = tuple{ args... }.template get<is_same_as<vk::b>>();
 			}
 
-			if constexpr(types<Args...>::template count_of_same_as<vk::a> > 0) {
-				a = tuple{ args... }.template get_same_as<vk::a>();
+			if constexpr((is_same_as<vk::a> > 0).for_types<Args...>()) {
+				a = tuple{ args... }.template get<is_same_as<vk::a>>();
 			}
 		}
 

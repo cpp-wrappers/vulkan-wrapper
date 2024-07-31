@@ -20,29 +20,37 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_range_of_decayed<handle<vk::descriptor_set_layout>> <= 1,
-		count_of_range_of_decayed<vk::push_constant_range> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_range_of<is_same_as<handle<vk::descriptor_set_layout>>.decayed> <= 1,
+		is_range_of<is_same_as<vk::push_constant_range>.decayed> <= 1
 	>
 	vk::expected<handle<vk::pipeline_layout>>
 	try_create_pipeline_layout(Args&&... args) {
 		vk::pipeline_layout_create_info ci{};
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<handle<vk::descriptor_set_layout>> > 0
+			count_of<is_range_of<
+				is_same_as<handle<vk::descriptor_set_layout>>.decayed
+			>> > 0
 		) {
 			auto& layouts = tuple{ args... }.template
-				get_range_of_decayed<handle<vk::descriptor_set_layout>>();
+				get<is_range_of<
+					is_same_as<handle<vk::descriptor_set_layout>>.decayed
+				>>();
 			ci.descriptor_set_layout_count = (uint32) layouts.size();
 			ci.descriptor_set_layouts = layouts.iterator();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::push_constant_range> > 0
+			count_of<is_range_of<
+				is_same_as<vk::push_constant_range>.decayed
+			>> > 0
 		) {
 			auto& push_constant_ranges = tuple{ args... }.template
-				get_range_of_decayed<vk::push_constant_range>();
+				get<is_range_of<
+					is_same_as<vk::push_constant_range>.decayed
+				>>();
 
 			ci.push_constant_range_count =
 				(uint32) push_constant_ranges.size();
@@ -50,10 +58,10 @@ namespace vk {
 		}
 
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::pipeline_layout> pipeline_layout;
 

@@ -37,7 +37,7 @@ namespace vk {
 		is_same_as<vk::image_tiling>.decayed == 1,
 		is_same_as<vk::image_usages>.decayed == 1,
 		is_same_as<vk::sharing_mode>.decayed <= 1,
-		count_of_range_of_decayed<vk::queue_family_index> <= 1,
+		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
 		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
@@ -45,25 +45,25 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::image_create_info ci{};
 
-		ci.image_type = a.template get_decayed_same_as<vk::image_type>();
-		ci.format = a.template get_decayed_same_as<vk::format>();
-		ci.extent = a.template get_decayed_same_as<vk::extent<3>>();
-		ci.tiling = a.template get_decayed_same_as<vk::image_tiling>();
-		ci.usages = a.template get_decayed_same_as<vk::image_usages>();
+		ci.image_type = a.template get<is_same_as<vk::image_type>.decayed>();
+		ci.format = a.template get<is_same_as<vk::format>.decayed>();
+		ci.extent = a.template get<is_same_as<vk::extent<3>>.decayed>();
+		ci.tiling = a.template get<is_same_as<vk::image_tiling>.decayed>();
+		ci.usages = a.template get<is_same_as<vk::image_usages>.decayed>();
 
 		if constexpr (
 			(is_same_as<vk::image_create_flags>.decayed > 0)
 			.for_types<Args...>()
 		) {
 			ci.flags = a.template
-				get_decayed_same_as<vk::image_create_flags>();
+				get<is_same_as<vk::image_create_flags>.decayed>();
 		}
 
 		if constexpr (
@@ -71,7 +71,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.mip_levels = a.template
-				get_decayed_same_as<vk::mip_levels>();
+				get<is_same_as<vk::mip_levels>.decayed>();
 		}
 
 		if constexpr (
@@ -79,7 +79,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.array_layers = a.template
-				get_decayed_same_as<vk::array_layers>();
+				get<is_same_as<vk::array_layers>.decayed>();
 		}
 
 		if constexpr (
@@ -87,7 +87,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.samples = a.template
-				get_decayed_same_as<vk::sample_count>();
+				get<is_same_as<vk::sample_count>.decayed>();
 		}
 
 		if constexpr (
@@ -95,21 +95,23 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ci.sharing_mode = a.template
-				get_decayed_same_as<vk::sharing_mode>();
+				get<is_same_as<vk::sharing_mode>.decayed>();
 		}
 
 		if constexpr (
 			(is_same_as<vk::initial_layout>.decayed > 0).for_types<Args...>()
 		) {
 			ci.initial_layout = a.template
-				get_decayed_same_as<vk::initial_layout>();
+				get<is_same_as<vk::initial_layout>.decayed>();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::queue_family_index> > 0
+			count_of<is_range_of<
+				is_same_as<vk::queue_family_index>.decayed
+			>> > 0
 		) {
 			auto& queues = a.template
-				get_range_of_decayed<vk::queue_family_index>();
+				get<is_range_of<is_same_as<vk::queue_family_index>.decayed>>();
 			
 			ci.queue_family_index_count = (uint32) queues.size();
 			ci.queue_family_indices = queues.iterator();
@@ -147,7 +149,7 @@ namespace vk {
 		is_same_as<vk::image_tiling>.decayed == 1,
 		is_same_as<vk::image_usages>.decayed == 1,
 		is_same_as<vk::sharing_mode>.decayed <= 1,
-		count_of_range_of_decayed<vk::queue_family_index> <= 1,
+		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
 		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
@@ -171,7 +173,7 @@ namespace vk {
 		is_same_as<vk::image_tiling>.decayed == 1,
 		is_same_as<vk::image_usages>.decayed == 1,
 		is_same_as<vk::sharing_mode>.decayed <= 1,
-		count_of_range_of_decayed<vk::queue_family_index> <= 1,
+		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
 		is_same_as<vk::initial_layout>.decayed <= 1
 	>
 	vk::expected<handle<vk::image>>
@@ -179,11 +181,9 @@ namespace vk {
 		tuple _args{ args... };
 
 		vk::extent<2> extent_2
-			= _args.template get_satisfying_predicate<
-				is_same_as<vk::extent<2>>.decayed
-			>();
+			= _args.template get<is_same_as<vk::extent<2>>.decayed>();
 
-		return _args.template pass_satisfying_predicate<
+		return _args.template pass<
 			!is_same_as<vk::extent<2>>.decayed
 		>([&]<typename... _Args>(_Args&&... _args) {
 			return try_create_image(

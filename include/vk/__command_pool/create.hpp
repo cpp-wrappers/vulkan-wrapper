@@ -32,22 +32,22 @@ namespace vk {
 	vk::expected<handle<vk::command_pool>>
 	try_create_command_pool(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::command_pool_create_info ci{};
 
 		ci.queue_family_index = tuple{ args... }.template
-			get_decayed_same_as<vk::queue_family_index>();
+			get<is_same_as<vk::queue_family_index>.decayed>();
 
 		if constexpr (
 			(is_same_as<vk::command_pool_create_flags>.decayed > 0)
 			.for_types<Args...>()
 		) {
 			ci.flags = tuple{ args... }.template
-				get_decayed_same_as<vk::command_pool_create_flags>();
+				get<is_same_as<vk::command_pool_create_flags>.decayed>();
 		}
 
 		handle<vk::command_pool> command_pool;

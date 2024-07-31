@@ -26,25 +26,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
-		count_of_decayed_same_as<handle<vk::surface>> == 1,
-		count_of_decayed_same_as<vk::queue_family_index> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::physical_device>>.decayed == 1,
+		is_same_as<handle<vk::surface>>.decayed == 1,
+		is_same_as<vk::queue_family_index>.decayed == 1
 	>
 	[[ nodiscard ]]
 	vk::expected<bool>
 	try_get_physical_device_surface_support(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::physical_device> physical_device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::physical_device>>();
+			get<is_same_as<handle<vk::physical_device>>.decayed>();
 
 		handle<vk::surface> surface = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::surface>>();
+			get<is_same_as<handle<vk::surface>>.decayed>();
 
 		vk::queue_family_index queue_family_index = tuple{ args... }.template
-			get_decayed_same_as<vk::queue_family_index>();
+			get<is_same_as<vk::queue_family_index>.decayed>();
 
 		uint32 supports;
 

@@ -27,27 +27,27 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::src_subpass> == 1,
-			count_of_decayed_same_as<vk::dst_subpass> == 1,
-			count_of_decayed_same_as<vk::src_stages> == 1,
-			count_of_decayed_same_as<vk::dst_stages> == 1,
-			count_of_decayed_same_as<vk::src_access> <= 1,
-			count_of_decayed_same_as<vk::dst_access> <= 1
+			is_same_as<vk::src_subpass>.decayed == 1,
+			is_same_as<vk::dst_subpass>.decayed == 1,
+			is_same_as<vk::src_stages>.decayed == 1,
+			is_same_as<vk::dst_stages>.decayed == 1,
+			is_same_as<vk::src_access>.decayed <= 1,
+			is_same_as<vk::dst_access>.decayed <= 1
 		>
 		subpass_dependency(Args&&... args) {
 			tuple a{ args... };
-			src_subpass = a.template get_decayed_same_as<vk::src_subpass>();
-			dst_subpass = a.template get_decayed_same_as<vk::dst_subpass>();
-			src_stages = a.template get_decayed_same_as<vk::src_stages>();
-			dst_stages = a.template get_decayed_same_as<vk::dst_stages>();
+			src_subpass = a.template get<is_same_as<vk::src_subpass>.decayed>();
+			dst_subpass = a.template get<is_same_as<vk::dst_subpass>.decayed>();
+			src_stages = a.template get<is_same_as<vk::src_stages>.decayed>();
+			dst_stages = a.template get<is_same_as<vk::dst_stages>.decayed>();
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::src_access> > 0
-			) { src_access = a.template get_decayed_same_as<vk::src_access>(); }
+			if constexpr (
+				(is_same_as<vk::src_access>.decayed > 0).for_types<Args...>()
+			) { src_access = a.template get<is_same_as<vk::src_access>.decayed>(); }
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::dst_access> > 0
-			) { dst_access = a.template get_decayed_same_as<vk::dst_access>(); }
+			if constexpr (
+				(is_same_as<vk::dst_access>.decayed > 0).for_types<Args...>()
+			) { dst_access = a.template get<is_same_as<vk::dst_access>.decayed>(); }
 		} // constructor
 
 	}; // subpass_dependency

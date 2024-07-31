@@ -29,13 +29,13 @@ namespace vk {
 	vk::expected<handle<vk::debug_report_callback>>
 	try_create_debug_report_callback(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		auto flags = tuple{ args... }.template
-			get_decayed_same_as<vk::debug_report_flags>();
+			get<is_same_as<vk::debug_report_flags>.decayed>();
 
 		auto callback = tuple{ args... }.template
-			get_decayed_same_as<vk::debug_report_callback_type>();
+			get<is_same_as<vk::debug_report_callback_type>.decayed>();
 
 		debug_report_callback_create_info ci {
 			.flags = flags,
@@ -79,10 +79,10 @@ namespace vk {
 		});
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		decltype(auto) callback = a.template
-			get_decayed_same_as<vk::debug_report_callback_type>();
+			get<is_same_as<vk::debug_report_callback_type>.decayed>();
 
 		return vk::try_create_debug_report_callback(
 			instance,

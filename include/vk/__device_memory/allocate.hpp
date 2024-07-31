@@ -34,9 +34,10 @@ namespace vk {
 		tuple a { args... };
 
 		vk::memory_allocate_info ai {
-			.size = a.template get_decayed_same_as<vk::memory_size>(),
+			.size = a.template
+				get<is_same_as<vk::memory_size>.decayed>(),
 			.memory_type_index = a.template
-				get_decayed_same_as<vk::memory_type_index>()
+				get<is_same_as<vk::memory_type_index>.decayed>()
 		};
 
 		if constexpr (
@@ -44,14 +45,14 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			ai.next = & a.template
-				get_decayed_same_as<vk::memory_allocate_flags_info>();
+				get<is_same_as<vk::memory_allocate_flags_info>.decayed>();
 		}
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::device_memory> device_memory;
 

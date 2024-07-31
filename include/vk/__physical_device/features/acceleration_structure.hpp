@@ -5,7 +5,7 @@
 namespace vk {
 
 	struct physical_device_acceleration_structure_features :
-		vk::physical_device_features_marker
+		vk::physical_device_features_mark
 	{
 		uint32 structure_type = 1000150013;
 		const void* next;

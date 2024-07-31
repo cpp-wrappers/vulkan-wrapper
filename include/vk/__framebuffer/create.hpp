@@ -19,29 +19,30 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::render_pass>> == 1,
-		count_of_range_of_decayed<handle<vk::image_view>> == 1,
-		count_of_decayed_same_as<vk::extent<3>> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::render_pass>>.decayed == 1,
+		is_range_of<is_same_as<handle<vk::image_view>>.decayed> == 1,
+		is_same_as<vk::extent<3>>.decayed == 1
 	>
 	vk::expected<handle<vk::framebuffer>>
 	try_create_framebuffer(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::render_pass> render_pass = a.template
-			get_decayed_same_as<handle<vk::render_pass>>();
+			get<is_same_as<handle<vk::render_pass>>.decayed>();
 
 		auto& attachments = a.template
-			get_range_of_decayed<handle<vk::image_view>>();
+			get<is_range_of<is_same_as<handle<vk::image_view>>.decayed>>();
 
-		vk::extent<3> extent = a.template get_decayed_same_as<vk::extent<3>>();
+		vk::extent<3> extent = a.template
+			get<is_same_as<vk::extent<3>>.decayed>();
 
 		vk::framebuffer_create_info ci {
 			.render_pass = (handle<vk::render_pass>::underlying_type)

@@ -37,28 +37,30 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 		
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::buffer> buffer = a.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
 		vk::memory_size size = a.template
-			get_decayed_same_as<vk::memory_size>();
+			get<is_same_as<vk::memory_size>.decayed>();
 
-		void* data = a.template get_decayed_same_as<void*>();
+		void* data = a.template
+			get<is_same_as<void*>.decayed>();
 
 		vk::memory_offset offset{};
 
 		if constexpr(
 			(is_same_as<vk::memory_offset>.decayed > 0).for_types<Args...>()
 		) {
-			offset = a.template get_decayed_same_as<vk::memory_offset>();
+			offset = a.template
+				get<is_same_as<vk::memory_offset>.decayed>();
 		}
 
 		vk::get_device_function<vk::cmd_update_buffer_function>(

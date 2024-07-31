@@ -28,44 +28,43 @@ namespace vk {
 		is_same_as<vk::buffer_size>.decayed == 1,
 		is_same_as<vk::buffer_usages>.decayed == 1,
 		is_same_as<vk::sharing_mode>.decayed <= 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::queue_family_index>.decayed
-		> <= 1
+		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1
 	>
 	vk::expected<handle<vk::buffer>>
 	try_create_buffer(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::buffer_create_info ci {
-			.size = a.template get_decayed_same_as<vk::buffer_size>(),
-			.usage = a.template get_decayed_same_as<vk::buffer_usages>()
+			.size = a.template get<is_same_as<vk::buffer_size>.decayed>(),
+			.usage = a.template get<is_same_as<vk::buffer_usages>.decayed>()
 		};
 
 		if constexpr (
 			(is_same_as<vk::sharing_mode>.decayed > 0).for_types<Args...>()
 		) {
 			ci.sharing_mode = a.template
-				get_decayed_same_as<vk::sharing_mode>();
+				get<is_same_as<vk::sharing_mode>.decayed>();
 		}
 
 		if constexpr (
 			(is_same_as<vk::buffer_create_flags> > 0).for_types<Args...>()
 		) {
 			ci.flags = a.template
-				get_decayed_same_as<vk::buffer_create_flags>();
+				get<is_same_as<vk::buffer_create_flags>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::queue_family_index> > 0
+		if constexpr (
+			(is_range_of<is_same_as<vk::queue_family_index>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& queue_fanily_indices = a.template
-				get_range_of_decayed<vk::queue_family_index>();
+				get<is_range_of<is_same_as<vk::queue_family_index>.decayed>>();
 
 			ci.queue_family_index_count = queue_fanily_indices.size();
 			ci.queue_fanily_indices = queue_fanily_indices.iterator();

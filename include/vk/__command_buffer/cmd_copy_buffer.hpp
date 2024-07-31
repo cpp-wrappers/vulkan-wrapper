@@ -51,21 +51,22 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::src_buffer src = a.template
-			get_decayed_same_as<vk::src_buffer>();
+			get<is_same_as<vk::src_buffer>.decayed>();
 
 		vk::dst_buffer dst = a.template
-			get_decayed_same_as<vk::dst_buffer>();
+			get<is_same_as<vk::dst_buffer>.decayed>();
 
-		auto& regions = a.template get_range_of_decayed<vk::buffer_copy>();
+		auto& regions = a.template
+			get<is_range_of<is_same_as<vk::buffer_copy>.decayed>>();
 
 		vk::get_device_function<vk::cmd_copy_buffer_function>(
 			instance, device

@@ -35,19 +35,19 @@ namespace vk {
 			is_same_as<vk::dst_binding>.decayed == 1,
 			is_same_as<vk::dst_array_element>.decayed <= 1,
 			is_same_as<vk::descriptor_type>.decayed == 1,
-			count_of_range_of_decayed<vk::descriptor_image_info> <= 1,
-			count_of_range_of_decayed<vk::descriptor_buffer_info> <= 1,
-			count_of_range_of_decayed<handle<vk::buffer_view>> <= 1
+			is_range_of<is_same_as<vk::descriptor_image_info>.decayed> <= 1,
+			is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed> <= 1,
+			is_range_of<is_same_as<handle<vk::buffer_view>>.decayed> <= 1
 		> &&
 		(
-			types<Args...>::template count_of_range_of_decayed<
-				vk::descriptor_image_info
+			types<Args...>::template count_of<
+				is_range_of<is_same_as<vk::descriptor_image_info>.decayed>
 			> +
-			types<Args...>::template count_of_range_of_decayed<
-				vk::descriptor_buffer_info
+			types<Args...>::template count_of<
+				is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed>
 			> +
-			types<Args...>::template count_of_range_of_decayed<
-				handle<vk::buffer_view>
+			types<Args...>::template count_of<
+				is_range_of<is_same_as<handle<vk::buffer_view>>.decayed>
 			>
 			== 1
 		)
@@ -55,47 +55,54 @@ namespace vk {
 			tuple a { args... };
 			
 			dst_set = a.template
-				get_decayed_same_as<handle<vk::descriptor_set>>().underlying();
+				get<is_same_as<handle<vk::descriptor_set>>.decayed>()
+				.underlying();
 
 			dst_binding = a.template
-				get_decayed_same_as<vk::dst_binding>();
+				get<is_same_as<vk::dst_binding>.decayed>();
 
 			descriptor_type = a.template
-				get_decayed_same_as<vk::descriptor_type>();
+				get<is_same_as<vk::descriptor_type>.decayed>();
 
 			if constexpr (
 				(is_same_as<vk::dst_array_element>.while_decayed > 0)
 				.for_types<Args...>()
 			) {
 				dst_array_element = a.template
-					get_decayed_same_as<vk::dst_array_element>();
+					get<is_same_as<vk::dst_array_element>.decayed>();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::descriptor_image_info> > 0
+				count_of<is_range_of<
+					is_same_as<vk::descriptor_image_info>.decayed
+				>> > 0
 			) {
 				auto& r = a.template
-					get_range_of_decayed<vk::descriptor_image_info>();
+					get<is_range_of<is_same_as<vk::descriptor_image_info>.decayed>>();
 
 				count = vk::count{ (uint32) r.size() };
 				image_info = r.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<vk::descriptor_buffer_info>
+				count_of<is_range_of<
+					is_same_as<vk::descriptor_buffer_info>.decayed
+				>> > 0
 			) {
 				auto& r = a.template
-					get_range_of_decayed<vk::descriptor_buffer_info>();
+					get<is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed>>();
 
 				count = vk::count{ (uint32) r.size() };
 				buffer_info = r.iterator();
 			}
 
 			if constexpr (types<Args...>::template
-				count_of_range_of_decayed<handle<vk::buffer_view>> > 0
+				count_of<is_range_of<
+					is_same_as<handle<vk::buffer_view>>.decayed
+				>> > 0
 			) {
 				auto& r = a.template
-					get_range_of_decayed<handle<vk::buffer_view>>();
+					get<is_range_of<is_same_as<handle<vk::buffer_view>>.decayed>>();
 
 				count = vk::count{ (uint32) r.size() };
 				texel_buffer_view =

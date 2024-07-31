@@ -1,5 +1,6 @@
 #pragma once
 
+#include <types.hpp>
 #include "../__internal/function.hpp"
 #include "../__internal/queue_family_index.hpp"
 #include "../__queue/handle.hpp"
@@ -27,16 +28,16 @@ namespace vk {
 	handle<vk::queue>
 	get_device_queue(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::queue_family_index queue_family_index = tuple{ args... }.template
-			get_decayed_same_as<vk::queue_family_index>();
+			get<is_same_as<vk::queue_family_index>.decayed>();
 
 		vk::queue_index queue_index = tuple{ args... }.template
-			get_decayed_same_as<vk::queue_index>();
+			get<is_same_as<vk::queue_index>.decayed>();
 
 		handle<vk::queue> queue;
 

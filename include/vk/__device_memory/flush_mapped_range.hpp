@@ -17,24 +17,25 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::device_memory> device_memory = a.template
-			get_decayed_same_as<handle<vk::device_memory>>();
+			get<is_same_as<handle<vk::device_memory>>.decayed>();
 
 		vk::memory_offset offset{ 0 };
 		
 		if constexpr (
 			(is_same_as<vk::memory_offset>.decayed > 0).for_types<Args...>()
 		) {
-			offset = a.template get_decayed_same_as<vk::memory_offset>();
+			offset = a.template
+				get<is_same_as<vk::memory_offset>.decayed>();
 		}
 
 		vk::memory_size size = a.template
-			get_decayed_same_as<vk::memory_size>();
+			get<is_same_as<vk::memory_size>.decayed>();
 
 		return vk::try_flush_mapped_memory_ranges(
 			instance,

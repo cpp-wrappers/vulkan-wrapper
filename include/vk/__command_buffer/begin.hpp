@@ -36,7 +36,7 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			bi.usages = a.template
-				get_decayed_same_as<vk::command_buffer_usages>();
+				get<is_same_as<vk::command_buffer_usages>.decayed>();
 		}
 
 		if constexpr (
@@ -44,17 +44,17 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			bi.inheritance_info = a.template
-				get_decayed_same_as<vk::command_buffer_inheritance_info>();
+				get<is_same_as<vk::command_buffer_inheritance_info>.decayed>();
 		}
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		return {
 			vk::get_device_function<vk::begin_command_buffer_function>(

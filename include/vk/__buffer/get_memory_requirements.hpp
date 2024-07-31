@@ -28,13 +28,13 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::buffer> buffer = a.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
 		vk::memory_requirements requirements;
 

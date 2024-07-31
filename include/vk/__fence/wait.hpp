@@ -23,33 +23,34 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_range_of_decayed<handle<vk::fence>> == 1,
-		count_of_decayed_same_as<vk::wait_all> <= 1,
-		count_of_decayed_same_as<vk::timeout> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_range_of<is_same_as<handle<vk::fence>>.decayed> == 1,
+		is_same_as<vk::wait_all>.decayed <= 1,
+		is_same_as<vk::timeout>.decayed <= 1
 	>
 	vk::result try_wait_for_fences(Args&&... args) {
 		tuple a { args... };
-		auto& fences = a.template get_range_of_decayed<handle<vk::fence>>();
+		auto& fences = a.template
+			get<is_range_of<is_same_as<handle<vk::fence>>.decayed>>();
 
 		bool wait_all = true;
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::wait_all> > 0
-		) { wait_all = (bool) a.template get_decayed_same_as<vk::wait_all>(); }
+		if constexpr (
+			(is_same_as<vk::wait_all>.decayed > 0).for_types<Args...>()
+		) { wait_all = (bool) a.template get<is_same_as<vk::wait_all>.decayed>(); }
 
 		vk::timeout timeout{ ~uint64{ 0 } };
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::timeout> > 0
-		) { timeout = a.template get_decayed_same_as<vk::timeout>(); }
+		if constexpr (
+			(is_same_as<vk::timeout>.decayed > 0).for_types<Args...>()
+		) { timeout = a.template get<is_same_as<vk::timeout>.decayed>(); }
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		return {
 			vk::get_device_function<vk::wait_for_fences_function>(
@@ -72,17 +73,17 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::fence>> == 1,
-		count_of_decayed_same_as<vk::wait_all> <= 1,
-		count_of_decayed_same_as<vk::timeout> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::fence>>.decayed == 1,
+		is_same_as<vk::wait_all>.decayed <= 1,
+		is_same_as<vk::timeout>.decayed <= 1
 	>
 	vk::result try_wait_for_fence(Args&&... args) {
 		handle<vk::fence> fence = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::fence>>();
+			get<is_same_as<handle<vk::fence>>.decayed>();
 
-		return tuple{ args... }.template pass_satisfying_predicate<
+		return tuple{ args... }.template pass<
 			!is_same_as<handle<vk::fence>>.decayed
 		>([&]<typename... Args0>(Args0&&... args0) {
 			return vk::try_wait_for_fences(

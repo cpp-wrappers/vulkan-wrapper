@@ -30,43 +30,47 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::application_name> <= 1,
-			count_of_decayed_same_as<vk::application_version> <= 1,
-			count_of_decayed_same_as<vk::engine_name> <= 1,
-			count_of_decayed_same_as<vk::engine_version> <= 1,
-			count_of_decayed_same_as<vk::api_version> == 1
+			is_same_as<vk::application_name>.decayed <= 1,
+			is_same_as<vk::application_version>.decayed <= 1,
+			is_same_as<vk::engine_name>.decayed <= 1,
+			is_same_as<vk::engine_version>.decayed <= 1,
+			is_same_as<vk::api_version>.decayed == 1
 		>
 		application_info(Args... args) :
 			api_version {
-				tuple{ args... }.template get_decayed_same_as<vk::api_version>()
+				tuple{ args... }.template get<is_same_as<vk::api_version>.decayed>()
 			}
 		{
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::application_name> > 0
+			if constexpr(
+				(is_same_as<vk::application_name>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				app_name = tuple{ args... }.template
-					get_decayed_same_as<vk::application_name>();
+					get<is_same_as<vk::application_name>.decayed>();
 			}
 
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::application_version> > 0
+			if constexpr(
+				(is_same_as<vk::application_version>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				app_version = tuple{ args... }.template
-					get_decayed_same_as<vk::application_version>();
+					get<is_same_as<vk::application_version>.decayed>();
 			}
 
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::engine_name> > 0
+			if constexpr(
+				(is_same_as<vk::engine_name>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				engine_name = tuple{ args... }.template
-					get_decayed_same_as<vk::engine_name>();
+					get<is_same_as<vk::engine_name>.decayed>();
 			}
 
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::engine_version> > 0
+			if constexpr(
+				(is_same_as<vk::engine_version>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				engine_version = tuple{ args... }.template
-					get_decayed_same_as<vk::engine_version>();
+					get<is_same_as<vk::engine_version>.decayed>();
 			}
 
 		} // constructor

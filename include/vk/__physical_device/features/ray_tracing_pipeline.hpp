@@ -5,7 +5,7 @@
 namespace vk {
 
 	struct physical_device_ray_tracing_pipeline_features :
-		vk::physical_device_features_marker
+		vk::physical_device_features_mark
 	{
 		uint32 struct_type = 1000347000;
 		const void* next;

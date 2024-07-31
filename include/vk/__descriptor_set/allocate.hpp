@@ -33,18 +33,18 @@ namespace vk {
 		tuple a{ args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::descriptor_pool> pool = a.template
-			get_decayed_same_as<handle<vk::descriptor_pool>>();
+			get<is_same_as<handle<vk::descriptor_pool>>.decayed>();
 
 		auto& sets = a.template
-			get_range_of_decayed<handle<vk::descriptor_set>>();
+			get<is_range_of<is_same_as<handle<vk::descriptor_set>>.decayed>>();
 		auto& layouts = a.template
-			get_range_of_decayed<handle<vk::descriptor_set_layout>>();
+			get<is_range_of<is_same_as<handle<vk::descriptor_set_layout>>.decayed>>();
 
 		vk::descriptor_set_allocate_info ai {
 			.descriptor_pool = pool.underlying(),
@@ -78,16 +78,16 @@ namespace vk {
 		tuple a{ args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::descriptor_pool> pool = a.template
-			get_decayed_same_as<handle<vk::descriptor_pool>>();
+			get<is_same_as<handle<vk::descriptor_pool>>.decayed>();
 		
 		handle<vk::descriptor_set_layout> layout = a.template
-			get_decayed_same_as<handle<vk::descriptor_set_layout>>();
+			get<is_same_as<handle<vk::descriptor_set_layout>>.decayed>();
 		
 		handle<vk::descriptor_set> set;
 

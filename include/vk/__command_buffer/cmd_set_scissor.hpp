@@ -38,22 +38,26 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_scissor_index first{ 0 };
 		
 		if constexpr (
 			(is_same_as<vk::first_scissor_index>.decayed > 0)
 			.for_types<Args...>()
-		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
+		) {
+			first = a.template
+				get<is_same_as<vk::first_scissor_index>.decayed>();
+		}
 
-		auto& scissors = a.template get_range_of_decayed<vk::rect2d>();
+		auto& scissors = a.template
+			get<is_range_of<is_same_as<vk::rect2d>.decayed>>();
 
 		vk::get_device_function<vk::cmd_set_scissor_function>(
 			instance, device
@@ -77,22 +81,25 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_scissor_index first{ 0 };
 		
 		if constexpr (
 			(is_same_as<vk::first_scissor_index>.decayed > 0)
 			.for_types<Args...>()
-		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
+		) {
+			first = a.template
+				get<is_same_as<vk::first_scissor_index>.decayed>();
+		}
 
-		vk::rect2d scissor = a.template get_decayed_same_as<vk::rect2d>();
+		vk::rect2d scissor = a.template get<is_same_as<vk::rect2d>.decayed>();
 
 		vk::cmd_set_scissor(
 			instance, device, command_buffer, first, array{ scissor }
@@ -111,22 +118,26 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_scissor_index first{ 0 };
 		
 		if constexpr (
 			(is_same_as<vk::first_scissor_index>.decayed > 0)
 			.for_types<Args...>()
-		) { first = a.template get_decayed_same_as<vk::first_scissor_index>(); }
+		) {
+			first = a.template
+				get<is_same_as<vk::first_scissor_index>.decayed>();
+		}
 
-		vk::extent<2> extent = a.template get_decayed_same_as<vk::extent<2>>();
+		vk::extent<2> extent = a.template
+			get<is_same_as<vk::extent<2>>.decayed>();
 
 		vk::cmd_set_scissor(
 			instance,

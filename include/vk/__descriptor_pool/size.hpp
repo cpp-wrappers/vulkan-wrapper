@@ -19,10 +19,10 @@ namespace vk {
 		>
 		descriptor_pool_size(Args&&... args) {
 			type = tuple{ args... }.template
-				get_decayed_same_as<vk::descriptor_type>();
+				get<is_same_as<vk::descriptor_type>.decayed>();
 
 			descriptor_count = tuple{ args... }.template
-				get_decayed_same_as<vk::descriptor_count>();
+				get<is_same_as<vk::descriptor_count>.decayed>();
 		}
 	};
 

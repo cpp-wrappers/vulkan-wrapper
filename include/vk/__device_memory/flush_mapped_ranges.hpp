@@ -20,21 +20,21 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_range_of_decayed<vk::mapped_memory_range> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_range_of<is_same_as<vk::mapped_memory_range>.decayed> == 1
 	>
 	vk::result try_flush_mapped_memory_ranges(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		auto& ranges = a.template
-			get_range_of_decayed<vk::mapped_memory_range>();
+			get<is_range_of<is_same_as<vk::mapped_memory_range>.decayed>>();
 
 		return {
 			vk::get_device_function<vk::flush_mammed_memory_ranges_function>(

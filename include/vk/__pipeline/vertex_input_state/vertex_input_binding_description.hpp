@@ -20,20 +20,21 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::binding> == 1,
-			count_of_decayed_same_as<vk::stride> == 1,
-			count_of_decayed_same_as<vk::vertex_input_rate> <= 1
+			is_same_as<vk::binding>.decayed == 1,
+			is_same_as<vk::stride>.decayed == 1,
+			is_same_as<vk::vertex_input_rate>.decayed <= 1
 		>
 		vertex_input_binding_description(Args&&... args) {
 			tuple a{ args... };
-			binding = a.template get_decayed_same_as<vk::binding>();
-			stride = a.template get_decayed_same_as<vk::stride>();
+			binding = a.template get<is_same_as<vk::binding>.decayed>();
+			stride = a.template get<is_same_as<vk::stride>.decayed>();
 	
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::vertex_input_rate> > 0
+			if constexpr (
+				(is_same_as<vk::vertex_input_rate>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				vertex_input_rate = a.template
-					get_decayed_same_as<vk::vertex_input_rate>();
+					get<is_same_as<vk::vertex_input_rate>.decayed>();
 			}
 
 		} // constructor

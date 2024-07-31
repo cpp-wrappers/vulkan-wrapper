@@ -22,34 +22,38 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<vk::application_info> >= 0,
-		count_of_range_of_decayed<vk::layer_name> >= 0,
-		count_of_range_of_decayed<vk::extension_name> >= 0
+		is_same_as<vk::application_info>.decayed >= 0,
+		is_range_of<is_same_as<vk::layer_name>.decayed> >= 0,
+		is_range_of<is_same_as<vk::extension_name>.decayed> >= 0
 	>
 	vk::expected<handle<vk::instance>> try_create_instance(Args&&... args) {
 		instance_create_info ici{};
 
-		if constexpr(types<Args...>::template
-			count_of_decayed_same_as<vk::application_info> > 0
+		if constexpr(
+			(is_same_as<vk::application_info>.decayed > 0).for_types<Args...>()
 		) {
 			ici.application_info = & tuple{ args... }.template
-				get_decayed_same_as<vk::application_info>();
+				get<is_same_as<vk::application_info>.decayed>();
 		}
 
 		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::extension_name> > 0
+			count_of<is_range_of<
+				is_same_as<vk::extension_name>.decayed
+			>> > 0
 		) {
 			auto& range = tuple{ args... }.template
-				get_range_of_decayed<vk::extension_name>();
+				get<is_range_of<is_same_as<vk::extension_name>.decayed>>();
 			ici.enabled_extension_count = (uint32) range.size();
 			ici.enabled_extension_names = range.iterator();
 		}
 
 		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::layer_name> > 0
+			count_of<is_range_of<
+				is_same_as<vk::layer_name>.decayed
+			>> > 0
 		) {
 			auto& range = tuple{ args... }.template
-				get_range_of_decayed<vk::layer_name>();
+				get<is_range_of<is_same_as<vk::layer_name>.decayed>>();
 			ici.enabled_layer_count = (uint32) range.size();
 			ici.enabled_layer_names = range.iterator();
 		}

@@ -51,55 +51,62 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::format> == 1,
-			count_of_decayed_same_as<vk::sample_count> <= 1,
-			count_of_decayed_same_as<vk::load_op> <= 1,
-			count_of_decayed_same_as<vk::store_op> <= 1,
-			count_of_decayed_same_as<vk::stencil_load_op> <= 1,
-			count_of_decayed_same_as<vk::stencil_store_op> <= 1,
-			count_of_decayed_same_as<vk::initial_layout> <= 1,
-			count_of_decayed_same_as<vk::final_layout> <= 1
+			is_same_as<vk::format>.decayed == 1,
+			is_same_as<vk::sample_count>.decayed <= 1,
+			is_same_as<vk::load_op>.decayed <= 1,
+			is_same_as<vk::store_op>.decayed <= 1,
+			is_same_as<vk::stencil_load_op>.decayed <= 1,
+			is_same_as<vk::stencil_store_op>.decayed <= 1,
+			is_same_as<vk::initial_layout>.decayed <= 1,
+			is_same_as<vk::final_layout>.decayed <= 1
 		>
 		attachment_description(Args&&... args) {
 			tuple a{ args... };
-			format = a.template get_decayed_same_as<vk::format>();
+			format = a.template get<is_same_as<vk::format>.decayed>();
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::sample_count> > 0
-			) { samples = a.template get_decayed_same_as<vk::sample_count>(); }
+			if constexpr(
+				(is_same_as<vk::sample_count>.decayed > 0)
+				.for_types<Args...>()
+			) { samples = a.template get<is_same_as<vk::sample_count>.decayed>(); }
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::load_op> > 0
-			) { load_op = a.template get_decayed_same_as<vk::load_op>(); }
+			if constexpr(
+				(is_same_as<vk::load_op>.decayed > 0)
+				.for_types<Args...>()
+			) { load_op = a.template get<is_same_as<vk::load_op>.decayed>(); }
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::store_op> > 0
-			) { store_op = a.template get_decayed_same_as<vk::store_op>(); }
+			if constexpr(
+				(is_same_as<vk::store_op>.decayed > 0)
+				.for_types<Args...>()
+			) { store_op = a.template get<is_same_as<vk::store_op>.decayed>(); }
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::stencil_load_op> > 0
+			if constexpr(
+				(is_same_as<vk::stencil_load_op>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				stencil_load_op = a.template
-					get_decayed_same_as<vk::stencil_load_op>();
+					get<is_same_as<vk::stencil_load_op>.decayed>();
 			}
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::stencil_store_op> > 0
+			if constexpr(
+				(is_same_as<vk::stencil_store_op>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				stencil_store_op = a.template
-					get_decayed_same_as<vk::stencil_store_op>(); }
+					get<is_same_as<vk::stencil_store_op>.decayed>(); }
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::initial_layout> > 0
+			if constexpr(
+				(is_same_as<vk::initial_layout>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				initial_layout = a.template
-					get_decayed_same_as<vk::initial_layout>(); }
+					get<is_same_as<vk::initial_layout>.decayed>(); }
 	
-			if constexpr(types<Args...>::template
-				count_of_decayed_same_as<vk::final_layout> > 0
+			if constexpr(
+				(is_same_as<vk::final_layout>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				final_layout = a.template
-					get_decayed_same_as<vk::final_layout>();
+					get<is_same_as<vk::final_layout>.decayed>();
 			}
 
 		} // constructor

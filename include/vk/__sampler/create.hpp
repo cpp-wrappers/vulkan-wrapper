@@ -19,116 +19,126 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<vk::sampler_create_flags> <= 1,
-		count_of_decayed_same_as<vk::mag_filter> == 1,
-		count_of_decayed_same_as<vk::min_filter> == 1,
-		count_of_decayed_same_as<vk::mipmap_mode> == 1,
-		count_of_decayed_same_as<vk::address_mode_u> == 1,
-		count_of_decayed_same_as<vk::address_mode_v> == 1,
-		count_of_decayed_same_as<vk::address_mode_w> == 1,
-		count_of_decayed_same_as<vk::mip_lod_bias> <= 1,
-		count_of_decayed_same_as<vk::anisotropy_enable> <= 1,
-		count_of_decayed_same_as<vk::max_anisotropy> <= 1,
-		count_of_decayed_same_as<vk::compare_enable> <= 1,
-		count_of_decayed_same_as<vk::compare_op> <= 1,
-		count_of_decayed_same_as<vk::min_lod> <= 1,
-		count_of_decayed_same_as<vk::max_lod> <= 1,
-		count_of_decayed_same_as<vk::border_color> <= 1,
-		count_of_decayed_same_as<vk::unnormalized_coordinates> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<vk::sampler_create_flags>.decayed <= 1,
+		is_same_as<vk::mag_filter>.decayed == 1,
+		is_same_as<vk::min_filter>.decayed == 1,
+		is_same_as<vk::mipmap_mode>.decayed == 1,
+		is_same_as<vk::address_mode_u>.decayed == 1,
+		is_same_as<vk::address_mode_v>.decayed == 1,
+		is_same_as<vk::address_mode_w>.decayed == 1,
+		is_same_as<vk::mip_lod_bias>.decayed <= 1,
+		is_same_as<vk::anisotropy_enable>.decayed <= 1,
+		is_same_as<vk::max_anisotropy>.decayed <= 1,
+		is_same_as<vk::compare_enable>.decayed <= 1,
+		is_same_as<vk::compare_op>.decayed <= 1,
+		is_same_as<vk::min_lod>.decayed <= 1,
+		is_same_as<vk::max_lod>.decayed <= 1,
+		is_same_as<vk::border_color>.decayed <= 1,
+		is_same_as<vk::unnormalized_coordinates>.decayed <= 1
 	>
 	vk::expected<handle<vk::sampler>>
 	try_create_sampler(Args&&... args) {
 		tuple a { args... };
 
 		vk::sampler_create_info ci {
-			.mag_filter = a.template get_decayed_same_as<vk::mag_filter>(),
-			.min_filter = a.template get_decayed_same_as<vk::min_filter>(),
-			.mipmap_mode = a.template get_decayed_same_as<vk::mipmap_mode>(),
+			.mag_filter = a.template get<is_same_as<vk::mag_filter>.decayed>(),
+			.min_filter = a.template get<is_same_as<vk::min_filter>.decayed>(),
+			.mipmap_mode = a.template get<is_same_as<vk::mipmap_mode>.decayed>(),
 			.address_mode_u = a.template
-				get_decayed_same_as<vk::address_mode_u>(),
+				get<is_same_as<vk::address_mode_u>.decayed>(),
 			.address_mode_v = a.template
-				get_decayed_same_as<vk::address_mode_v>(),
+				get<is_same_as<vk::address_mode_v>.decayed>(),
 			.address_mode_w = a.template
-				get_decayed_same_as<vk::address_mode_w>()
+				get<is_same_as<vk::address_mode_w>.decayed>()
 		};
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::sampler_create_flags> > 0
+		if constexpr (
+			(is_same_as<vk::sampler_create_flags>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.flags = a.template
-				get_decayed_same_as<vk::sampler_create_flags>();
+				get<is_same_as<vk::sampler_create_flags>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::mip_lod_bias> > 0
+		if constexpr (
+			(is_same_as<vk::mip_lod_bias>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.mip_lod_bias = a.template
-				get_decayed_same_as<vk::mip_lod_bias>();
+				get<is_same_as<vk::mip_lod_bias>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::anisotropy_enable> > 0
+		if constexpr (
+			(is_same_as<vk::anisotropy_enable>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.anisotropy_enable = a.template
-				get_decayed_same_as<vk::anisotropy_enable>();
+				get<is_same_as<vk::anisotropy_enable>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::max_anisotropy> > 0
+		if constexpr (
+			(is_same_as<vk::max_anisotropy>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.max_anisotropy = a.template
-				get_decayed_same_as<vk::max_anisotropy>();
+				get<is_same_as<vk::max_anisotropy>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::compare_enable> > 0
+		if constexpr (
+			(is_same_as<vk::compare_enable>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.compare_enable = a.template
-				get_decayed_same_as<vk::compare_enable>();
+				get<is_same_as<vk::compare_enable>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::compare_op> > 0
+		if constexpr (
+			(is_same_as<vk::compare_op>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.compare_op = a.template
-				get_decayed_same_as<vk::compare_op>();
+				get<is_same_as<vk::compare_op>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::min_lod> > 0
+		if constexpr (
+			(is_same_as<vk::min_lod>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.min_lod = a.template
-				get_decayed_same_as<vk::min_lod>();
+				get<is_same_as<vk::min_lod>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::max_lod> > 0
+		if constexpr (
+			(is_same_as<vk::max_lod>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.max_lod = a.template
-				get_decayed_same_as<vk::max_lod>();
+				get<is_same_as<vk::max_lod>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::border_color> > 0
+		if constexpr (
+			(is_same_as<vk::border_color>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.border_color = a.template
-				get_decayed_same_as<vk::border_color>();
+				get<is_same_as<vk::border_color>.decayed>();
 		}
 
-		if constexpr (types<Args...>::template
-			count_of_decayed_same_as<vk::unnormalized_coordinates> > 0
+		if constexpr (
+			(is_same_as<vk::unnormalized_coordinates>.decayed > 0)
+			.for_types<Args...>()
 		) {
 			ci.unnormalized_coordinates = a.template
-				get_decayed_same_as<vk::unnormalized_coordinates>();
+				get<is_same_as<vk::unnormalized_coordinates>.decayed>();
 		}
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::sampler> sampler;
 

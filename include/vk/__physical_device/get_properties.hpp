@@ -45,11 +45,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::physical_device>> == 1,
-		(count_of_satisfying_predicate<
-			vk::is_extension_properties_reference
-		> > 0)
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::physical_device>>.decayed == 1,
+		(vk::is_extension_properties_reference > 0)
 	>
 	[[ nodiscard ]]
 	vk::physical_device_properties
@@ -57,10 +55,10 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::physical_device> physical_device = a.template
-			get_decayed_same_as<handle<vk::physical_device>>();
+			get<is_same_as<handle<vk::physical_device>>.decayed>();
 
 		vk::physical_device_properties_2 props{};
 

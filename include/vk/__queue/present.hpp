@@ -22,25 +22,25 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::queue>> == 1,
-		count_of_decayed_same_as<vk::present_info> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::queue>>.decayed == 1,
+		is_same_as<vk::present_info>.decayed == 1
 	>
 	vk::result try_queue_present(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::queue> queue = a.template
-			get_decayed_same_as<handle<vk::queue>>();
+			get<is_same_as<handle<vk::queue>>.decayed>();
 
 		vk::present_info present_info = a.template
-			get_decayed_same_as<vk::present_info>();
+			get<is_same_as<vk::present_info>.decayed>();
 
 		return {
 			vk::get_device_function<vk::queue_present_function>(
@@ -54,32 +54,32 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::queue>> == 1,
-		count_of_range_of_decayed<vk::wait_semaphore> == 1,
-		count_of_range_of_decayed<handle<vk::swapchain>> == 1,
-		count_of_range_of_decayed<vk::image_index> == 1,
-		count_of_range_of_decayed<vk::result> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::queue>>.decayed == 1,
+		is_range_of<is_same_as<vk::wait_semaphore>.decayed> == 1,
+		is_range_of<is_same_as<handle<vk::swapchain>>.decayed> == 1,
+		is_range_of<is_same_as<vk::image_index>.decayed> == 1,
+		is_range_of<is_same_as<vk::result>.decayed> <= 1
 	>
 	vk::result try_queue_present(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::queue> queue = a.template
-			get_decayed_same_as<handle<vk::queue>>();
+			get<is_same_as<handle<vk::queue>>.decayed>();
 
 		auto& wait_semaphores = a.template
-			get_range_of_decayed<vk::wait_semaphore>();
+			get<is_range_of<is_same_as<vk::wait_semaphore>.decayed>>();
 		auto& swapchains = a.template
-			get_range_of_decayed<handle<vk::swapchain>>();
+			get<is_range_of<is_same_as<handle<vk::swapchain>>.decayed>>();
 		auto& image_indices = a.template
-			get_range_of_decayed<vk::image_index>();
+			get<is_range_of<is_same_as<vk::image_index>.decayed>>();
 
 		vk::present_info present_info {
 			.wait_semaphore_count = (uint32) wait_semaphores.size(),
@@ -92,10 +92,10 @@ namespace vk {
 		};
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::result> > 0
+			count_of<is_range_of<is_same_as<vk::result>.decayed>> > 0
 		) {
 			present_info.results = a.template
-				get_range_of_decayed<vk::result>();
+				get<is_range_of<is_same_as<vk::result>.decayed>>();
 		}
 	
 		return vk::try_queue_present(instance, device, queue, present_info);
@@ -103,33 +103,33 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_decayed_same_as<handle<vk::queue>> == 1,
-		count_of_decayed_same_as<vk::wait_semaphore> == 1,
-		count_of_decayed_same_as<handle<vk::swapchain>> == 1,
-		count_of_decayed_same_as<vk::image_index> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::queue>>.decayed == 1,
+		is_same_as<vk::wait_semaphore>.decayed == 1,
+		is_same_as<handle<vk::swapchain>>.decayed == 1,
+		is_same_as<vk::image_index>.decayed == 1
 	>
 	[[nodiscard]] vk::result try_queue_present(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::queue> queue = a.template
-			get_decayed_same_as<handle<vk::queue>>();
+			get<is_same_as<handle<vk::queue>>.decayed>();
 
 		handle<vk::semaphore> wait_semaphore =
 			(handle<vk::semaphore>)
-			a.template get_decayed_same_as<vk::wait_semaphore>();
+			a.template get<is_same_as<vk::wait_semaphore>.decayed>();
 		
 		handle<vk::swapchain> swapchain = a.template
-			get_decayed_same_as<handle<vk::swapchain>>();
+			get<is_same_as<handle<vk::swapchain>>.decayed>();
 		vk::image_index image_index = a.template
-			get_decayed_same_as<vk::image_index>();
+			get<is_same_as<vk::image_index>.decayed>();
 
 		vk::present_info present_info {
 			.wait_semaphore_count = 1,

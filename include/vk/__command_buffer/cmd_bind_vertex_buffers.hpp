@@ -40,13 +40,13 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 		
 		vk::first_binding first_binding{ 0 };
 
@@ -55,13 +55,13 @@ namespace vk {
 			.for_types<Args...>()
 		) {
 			first_binding = a.template
-				get_decayed_same_as<vk::first_binding>();
+				get<is_same_as<vk::first_binding>.decayed>();
 		}
 
 		auto& buffers = a.template
-				get_range_of_decayed<handle<vk::buffer>>();
+				get<is_range_of<is_same_as<handle<vk::buffer>>.decayed>>();
 		auto& offsets = a.template
-				get_range_of_decayed<vk::memory_offset>();
+				get<is_range_of<is_same_as<vk::memory_offset>.decayed>>();
 
 		vk::get_device_function<vk::cmd_bind_vertex_buffers_function>(
 			instance, device

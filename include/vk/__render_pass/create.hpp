@@ -21,47 +21,51 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of_decayed_same_as<handle<vk::instance>> == 1,
-		count_of_decayed_same_as<handle<vk::device>> == 1,
-		count_of_range_of_decayed<vk::subpass_description> == 1,
-		count_of_range_of_decayed<vk::subpass_dependency> <= 1,
-		count_of_range_of_decayed<vk::attachment_description> <= 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_range_of<is_same_as<vk::subpass_description>.decayed> == 1,
+		is_range_of<is_same_as<vk::subpass_dependency>.decayed> <= 1,
+		is_range_of<is_same_as<vk::attachment_description>.decayed> <= 1
 	>
 	vk::expected<handle<vk::render_pass>>
 	try_create_render_pass(Args&&... args) {
 		vk::render_pass_create_info ci{};
 
 		auto& subpass_descriptions = tuple{ args... }.template
-			get_range_of_decayed<vk::subpass_description>();
+			get<is_range_of<is_same_as<vk::subpass_description>.decayed>>();
 
 		ci.subpass_count = (uint32) subpass_descriptions.size();
 		ci.subpasses = subpass_descriptions.iterator();
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::subpass_dependency> > 0
+			count_of<is_range_of<
+				is_same_as<vk::subpass_dependency>.decayed
+			>> > 0
 		) {
 			auto& subpass_dependencies = tuple{ args... }.template
-				get_range_of_decayed<vk::subpass_dependency>();
+				get<is_range_of<is_same_as<vk::subpass_dependency>.decayed>>();
 
 			ci.dependency_count = (uint32) subpass_dependencies.size();
 			ci.dependencies = subpass_dependencies.iterator();
 		}
 
 		if constexpr (types<Args...>::template
-			count_of_range_of_decayed<vk::attachment_description> > 0
+			count_of<is_range_of<
+				is_same_as<vk::attachment_description>.decayed
+			>> > 0
 		) {
 			auto& attachment_descriptions = tuple{ args... }.template
-				get_range_of_decayed<vk::attachment_description>();
+				get<is_range_of<is_same_as<vk::attachment_description>.decayed>>();
 
 			ci.attachment_count = (uint32) attachment_descriptions.size();
 			ci.attachments = attachment_descriptions.iterator();
 		}
 
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::render_pass> render_pass;
 

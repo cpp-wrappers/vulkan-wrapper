@@ -21,9 +21,9 @@ namespace vk {
 		>
 		memory_barrier(Args&&... args) {
 			src_access_mask = tuple { args... }.template
-				get_decayed_same_as<vk::src_access>();
+				get<is_same_as<vk::src_access>.decayed>();
 			dst_access_mask = tuple { args... }.template
-				get_decayed_same_as<vk::dst_access>();
+				get<is_same_as<vk::dst_access>.decayed>();
 		}
 	};
 

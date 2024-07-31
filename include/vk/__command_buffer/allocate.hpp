@@ -23,29 +23,29 @@ namespace vk {
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::command_pool>>.decayed == 1,
 		is_same_as<vk::command_buffer_level>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::command_buffer>>.decayed
-		> == 1
+		is_range_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1
 	>
 	vk::result try_allocate_command_buffers(Args&&... args) {
 		vk::command_buffer_allocate_info ai {};
 
 		auto& command_buffers = tuple{ args... }.template
-			get_range_of_decayed<handle<vk::command_buffer>>();
+			get<is_range_of<
+				is_same_as<handle<vk::command_buffer>>.decayed
+			>>();
 
 		ai.command_pool = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::command_pool>>().underlying();
+			get<is_same_as<handle<vk::command_pool>>.decayed>().underlying();
 
 		ai.level = tuple{ args... }.template
-			get_decayed_same_as<vk::command_buffer_level>();
+			get<is_same_as<vk::command_buffer_level>.decayed>();
 
 		ai.count = (uint32) command_buffers.size();
 
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		return {
 			vk::get_device_function<vk::allocate_command_buffers_function>(

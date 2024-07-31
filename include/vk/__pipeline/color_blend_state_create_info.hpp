@@ -41,38 +41,39 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of_decayed_same_as<vk::enable_logic_op> <= 1,
-			count_of_decayed_same_as<vk::logic_op> <= 1,
-			count_of_decayed_same_as<AttachementsRange> <= 1,
-			count_of_decayed_same_as<vk::blend_constants> <= 1
+			is_same_as<vk::enable_logic_op>.decayed <= 1,
+			is_same_as<vk::logic_op>.decayed <= 1,
+			is_same_as<AttachementsRange>.decayed <= 1,
+			is_same_as<vk::blend_constants>.decayed <= 1
 		>
 		pipeline_color_blend_state_create_info(Args&&... args):
 			attachments{
 				tuple{forward<Args>(args)...}
-				.template get_satisfying_predicate<
-					is_same_as<AttachementsRange>.decayed
-				>()
+				.template get<is_same_as<AttachementsRange>.decayed>()
 			}
 		{
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::enable_logic_op> > 0
+			if constexpr (
+				(is_same_as<vk::enable_logic_op>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				enable_logic_op = tuple{ args... }.template
-					get_decayed_same_as<vk::enable_logic_op>();
+					get<is_same_as<vk::enable_logic_op>.decayed>();
 			}
 			
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::logic_op> > 0
+			if constexpr (
+				(is_same_as<vk::logic_op>.decayed > 0)
+				.for_types<Args...>()
 			) {
 				logic_op = tuple{ args... }.template
-					get_decayed_same_as<vk::logic_op>();
+					get<is_same_as<vk::logic_op>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of_decayed_same_as<vk::blend_constants> > 0
+			if constexpr (
+				(is_same_as<vk::blend_constants> > 0)
+				.for_types<Args...>()
 			) {
 				enable_logic_op = tuple{ args... }.template
-					get_decayed_same_as<vk::blend_constants>();
+					get<is_same_as<vk::blend_constants>.decayed>();
 			}
 
 		} // constructor
@@ -93,7 +94,10 @@ namespace vk {
 	template<typename... Args>
 	pipeline_color_blend_state_create_info(Args...)
 		-> pipeline_color_blend_state_create_info<
-			typename types<Args...>::template get<is_range_of_decayed<pipeline_color_blend_attachment_state>>
+			typename types<Args...>::template
+			get<is_range_of<
+				is_same_as<pipeline_color_blend_attachment_state>.decayed
+			>>
 		>;
 
 } // vk

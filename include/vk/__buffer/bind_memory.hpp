@@ -31,16 +31,16 @@ namespace vk {
 	>
 	vk::result try_bind_buffer_memory(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::buffer> buffer = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::buffer>>();
+			get<is_same_as<handle<vk::buffer>>.decayed>();
 
 		handle<vk::device_memory> device_memory = tuple{ args... }.template
-			get_decayed_same_as<handle<vk::device_memory>>();
+			get<is_same_as<handle<vk::device_memory>>.decayed>();
 
 		vk::memory_offset offset{ 0 };
 		
@@ -48,7 +48,7 @@ namespace vk {
 			(is_same_as<vk::memory_offset> > 0).for_types<Args...>()
 		) {
 			offset = tuple{ args... }.template
-				get_decayed_same_as<vk::memory_offset>();
+				get<is_same_as<vk::memory_offset>.decayed>();
 		}
 
 		return {

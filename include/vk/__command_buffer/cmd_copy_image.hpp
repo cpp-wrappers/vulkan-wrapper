@@ -38,14 +38,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		count_of<is_same_as<handle<vk::instance>>.decayed> == 1,
-		count_of<is_same_as<handle<vk::device>>.decayed> == 1,
-		count_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1,
-		count_of<is_same_as<vk::src_image>.decayed> == 1,
-		count_of<is_same_as<vk::src_image_layout>.decayed> == 1,
-		count_of<is_same_as<vk::dst_image>.decayed> == 1,
-		count_of<is_same_as<vk::dst_image_layout>.decayed> == 1,
-		count_of<is_range_of_element_type_satisfying_predicate<is_same_as<vk::image_copy>.decayed>> == 1
+		is_same_as<handle<vk::instance>>.decayed == 1,
+		is_same_as<handle<vk::device>>.decayed == 1,
+		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_same_as<vk::src_image>.decayed == 1,
+		is_same_as<vk::src_image_layout>.decayed == 1,
+		is_same_as<vk::dst_image>.decayed == 1,
+		is_same_as<vk::dst_image_layout>.decayed == 1,
+		is_range_of_element_type_satisfying_predicate<is_same_as<vk::image_copy>.decayed> == 1
 	>
 	void cmd_copy_image(Args&&... args) {
 		tuple a { args... };

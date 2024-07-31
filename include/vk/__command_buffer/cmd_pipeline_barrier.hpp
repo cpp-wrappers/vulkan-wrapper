@@ -35,27 +35,27 @@ namespace vk {
 		is_same_as<vk::src_stages>.decayed == 1,
 		is_same_as<vk::dst_stages>.decayed == 1,
 		is_same_as<vk::dependencies>.decayed <= 1,
-		count_of_range_of_decayed<vk::memory_barrier> <= 1,
-		count_of_range_of_decayed<vk::buffer_memory_barrier> <= 1,
-		count_of_range_of_decayed<vk::image_memory_barrier> <= 1
+		is_range_of<is_same_as<vk::memory_barrier>.decayed> <= 1,
+		is_range_of<is_same_as<vk::buffer_memory_barrier>.decayed> <= 1,
+		is_range_of<is_same_as<vk::image_memory_barrier>.decayed> <= 1
 	>
 	void cmd_pipeline_barrier(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::src_stages src_stages = a.template
-			get_decayed_same_as<vk::src_stages>();
+			get<is_same_as<vk::src_stages>.decayed>();
 
 		vk::dst_stages dst_stages = a.template
-			get_decayed_same_as<vk::dst_stages>();
+			get<is_same_as<vk::dst_stages>.decayed>();
 
 		vk::dependencies dependencies{};
 		
@@ -63,17 +63,18 @@ namespace vk {
 			(is_same_as<vk::dependencies>.decayed > 0).for_types<Args...>()
 		) {
 			dependencies = a.template
-				get_decayed_same_as<vk::dependencies>();
+				get<is_same_as<vk::dependencies>.decayed>();
 		}
 
 		uint32 memory_barrier_count{};
 		const vk::memory_barrier* memory_barriers{};
 
-		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::memory_barrier> > 0
+		if constexpr(
+			(is_range_of<is_same_as<vk::memory_barrier>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& memory_barriers0 = a.template
-				get_range_of_decayed<vk::memory_barrier>();
+				get<is_range_of<is_same_as<vk::memory_barrier>.decayed>>();
 			memory_barrier_count = (uint32) memory_barriers0.size();
 			memory_barriers = memory_barriers0.iterator();
 		}
@@ -81,11 +82,12 @@ namespace vk {
 		uint32 buffer_barrier_count{};
 		const vk::buffer_memory_barrier* buffer_barriers{};
 
-		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::buffer_memory_barrier> > 0
+		if constexpr(
+			(is_range_of<is_same_as<vk::buffer_memory_barrier>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& buffer_barriers0 = a.template
-				get_range_of_decayed<vk::buffer_memory_barrier>();
+				get<is_range_of<is_same_as<vk::buffer_memory_barrier>.decayed>>();
 			buffer_barrier_count = (uint32) buffer_barriers0.size();
 			buffer_barriers = buffer_barriers0.iterator();
 		}
@@ -93,11 +95,12 @@ namespace vk {
 		uint32 image_barrier_count{};
 		const vk::image_memory_barrier* image_barriers{};
 
-		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::image_memory_barrier> > 0
+		if constexpr(
+			(is_range_of<is_same_as<vk::image_memory_barrier>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& image_barriers0 = a.template
-				get_range_of_decayed<vk::image_memory_barrier>();
+				get<is_range_of<is_same_as<vk::image_memory_barrier>.decayed>>();
 			image_barrier_count = (uint32) image_barriers0.size();
 			image_barriers = image_barriers0.iterator();
 		}

@@ -38,13 +38,13 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_viewport_index first{ 0 };
 		
@@ -52,10 +52,12 @@ namespace vk {
 			(is_same_as<vk::first_viewport_index>.decayed > 0)
 			.for_types<Args...>()
 		) {
-			first = a.template get_decayed_same_as<vk::first_viewport_index>();
+			first = a.template
+				get<is_same_as<vk::first_viewport_index>.decayed>();
 		}
 
-		auto& viewports = a.template get_range_of_decayed<vk::viewport>();
+		auto& viewports = a.template
+			get<is_range_of<is_same_as<vk::viewport>.decayed>>();
 
 		vk::get_device_function<vk::cmd_set_viewport_function>(
 			instance, device
@@ -79,13 +81,13 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_viewport_index first{ 0 };
 		
@@ -93,10 +95,12 @@ namespace vk {
 			(is_same_as<vk::first_viewport_index>.decayed > 0)
 			.for_types<Args...>()
 		) {
-			first = a.template get_decayed_same_as<vk::first_viewport_index>();
+			first = a.template
+				get<is_same_as<vk::first_viewport_index>.decayed>();
 		}
 
-		vk::viewport viewport = a.template get_decayed_same_as<vk::viewport>();
+		vk::viewport viewport = a.template
+			get<is_same_as<vk::viewport>.decayed>();
 
 		vk::cmd_set_viewport(
 			instance, device, command_buffer, first, array{ viewport }
@@ -115,13 +119,13 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		vk::first_viewport_index first{ 0 };
 		
@@ -129,10 +133,12 @@ namespace vk {
 			(is_same_as<vk::first_viewport_index>.decayed > 0)
 			.for_types<Args...>()
 		) {
-			first = a.template get_decayed_same_as<vk::first_viewport_index>();
+			first = a.template
+				get<is_same_as<vk::first_viewport_index>.decayed>();
 		}
 
-		vk::extent<2> extent = a.template get_decayed_same_as<vk::extent<2>>();
+		vk::extent<2> extent = a.template
+			get<is_same_as<vk::extent<2>>.decayed>();
 
 		vk::cmd_set_viewport(
 			instance,

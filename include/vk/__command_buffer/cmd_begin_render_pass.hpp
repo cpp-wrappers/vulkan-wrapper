@@ -30,16 +30,16 @@ namespace vk {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		auto& render_pass_begin_info = a.template
-			get_decayed_same_as<vk::render_pass_begin_info>();
+			get<is_same_as<vk::render_pass_begin_info>.decayed>();
 
 		vk::get_device_function<vk::cmd_begin_render_pass_function>(
 			instance, device
@@ -60,42 +60,41 @@ namespace vk {
 		is_same_as<handle<vk::render_pass>>.decayed == 1,
 		is_same_as<handle<vk::framebuffer>>.decayed == 1,
 		is_same_as<vk::render_area>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::clear_value>.decayed
-		> <= 1
+		is_range_of<is_same_as<vk::clear_value>.decayed> <= 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
 
 		handle<vk::instance> instance = a.template
-			get_decayed_same_as<handle<vk::instance>>();
+			get<is_same_as<handle<vk::instance>>.decayed>();
 
 		handle<vk::device> device = a.template
-			get_decayed_same_as<handle<vk::device>>();
+			get<is_same_as<handle<vk::device>>.decayed>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get_decayed_same_as<handle<vk::command_buffer>>();
+			get<is_same_as<handle<vk::command_buffer>>.decayed>();
 
 		handle<vk::render_pass> render_pass = a.template
-			get_decayed_same_as<handle<vk::render_pass>>();
+			get<is_same_as<handle<vk::render_pass>>.decayed>();
 
 		handle<vk::framebuffer> framebuffer = a.template
-			get_decayed_same_as<handle<vk::framebuffer>>();
+			get<is_same_as<handle<vk::framebuffer>>.decayed>();
 
 		vk::clear_value* clear_values = nullptr;
 		uint32 clear_values_count = 0;
 
-		if constexpr(types<Args...>::template
-			count_of_range_of_decayed<vk::clear_value> > 0
+		if constexpr(
+			(is_range_of<is_same_as<vk::clear_value>.decayed> > 0)
+			.for_types<Args...>()
 		) {
 			auto& clear_values0 = a.template
-				get_range_of_decayed<vk::clear_value>();
+				get<is_range_of<is_same_as<vk::clear_value>.decayed>>();
 			clear_values = clear_values0.iterator();
 			clear_values_count = clear_values0.size();
 		}
 
 		vk::render_area render_area = a.template
-			get_decayed_same_as<vk::render_area>();
+			get<is_same_as<vk::render_area>.decayed>();
 
 		return vk::cmd_begin_render_pass(
 			instance,
@@ -117,10 +116,10 @@ namespace vk {
 	((is_same_as<vk::clear_value>.decayed == 1).for_types<Args...>())
 	void cmd_begin_render_pass(Args&&... args) {
 		vk::clear_value clear_value = tuple{ args... }.template
-			get_decayed_same_as<vk::clear_value>();
+			get<is_same_as<vk::clear_value>.decayed>();
 
 		tuple{ args... }.template
-		pass_satisfying_predicate<
+		pass<
 			!is_same_as<vk::clear_value>.decayed
 		>([&]<typename... Args0>(Args0&&... args0) {
 			cmd_begin_render_pass(

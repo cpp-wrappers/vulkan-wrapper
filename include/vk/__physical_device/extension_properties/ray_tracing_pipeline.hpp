@@ -7,7 +7,7 @@
 namespace vk {
 
 	struct physical_device_ray_tracing_pipeline_properties :
-		vk::extension_properties_marker
+		vk::extension_properties_mark
 	{
 		uint32 structure_type = 1000347001;
 		const void* next;
