@@ -21,12 +21,8 @@ namespace vk {
 	requires types<Args...>::template exclusively_satisfy_predicates<
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::write_descriptor_set>.decayed
-		> <= 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::copy_descriptor_set>.decayed
-		> <= 1
+		is_range_of<is_same_as<vk::write_descriptor_set>.decayed> <= 1,
+		is_range_of<is_same_as<vk::copy_descriptor_set>.decayed> <= 1
 	>
 	void update_descriptor_sets(Args&&... args) {
 		tuple a { args... };
@@ -38,7 +34,7 @@ namespace vk {
 			get<is_same_as<handle<vk::device>>.decayed>();
 
 		uint32 write_count{};
-		const vk::write_descriptor_set* writes;
+		const vk::write_descriptor_set* writes = nullptr;
 
 		if constexpr (
 			(is_range_of<is_same_as<vk::write_descriptor_set>.decayed> > 0)
@@ -52,7 +48,7 @@ namespace vk {
 		}
 
 		uint32 copy_count{};
-		const vk::copy_descriptor_set* copies;
+		const vk::copy_descriptor_set* copies = nullptr;
 
 		if constexpr (
 			(is_range_of<is_same_as<vk::copy_descriptor_set>.decayed> > 0)
@@ -78,34 +74,34 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::write_descriptor_set>.decayed == 1
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<vk::write_descriptor_set> == 1
 	>
-	void update_descriptor_set(Args&&... args) {
-		tuple a { args... };
+	void update_descriptor_set(Args... args) {
+		tuple<Args...> a { args... };
 		return vk::update_descriptor_sets(
-			a.template get<is_same_as<handle<vk::instance>>.decayed>(),
-			a.template get<is_same_as<handle<vk::device>>.decayed>(),
+			a.template get<is_same_as<handle<vk::instance>>>(),
+			a.template get<is_same_as<handle<vk::device>>>(),
 			array {
-				a.template get<is_same_as<vk::write_descriptor_set>.decayed>()
+				a.template get<is_same_as<vk::write_descriptor_set>>()
 			}
 		);
 	}
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::copy_descriptor_set>.decayed == 1
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<vk::copy_descriptor_set> == 1
 	>
-	void update_descriptor_set(Args&&... args) {
-		tuple a { args... };
+	void update_descriptor_set(Args... args) {
+		tuple<Args...> a { args... };
 		return vk::update_descriptor_sets(
-			a.template get<is_same_as<handle<vk::instance>>.decayed>(),
-			a.template get<is_same_as<handle<vk::device>>.decayed>(),
+			a.template get<is_same_as<handle<vk::instance>>>(),
+			a.template get<is_same_as<handle<vk::device>>>(),
 			array {
-				a.template get<is_same_as<vk::copy_descriptor_set>.decayed>()
+				a.template get<is_same_as<vk::copy_descriptor_set>>()
 			}
 		);
 	}

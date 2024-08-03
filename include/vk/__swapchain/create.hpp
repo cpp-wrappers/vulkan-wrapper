@@ -22,12 +22,14 @@ namespace vk {
 		static constexpr auto name = "vkCreateSwapchainKHR";
 	};
 
+	struct old_swapchain : handle<vk::swapchain>{};
+
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::surface>>.decayed == 1,
-		is_same_as<handle<vk::swapchain>>.decayed <= 1,
+		is_same_as<old_swapchain>.decayed <= 1,
 		is_same_as<vk::swapchain_create_flag>.decayed >= 0,
 		is_same_as<vk::min_image_count>.decayed == 1,
 		is_same_as<vk::format>.decayed == 1,
@@ -69,9 +71,7 @@ namespace vk {
 
 		a.template for_each([&]<typename Type>(Type& arg) {
 			if constexpr(
-				is_same_as<vk::swapchain_create_flag>
-				.while_decayed
-				.for_type<Type>()
+				is_same_as<vk::swapchain_create_flag>.decayed.for_type<Type>()
 			) {
 				ci.flags.set(arg);
 			}
@@ -79,9 +79,7 @@ namespace vk {
 
 		a.template for_each([&]<typename Type>(Type& arg) {
 			if constexpr(
-				is_same_as<vk::surface_transform>
-				.while_decayed
-				.for_type<Type>()
+				is_same_as<vk::surface_transform>.decayed.for_type<Type>()
 			) {
 				ci.pre_transform.set(arg);
 			}
@@ -89,9 +87,7 @@ namespace vk {
 
 		a.template for_each([&]<typename Type>(Type& arg) {
 			if constexpr(
-				is_same_as<vk::composite_alpha>
-				.while_decayed
-				.for_type<Type>()
+				is_same_as<vk::composite_alpha>.decayed.for_type<Type>()
 			) {
 				ci.composite_alpha.set(arg);
 			}
@@ -115,11 +111,11 @@ namespace vk {
 		}
 
 		if constexpr (
-			(is_same_as<handle<vk::swapchain>>.decayed > 0)
+			(is_same_as<vk::old_swapchain>.decayed > 0)
 			.for_types<Args...>()
 		) {
 			ci.old_swapchain = a.template
-				get<is_same_as<handle<vk::swapchain>>.decayed>().underlying();
+				get<is_same_as<vk::old_swapchain>.decayed>().underlying();
 		}
 
 		handle<vk::swapchain> swapchain;

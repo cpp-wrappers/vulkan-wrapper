@@ -19,28 +19,28 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::sampler_create_flags>.decayed <= 1,
-		is_same_as<vk::mag_filter>.decayed == 1,
-		is_same_as<vk::min_filter>.decayed == 1,
-		is_same_as<vk::mipmap_mode>.decayed == 1,
-		is_same_as<vk::address_mode_u>.decayed == 1,
-		is_same_as<vk::address_mode_v>.decayed == 1,
-		is_same_as<vk::address_mode_w>.decayed == 1,
-		is_same_as<vk::mip_lod_bias>.decayed <= 1,
-		is_same_as<vk::anisotropy_enable>.decayed <= 1,
-		is_same_as<vk::max_anisotropy>.decayed <= 1,
-		is_same_as<vk::compare_enable>.decayed <= 1,
-		is_same_as<vk::compare_op>.decayed <= 1,
-		is_same_as<vk::min_lod>.decayed <= 1,
-		is_same_as<vk::max_lod>.decayed <= 1,
-		is_same_as<vk::border_color>.decayed <= 1,
-		is_same_as<vk::unnormalized_coordinates>.decayed <= 1
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<vk::sampler_create_flags> <= 1,
+		is_same_as<vk::mag_filter> == 1,
+		is_same_as<vk::min_filter> == 1,
+		is_same_as<vk::mipmap_mode> == 1,
+		is_same_as<vk::address_mode_u> == 1,
+		is_same_as<vk::address_mode_v> == 1,
+		is_same_as<vk::address_mode_w> == 1,
+		is_same_as<vk::mip_lod_bias> <= 1,
+		is_same_as<vk::anisotropy_enable> <= 1,
+		is_same_as<vk::max_anisotropy> <= 1,
+		is_same_as<vk::compare_enable> <= 1,
+		is_same_as<vk::compare_op> <= 1,
+		is_same_as<vk::min_lod> <= 1,
+		is_same_as<vk::max_lod> <= 1,
+		is_same_as<vk::border_color> <= 1,
+		is_same_as<vk::unnormalized_coordinates> <= 1
 	>
 	vk::expected<handle<vk::sampler>>
-	try_create_sampler(Args&&... args) {
-		tuple a { args... };
+	try_create_sampler(Args... args) {
+		tuple<Args...> a { args... };
 
 		vk::sampler_create_info ci {
 			.mag_filter = a.template get<is_same_as<vk::mag_filter>.decayed>(),
@@ -153,7 +153,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return sampler;
 	}
@@ -162,7 +162,7 @@ namespace vk {
 	handle<vk::sampler> create_sampler(Args&&... args) {
 		vk::expected<handle<vk::sampler>> result
 			= vk::try_create_sampler(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

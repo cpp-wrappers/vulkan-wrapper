@@ -14,7 +14,9 @@ namespace vk {
 		uint32               dynamic_state_count = 0;
 		const dynamic_state* dynamic_states = nullptr;
 
-		template<range_of_decayed<vk::dynamic_state> DynamicStates>
+		template<
+			range_of<is_same_as<vk::dynamic_state>.decayed> DynamicStates
+		>
 		pipeline_dynamic_state_create_info(DynamicStates& dynamic_states) :
 			dynamic_state_count { (uint32) dynamic_states.size() },
 			dynamic_states { dynamic_states.iterator() }

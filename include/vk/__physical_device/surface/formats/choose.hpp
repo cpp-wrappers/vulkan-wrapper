@@ -6,7 +6,7 @@
 
 namespace vk {
 
-	template<range_of_decayed<vk::surface_format> PreferredFormats>
+	template<range_of<is_same_as<vk::surface_format>.decayed> PreferredFormats>
 	optional<vk::surface_format>
 	try_choose_physical_device_surface_format(
 		handle<vk::instance> instance,

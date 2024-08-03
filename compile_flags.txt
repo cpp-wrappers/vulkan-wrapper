@@ -3,6 +3,7 @@
 
 -Wall
 -Wextra
+-Wno-vla-cxx-extension
 
 -fno-exceptions
 -fno-rtti
@@ -13,4 +14,3 @@
 -I../core/include
 -I../encoding/include
 -I../math/include
--fimplicit-module-maps

@@ -16,22 +16,22 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			is_same_as<handle<vk::buffer>>.decayed == 1,
-			is_same_as<vk::memory_size>.decayed == 1,
-			is_same_as<vk::memory_offset>.decayed <= 1
+			is_same_as<handle<vk::buffer>> == 1,
+			is_same_as<vk::memory_size> == 1,
+			is_same_as<vk::memory_offset> <= 1
 		>
-		descriptor_buffer_info(Args&&... args) {
-			tuple a { args... };
+		descriptor_buffer_info(Args... args) {
+			tuple<Args...> a { args... };
 
 			buffer = a.template
-				get<is_same_as<handle<vk::buffer>>.decayed>().underlying();
+				get<is_same_as<handle<vk::buffer>>>().underlying();
 
-			size = a.template get<is_same_as<vk::memory_size>.decayed>();
+			size = a.template get<is_same_as<vk::memory_size>>();
 
 			if constexpr (
-				(is_same_as<vk::memory_offset>.decayed > 0).for_types<Args...>()
+				(is_same_as<vk::memory_offset> > 0).for_types<Args...>()
 			) {
-				offset = a.template get<is_same_as<vk::memory_offset>.decayed>();
+				offset = a.template get<is_same_as<vk::memory_offset>>();
 			}
 		}
 	};

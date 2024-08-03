@@ -20,24 +20,25 @@ namespace vk {
 	
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			is_same_as<vk::binding>.decayed == 1,
-			is_same_as<vk::stride>.decayed == 1,
-			is_same_as<vk::vertex_input_rate>.decayed <= 1
+			is_same_as<vk::binding> == 1,
+			is_same_as<vk::stride> == 1,
+			is_same_as<vk::vertex_input_rate> <= 1
 		>
-		vertex_input_binding_description(Args&&... args) {
-			tuple a{ args... };
-			binding = a.template get<is_same_as<vk::binding>.decayed>();
-			stride = a.template get<is_same_as<vk::stride>.decayed>();
-	
-			if constexpr (
-				(is_same_as<vk::vertex_input_rate>.decayed > 0)
-				.for_types<Args...>()
-			) {
-				vertex_input_rate = a.template
-					get<is_same_as<vk::vertex_input_rate>.decayed>();
+		vertex_input_binding_description(Args... args) :
+			binding {
+				tuple<Args...>{ args... }
+				.template get<is_same_as<vk::binding>>()
+			},
+			stride {
+				tuple<Args...>{ args... }
+				.template get<is_same_as<vk::stride>>()
+			},
+			vertex_input_rate {
+				tuple<Args...>{ args... }.template get_or<
+					is_same_as<vk::vertex_input_rate>
+				>([]{ return vertex_input_rate::vertex; })
 			}
-
-		} // constructor
+		{}
 
 	}; // vertex_input_binding_description
 

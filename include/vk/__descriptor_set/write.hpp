@@ -18,7 +18,7 @@
 namespace vk {
 
 	struct write_descriptor_set {
-		uint32 strucutre_type = 35;
+		const uint32 strucutre_type = 35;
 		const void* next = nullptr;
 		handle<vk::descriptor_set>::underlying_type dst_set;
 		vk::dst_binding dst_binding;
@@ -53,7 +53,7 @@ namespace vk {
 		)
 		write_descriptor_set(Args&&... args) {
 			tuple a { args... };
-			
+
 			dst_set = a.template
 				get<is_same_as<handle<vk::descriptor_set>>.decayed>()
 				.underlying();
@@ -65,44 +65,44 @@ namespace vk {
 				get<is_same_as<vk::descriptor_type>.decayed>();
 
 			if constexpr (
-				(is_same_as<vk::dst_array_element>.while_decayed > 0)
+				(is_same_as<vk::dst_array_element>.decayed > 0)
 				.for_types<Args...>()
 			) {
 				dst_array_element = a.template
 					get<is_same_as<vk::dst_array_element>.decayed>();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of<is_range_of<
-					is_same_as<vk::descriptor_image_info>.decayed
-				>> > 0
+			if constexpr (
+				(is_range_of<is_same_as<vk::descriptor_image_info>.decayed> > 0)
+				.for_types<Args...>()
 			) {
-				auto& r = a.template
-					get<is_range_of<is_same_as<vk::descriptor_image_info>.decayed>>();
+				auto& r = a.template get<
+					is_range_of<is_same_as<vk::descriptor_image_info>.decayed>
+				>();
 
 				count = vk::count{ (uint32) r.size() };
 				image_info = r.iterator();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of<is_range_of<
-					is_same_as<vk::descriptor_buffer_info>.decayed
-				>> > 0
+			if constexpr (
+				(is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed> > 0)
+				.for_types<Args...>()
 			) {
-				auto& r = a.template
-					get<is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed>>();
+				auto& r = a.template get<
+					is_range_of<is_same_as<vk::descriptor_buffer_info>.decayed>
+				>();
 
 				count = vk::count{ (uint32) r.size() };
 				buffer_info = r.iterator();
 			}
 
-			if constexpr (types<Args...>::template
-				count_of<is_range_of<
-					is_same_as<handle<vk::buffer_view>>.decayed
-				>> > 0
+			if constexpr (
+				(is_range_of<is_same_as<handle<vk::buffer_view>>.decayed> > 0)
+				.for_types<Args...>()
 			) {
-				auto& r = a.template
-					get<is_range_of<is_same_as<handle<vk::buffer_view>>.decayed>>();
+				auto& r = a.template get<
+					is_range_of<is_same_as<handle<vk::buffer_view>>.decayed>
+				>();
 
 				count = vk::count{ (uint32) r.size() };
 				texel_buffer_view =

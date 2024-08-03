@@ -1,5 +1,6 @@
 #pragma once
 
+#include <range.hpp>
 #include "../../../__internal/result.hpp"
 #include "../../../__internal/count.hpp"
 #include "../../../__internal/unexpected_handler.hpp"
@@ -15,7 +16,7 @@ namespace vk {
 		static constexpr auto name = "vkEnumerateInstanceLayerProperties";
 	};
 
-	template<range_of_decayed<vk::layer_properties> Range>
+	template<range_of<is_same_as<vk::layer_properties>.decayed> Range>
 	[[ nodiscard ]]
 	vk::expected<vk::count>
 	try_enumerate_instance_layer_properties(
@@ -36,7 +37,11 @@ namespace vk {
 		return vk::count{ count };
 	}
 
-	template<range_of_decayed<vk::layer_properties> InstanceLayersProperties>
+	template<
+		range_of<
+			is_same_as<vk::layer_properties>.decayed
+		> InstanceLayersProperties
+	>
 	[[ nodiscard ]]
 	vk::count enumerate_instance_layer_properties(
 		InstanceLayersProperties&& instance_layers_properties

@@ -89,9 +89,7 @@ namespace vk {
 		is_same_as<vk::dst_image>.decayed == 1,
 		is_same_as<vk::dst_image_layout>.decayed == 1,
 
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::image_blit>.decayed
-		> == 1,
+		is_range_of<is_same_as<vk::image_blit>.decayed> == 1,
 
 		is_same_as<vk::filter> == 1
 	>
@@ -118,9 +116,7 @@ namespace vk {
 			get<is_same_as<vk::dst_image_layout>.decayed>();
 
 		auto& regions = a.template
-			get<is_range_of_element_type_satisfying_predicate<
-				is_same_as<vk::image_blit>.decayed
-			>>();
+			get<is_range_of<is_same_as<vk::image_blit>.decayed>>();
 
 		vk::filter filter = a.template
 			get<is_same_as<vk::filter>.decayed>();

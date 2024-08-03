@@ -15,7 +15,11 @@ namespace vk {
 	};
 }
 
-template<range_of_decayed<handle<vk::physical_device>> PhysicalDevices>
+template<
+	range_of<
+		is_same_as<handle<vk::physical_device>>.decayed
+	> PhysicalDevices
+>
 [[ nodiscard ]] vk::count
 handle_interface<vk::instance>::enumerate_physical_devices(
 	PhysicalDevices&& physical_devices

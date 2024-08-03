@@ -3,6 +3,7 @@
 #include "./handle.hpp"
 #include "../__internal/function.hpp"
 #include "../__internal/first_binding.hpp"
+#include "../__internal/binding.hpp"
 #include "../__internal/memory_offset.hpp"
 #include "../__buffer/handle.hpp"
 #include "../__device/handle.hpp"
@@ -29,12 +30,8 @@ namespace vk {
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::command_buffer>>.decayed == 1,
 		is_same_as<vk::first_binding>.decayed <= 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::buffer>>.decayed
-		> == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::memory_offset>.decayed
-		> == 1
+		is_range_of<is_same_as<handle<vk::buffer>>.decayed> == 1,
+		is_range_of<is_same_as<vk::memory_offset>.decayed> == 1
 	>
 	void cmd_bind_vertex_buffers(Args&&... args) {
 		tuple a { args... };
@@ -67,10 +64,49 @@ namespace vk {
 			instance, device
 		)(
 			command_buffer.underlying(),
-			first_binding,
+			(uint32) first_binding,
 			(uint32) buffers.size(),
 			(const handle<vk::buffer>::underlying_type*) buffers.iterator(),
 			offsets.iterator()
+		);
+	}
+
+	template<typename... Args>
+	requires types<Args...>::template exclusively_satisfy_predicates<
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<handle<vk::command_buffer>> == 1,
+		is_same_as<vk::binding> == 1,
+		is_same_as<handle<vk::buffer>> == 1,
+		is_same_as<vk::memory_offset> <= 1
+	>
+	void cmd_bind_vertex_buffer(Args... args) {
+		tuple<Args...> a { args... };
+
+		handle<vk::instance> instance = a.template
+			get<is_same_as<handle<vk::instance>>>();
+
+		handle<vk::device> device = a.template
+			get<is_same_as<handle<vk::device>>>();
+
+		handle<vk::command_buffer> command_buffer = a.template
+			get<is_same_as<handle<vk::command_buffer>>>();
+		
+		vk::binding binding = a.template
+			get<is_same_as<vk::binding>>();
+
+		handle<vk::buffer> buffer = a.template
+			get<is_same_as<handle<vk::buffer>>>();
+
+		vk::memory_offset offset = a.template
+			get_or<is_same_as<vk::memory_offset>>(
+				[]{ return vk::memory_offset{0}; }
+			);
+
+		vk::cmd_bind_vertex_buffers(
+			instance, device, command_buffer,
+			vk::first_binding{ (uint32) binding },
+			array{ buffer }, array{ offset }
 		);
 	}
 

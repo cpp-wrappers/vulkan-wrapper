@@ -24,9 +24,7 @@ namespace vk {
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<vk::descriptor_pool_create_flags>.decayed <= 1,
 		is_same_as<vk::max_sets>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::descriptor_pool_size>.decayed
-		> == 1
+		is_range_of<is_same_as<vk::descriptor_pool_size>.decayed> == 1
 	>
 	vk::expected<handle<vk::descriptor_pool>>
 	try_create_descriptor_pool(Args&&... args) {

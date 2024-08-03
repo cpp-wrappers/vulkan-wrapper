@@ -30,9 +30,7 @@ namespace vk {
 		is_same_as<handle<vk::image>>.decayed == 1,
 		is_same_as<vk::image_layout>.decayed == 1,
 		is_same_as<vk::clear_color_value>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::image_subresource_range>.decayed
-		> == 1
+		is_range_of<is_same_as<vk::image_subresource_range>.decayed> <= 1
 	>
 	void cmd_clear_color_image(Args&&... args) {
 		tuple a { args... };
@@ -54,9 +52,21 @@ namespace vk {
 
 		vk::clear_color_value clear_color = a.template
 			get<is_same_as<vk::clear_color_value>.decayed>();
-	
-		auto& ranges = a.template
-			get<is_range_of<is_same_as<vk::image_subresource_range>.decayed>>();
+
+		vk::image_subresource_range subresource{};
+		vk::image_subresource_range* subresources = &subresource;
+		uint32 subresources_count = 1;
+
+		if constexpr (
+			(is_range_of<is_same_as<vk::image_subresource_range>.decayed> > 0)
+			.for_types<Args...>()
+		) {
+			auto& range = a.template get<
+				is_range_of<is_same_as<vk::image_subresource_range>.decayed>
+			>();
+			subresources = range.iterator();
+			subresources_count = range.size();
+		}
 
 		vk::get_device_function<vk::cmd_clear_color_image_function>(
 			instance, device
@@ -65,8 +75,8 @@ namespace vk {
 			image.underlying(),
 			layout,
 			&clear_color,
-			(uint32) ranges.size(),
-			ranges.iterator()
+			subresources_count,
+			subresources
 		);
 	} // cmd_clear_color_image
 

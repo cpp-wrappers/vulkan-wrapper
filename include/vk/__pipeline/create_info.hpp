@@ -25,7 +25,7 @@ namespace vk {
 		uint32 stage_count = 0;
 		const vk::pipeline_shader_stage_create_info*
 			stages = nullptr;
-		const vk::pipeline_vertex_input_state_create_info*
+		const vk::_pipeline_vertex_input_state_create_info*
 			vertex_input_state = nullptr;
 		const vk::pipeline_input_assembly_state_create_info*
 			input_assembly_state = nullptr;

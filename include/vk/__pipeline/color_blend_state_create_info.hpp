@@ -28,8 +28,13 @@ namespace vk {
 
 	struct _pipeline_color_blend_state_create_info_mark {};
 
+	inline constexpr auto is_pipeline_color_blend_state_create_info
+		= is_derived_from<_pipeline_color_blend_state_create_info_mark>;
+
 	template<
-		range_of_decayed<pipeline_color_blend_attachment_state> AttachementsRange
+		range_of<
+			is_same_as<pipeline_color_blend_attachment_state>.decayed
+		> AttachementsRange
 	>
 	struct pipeline_color_blend_state_create_info :
 		_pipeline_color_blend_state_create_info_mark

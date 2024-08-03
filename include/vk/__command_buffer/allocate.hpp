@@ -65,7 +65,7 @@ namespace vk {
 			vk::try_allocate_command_buffers(forward<Args>(args)...)
 		};
 
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 	template<typename... Args>

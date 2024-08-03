@@ -39,16 +39,14 @@ namespace vk {
 			is_same_as<vk::pipeline_shader_stage_create_info>.decayed
 		> == 1,
 		is_same_as<vk::pipeline_create_flag>.decayed >= 0,
-		is_same_as<vk::pipeline_vertex_input_state_create_info>.decayed <= 1,
+		vk::is_pipeline_vertex_input_state_create_info.decayed <= 1,
 		is_same_as<vk::pipeline_input_assembly_state_create_info>.decayed <= 1,
 		is_same_as<vk::pipeline_tesselation_state_create_info>.decayed <= 1,
 		is_same_as<vk::pipeline_viewport_state_create_info>.decayed <= 1,
 		is_same_as<vk::pipeline_rasterization_state_create_info>.decayed == 1,
 		is_same_as<vk::pipeline_multisample_state_create_info>.decayed == 1,
 		is_same_as<vk::pipeline_depth_stencil_state_create_info>.decayed <= 1,
-		is_derived_from<
-			vk::_pipeline_color_blend_state_create_info_mark
-		>.decayed <= 1,
+		vk::is_pipeline_color_blend_state_create_info.decayed <= 1,
 		is_same_as<vk::pipeline_dynamic_state_create_info>.decayed <= 1,
 		is_same_as<vk::subpass>.decayed == 1,
 		is_same_as<vk::base_pipeline_index>.decayed <= 1
@@ -78,9 +76,7 @@ namespace vk {
 
 		a.template for_each([&]<typename Type>(Type& arg) {
 			if constexpr(
-				is_same_as<vk::pipeline_create_flag>
-				.while_decayed
-				.for_type<Type>()
+				is_same_as<vk::pipeline_create_flag>.decayed.for_type<Type>()
 			) {
 				ci.flags.set(arg);
 			}
@@ -92,15 +88,26 @@ namespace vk {
 		ci.stages = stages.iterator();
 		ci.stage_count = (uint32)stages.size();
 
+		vk::_pipeline_vertex_input_state_create_info visci{};
+
 		if constexpr (
-			(is_same_as<
-				vk::pipeline_vertex_input_state_create_info
-			>.decayed > 0).for_types<Args...>()
+			(vk::is_pipeline_vertex_input_state_create_info.decayed > 0)
+			.for_types<Args...>()
 		) {
-			ci.vertex_input_state = & a.template
-				get<is_same_as<
-					vk::pipeline_vertex_input_state_create_info
-				>.decayed>();
+			auto& vis = a.template
+				get<vk::is_pipeline_vertex_input_state_create_info.decayed>();
+
+			visci.vertex_binding_description_count
+				= vis.binding_descriptions.size();
+			visci.vertex_binding_descriptions
+				= vis.binding_descriptions.iterator();
+
+			visci.vertex_attribute_description_count
+				= vis.attribute_descriptions.size();
+			visci.vertex_attribute_descriptions
+				= vis.attribute_descriptions.iterator();
+
+			ci.vertex_input_state = &visci;
 		}
 
 		if constexpr (
@@ -161,14 +168,11 @@ namespace vk {
 		vk::_pipeline_color_blend_state_create_info cbs_ci{};
 
 		if constexpr (
-			(is_derived_from<
-				vk::_pipeline_color_blend_state_create_info_mark
-			>.decayed > 0).for_types<Args...>()
+			(vk::is_pipeline_color_blend_state_create_info.decayed > 0)
+			.for_types<Args...>()
 		) {
 			cbs_ci = a.template
-				get<is_derived_from<
-					vk::_pipeline_color_blend_state_create_info_mark
-				>.decayed>();
+				get<vk::is_pipeline_color_blend_state_create_info.decayed>();
 			ci.color_blend_state = &cbs_ci;
 		}
 

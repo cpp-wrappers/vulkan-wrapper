@@ -29,7 +29,11 @@ struct handle_underlying_t<vk::instance> {
 template<>
 struct handle_interface<vk::instance> : handle_interface_base<vk::instance> {
 
-	template<range_of_decayed<handle<vk::physical_device>> PhysicalDevices>
+	template<
+		range_of<
+			is_same_as<handle<vk::physical_device>>.decayed
+		> PhysicalDevices
+	>
 	[[ nodiscard ]] vk::count
 	enumerate_physical_devices(PhysicalDevices&&) const;
 

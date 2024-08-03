@@ -13,7 +13,7 @@ namespace vk {
 		uint32                            attachment_count;
 		const vk::attachment_description* attachments;
 		uint32                            subpass_count;
-		const vk::subpass_description*    subpasses;
+		const vk::_subpass_description*   subpasses;
 		uint32                            dependency_count;
 		const vk::subpass_dependency*     dependencies;
 	};

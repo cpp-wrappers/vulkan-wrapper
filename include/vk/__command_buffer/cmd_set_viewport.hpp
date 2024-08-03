@@ -30,9 +30,7 @@ namespace vk {
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::command_buffer>>.decayed == 1,
 		is_same_as<vk::first_viewport_index>.decayed <= 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::viewport>.decayed
-		> == 1
+		is_range_of<is_same_as<vk::viewport>.decayed> == 1
 	>
 	void cmd_set_viewport(Args&&... args) {
 		tuple a { args... };
@@ -109,42 +107,35 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_buffer>>.decayed == 1,
-		is_same_as<vk::first_viewport_index>.decayed <= 1,
-		is_same_as<vk::extent<2>>.decayed == 1
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<handle<vk::command_buffer>> == 1,
+		is_same_as<vk::first_viewport_index> <= 1,
+		is_same_as<vk::extent<2>> == 1
 	>
-	void cmd_set_viewport(Args&&... args) {
-		tuple a { args... };
+	void cmd_set_viewport(Args... args) {
+		tuple<Args...> a { args... };
 
 		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+			get<is_same_as<handle<vk::instance>>>();
 
 		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+			get<is_same_as<handle<vk::device>>>();
 
 		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.decayed>();
+			get<is_same_as<handle<vk::command_buffer>>>();
 
-		vk::first_viewport_index first{ 0 };
-		
-		if constexpr (
-			(is_same_as<vk::first_viewport_index>.decayed > 0)
-			.for_types<Args...>()
-		) {
-			first = a.template
-				get<is_same_as<vk::first_viewport_index>.decayed>();
-		}
+		vk::first_viewport_index index = a.template get_or<
+			is_same_as<vk::first_viewport_index>
+		>([]{ return vk::first_viewport_index{ 0 }; });
 
-		vk::extent<2> extent = a.template
-			get<is_same_as<vk::extent<2>>.decayed>();
+		vk::extent<2> extent = a.template get<is_same_as<vk::extent<2>>>();
 
 		vk::cmd_set_viewport(
 			instance,
 			device,
 			command_buffer,
-			first,
+			index,
 			vk::viewport {
 				.width = (float) extent.width(),
 				.height = (float) extent.height()

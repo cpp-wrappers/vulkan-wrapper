@@ -43,9 +43,7 @@ namespace vk {
 		is_same_as<handle<vk::command_buffer>>.decayed == 1,
 		is_same_as<vk::src_buffer>.decayed == 1,
 		is_same_as<vk::dst_buffer>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<vk::buffer_copy>.decayed
-		> == 1
+		is_range_of<is_same_as<vk::buffer_copy>.decayed> == 1
 	>
 	void cmd_copy_buffer(Args&&... args) {
 		tuple a { args... };

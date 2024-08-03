@@ -4,6 +4,6 @@
 
 namespace vk {
 
-	struct first_binding { uint32 _; };
+	enum first_binding : uint32;
 
 } // vk

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <range.hpp>
 #include "../../../__internal/extension_properties.hpp"
 #include "../../../__internal/result.hpp"
 #include "../../../__internal/count.hpp"
@@ -19,7 +20,9 @@ namespace vk {
 	};
 
 	template<
-		range_of_decayed<vk::extension_properties> InstanceExtensionsProperties
+		range_of<
+			is_same_as<vk::extension_properties>.decayed
+		> InstanceExtensionsProperties
 	>
 	vk::expected<vk::count>
 	try_enumerate_instance_extension_properties(
@@ -45,7 +48,9 @@ namespace vk {
 	}
 
 	template<
-		range_of_decayed<vk::extension_properties> InstanceExtensionsProperties
+		range_of<
+			is_same_as<vk::extension_properties>.decayed
+		> InstanceExtensionsProperties
 	>
 	vk::count enumerate_instance_extension_properties(
 		InstanceExtensionsProperties&& instance_extensions_properties

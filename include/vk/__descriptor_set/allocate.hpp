@@ -22,12 +22,8 @@ namespace vk {
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::descriptor_pool>>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::descriptor_set_layout>>.decayed
-		> == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::descriptor_set>>.decayed
-		> == 1
+		is_range_of<is_same_as<handle<vk::descriptor_set_layout>>.decayed> == 1,
+		is_range_of<is_same_as<handle<vk::descriptor_set>>.decayed> == 1
 	>
 	vk::result try_allocate_descriptor_sets(Args&&... args) {
 		tuple a{ args... };
@@ -68,26 +64,26 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::descriptor_pool>>.decayed == 1,
-		is_same_as<handle<vk::descriptor_set_layout>>.decayed == 1
+		is_same_as<handle<vk::instance>> == 1,
+		is_same_as<handle<vk::device>> == 1,
+		is_same_as<handle<vk::descriptor_pool>> == 1,
+		is_same_as<handle<vk::descriptor_set_layout>> == 1
 	>
 	vk::expected<handle<descriptor_set>>
-	try_allocate_descriptor_set(Args&&... args) {
-		tuple a{ args... };
+	try_allocate_descriptor_set(Args... args) {
+		tuple<Args...> a{ args... };
 
 		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+			get<is_same_as<handle<vk::instance>>>();
 
 		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+			get<is_same_as<handle<vk::device>>>();
 
 		handle<vk::descriptor_pool> pool = a.template
-			get<is_same_as<handle<vk::descriptor_pool>>.decayed>();
+			get<is_same_as<handle<vk::descriptor_pool>>>();
 		
 		handle<vk::descriptor_set_layout> layout = a.template
-			get<is_same_as<handle<vk::descriptor_set_layout>>.decayed>();
+			get<is_same_as<handle<vk::descriptor_set_layout>>>();
 		
 		handle<vk::descriptor_set> set;
 

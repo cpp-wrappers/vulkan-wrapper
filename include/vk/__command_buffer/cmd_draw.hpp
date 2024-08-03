@@ -10,22 +10,10 @@
 
 namespace vk {
 
-	struct vertex_count   {
-		uint32 value_;
-		operator uint32 () const { return value_; }
-	};
-	struct instance_count {
-		uint32 value_;
-		operator uint32 () const { return value_; }
-	};
-	struct first_vertex   {
-		uint32 value_;
-		operator uint32 () const { return value_; }
-	};
-	struct first_instance {
-		uint32 value_;
-		operator uint32 () const { return value_; }
-	};
+	enum vertex_count : uint32{};
+	enum instance_count : uint32{};
+	enum first_vertex : uint32{};
+	enum first_instance : uint32{};
 
 }
 

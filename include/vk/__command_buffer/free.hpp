@@ -25,9 +25,7 @@ namespace vk {
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
 		is_same_as<handle<vk::command_pool>>.decayed == 1,
-		is_range_of_element_type_satisfying_predicate<
-			is_same_as<handle<vk::command_buffer>>.decayed
-		> == 1
+		is_range_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1
 	>
 	void free_command_buffers(Args&&... args) {
 		handle<vk::instance> instance = tuple{ args... }.template

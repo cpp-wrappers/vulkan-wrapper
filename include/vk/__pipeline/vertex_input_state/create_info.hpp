@@ -9,7 +9,7 @@
 
 namespace vk {
 
-	struct pipeline_vertex_input_state_create_info {
+	struct _pipeline_vertex_input_state_create_info {
 		const uint32 structure_type = 19;
 		const void*  next = nullptr;
 		uint32       flags{};
@@ -19,49 +19,60 @@ namespace vk {
 		uint32       vertex_attribute_description_count{};
 		const vertex_input_attribute_description*
 		             vertex_attribute_descriptions{};
+	};
+
+	struct _pipeline_vertex_input_state_create_info_mark{};
+
+	static constexpr auto is_pipeline_vertex_input_state_create_info
+		= is_derived_from<_pipeline_vertex_input_state_create_info_mark>;
+
+	template<
+		basic_range BindingDescriptions,
+		basic_range AttributeDescriptions
+	>
+	struct pipeline_vertex_input_state_create_info :
+		_pipeline_vertex_input_state_create_info_mark
+	{
+		BindingDescriptions binding_descriptions;
+		AttributeDescriptions attribute_descriptions;
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			count_of<is_range_of<
-				is_same_as<vk::vertex_input_binding_description>.decayed
-			>> <= 1,
-			count_of<is_range_of<
-				is_same_as<vk::vertex_input_attribute_description>.decayed
-			>> <= 1
+			is_same_as<BindingDescriptions> <= 1,
+			is_same_as<AttributeDescriptions> <= 1
 		>
-		pipeline_vertex_input_state_create_info(Args&&... args) {
-			if constexpr(types<Args...>::template
-				count_of<is_range_of<
-					is_same_as<vk::vertex_input_binding_description>.decayed
-				>> > 0
-			) {
-				auto& binding_descriptions = tuple{ args... }.template
-					get<is_range_of<
-						is_same_as<vk::vertex_input_binding_description>.decayed
-					>>();
-
-				vertex_binding_description_count
-					= (uint32) binding_descriptions.size();
-				vertex_binding_descriptions = binding_descriptions.iterator();
+		pipeline_vertex_input_state_create_info(Args&&... args):
+			binding_descriptions {
+				tuple{args...}
+				.template get_or<is_same_as<BindingDescriptions>.decayed>(
+					[]{ return span<vertex_input_binding_description>{}; }
+				)
+			},
+			attribute_descriptions {
+				tuple{args...}
+				.template get_or<is_same_as<AttributeDescriptions>.decayed>(
+					[]{ return span<vertex_input_attribute_description>{}; }
+				)
 			}
-
-			if constexpr(types<Args...>::template
-				count_of<is_range_of<
-					is_same_as<vk::vertex_input_attribute_description>.decayed
-				>> > 0
-			) {
-				auto& attribute_descriptions = tuple{ args... }.template
-					get<is_range_of<
-						is_same_as<vk::vertex_input_attribute_description>.decayed
-					>>();
-
-				vertex_attribute_description_count
-					= (uint32) attribute_descriptions.size();
-				vertex_attribute_descriptions
-					= attribute_descriptions.iterator();
-			}
-		}
+		{}
 
 	}; // pipeline_vertex_input_state_create_info
+
+	template<typename... Args>
+	pipeline_vertex_input_state_create_info(Args&&...) -> 
+		pipeline_vertex_input_state_create_info<
+			typename types<Args...>::template get_or<
+				is_range_of<
+					is_same_as<vk::vertex_input_binding_description>.decayed
+				>,
+				span<vk::vertex_input_binding_description>
+			>,
+			typename types<Args...>::template get_or<
+				is_range_of<
+					is_same_as<vk::vertex_input_attribute_description>.decayed
+				>,
+				span<vk::vertex_input_attribute_description>
+			>
+		>;
 
 } // vk

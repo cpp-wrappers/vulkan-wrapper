@@ -67,7 +67,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return device_memory;
 	}
@@ -76,7 +76,7 @@ namespace vk {
 	handle<vk::device_memory> allocate_memory(Args&&... args) {
 		vk::expected<handle<vk::device_memory>> result
 			= vk::try_allocate_memory(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

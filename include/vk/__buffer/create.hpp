@@ -83,7 +83,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return handle<vk::buffer>{ buffer };
 	}
@@ -92,7 +92,7 @@ namespace vk {
 	handle<vk::buffer> create_buffer(Args&&... args) {
 		vk::expected<handle<vk::buffer>> result
 			= vk::try_create_buffer(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
