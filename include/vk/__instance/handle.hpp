@@ -83,7 +83,7 @@ struct handle_interface<vk::instance> : handle_interface_base<vk::instance> {
 			vk::create<ObjectType>(*this, forward<Args>(args)...)
 		};
 
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 

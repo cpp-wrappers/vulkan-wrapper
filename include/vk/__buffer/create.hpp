@@ -22,11 +22,14 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
 		is_same_as<vk::buffer_create_flags>.decayed <= 1,
 		is_same_as<vk::buffer_size>.decayed == 1,
-		is_same_as<vk::buffer_usages>.decayed == 1,
+		(
+			is_same_as<vk::buffer_usages>.decayed == 1 ||
+			is_same_as<vk::buffer_usage>.decayed > 0
+		),
 		is_same_as<vk::sharing_mode>.decayed <= 1,
 		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1
 	>
@@ -34,15 +37,28 @@ namespace vk {
 	try_create_buffer(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
+
+		vk::buffer_usages usages;
+
+		if constexpr (
+			(is_same_as<vk::buffer_usages>.decayed > 0).for_types<Args...>()
+		) {
+			usages = a.template get<is_same_as<vk::buffer_usages>.decayed>();
+		}
+		a.template pass<is_same_as<vk::buffer_usage>.decayed>(
+			[&](auto... _usages) {
+				(usages.set(_usages), ...);
+			}
+		);
 
 		vk::buffer_create_info ci {
 			.size = a.template get<is_same_as<vk::buffer_size>.decayed>(),
-			.usage = a.template get<is_same_as<vk::buffer_usages>.decayed>()
+			.usage = usages
 		};
 
 		if constexpr (

@@ -92,7 +92,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return render_pass;
 
@@ -102,7 +102,7 @@ namespace vk {
 	handle<vk::render_pass> create_render_pass(Args&&... args) {
 		vk::expected<handle<vk::render_pass>> result
 			= vk::try_create_render_pass(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

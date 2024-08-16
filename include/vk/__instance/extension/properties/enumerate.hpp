@@ -61,7 +61,7 @@ namespace vk {
 			)
 		);
 
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 

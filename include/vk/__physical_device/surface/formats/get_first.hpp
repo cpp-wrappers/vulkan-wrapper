@@ -20,7 +20,7 @@ namespace vk {
 			)
 		};
 
-		if(count == 0) {
+		if (count == 0) {
 			vk::unexpected_handler();
 		}
 

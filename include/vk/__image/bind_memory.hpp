@@ -25,26 +25,26 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::image>>.decayed == 1,
-		is_same_as<handle<vk::device_memory>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::image>> == 1,
+		is_convertible_to<handle<vk::device_memory>> == 1,
 		is_same_as<vk::memory_offset>.decayed <= 1
 	>
 	[[nodiscard]] vk::result try_bind_image_memory(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::image> image = a.template
-			get<is_same_as<handle<vk::image>>.decayed>();
+		handle<vk::image> image = (handle<vk::image>) a.template
+			get<is_convertible_to<handle<vk::image>>>();
 
-		handle<vk::device_memory> device_memory = a.template
-			get<is_same_as<handle<vk::device_memory>>.decayed>();
+		handle<vk::device_memory> device_memory = (handle<vk::device_memory>) a.template
+			get<is_convertible_to<handle<vk::device_memory>>>();
 
 		vk::memory_offset offset{ 0 };
 		
@@ -61,7 +61,7 @@ namespace vk {
 				device.underlying(),
 				image.underlying(),
 				device_memory.underlying(),
-				offset
+				(uint64) offset
 			)
 		};
 	} // try_bind_image_memory
@@ -69,7 +69,7 @@ namespace vk {
 	template<typename... Args>
 	void bind_image_memory(Args&&... args) {
 		vk::result result = vk::try_bind_image_memory(forward<Args>(args)...);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

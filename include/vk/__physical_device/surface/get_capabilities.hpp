@@ -53,11 +53,11 @@ namespace vk {
 			)
 		};
 
-		if(caps.max_image_count == 0) { // attention, please.
+		if (caps.max_image_count == 0) { // attention, please.
 			caps.max_image_count = uint32(0) - uint32(1);
 		}
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return caps;
 	}
@@ -69,7 +69,7 @@ namespace vk {
 			= vk::try_get_physical_device_surface_capabilities(
 				forward<Args>(args)...
 			);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

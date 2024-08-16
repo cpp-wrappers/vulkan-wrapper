@@ -58,7 +58,7 @@ namespace vk {
 			)
 		};
 
-		if(result.success()) return handle<vk::fence>{ fence };
+		if (result.success()) return handle<vk::fence>{ fence };
 
 		return result;
 	}
@@ -94,7 +94,7 @@ namespace vk {
 	handle<vk::fence> create_fence(Args&&... args) {
 		vk::expected<handle<vk::fence>> result
 			= vk::try_create_fence(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

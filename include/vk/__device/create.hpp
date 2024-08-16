@@ -112,7 +112,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return device;
 	}
@@ -122,7 +122,7 @@ namespace vk {
 		vk::expected<handle<vk::device>> result
 			= try_create_device(forward<Args>(args)...);
 		
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

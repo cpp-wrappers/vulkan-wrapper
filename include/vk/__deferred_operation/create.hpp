@@ -32,7 +32,7 @@ namespace vk {
 				)
 			};
 			
-			if(result.error()) return result;
+			if (result.error()) return result;
 
 			return deferred_operation;
 

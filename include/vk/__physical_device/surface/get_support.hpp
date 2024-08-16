@@ -59,7 +59,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return { (bool) supports };
 	} // try_get_physical_device_surface_support
@@ -71,7 +71,7 @@ namespace vk {
 			forward<Args>(args)...
 		);
 
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 

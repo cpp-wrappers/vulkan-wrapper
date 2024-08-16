@@ -131,7 +131,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return swapchain;
 
@@ -141,7 +141,7 @@ namespace vk {
 	handle<vk::swapchain> create_swapchain(Args&&... args) {
 		vk::expected<handle<vk::swapchain>> result
 			= vk::try_create_swapchain(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

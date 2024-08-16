@@ -7,7 +7,7 @@ namespace vk {
 	struct extension_properties_mark {};
 
 	struct is_extension_properties_reference_t :
-		type_predicate_extension<is_extension_properties_reference_t>
+		type_predicate_extensions<is_extension_properties_reference_t>
 	{
 
 		template<typename Type>

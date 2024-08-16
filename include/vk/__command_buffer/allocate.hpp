@@ -19,33 +19,36 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_pool>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_pool>> == 1,
 		is_same_as<vk::command_buffer_level>.decayed == 1,
 		is_range_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1
 	>
 	vk::result try_allocate_command_buffers(Args&&... args) {
+		tuple a { args... };
+
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
+
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
+
+		auto command_pool = (handle<vk::command_pool>) a.template
+			get<is_convertible_to<handle<vk::command_pool>>>();
+
 		vk::command_buffer_allocate_info ai {};
 
-		auto& command_buffers = tuple{ args... }.template
+		ai.command_pool = command_pool.underlying();
+
+		ai.level = a.template
+			get<is_same_as<vk::command_buffer_level>.decayed>();
+
+		auto& command_buffers = a.template
 			get<is_range_of<
 				is_same_as<handle<vk::command_buffer>>.decayed
 			>>();
-
-		ai.command_pool = tuple{ args... }.template
-			get<is_same_as<handle<vk::command_pool>>.decayed>().underlying();
-
-		ai.level = tuple{ args... }.template
-			get<is_same_as<vk::command_buffer_level>.decayed>();
-
 		ai.count = (uint32) command_buffers.size();
-
-		handle<vk::instance> instance = tuple{ args... }.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
-
-		handle<vk::device> device = tuple{ args... }.template
-			get<is_same_as<handle<vk::device>>.decayed>();
 
 		return {
 			vk::get_device_function<vk::allocate_command_buffers_function>(
@@ -70,9 +73,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_pool>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_pool>> == 1,
 		is_same_as<vk::command_buffer_level>.decayed == 1
 	>
 	handle<vk::command_buffer> allocate_command_buffer(Args&&... args) {

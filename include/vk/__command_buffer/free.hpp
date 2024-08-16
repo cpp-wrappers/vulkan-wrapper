@@ -22,22 +22,24 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_pool>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_pool>> == 1,
 		is_range_of<is_same_as<handle<vk::command_buffer>>.decayed> == 1
 	>
 	void free_command_buffers(Args&&... args) {
-		handle<vk::instance> instance = tuple{ args... }.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		tuple a { args... };
 
-		handle<vk::device> device = tuple{ args... }.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::command_pool> pool = tuple{ args... }.template
-			get<is_same_as<handle<vk::command_pool>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		auto& buffers = tuple{ args... }.template
+		handle<vk::command_pool> pool = (handle<vk::command_pool>) a.template
+			get<is_convertible_to<handle<vk::command_pool>>>();
+
+		auto& buffers = a.template
 			get<is_range_of<is_same_as<handle<vk::command_buffer>>.decayed>>();
 
 		vk::get_device_function<vk::free_command_buffers_function>(

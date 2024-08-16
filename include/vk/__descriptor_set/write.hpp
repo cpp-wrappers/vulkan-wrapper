@@ -31,7 +31,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			is_same_as<handle<vk::descriptor_set>>.decayed == 1,
+			is_convertible_to<handle<vk::descriptor_set>> == 1,
 			is_same_as<vk::dst_binding>.decayed == 1,
 			is_same_as<vk::dst_array_element>.decayed <= 1,
 			is_same_as<vk::descriptor_type>.decayed == 1,
@@ -54,9 +54,10 @@ namespace vk {
 		write_descriptor_set(Args&&... args) {
 			tuple a { args... };
 
-			dst_set = a.template
-				get<is_same_as<handle<vk::descriptor_set>>.decayed>()
-				.underlying();
+			dst_set = (
+				(handle<vk::descriptor_set>) a.template
+				get<is_convertible_to<handle<vk::descriptor_set>>>()
+			).underlying();
 
 			dst_binding = a.template
 				get<is_same_as<vk::dst_binding>.decayed>();

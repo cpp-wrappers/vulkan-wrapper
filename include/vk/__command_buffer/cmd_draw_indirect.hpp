@@ -74,7 +74,7 @@ namespace vk {
 		)(
 			command_buffer.underlying(),
 			buffer.underlying(),
-			offset,
+			(uint64) offset,
 			draw_count,
 			stride
 		);

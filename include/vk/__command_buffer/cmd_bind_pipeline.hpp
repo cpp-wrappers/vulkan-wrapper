@@ -22,26 +22,26 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_buffer>>.decayed == 1,
-		is_same_as<handle<vk::pipeline>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_buffer>> == 1,
+		is_convertible_to<handle<vk::pipeline>> == 1,
 		is_same_as<vk::pipeline_bind_point>.decayed == 1
 	>
 	void cmd_bind_pipeline(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.decayed>();
+		auto command_buffer = (handle<vk::command_buffer>) a.template
+			get<is_convertible_to<handle<vk::command_buffer>>>();
 
-		handle<vk::pipeline> pipeline = a.template
-			get<is_same_as<handle<vk::pipeline>>.decayed>();
+		auto pipeline = (handle<vk::pipeline>) a.template
+			get<is_convertible_to<handle<vk::pipeline>>>();
 
 		vk::pipeline_bind_point bind_point = a.template
 			get<is_same_as<vk::pipeline_bind_point>.decayed>();

@@ -40,7 +40,7 @@ namespace vk::debug_utils {
 	inline void set_object_name(Args&&... args) {
 		vk::result result
 			= vk::debug_utils::try_set_object_name(forward<Args>(args)...);
-		if(result.error()) {
+		if (result.error()) {
 			vk::unexpected_handler(result);
 		}
 	}

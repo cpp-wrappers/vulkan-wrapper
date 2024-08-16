@@ -68,7 +68,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) {
+		if (result.error()) {
 			return result;
 		}
 
@@ -79,7 +79,7 @@ namespace vk {
 	handle<vk::instance> create_instance(Args&&... args) {
 		vk::expected<handle<vk::instance>> result
 			= vk::try_create_instance(::forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

@@ -14,7 +14,7 @@ namespace vk {
 			instance,
 			physical_device,
 			[&](auto props) {
-				for(auto p : props){ handler(p); }
+				for (auto p : props){ handler(p); }
 			}
 		);
 	}

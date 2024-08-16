@@ -8,7 +8,7 @@ namespace vk {
 	struct physical_device_features_mark {};
 
 	struct is_physical_device_features_t :
-		type_predicate_extension<is_physical_device_features_t>
+		type_predicate_extensions<is_physical_device_features_t>
 	{
 		template<typename Type>
 		constexpr bool for_type() const {

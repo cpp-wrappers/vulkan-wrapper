@@ -56,7 +56,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return vk::count{ count };
 	}
@@ -68,7 +68,7 @@ namespace vk {
 		vk::expected<vk::count> result =
 			vk::try_get_physical_device_surface_formats(forward<Args>(args)...);
 
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 

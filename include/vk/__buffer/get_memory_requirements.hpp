@@ -19,22 +19,22 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::buffer>>.decayed == 1
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::buffer>> == 1
 	>
 	vk::memory_requirements
 	get_memory_requirements(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::buffer> buffer = a.template
-			get<is_same_as<handle<vk::buffer>>.decayed>();
+		handle<vk::buffer> buffer = (handle<vk::buffer>) a.template
+			get<is_convertible_to<handle<vk::buffer>>>();
 
 		vk::memory_requirements requirements;
 

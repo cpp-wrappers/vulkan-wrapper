@@ -20,9 +20,9 @@ namespace vk {
 			surface,
 			[&](span<vk::surface_format> supported_formats)
 			-> optional<vk::surface_format> {
-				for(vk::surface_format preferred : preferred_formats) {
-					for(vk::surface_format supported : supported_formats) {
-						if(preferred == supported) {
+				for (vk::surface_format preferred : preferred_formats) {
+					for (vk::surface_format supported : supported_formats) {
+						if (preferred == supported) {
 							return preferred;
 						}
 					}

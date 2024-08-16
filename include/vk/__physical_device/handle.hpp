@@ -33,7 +33,7 @@ struct handle_interface<vk::physical_device> :
 	[[ nodiscard ]]
 	auto create(Args&&... args) const {
 		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
@@ -56,7 +56,7 @@ struct handle_interface<vk::physical_device> :
 	) const {
 		auto physical_device_memory_properties = get_memory_properties();
 
-		for(
+		for (
 			uint32 i = 0;
 			i < physical_device_memory_properties.memory_type_count;
 			++i
@@ -69,7 +69,7 @@ struct handle_interface<vk::physical_device> :
 				(memory_type.properties.value & required_properties.value)
 				== required_properties.value;
 
-			if(required_type && meets_required_properties) {
+			if (required_type && meets_required_properties) {
 				return (vk::memory_type_index) i;
 			}
 		}
@@ -91,8 +91,8 @@ struct handle_interface<vk::physical_device> :
 		vk::queue_family_properties props[count];
 		count = get_queue_family_properties(span{ props, count });
 		uint32 index = 0;
-		for(vk::queue_family_properties p : span{ props, count }) {
-			if((p.flags.get(args) && ...))
+		for (vk::queue_family_properties p : span{ props, count }) {
+			if ((p.flags.get(args) && ...))
 				return vk::queue_family_index{ index };
 			++index;
 		}

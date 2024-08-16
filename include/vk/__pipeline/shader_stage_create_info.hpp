@@ -32,7 +32,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			is_same_as<handle<vk::shader_module>>.decayed == 1,
+			is_convertible_to<handle<vk::shader_module>> == 1,
 			is_same_as<vk::shader_stages>.decayed == 1,
 			is_same_as<vk::entrypoint_name>.decayed == 1
 		>
@@ -42,9 +42,12 @@ namespace vk {
 					get<is_same_as<vk::shader_stages>.decayed>()
 			},
 			module {
-				tuple{ args... }.template
-					get<is_same_as<handle<vk::shader_module>>.decayed>()
-					.underlying()
+				( (handle<vk::shader_module>)
+					tuple{ args... }.template
+					get<is_convertible_to<
+						handle<vk::shader_module>
+					>>()
+				).underlying()
 			},
 			entrypoint_name {
 				tuple{ args... }.template
@@ -54,7 +57,7 @@ namespace vk {
 
 		template<typename... Args>
 		requires types<Args...>::template exclusively_satisfy_predicates<
-			is_same_as<handle<vk::shader_module>>.decayed == 1,
+			is_convertible_to<handle<vk::shader_module>> == 1,
 			is_same_as<vk::shader_stage>.decayed == 1,
 			is_same_as<vk::entrypoint_name>.decayed == 1
 		>
@@ -64,9 +67,12 @@ namespace vk {
 					get<is_same_as<vk::shader_stage>.decayed>()
 			}},
 			module {
-				tuple{ args... }.template
-					get<is_same_as<handle<vk::shader_module>>.decayed>()
-					.underlying()
+				( (handle<vk::shader_module>)
+					tuple{ args... }.template
+					get<is_convertible_to<
+						handle<vk::shader_module>
+					>>()
+				).underlying()
 			},
 			entrypoint_name {
 				tuple{ args... }.template

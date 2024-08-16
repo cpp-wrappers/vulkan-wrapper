@@ -56,7 +56,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return shader_module;
 	}
@@ -65,7 +65,7 @@ namespace vk {
 	handle<vk::shader_module> create_shader_module(Args&&... args) {
 		vk::expected<handle<vk::shader_module>> result
 			= vk::try_create_shader_module(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

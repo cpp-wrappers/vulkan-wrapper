@@ -11,7 +11,7 @@ namespace vk {
 		return vk::view_instance_layer_properties(
 			count,
 			[&](span<vk::layer_properties> view) {
-				for(vk::layer_properties props : view) handler(props);
+				for (vk::layer_properties props : view) handler(props);
 			}
 		);
 	}

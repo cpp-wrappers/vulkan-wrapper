@@ -32,7 +32,7 @@ namespace vk {
 	template<typename... Args>
 	void queue_wait_idle(Args&&... args) {
 		vk::result result = vk::try_queue_wait_idle(forward<Args>(args)...);
-		if(result.error()) {
+		if (result.error()) {
 			vk::unexpected_handler(result);
 		}
 	}

@@ -68,8 +68,8 @@ namespace vk {
 		)(
 			command_buffer.underlying(),
 			buffer.underlying(),
-			offset,
-			size,
+			(uint64) offset,
+			(uint64) size,
 			data
 		);
 	}

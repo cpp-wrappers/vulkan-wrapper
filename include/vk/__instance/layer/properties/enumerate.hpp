@@ -50,7 +50,7 @@ namespace vk {
 			forward<InstanceLayersProperties>(instance_layers_properties)
 		);
 
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 

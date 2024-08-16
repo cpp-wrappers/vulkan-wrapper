@@ -35,7 +35,7 @@ namespace vk {
 			device,
 			command_buffer
 		);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

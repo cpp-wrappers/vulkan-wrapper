@@ -21,22 +21,22 @@ namespace vk {
 	
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_buffer>> == 1,
 		is_same_as<vk::render_pass_begin_info>.decayed == 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.decayed>();
+		auto command_buffer = (handle<vk::command_buffer>) a.template
+			get<is_convertible_to<handle<vk::command_buffer>>>();
 
 		auto& render_pass_begin_info = a.template
 			get<is_same_as<vk::render_pass_begin_info>.decayed>();
@@ -54,31 +54,31 @@ namespace vk {
 	requires
 	//(Order == 1) &&
 	types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_buffer>>.decayed == 1,
-		is_same_as<handle<vk::render_pass>>.decayed == 1,
-		is_same_as<handle<vk::framebuffer>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_buffer>> == 1,
+		is_convertible_to<handle<vk::render_pass>> == 1,
+		is_convertible_to<handle<vk::framebuffer>> == 1,
 		is_same_as<vk::render_area>.decayed == 1,
 		is_range_of<is_same_as<vk::clear_value>.decayed> <= 1
 	>
 	void cmd_begin_render_pass(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.decayed>();
+		auto command_buffer = (handle<vk::command_buffer>) a.template
+			get<is_convertible_to<handle<vk::command_buffer>>>();
 
-		handle<vk::render_pass> render_pass = a.template
-			get<is_same_as<handle<vk::render_pass>>.decayed>();
+		auto render_pass = (handle<vk::render_pass> )a.template
+			get<is_convertible_to<handle<vk::render_pass>>>();
 
-		handle<vk::framebuffer> framebuffer = a.template
-			get<is_same_as<handle<vk::framebuffer>>.decayed>();
+		auto framebuffer = (handle<vk::framebuffer>) a.template
+			get<is_convertible_to<handle<vk::framebuffer>>>();
 
 		vk::clear_value* clear_values = nullptr;
 		uint32 clear_values_count = 0;

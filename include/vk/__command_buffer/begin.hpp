@@ -71,7 +71,7 @@ namespace vk {
 			vk::try_begin_command_buffer(forward<Args>(args)...)
 		};
 
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

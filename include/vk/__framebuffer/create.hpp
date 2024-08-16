@@ -19,9 +19,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::render_pass>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::render_pass>> == 1,
 		is_range_of<is_same_as<handle<vk::image_view>>.decayed> == 1,
 		is_same_as<vk::extent<3>>.decayed == 1
 	>
@@ -29,14 +29,14 @@ namespace vk {
 	try_create_framebuffer(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::render_pass> render_pass = a.template
-			get<is_same_as<handle<vk::render_pass>>.decayed>();
+		auto render_pass = (handle<vk::render_pass>) a.template
+			get<is_convertible_to<handle<vk::render_pass>>>();
 
 		auto& attachments = a.template
 			get<is_range_of<is_same_as<handle<vk::image_view>>.decayed>>();
@@ -68,7 +68,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return framebuffer;
 	}
@@ -77,7 +77,7 @@ namespace vk {
 	handle<vk::framebuffer> create_framebuffer(Args&&... args) {
 		vk::expected<handle<vk::framebuffer>> result
 			= vk::try_create_framebuffer(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

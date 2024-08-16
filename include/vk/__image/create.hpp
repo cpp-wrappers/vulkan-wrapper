@@ -130,7 +130,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return image;
 
@@ -198,7 +198,7 @@ namespace vk {
 	handle<vk::image> create_image(Args&&... args) {
 		vk::expected<handle<vk::image>> result =
 			vk::try_create_image(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

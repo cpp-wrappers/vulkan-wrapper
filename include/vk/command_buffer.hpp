@@ -12,6 +12,7 @@
 #include "./__command_buffer/cmd_bind_vertex_buffers.hpp"
 #include "./__command_buffer/cmd_blit_image.hpp"
 #include "./__command_buffer/cmd_clear_color_image.hpp"
+#include "./__command_buffer/cmd_clear_depth_stencil_image.hpp"
 #include "./__command_buffer/cmd_copy_buffer_to_image.hpp"
 #include "./__command_buffer/cmd_copy_buffer.hpp"
 #include "./__command_buffer/cmd_copy_image.hpp"

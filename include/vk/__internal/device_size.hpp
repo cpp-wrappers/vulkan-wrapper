@@ -9,8 +9,8 @@ namespace vk {
 	public:
 		constexpr device_size() = default;
 		constexpr device_size(uint64 value) : value_{ value } {}
-		operator uint64& () { return value_; }
-		operator const uint64& () const { return value_; }
+		explicit operator uint64& () { return value_; }
+		explicit operator const uint64& () const { return value_; }
 	};
 
 } // vk

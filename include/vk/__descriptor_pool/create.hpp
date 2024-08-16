@@ -20,8 +20,8 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
 		is_same_as<vk::descriptor_pool_create_flags>.decayed <= 1,
 		is_same_as<vk::max_sets>.decayed == 1,
 		is_range_of<is_same_as<vk::descriptor_pool_size>.decayed> == 1
@@ -50,11 +50,11 @@ namespace vk {
 				get<is_same_as<vk::descriptor_pool_create_flags>.decayed>();
 		}
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
 		handle<vk::descriptor_pool> descriptor_pool;
 
@@ -69,7 +69,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return descriptor_pool;
 	}
@@ -78,7 +78,7 @@ namespace vk {
 	handle<vk::descriptor_pool> create_descriptor_pool(Args&&... args) {
 		vk::expected<handle<vk::descriptor_pool>> result
 			= vk::try_create_descriptor_pool(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

@@ -32,7 +32,7 @@ namespace vk {
 		handle<vk::device> device
 	) {
 		auto result = vk::try_device_wait_idle(instance, device);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

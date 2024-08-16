@@ -58,7 +58,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return vk::count{ count };
 
@@ -67,7 +67,7 @@ namespace vk {
 	template<typename... Args>
 	vk::count get_swapchain_images(Args&&... args) {
 		auto result = vk::try_get_swapchain_images(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

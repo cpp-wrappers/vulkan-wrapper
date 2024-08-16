@@ -18,7 +18,7 @@ namespace vk {
 	public:
 		first_set() = default;
 		first_set(uint32 value) : value_ { value } {}
-		operator uint32 () const { return value_; }
+		explicit operator uint32 () const { return value_; }
 	};
 	struct dynamic_offset { uint32 _; };
 
@@ -37,11 +37,11 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::command_buffer>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::command_buffer>> == 1,
 		is_same_as<vk::pipeline_bind_point>.decayed == 1,
-		is_same_as<handle<vk::pipeline_layout>>.decayed == 1,
+		is_convertible_to<handle<vk::pipeline_layout>> == 1,
 		is_same_as<vk::first_set>.decayed <= 1,
 		is_range_of<is_same_as<handle<vk::descriptor_set>>.decayed> == 1,
 		is_range_of<is_same_as<vk::dynamic_offset>.decayed> <= 1
@@ -49,20 +49,20 @@ namespace vk {
 	void cmd_bind_descriptor_sets(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::command_buffer> command_buffer = a.template
-			get<is_same_as<handle<vk::command_buffer>>.decayed>();
+		auto command_buffer = (handle<vk::command_buffer>) a.template
+			get<is_convertible_to<handle<vk::command_buffer>>>();
 
 		vk::pipeline_bind_point bind_point = a.template
 			get<is_same_as<vk::pipeline_bind_point>.decayed>();
 
-		handle<vk::pipeline_layout> pipeline_layout = a.template
-			get<is_same_as<handle<vk::pipeline_layout>>.decayed>();
+		auto pipeline_layout = (handle<vk::pipeline_layout>) a.template
+			get<is_convertible_to<handle<vk::pipeline_layout>>>();
 
 		vk::first_set first{};
 		

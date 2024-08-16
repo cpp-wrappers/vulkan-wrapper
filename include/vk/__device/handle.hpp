@@ -39,7 +39,7 @@ struct handle_interface<vk::device> : handle_interface_base<vk::device> {
 	handle<ObjectType>
 	create(Args&&... args) const {
 		auto result = vk::create<ObjectType>(*this, forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();
@@ -54,7 +54,7 @@ struct handle_interface<vk::device> : handle_interface_base<vk::device> {
 	handle<ObjectType>
 	allocate(Args&&... args) const {
 		auto result = vk::allocate<ObjectType>(*this, forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

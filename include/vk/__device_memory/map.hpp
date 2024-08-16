@@ -23,11 +23,12 @@ namespace vk {
 		static constexpr auto name = "vkMapMemory";
 	};
 
+
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::device_memory>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::device_memory>> == 1,
 		is_same_as<vk::memory_offset>.decayed <= 1,
 		is_same_as<vk::memory_size>.decayed == 1,
 		is_same_as<uint8*&> == 1
@@ -35,14 +36,14 @@ namespace vk {
 	vk::result try_map_memory(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::device_memory> device_memory = a.template
-			get<is_same_as<handle<vk::device_memory>>.decayed>();
+		auto device_memory = (handle<vk::device_memory>) a.template
+			get<is_convertible_to<handle<vk::device_memory>>>();
 
 		vk::memory_offset offset{ 0 };
 
@@ -75,10 +76,10 @@ namespace vk {
 	uint8* map_memory(Args&&... args) {
 		uint8* mem_ptr;
 		vk::result result = vk::try_map_memory(
-			forward<Args>(args)...,
+			::forward<Args>(args)...,
 			mem_ptr
 		);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 		return mem_ptr;
 	}
 

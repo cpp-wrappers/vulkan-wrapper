@@ -94,7 +94,7 @@ namespace vk {
 				)
 			};
 
-			if(result.error()) return result;
+			if (result.error()) return result;
 
 			return acceleration_structure;
 

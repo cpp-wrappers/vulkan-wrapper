@@ -52,7 +52,7 @@ namespace vk {
 		vk::result result = vk::try_flush_mapped_memory_ranges(
 			forward<Args>(args)...
 		);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

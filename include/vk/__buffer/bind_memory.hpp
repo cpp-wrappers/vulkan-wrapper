@@ -23,32 +23,33 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::buffer>>.decayed == 1,
-		is_same_as<handle<vk::device_memory>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::buffer>> == 1,
+		is_convertible_to<handle<vk::device_memory>> == 1,
 		is_same_as<vk::memory_offset>.decayed <= 1
 	>
 	vk::result try_bind_buffer_memory(Args&&... args) {
-		handle<vk::instance> instance = tuple{ args... }.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		tuple a { args... };
 
-		handle<vk::device> device = tuple{ args... }.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::buffer> buffer = tuple{ args... }.template
-			get<is_same_as<handle<vk::buffer>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::device_memory> device_memory = tuple{ args... }.template
-			get<is_same_as<handle<vk::device_memory>>.decayed>();
+		handle<vk::buffer> buffer = (handle<vk::buffer>) a.template
+			get<is_convertible_to<handle<vk::buffer>>>();
+
+		handle<vk::device_memory> device_memory = (handle<vk::device_memory>) a.template
+			get<is_convertible_to<handle<vk::device_memory>>>();
 
 		vk::memory_offset offset{ 0 };
 		
 		if constexpr (
 			(is_same_as<vk::memory_offset> > 0).for_types<Args...>()
 		) {
-			offset = tuple{ args... }.template
-				get<is_same_as<vk::memory_offset>.decayed>();
+			offset = a.template get<is_same_as<vk::memory_offset>.decayed>();
 		}
 
 		return {
@@ -66,7 +67,7 @@ namespace vk {
 	template<typename... Args>
 	void bind_buffer_memory(Args&&... args) {
 		vk::result result = vk::try_bind_buffer_memory(forward<Args>(args)...);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

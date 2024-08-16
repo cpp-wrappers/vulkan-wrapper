@@ -11,7 +11,7 @@ namespace vk {
 		return vk::view_instance_extension_properties(
 			count,
 			[&](span<vk::extension_properties> view) {
-				for(vk::extension_properties props : view) handler(props);
+				for (vk::extension_properties props : view) handler(props);
 			}
 		);
 	}

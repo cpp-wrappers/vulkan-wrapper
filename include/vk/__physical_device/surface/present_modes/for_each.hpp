@@ -14,7 +14,7 @@ namespace vk {
 			physical_device,
 			surface,
 			[&](auto view) {
-				for(auto present_mode : view) {
+				for (auto present_mode : view) {
 					handler(present_mode);
 				}
 			}

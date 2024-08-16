@@ -35,7 +35,7 @@ handle_interface<vk::instance>::enumerate_physical_devices(
 			(vk::physical_device**) physical_devices.iterator()
 		)
 	};
-	if(result.error()) {
+	if (result.error()) {
 		vk::unexpected_handler(result);
 	}
 	return vk::count{ count };

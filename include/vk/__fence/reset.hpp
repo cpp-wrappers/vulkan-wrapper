@@ -46,7 +46,7 @@ namespace vk {
 	template<typename... Args>
 	void reset_fences(Args&&... args) {
 		vk::result result = vk::try_reset_fences(forward<Args>(args)...);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 	template<typename... Args>
@@ -67,7 +67,7 @@ namespace vk {
 	template<typename... Args>
 	void reset_fence(Args&&... args) {
 		auto result = vk::try_reset_fence(forward<Args>(args)...);
-		if(result.error()) vk::unexpected_handler(result);
+		if (result.error()) vk::unexpected_handler(result);
 	}
 
 } // vk

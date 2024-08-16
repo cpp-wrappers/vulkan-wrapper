@@ -23,9 +23,9 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<handle<vk::image>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		is_convertible_to<handle<vk::image>> == 1,
 		is_same_as<vk::format>.decayed == 1,
 		is_same_as<vk::image_view_type>.decayed == 1,
 		is_same_as<vk::component_mapping>.decayed <= 1,
@@ -35,14 +35,14 @@ namespace vk {
 	try_create_image_view(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
-		handle<vk::image> image = a.template
-			get<is_same_as<handle<vk::image>>.decayed>();
+		handle<vk::image> image = (handle<vk::image>) a.template
+			get<is_convertible_to<handle<vk::image>>>();
 
 		vk::image_view_create_info ci {
 			.image = image.underlying(),
@@ -78,7 +78,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return image_view;
 	}
@@ -87,7 +87,7 @@ namespace vk {
 	handle<vk::image_view> create_image_view(Args&&... args) {
 		vk::expected<handle<vk::image_view>> result
 			= vk::try_create_image_view(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

@@ -67,7 +67,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return descriptor_set_layout;
 	}
@@ -77,7 +77,7 @@ namespace vk {
 	create_descriptor_set_layout(Args&&... args) {
 		vk::expected<handle<vk::descriptor_set_layout>> result
 			= vk::try_create_descriptor_set_layout(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

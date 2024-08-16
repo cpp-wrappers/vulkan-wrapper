@@ -19,9 +19,19 @@ namespace vk {
 	};
 
 	void free_descriptor_sets(
+		handle<vk::instance> instance,
 		handle<vk::device> device,
-		handle<vk::descriptor_pool> descritor_pool,
-		range_of_element_type_satisfying_predicate<is_same_as<handle<vk::descriptor_set>>.decayed> auto descritor_sets
-	)
+		handle<vk::descriptor_pool> descriptor_pool,
+		range_of<is_same_as<handle<vk::descriptor_set>>.decayed> auto descriptor_sets
+	) {
+		vk::get_device_function<vk::free_descriptor_sets_function>(
+			instance, device
+		)(
+			device.underlying(),
+			descriptor_pool.underlying(),
+			(uint32) descriptor_sets.size(),
+			descriptor_sets.iterator()
+		);
+	}
 
-}
+} // vk

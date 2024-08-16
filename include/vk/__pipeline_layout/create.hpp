@@ -20,13 +20,15 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
 		is_range_of<is_same_as<handle<vk::descriptor_set_layout>>.decayed> <= 1,
 		is_range_of<is_same_as<vk::push_constant_range>.decayed> <= 1
 	>
 	vk::expected<handle<vk::pipeline_layout>>
 	try_create_pipeline_layout(Args&&... args) {
+		tuple a { args... };
+
 		vk::pipeline_layout_create_info ci{};
 
 		if constexpr (types<Args...>::template
@@ -34,7 +36,7 @@ namespace vk {
 				is_same_as<handle<vk::descriptor_set_layout>>.decayed
 			>> > 0
 		) {
-			auto& layouts = tuple{ args... }.template
+			auto& layouts = a.template
 				get<is_range_of<
 					is_same_as<handle<vk::descriptor_set_layout>>.decayed
 				>>();
@@ -47,7 +49,7 @@ namespace vk {
 				is_same_as<vk::push_constant_range>.decayed
 			>> > 0
 		) {
-			auto& push_constant_ranges = tuple{ args... }.template
+			auto& push_constant_ranges = a.template
 				get<is_range_of<
 					is_same_as<vk::push_constant_range>.decayed
 				>>();
@@ -57,11 +59,11 @@ namespace vk {
 			ci.push_constant_ranges = push_constant_ranges.iterator();
 		}
 
-		handle<vk::instance> instance = tuple{ args... }.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = tuple{ args... }.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		handle<vk::device> device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
 		handle<vk::pipeline_layout> pipeline_layout;
 
@@ -76,7 +78,7 @@ namespace vk {
 			)
 		};
 
-		if(result.error()) return result;
+		if (result.error()) return result;
 
 		return pipeline_layout;
 	}
@@ -85,7 +87,7 @@ namespace vk {
 	handle<vk::pipeline_layout> create_pipeline_layout(Args&&... args) {
 		vk::expected<handle<vk::pipeline_layout>> result
 			= vk::try_create_pipeline_layout(forward<Args>(args)...);
-		if(result.is_unexpected()) {
+		if (result.is_unexpected()) {
 			vk::unexpected_handler(result.get_unexpected());
 		}
 		return result.get_expected();

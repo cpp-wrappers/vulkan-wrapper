@@ -17,7 +17,7 @@ namespace vk {
 				instance, physical_device
 			);
 
-		for(
+		for (
 			uint32 i = 0;
 			i < physical_device_memory_properties.memory_type_count;
 			++i
@@ -30,7 +30,7 @@ namespace vk {
 				(memory_type.properties & required_properties)
 				== required_properties;
 
-			if(required_type && meets_required_properties) {
+			if (required_type && meets_required_properties) {
 				return (vk::memory_type_index) i;
 			}
 		}
@@ -50,7 +50,7 @@ namespace vk {
 
 		vk::memory_type_indices indices;
 
-		for(uint32 i = 0; i < props.memory_type_count; ++i) {
+		for (uint32 i = 0; i < props.memory_type_count; ++i) {
 			indices.set(vk::memory_type_index{ i });
 		}
 

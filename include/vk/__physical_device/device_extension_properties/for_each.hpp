@@ -13,7 +13,7 @@ namespace vk {
 		vk::view_device_extension_properties(
 			physical_device,
 			[&](auto view) {
-				for(auto props : view) handler(props);
+				for (auto props : view) handler(props);
 			},
 			layer_name
 		);
