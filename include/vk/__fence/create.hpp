@@ -22,18 +22,21 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::fence_create_flags>.decayed <= 1
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
+		(
+			is_same_as<vk::fence_create_flags>.decayed <= 1 ||
+			is_same_as<vk::fence_create_flag>.decayed > 0
+		)
 	>
 	vk::expected<handle<vk::fence>>
 	try_create_fence(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
+		auto instance = (handle<vk::instance>) a.template
 			get<is_same_as<handle<vk::instance>>.decayed>();
 
-		handle<vk::device> device = a.template
+		auto device = (handle<vk::device>) a.template
 			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::fence_create_info ci {};
@@ -44,6 +47,9 @@ namespace vk {
 			ci.flags = a.template
 				get<is_same_as<vk::fence_create_flags>.decayed>();
 		}
+		a.template pass<is_same_as<vk::fence_create_flag>.decayed>(
+			[&](auto... flags){ (ci.flags.set(flags), ...); }
+		);
 
 		handle<vk::fence> fence;
 
@@ -61,33 +67,6 @@ namespace vk {
 		if (result.success()) return handle<vk::fence>{ fence };
 
 		return result;
-	}
-
-	template<typename... Args>
-	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		(is_same_as<vk::fence_create_flag>.decayed > 0)
-	>
-	vk::expected<handle<vk::fence>>
-	try_create_fence(Args&&... args) {
-		tuple a { args... };
-
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
-
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
-
-		vk::fence_create_flags create_flags;
-
-		a.template for_each([&]<typename Arg>(Arg& arg) {
-			if constexpr (same_as<decay<Arg>, vk::fence_create_flag>) {
-				create_flags.set(arg);
-			}
-		});
-
-		return vk::try_create_fence(instance, device, create_flags);
 	}
 
 	template<typename... Args>

@@ -50,6 +50,6 @@ namespace vk {
 			(uint32) buffers.size(),
 			(handle<vk::command_buffer>::underlying_type*) buffers.iterator()
 		);
-	} // free_command_buffers
+	}
 
 } // vk

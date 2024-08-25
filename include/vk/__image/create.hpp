@@ -25,17 +25,23 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		is_convertible_to<handle<vk::device>> == 1,
 		is_same_as<vk::image_create_flags>.decayed <= 1,
-		is_same_as<vk::image_type>.decayed == 1,
 		is_same_as<vk::format>.decayed == 1,
-		is_same_as<vk::extent<3>>.decayed == 1,
+		(
+			is_same_as<vk::extent<3>>.decayed == 1 ||
+			is_same_as<vk::extent<2>>.decayed == 1
+		),
+		is_same_as<vk::image_type>.decayed <= 1,
 		is_same_as<vk::mip_levels>.decayed <= 1,
 		is_same_as<vk::array_layers>.decayed <= 1,
 		is_same_as<vk::sample_count>.decayed <= 1,
 		is_same_as<vk::image_tiling>.decayed == 1,
-		is_same_as<vk::image_usages>.decayed == 1,
+		(
+			is_same_as<vk::image_usages>.decayed == 1 ||
+			is_same_as<vk::image_usage>.decayed > 0
+		),
 		is_same_as<vk::sharing_mode>.decayed <= 1,
 		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
 		is_same_as<vk::initial_layout>.decayed <= 1
@@ -44,19 +50,49 @@ namespace vk {
 	try_create_image(Args&&... args) {
 		tuple a { args... };
 
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		auto instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		handle<vk::device> device = a.template
-			get<is_same_as<handle<vk::device>>.decayed>();
+		auto device = (handle<vk::device>) a.template
+			get<is_convertible_to<handle<vk::device>>>();
 
 		vk::image_create_info ci{};
 
-		ci.image_type = a.template get<is_same_as<vk::image_type>.decayed>();
 		ci.format = a.template get<is_same_as<vk::format>.decayed>();
-		ci.extent = a.template get<is_same_as<vk::extent<3>>.decayed>();
 		ci.tiling = a.template get<is_same_as<vk::image_tiling>.decayed>();
-		ci.usages = a.template get<is_same_as<vk::image_usages>.decayed>();
+
+		if constexpr (
+			(is_same_as<vk::extent<3>>.decayed > 0).for_types<Args...>()
+		) {
+			ci.extent = a.template get<is_same_as<vk::extent<3>>.decayed>();
+			ci.image_type = vk::image_type::three_d;
+		}
+		if constexpr (
+			(is_same_as<vk::extent<2>>.decayed > 0).for_types<Args...>()
+		) {
+			ci.extent = vk::extent<3> {
+				a.template get<is_same_as<vk::extent<2>>.decayed>(),
+				1
+			};
+			ci.image_type = vk::image_type::two_d;
+		}
+		if constexpr (
+			(is_same_as<vk::image_type>.decayed > 0).for_types<Args...>()
+		) {
+			ci.image_type = a.template
+				get<is_same_as<vk::image_type>.decayed>();
+		}
+
+		if constexpr (
+			(is_same_as<vk::image_usages>.decayed > 0).for_types<Args...>()
+		){
+			ci.usages = a.template get<is_same_as<vk::image_usages>.decayed>();
+		}
+		a.template pass<is_same_as<vk::image_usage>.decayed>(
+			[&](auto... usages) {
+				(ci.usages.set(usages), ...);
+			}
+		);
 
 		if constexpr (
 			(is_same_as<vk::image_create_flags>.decayed > 0)
@@ -135,64 +171,6 @@ namespace vk {
 		return image;
 
 	};
-
-	template<typename... Args>
-	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::image_create_flags>.decayed <= 1,
-		is_same_as<vk::format>.decayed == 1,
-		is_same_as<vk::extent<3>>.decayed == 1,
-		is_same_as<vk::mip_levels>.decayed <= 1,
-		is_same_as<vk::array_layers>.decayed <= 1,
-		is_same_as<vk::sample_count>.decayed <= 1,
-		is_same_as<vk::image_tiling>.decayed == 1,
-		is_same_as<vk::image_usages>.decayed == 1,
-		is_same_as<vk::sharing_mode>.decayed <= 1,
-		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
-		is_same_as<vk::initial_layout>.decayed <= 1
-	>
-	vk::expected<handle<vk::image>>
-	try_create_image(Args&&... args) {
-		return try_create_image(
-			vk::image_type::three_d,
-			forward<Args>(args)...
-		);
-	}
-
-	template<typename... Args>
-	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::image_create_flags>.decayed <= 1,
-		is_same_as<vk::format>.decayed == 1,
-		is_same_as<vk::extent<2>>.decayed == 1,
-		is_same_as<vk::mip_levels>.decayed <= 1,
-		is_same_as<vk::array_layers>.decayed <= 1,
-		is_same_as<vk::sample_count>.decayed <= 1,
-		is_same_as<vk::image_tiling>.decayed == 1,
-		is_same_as<vk::image_usages>.decayed == 1,
-		is_same_as<vk::sharing_mode>.decayed <= 1,
-		is_range_of<is_same_as<vk::queue_family_index>.decayed> <= 1,
-		is_same_as<vk::initial_layout>.decayed <= 1
-	>
-	vk::expected<handle<vk::image>>
-	try_create_image(Args&&... args) {
-		tuple _args{ args... };
-
-		vk::extent<2> extent_2
-			= _args.template get<is_same_as<vk::extent<2>>.decayed>();
-
-		return _args.template pass<
-			!is_same_as<vk::extent<2>>.decayed
-		>([&]<typename... _Args>(_Args&&... _args) {
-			return try_create_image(
-				vk::image_type::two_d,
-				vk::extent<3>{ extent_2, 1 },
-				forward<_Args>(_args)...
-			);
-		});
-	}
 
 	template<typename... Args>
 	handle<vk::image> create_image(Args&&... args) {
