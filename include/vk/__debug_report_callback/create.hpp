@@ -22,25 +22,36 @@ namespace vk {
 
 	template<typename... Args>
 	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<vk::debug_report_flags>.decayed == 1,
+		is_convertible_to<handle<vk::instance>> == 1,
+		(
+			is_same_as<vk::debug_report_flags>.decayed == 1 ||
+			is_same_as<vk::debug_report_flag>.decayed > 0
+		),
 		is_same_as<vk::debug_report_callback_type>.decayed == 1
 	>
 	vk::expected<handle<vk::debug_report_callback>>
 	try_create_debug_report_callback(Args&&... args) {
-		handle<vk::instance> instance = tuple{ args... }.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
+		tuple a{ args... };
 
-		auto flags = tuple{ args... }.template
-			get<is_same_as<vk::debug_report_flags>.decayed>();
+		handle<vk::instance> instance = (handle<vk::instance>) a.template
+			get<is_convertible_to<handle<vk::instance>>>();
 
-		auto callback = tuple{ args... }.template
+		debug_report_callback_create_info ci {};
+
+		if constexpr (
+			(is_same_as<vk::debug_report_flags>.decayed > 0)
+			.for_types<Args...>()
+		) {
+			ci.flags = a.template
+				get<is_same_as<vk::debug_report_flags>.decayed>();
+		}
+
+		a.template pass<is_same_as<vk::debug_report_flag>.decayed>(
+			[&](auto... flag){ (ci.flags.set(flag), ...); }
+		);
+
+		ci.callback = a.template
 			get<is_same_as<vk::debug_report_callback_type>.decayed>();
-
-		debug_report_callback_create_info ci {
-			.flags = flags,
-			.callback = callback
-		};
 
 		handle<vk::debug_report_callback> debug_report_callback;
 
@@ -59,37 +70,6 @@ namespace vk {
 
 		return debug_report_callback;
 	};
-
-	template<typename... Args>
-	requires types<Args...>::template exclusively_satisfy_predicates<
-		is_same_as<handle<vk::instance>>.decayed == 1,
-		is_same_as<vk::debug_report_flag>.decayed >= 0,
-		is_same_as<vk::debug_report_callback_type>.decayed == 1
-	>
-	vk::expected<handle<vk::debug_report_callback>>
-	try_create_debug_report_callback(Args&&... args) {
-		tuple a { args... };
-
-		vk::debug_report_flags flags{};
-
-		a.template for_each([&]<typename Arg>(Arg& arg) {
-			if constexpr(same_as<decay<Arg>, vk::debug_report_flag>) {
-				flags.set(arg);
-			}
-		});
-
-		handle<vk::instance> instance = a.template
-			get<is_same_as<handle<vk::instance>>.decayed>();
-
-		decltype(auto) callback = a.template
-			get<is_same_as<vk::debug_report_callback_type>.decayed>();
-
-		return vk::try_create_debug_report_callback(
-			instance,
-			flags,
-			callback
-		);
-	}
 
 	template<typename... Args>
 	handle<vk::debug_report_callback>

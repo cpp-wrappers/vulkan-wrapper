@@ -73,27 +73,27 @@ namespace vk {
 		subpass_description(Args&&... args) :
 			input_attachements {
 				tuple{ args... }.template get_or<
-					is_same_as<InputAttachements>.decayed
+					is_same_as<decay<InputAttachements>>.decayed
 				>([]{ return span<vk::input_attachment_reference>{}; })
 			},
 			color_attachements {
 				tuple{ args... }.template get_or<
-					is_same_as<ColorAttachements>.decayed
+					is_same_as<decay<ColorAttachements>>.decayed
 				>([]{ return span<vk::color_attachment_reference>{}; })
 			},
 			resolve_attachements {
 				tuple{ args... }.template get_or<
-					is_same_as<ResolveAttachements>.decayed
+					is_same_as<decay<ResolveAttachements>>.decayed
 				>([]{ return span<vk::resolve_attachment_reference>{}; })
 			},
 			depth_stencil_attachements {
 				tuple{ args... }.template get_or<
-					is_same_as<DepthStencilAttachements>.decayed
+					is_same_as<decay<DepthStencilAttachements>>.decayed
 				>([]{ return span<vk::depth_stencil_attachment_reference>{}; })
 			},
 			preserve_attachements {
 				tuple{ args... }.template get_or<
-					is_same_as<PreserveAttachements>.decayed
+					is_same_as<decay<PreserveAttachements>>.decayed
 				>([]{ return span<vk::preserve_attachment_reference>{}; })
 			}
 		{} // constructor

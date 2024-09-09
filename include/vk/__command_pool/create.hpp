@@ -26,29 +26,38 @@ namespace vk {
 	requires types<Args...>::template exclusively_satisfy_predicates<
 		is_same_as<handle<vk::instance>>.decayed == 1,
 		is_same_as<handle<vk::device>>.decayed == 1,
-		is_same_as<vk::command_pool_create_flags>.decayed <= 1,
+		(
+			is_same_as<vk::command_pool_create_flags>.decayed <= 1
+			|| is_same_as<vk::command_pool_create_flag>.decayed >= 0
+		),
 		is_same_as<vk::queue_family_index>.decayed == 1
 	>
 	vk::expected<handle<vk::command_pool>>
 	try_create_command_pool(Args&&... args) {
-		handle<vk::instance> instance = tuple{ args... }.template
+		tuple a{ args...};
+
+		handle<vk::instance> instance = a.template
 			get<is_same_as<handle<vk::instance>>.decayed>();
 
-		handle<vk::device> device = tuple{ args... }.template
+		handle<vk::device> device = a.template
 			get<is_same_as<handle<vk::device>>.decayed>();
 
 		vk::command_pool_create_info ci{};
 
-		ci.queue_family_index = tuple{ args... }.template
+		ci.queue_family_index = a.template
 			get<is_same_as<vk::queue_family_index>.decayed>();
 
 		if constexpr (
 			(is_same_as<vk::command_pool_create_flags>.decayed > 0)
 			.for_types<Args...>()
 		) {
-			ci.flags = tuple{ args... }.template
+			ci.flags = a.template
 				get<is_same_as<vk::command_pool_create_flags>.decayed>();
 		}
+
+		a.template pass<is_same_as<vk::command_pool_create_flag>.decayed>(
+			[&](auto... flag) { (ci.flags.set(flag), ...); }
+		);
 
 		handle<vk::command_pool> command_pool;
 
